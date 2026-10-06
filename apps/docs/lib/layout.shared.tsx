@@ -31,10 +31,11 @@ export function baseOptions(): BaseLayoutProps {
         type: "menu",
         text: "More",
         items: [
-          { text: "Introduction", url: "/docs/introduction" },
+          { text: "Introduction", url: "/docs" },
           { text: "Installation", url: "/docs/installation" },
           { text: "Theming", url: "/docs/theming" },
           { text: "Motion", url: "/docs/motion" },
+          { text: "AI", url: "/docs/ai" },
           { text: "Changelog", url: "/docs/changelog" },
         ],
       },
