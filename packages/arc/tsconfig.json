@@ -13,9 +13,14 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/registry/*": ["./registry/*"],
+      "@/registry.json": ["./registry.json"],
+      "@/lib/media": ["./lib/media.ts"],
+      "@/lib/motion-tokens": ["./lib/motion-tokens.ts"],
+      "@/lib/use-copy-feedback": ["./lib/use-copy-feedback.ts"]
     }
   },
-  "include": ["types/**/*.d.ts", "registry/**/*.ts", "registry/**/*.tsx", "lib/**/*.ts", "lib/**/*.tsx"],
+  "include": ["types/**/*.d.ts", "registry/**/*.ts", "registry/**/*.tsx", "lib/**/*.ts"],
   "exclude": ["node_modules"]
 }

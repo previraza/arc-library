@@ -1,0 +1,138 @@
+---
+title: Installation
+description: Add Arc to a Next.js or Vite project with the shadcn CLI, or copy the source by hand.
+---
+
+## Requirements
+
+- **React 19** with TypeScript
+- **Next.js** (App Router) or **Vite**
+- **[motion](https://www.npmjs.com/package/motion)** for animation. Some items also use
+  [lucide-react](https://lucide.dev) or a [Radix UI](https://www.radix-ui.com) primitive; the CLI installs
+  whatever an item needs.
+- The `@/*` import alias, which Next.js and shadcn set up by default
+
+No Tailwind is required. Arc styles are CSS modules that read CSS variables.
+
+## With the shadcn CLI
+
+Register the `@uiarc` namespace once in `components.json`:
+
+```json title="components.json"
+{
+  "registries": {
+    "@uiarc": "https://uiarc.dev/r/{name}.json"
+  }
+}
+```
+
+Then add items by name. Local dependencies, such as the components inside a block, come along automatically:
+
+```bash
+npx shadcn@latest add @uiarc/button @uiarc/dialog
+```
+
+Every item also installs from its full URL, without touching `components.json`:
+
+```bash
+npx shadcn@latest add https://uiarc.dev/r/button.json
+```
+
+Your first install adds `arc-foundation`, the design and motion tokens. Import it once at the root of your app:
+
+```tsx title="app/layout.tsx"
+// Next.js. On Vite, use src/main.tsx.
+import "@/components/arc/foundation.css";
+```
+
+## Setting up a new project
+
+<Steps>
+
+### Next.js
+
+```bash
+npx create-next-app@latest my-app
+cd my-app
+npx shadcn@latest init
+```
+
+Accept the default `@/*` import alias.
+
+### Vite
+
+```bash
+npm create vite@latest my-app -- --template react-ts
+cd my-app
+npx shadcn@latest init
+```
+
+Map `@/*` to `src` in `tsconfig.json` and `vite.config.ts`, as shadcn expects:
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] }
+  }
+}
+```
+
+```ts title="vite.config.ts"
+import path from "node:path";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+});
+```
+
+</Steps>
+
+## Copy and paste
+
+1. Install the shared packages: `npm install motion lucide-react`.
+2. Copy `registry/foundation.css`, `registry/motion-tokens.ts` and `lib/motion-tokens.ts` from this repository
+   into the same paths under your `@/` root, and import the CSS once at the root.
+3. Copy the item's folder from `registry/components/<id>/` or `registry/blocks/<id>/`, keeping the path. Copied
+   files keep this repository's layout and import each other through `@/`; the CLI install rewrites that for
+   you. The item's `public/r/<id>.json` file lists every file and npm package it needs.
+
+Every item page here has a **Manual** tab with the exact files.
+
+## Usage
+
+The CLI puts every file in an `arc/` folder under the `components` alias in your `components.json`, for example
+`components/arc/button/button.tsx`, or `src/components/arc/...` in a `src/` project or monorepo package. Arc
+files import each other with relative paths, so any alias setup works, and you can move the `arc/` folder as a
+whole. Use them like any local component:
+
+```tsx
+import { Button } from "@/components/arc/button/button";
+
+export default function Page() {
+  return <Button>Save changes</Button>;
+}
+```
+
+The code is yours: edit it, rename it, move it.
+
+## Troubleshooting
+
+**Cannot find module `@/registry/...`.** Arc files import each other through the `@/*` alias. Map it to your
+project root in `tsconfig.json`, and in `vite.config.ts` for Vite.
+
+**Components render without styles or colors.** Import the tokens once at the root:
+`import "@/components/arc/foundation.css";`. If the file is missing, run
+`npx shadcn@latest add @uiarc/arc-foundation`.
+
+**The CLI says `@uiarc` is an unknown registry.** Add the `registries` entry to `components.json`, or install
+from the full URL: `npx shadcn@latest add https://uiarc.dev/r/<id>.json`.
+
+**Dark mode does not switch.** Arc follows the `data-theme` attribute on `<html>`, not the `dark` class. Set
+`data-theme="dark"` before the page paints to avoid a flash of the light theme.
+
+**Animations do not play.** Arc honors the reduced motion setting of your operating system and swaps movement
+for simple fades. Turn it off to see the full motion, and make sure `motion` is installed.

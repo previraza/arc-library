@@ -1,0 +1,94 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/preset.css";
+/* Fumadocs ships its --color-fd-* defaults in the color file, including the diff colors the docs CSS uses. */
+@import "fumadocs-ui/css/neutral.css";
+/* Arc design tokens: colors, radii, shadows, motion curves, chart series. */
+@import "../../../packages/arc/registry/foundation.css";
+
+/*
+ * Fumadocs UI reads its palette from --color-fd-*. We bind those to the Arc tokens above so the
+ * docs chrome and the live component previews share one source of truth: change a token in
+ * foundation.css and the whole site follows, in both themes.
+ */
+@theme {
+  --color-fd-background: var(--background);
+  --color-fd-foreground: var(--foreground);
+  --color-fd-muted: var(--surface-muted);
+  --color-fd-muted-foreground: var(--text-muted);
+  --color-fd-popover: var(--surface-raised);
+  --color-fd-popover-foreground: var(--foreground);
+  --color-fd-card: var(--surface);
+  --color-fd-card-foreground: var(--foreground);
+  --color-fd-border: var(--border);
+  --color-fd-border-hover: var(--border-strong);
+  --color-fd-primary: var(--foreground);
+  --color-fd-primary-foreground: var(--background);
+  --color-fd-secondary: var(--surface-muted);
+  --color-fd-secondary-foreground: var(--foreground);
+  --color-fd-accent: color-mix(in oklab, var(--foreground) 7%, transparent);
+  --color-fd-accent-foreground: var(--foreground);
+  --color-fd-ring: var(--focus-ring);
+  --color-fd-overlay: color-mix(in oklab, var(--neutral-11) 28%, transparent);
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-geist, "Geist Variable"), var(--font-inter, "Inter Variable"), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Geist Mono", Menlo, Consolas, monospace;
+}
+
+.dark {
+  --color-fd-overlay: color-mix(in oklab, var(--neutral-0) 32%, transparent);
+}
+
+:root {
+  --fd-layout-width: 1520px;
+  --fd-nav-height: 3.5rem;
+  --arc-site-header-height: 4rem;
+  --arc-nav-pill-radius: var(--radius-control);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+
+/* Documentation pages read in Inter at a slightly tighter line height than the default prose. */
+.prose :where(h1, h2, h3, h4) {
+  font-family: var(--font-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: 500;
+}
+
+.prose :where(p, li) {
+  color: var(--text-secondary);
+}
+
+/* Home hero mesh, borrowed from the Arc landing page. */
+.arc-mesh {
+  position: relative;
+  isolation: isolate;
+}
+
+.arc-mesh::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse 32% 42% at 3% 96%, #e9babb, transparent 70%),
+    radial-gradient(ellipse 35% 50% at 95% 5%, #afc7f6, transparent 70%),
+    radial-gradient(ellipse 45% 45% at 50% 110%, #e8d9ad, transparent 70%),
+    var(--background);
+}
+
+.dark .arc-mesh::before {
+  background:
+    radial-gradient(ellipse 32% 42% at 3% 96%, oklch(35% 0.09 20), transparent 70%),
+    radial-gradient(ellipse 35% 50% at 95% 5%, oklch(35% 0.08 255), transparent 70%),
+    radial-gradient(ellipse 45% 45% at 50% 110%, oklch(36% 0.07 85), transparent 70%),
+    var(--background);
+}
+
+/* Fading wordmark in the footer. */
+.arc-wordmark {
+  mask-image: linear-gradient(180deg, #000 10%, transparent 88%);
+}

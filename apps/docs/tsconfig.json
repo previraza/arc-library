@@ -1,0 +1,67 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "arc/registry.json": [
+        "../../packages/arc/registry.json"
+      ],
+      "arc/registry/*": [
+        "../../packages/arc/registry/*"
+      ],
+      "arc/lib/*": [
+        "../../packages/arc/lib/*"
+      ],
+      "@/registry/*": [
+        "../../packages/arc/registry/*"
+      ],
+      "@/lib/media": [
+        "../../packages/arc/lib/media.ts"
+      ],
+      "@/lib/motion-tokens": [
+        "../../packages/arc/lib/motion-tokens.ts"
+      ],
+      "@/lib/use-copy-feedback": [
+        "../../packages/arc/lib/use-copy-feedback.ts"
+      ]
+    },
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "types/**/*.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "site/**/*.ts",
+    "site/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

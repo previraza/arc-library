@@ -1,0 +1,65 @@
+---
+title: Theming
+description: Arc components read semantic tokens, never raw colors. Change one token and every component follows, in both themes.
+---
+
+Components read semantic tokens, never raw colors. Change a token in `foundation.css`
+(`components/arc/foundation.css` after a CLI install) and every component follows, in both themes.
+
+| Token | Used for |
+| --- | --- |
+| `--background` | The page behind everything |
+| `--surface`, `--surface-raised`, `--surface-muted` | Cards and inputs, floating layers, quiet fills |
+| `--foreground`, `--text-secondary`, `--text-muted` | Primary, supporting and hint text |
+| `--border`, `--border-subtle`, `--border-strong` | Separators and edges |
+| `--accent`, `--accent-strong`, `--accent-subtle` | Selection, progress and helpful context |
+| `--success`, `--warning`, `--danger` | Status, always paired with a label |
+| `--radius-control`, `--radius-panel`, `--radius-surface` | Controls, menus, cards |
+| `--font-display`, `--font-body` | Geist for headings, Inter for everything else |
+
+## Accents
+
+Set `data-accent` on `<html>` to one of eight accents. Selection controls, sliders and charts all read from
+it, and each accent ships its own control fills so a white thumb keeps its contrast.
+
+<AccentSwitcher />
+
+## Dark mode
+
+Set `data-theme="dark"` on `<html>`, before the page paints to avoid a flash. Dark values are tuned separately
+rather than inverted, and every component, chart and gradient has its own dark stops.
+
+```tsx
+<html data-theme="dark" data-accent="violet">
+```
+
+<ThemeSwitch />
+
+## Radii
+
+Arc uses concentric radii. Nested elements step down 4 to 5px from their parent, which is what makes a card full
+of pills still read as one surface.
+
+| Token | Value | Used by |
+| --- | --- | --- |
+| `--radius-control` | 1.125rem | Buttons, inputs, selects |
+| `--radius-panel` | 1.625rem | Menus, dialogs, popovers, sheets |
+| `--radius-surface` | 2.125rem | Cards and sections |
+
+## Type
+
+`--font-display` is Geist, for headings at 30px and above. `--font-body` is Inter, for everything else. Both
+are set as CSS variables, so `next/font` can swap them without touching a component.
+
+```css
+:root {
+  --font-display: var(--font-geist), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+}
+```
+
+## Series colors
+
+Charts read `--series-1` through `--series-4`. The palette rotates from `--accent`, so every accent gets a
+chart series that is distinct from its neighbours. Override the four variables on any element to rebrand a
+chart.

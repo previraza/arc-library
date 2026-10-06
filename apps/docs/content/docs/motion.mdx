@@ -1,0 +1,54 @@
+---
+title: Motion
+description: Motion presets shared by every Arc component, from instant presses to morphing shapes.
+---
+
+Every animation in Arc comes from one file, `motion-tokens.ts`. Components import the presets rather than
+writing their own durations, which is what keeps a page of them feeling like one product.
+
+## Durations
+
+| Preset | Seconds | Used for |
+| --- | --- | --- |
+| `instant` | 0.12 | Presses, colour changes, anything the finger is waiting on |
+| `fast` | 0.16 | Icons and labels crossfading |
+| `exit` | 0.18 | Leaving labels, dismissed panels |
+| `standard` | 0.24 | The default for most transitions |
+| `considered` | 0.48 | Deliberate reveals, larger surfaces |
+
+## Springs
+
+Springs carry anything that moves while it is already on screen.
+
+| Preset | Character | Used for |
+| --- | --- | --- |
+| `snappy` | visualDuration 0.26, bounce 0.12 | Presses, toggles, thumbs, small indicators |
+| `smooth` | visualDuration 0.4, bounce 0 | Panels, height changes, layout shifts |
+| `morph` | visualDuration 0.42, bounce 0.16 | Shape morphs, shared highlights, width changes |
+| `responsive` | stiffness 520, damping 38 | Drag and gesture tracking |
+| `gentle` | stiffness 340, damping 34 | Larger surfaces that should not feel quick |
+
+Scale rides the spring, opacity and blur tween. Blur never overshoots below zero, which is why crossfades read
+as depth rather than as a smear.
+
+<MotionPlayground />
+
+## Reduced motion
+
+Every component reads `useReducedMotion()` and swaps movement for a short fade. Nothing is disabled outright,
+so state changes stay legible, and no animation depends on a transform to communicate.
+
+```tsx
+import { useReducedMotion } from "motion/react";
+
+const reduceMotion = useReducedMotion() ?? false;
+
+<motion.span
+  initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={reduceMotion ? { duration: motionTokens.duration.instant } : motionTokens.spring.snappy}
+/>;
+```
+
+The CSS side follows the same rule: transitions are shortened rather than removed, so hover and focus still
+answer.

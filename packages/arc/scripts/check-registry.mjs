@@ -1,14 +1,19 @@
 /**
- * Checks that registry.json and the prebuilt items in public/r agree with the source in this repository:
+ * Checks that registry.json and the prebuilt items in public/r agree with the source in this package:
  * every listed file exists, every item has a prebuilt JSON file, every dependency is a real package name, every file
  * installs where scripts/registry-install.mjs says, and the embedded content matches the source with its imports rewritten
- * for that install layout.
+ * for that install layout, so this package can live anywhere in the monorepo.
  *
- *   npm run check:registry
+ *   pnpm check:registry
  */
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { importSpecifiers, installTarget, isPackageName, withRelativeImports } from "./registry-install.mjs";
+
+// Every path below is relative to the package root, so the script can run from anywhere.
+const root = fileURLToPath(new URL("..", import.meta.url));
+process.chdir(root);
 
 const registry = JSON.parse(await readFile("registry.json", "utf8"));
 const problems = [];

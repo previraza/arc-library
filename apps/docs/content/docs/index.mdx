@@ -1,0 +1,43 @@
+---
+title: Introduction
+description: Arc is a free, open source library of React components and blocks with calm motion, built for shadcn.
+---
+
+Arc is a free, open source library of React components and blocks with calm motion. Add an item with the
+shadcn CLI, or copy the code. There is no runtime package to keep in sync: what you install is source code
+that lives in your repository.
+
+## What you get
+
+- **106 components** covering buttons, inputs, selects, overlays, navigation, charts and text effects.
+- **22 blocks**, complete sections and screens assembled from those components.
+- **One token file.** Colors, radii, shadows and motion live in `foundation.css` and `motion-tokens.ts`.
+- **Both themes from the start.** Every component has a tuned dark theme, never an inverted one.
+- **Reduced motion everywhere.** Animations fall back to simple fades when the system asks for it.
+
+## The rules
+
+Every Arc component follows the same handful of decisions, which is what makes a page of them feel like one
+product rather than a pile of widgets.
+
+| Rule | What it means |
+| --- | --- |
+| Semantic tokens only | Components read `--surface`, `--foreground`, `--accent`, never a raw color |
+| Concentric radii | Controls, then panels, then cards, each stepping down 4 to 5px inside |
+| No focus rings | Focus is answered by the surface and the label, not by an outline |
+| Quiet motion | Springs and short eases, nothing that announces itself |
+| Keyboard first | Every interactive component works without a pointer |
+| Reduced motion | `prefers-reduced-motion` swaps movement for fades, everywhere |
+
+## Try it
+
+```tsx
+import { Button } from "@/components/arc/button/button";
+
+export default function Page() {
+  return <Button>Save changes</Button>;
+}
+```
+
+Head to [Installation](/docs/installation) to add the registry to a project, or open
+[Button](/components/button) for a live preview and its full API.

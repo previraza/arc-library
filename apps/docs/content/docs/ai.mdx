@@ -1,0 +1,50 @@
+---
+title: AI tools
+description: Arc is built to be used from AI coding tools, through the shadcn registry, Markdown docs and a public MCP server.
+---
+
+Arc is built to be used from AI coding tools. Every item is plain source in a shadcn registry, every page has
+a Markdown version, and the whole library is indexed for assistants.
+
+## Registry
+
+An assistant can read the registry index directly, which is enough to resolve dependencies and install an item
+with the shadcn CLI:
+
+```text
+https://uiarc.dev/r/registry.json
+```
+
+An individual item, including the full source of every file it needs:
+
+```text
+https://uiarc.dev/r/button.json
+```
+
+## Markdown
+
+Every item page has a Markdown version next to it, at `/components/<id>/markdown` for a component and
+`/components/blocks/<id>/markdown` for a block. The library index for assistants is at `/llms.txt`, and the
+whole library in one file at `/llms-full.txt`.
+
+## MCP server
+
+The MCP server at `https://uiarc.dev/api/mcp` speaks Streamable HTTP and needs no key for free items. Point an
+assistant at it to search the library, read docs and fetch source.
+
+```bash
+claude mcp add --transport http arc https://uiarc.dev/api/mcp
+```
+
+## A prompt that works
+
+Give your assistant the registry URL rather than screenshots, and ask for the behaviour, not the pixels:
+
+```text
+Use @uiarc. Read https://uiarc.dev/r/registry.json to resolve dependencies, install items with the shadcn
+CLI, and keep the design tokens from arc-foundation. Match the existing page: same radius scale, same text
+scale, no focus rings.
+```
+
+That is enough for an assistant to install a component, keep it consistent with what is already on the page,
+and stay inside the token system.

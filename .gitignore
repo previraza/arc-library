@@ -7,3 +7,10 @@ bun.lockb
 *.tsbuildinfo
 .DS_Store
 .env*
+
+# build output
+.next/
+.source/
+out/
+build/
+*.log
