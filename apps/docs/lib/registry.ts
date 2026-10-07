@@ -1,4 +1,4 @@
-import registry from "arc/registry.json";
+import registry from "manicat/registry.json";
 import { blockGroups, componentGroups } from "@/lib/registry-groups";
 
 export type RegistryItem = {
@@ -81,7 +81,7 @@ export function getBlockGroups(): BlockGroup[] {
   }));
 }
 
-/** Items an install pulls along, resolved from registryDependencies, arc-foundation first. */
+/** Items an install pulls along, resolved from registryDependencies, manicat-foundation first. */
 export function getDependencies(item: RegistryItem): RegistryItem[] {
   const resolved = (item.registryDependencies ?? [])
     .map((dependency) => {
@@ -96,15 +96,16 @@ export function getRegistryJsonUrl(name: string): string {
   return `${siteUrl}/r/${name}.json`;
 }
 
-/** Upstream origin of the fork this site publishes, for links written before the site had its own origin. */
-const upstreamOrigin = "https://uiarc.dev";
+/** Published origins that predate this site having its own domain: the upstream fork and this project's own name. */
+const publishedOrigins = ["https://uiarc.dev", "https://manicat.dev"];
 
 /**
- * Re-points a link written for the upstream site at this site, so the docs links, the registry payloads and the
+ * Re-points a link written for a published origin at this site, so the docs links, the registry payloads and the
  * installable dependencies all resolve to the instance the visitor is reading.
  */
 export function selfLink(url: string): string {
-  return url.startsWith(upstreamOrigin) ? siteUrl + url.slice(upstreamOrigin.length) : url;
+  const origin = publishedOrigins.find((origin) => url.startsWith(origin));
+  return origin ? siteUrl + url.slice(origin.length) : url;
 }
 
 /** The payload this site publishes for an item. File contents stay in the .json, so the tab shows structure only. */

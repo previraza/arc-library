@@ -1,9 +1,9 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { Button } from "arc/registry/components/button/button";
-import { Slider } from "arc/registry/components/slider/slider";
-import { Switch } from "arc/registry/components/switch/switch";
+import { Button } from "manicat/registry/components/button/button";
+import { Slider } from "manicat/registry/components/slider/slider";
+import { Switch } from "manicat/registry/components/switch/switch";
 
 const accents = [
   { name: "neutral", color: "oklch(33% 0 0)" },

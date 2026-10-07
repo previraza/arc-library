@@ -9,7 +9,7 @@ import type { LibrarySection } from "@/site/library/library-sidebar";
 const labels: Record<LibrarySection, string> = { components: "Components", blocks: "Blocks" };
 
 /** The full page of a component or a block: preview, reference panel, related items and the pager. */
-export function ItemPage({ item, section }: { item: RegistryItem; section: LibrarySection }) {
+export async function ItemPage({ item, section }: { item: RegistryItem; section: LibrarySection }) {
   const { category, group } = getItemPath(item.name);
   const { previous, next } = getSiblings(item.name);
   const related = getRelated(item.name);
@@ -63,7 +63,7 @@ export function ItemPage({ item, section }: { item: RegistryItem; section: Libra
         <ItemPreview item={item} />
       </section>
 
-      <ItemTabs {...getItemReference(item)} />
+      <ItemTabs {...(await getItemReference(item))} />
 
       {related.length > 0 && (
         <section className="grid gap-4">

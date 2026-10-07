@@ -2,7 +2,7 @@
  * Builds lib/registry-groups.ts from the grouping already written in the repository README, so the docs site and the
  * README never drift: the README owns the curated order, this script mirrors it into typed data.
  *
- * Usage: pnpm --filter @arc/docs groups
+ * Usage: pnpm --filter @manicat/docs groups
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -12,7 +12,7 @@ import { dirname, join } from "node:path";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const repo = join(root, "..", "..");
 const readme = readFileSync(join(repo, "README.md"), "utf8");
-const registry = JSON.parse(readFileSync(join(repo, "packages", "arc", "registry.json"), "utf8"));
+const registry = JSON.parse(readFileSync(join(repo, "packages", "manicat", "registry.json"), "utf8"));
 
 const known = new Set(registry.items.map((item) => item.name));
 
@@ -25,7 +25,7 @@ const section = (heading) => {
 };
 
 const names = (block) =>
-  [...block.matchAll(/^\|\s*\[([^\]]+)\]\(https:\/\/uiarc\.dev\/components\/(?:blocks\/)?([a-z0-9-]+)\)/gm)].map(
+  [...block.matchAll(/^\|\s*\[([^\]]+)\]\(https:\/\/(?:uiarc|manicat)\.dev\/components\/(?:blocks\/)?([a-z0-9-]+)\)/gm)].map(
     (match) => match[2],
   );
 
@@ -70,7 +70,7 @@ for (const line of section("Blocks").split("\n")) {
 
 const grouped = [...new Set(all)];
 const missing = grouped.filter((name) => !known.has(name));
-const ungrouped = [...known].filter((name) => name !== "arc-foundation" && !grouped.includes(name));
+const ungrouped = [...known].filter((name) => name !== "manicat-foundation" && !grouped.includes(name));
 if (missing.length) throw new Error(`README lists unknown registry items: ${missing.join(", ")}`);
 if (ungrouped.length) console.warn(`Warning, registry items with no group: ${ungrouped.join(", ")}`);
 

@@ -2,9 +2,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import ts from "typescript";
 import type { RegistryItem } from "@/lib/registry";
-import { arcRoot } from "@/lib/arc-root";
+import { manicatRoot } from "@/lib/manicat-root";
 
-export { arcRoot };
+export { manicatRoot };
 
 export type PropRow = {
   name: string;
@@ -32,7 +32,7 @@ function getSourceFile(item: RegistryItem): string | undefined {
   const file = item.files.find((entry) => entry.type === "registry:component" && entry.path.endsWith(".tsx"));
   if (!file) return;
   try {
-    return readFileSync(join(arcRoot, file.path), "utf8");
+    return readFileSync(join(manicatRoot, file.path), "utf8");
   } catch {
     return;
   }
@@ -205,7 +205,7 @@ export function getItemFiles(item: RegistryItem): { path: string; target: string
 
 export function readSource(path: string): string | undefined {
   try {
-    return readFileSync(join(arcRoot, path), "utf8");
+    return readFileSync(join(manicatRoot, path), "utf8");
   } catch {
     return;
   }

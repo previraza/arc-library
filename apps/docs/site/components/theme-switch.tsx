@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "fumadocs-ui/provider/base";
-import { Switch } from "arc/registry/components/switch/switch";
+import { Switch } from "manicat/registry/components/switch/switch";
 
 export function ThemeSwitch() {
   const { resolvedTheme, setTheme } = useTheme();

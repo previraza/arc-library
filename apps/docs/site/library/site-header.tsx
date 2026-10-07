@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "fumadocs-ui/provider/base";
 import { Moon, Sun } from "lucide-react";
 import { SiteSearch } from "@/site/library/search-dialog";
-import { ArcMark, site } from "@/lib/layout.shared";
+import { ManicatMark, site } from "@/lib/layout.shared";
 
 const links = [
   { text: "Docs", url: "/docs" },
@@ -25,7 +25,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-fd-border bg-fd-background/80 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2 font-medium tracking-(--tracking-display)">
-          <ArcMark />
+          <ManicatMark />
           <span>{site.name}</span>
         </Link>
 
@@ -68,7 +68,7 @@ export function SiteHeader() {
             href={site.repository}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label="Arc on GitHub"
+            aria-label="Manicat UI on GitHub"
             className="grid size-8 place-items-center rounded-[var(--radius-pill)] text-fd-muted-foreground transition-colors hover:bg-fd-secondary hover:text-fd-foreground"
           >
             <GitHubIcon className="size-4" />

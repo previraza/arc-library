@@ -20,26 +20,26 @@
       "@/*": [
         "./*"
       ],
-      "arc/registry.json": [
-        "../../packages/arc/registry.json"
+      "manicat/registry.json": [
+        "../../packages/manicat/registry.json"
       ],
-      "arc/registry/*": [
-        "../../packages/arc/registry/*"
+      "manicat/registry/*": [
+        "../../packages/manicat/registry/*"
       ],
-      "arc/lib/*": [
-        "../../packages/arc/lib/*"
+      "manicat/lib/*": [
+        "../../packages/manicat/lib/*"
       ],
       "@/registry/*": [
-        "../../packages/arc/registry/*"
+        "../../packages/manicat/registry/*"
       ],
       "@/lib/media": [
-        "../../packages/arc/lib/media.ts"
+        "../../packages/manicat/lib/media.ts"
       ],
       "@/lib/motion-tokens": [
-        "../../packages/arc/lib/motion-tokens.ts"
+        "../../packages/manicat/lib/motion-tokens.ts"
       ],
       "@/lib/use-copy-feedback": [
-        "../../packages/arc/lib/use-copy-feedback.ts"
+        "../../packages/manicat/lib/use-copy-feedback.ts"
       ]
     },
     "incremental": true,

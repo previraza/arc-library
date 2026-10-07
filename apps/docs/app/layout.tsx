@@ -26,14 +26,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className="flex min-h-screen flex-col antialiased"
         style={{
-          // Arc components read these directly, next-themes writes className="dark" and data-theme on <html>.
+          // Manicat UI components read these directly, next-themes writes className="dark" and data-theme on <html>.
           "--font-display": `var(--font-geist)`,
           "--font-body": `var(--font-inter)`,
         } as React.CSSProperties}
       >
         <RootProvider
           theme={{
-            // Arc keys its dark tokens off [data-theme="dark"], Fumadocs UI off the .dark class. Write both.
+            // Manicat UI keys its dark tokens off [data-theme="dark"], Fumadocs UI off the .dark class. Write both.
             attribute: ["class", "data-theme"],
             enableSystem: true,
           }}

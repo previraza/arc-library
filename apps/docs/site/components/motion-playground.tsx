@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { motionTokens } from "arc/lib/motion-tokens";
-import { Button } from "arc/registry/components/button/button";
-import SegmentedControl from "arc/registry/components/segmented-control/segmented-control";
+import { motionTokens } from "manicat/lib/motion-tokens";
+import { Button } from "manicat/registry/components/button/button";
+import SegmentedControl from "manicat/registry/components/segmented-control/segmented-control";
 
 const presets = ["responsive", "gentle", "snappy", "smooth", "morph"] as const;
 

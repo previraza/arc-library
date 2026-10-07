@@ -7,7 +7,7 @@ import { ItemIndex } from "@/site/library/item-index";
 export const metadata: Metadata = {
   title: "Components",
   description:
-    "Every Arc component, grouped by what it does: actions, inputs, disclosure, feedback, navigation and data display.",
+    "Every Manicat UI component, grouped by what it does: actions, inputs, disclosure, feedback, navigation and data display.",
 };
 
 export default function ComponentsPage() {

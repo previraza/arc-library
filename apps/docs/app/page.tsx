@@ -2,16 +2,16 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { componentGroups, blockGroups } from "@/lib/registry-groups";
 import { getCounts, getComponentNames, getBlockNames, getInstallCommand, getItem } from "@/lib/registry";
-import { ArcMark, libraryCounts, site } from "@/lib/layout.shared";
+import { ManicatMark, libraryCounts, site } from "@/lib/layout.shared";
 import { SiteHeader } from "@/site/library/site-header";
-import { Button } from "arc/registry/components/button/button";
-import { ButtonGroup } from "arc/registry/components/button-group/button-group";
-import { Badge } from "arc/registry/components/badge/badge";
+import { Button } from "manicat/registry/components/button/button";
+import { ButtonGroup } from "manicat/registry/components/button-group/button-group";
+import { Badge } from "manicat/registry/components/badge/badge";
 import { ThemeSwitchDemo } from "@/site/demos/actions";
 import { SegmentedControlDemo } from "@/site/demos/inputs";
 
 export const metadata: Metadata = {
-  title: "Arc — React components with calm motion",
+  title: "Manicat UI — React components with calm motion",
   description: site.description,
 };
 
@@ -218,7 +218,7 @@ export default function HomePage() {
             ].map((feature) => (
               <div key={feature.title} className="grid gap-2">
                 <div className="flex items-center gap-2">
-                  <ArcMark size={18} className="text-fd-primary" />
+                  <ManicatMark size={18} className="text-fd-primary" />
                   <h3 className="font-medium text-fd-foreground">{feature.title}</h3>
                 </div>
                 <p className="text-sm text-fd-muted-foreground">{feature.body}</p>
@@ -231,7 +231,7 @@ export default function HomePage() {
       <footer className="border-t border-fd-border">
         <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap items-center justify-between gap-4 px-4 py-8 text-sm text-fd-muted-foreground sm:px-6">
           <span className="flex items-center gap-2">
-            <ArcMark size={18} />
+            <ManicatMark size={18} />
             {site.name} · {getComponentNames().length} components · {getBlockNames().length} blocks
           </span>
           <span className="flex gap-4">
@@ -247,6 +247,9 @@ export default function HomePage() {
             <a href={site.repository} target="_blank" rel="noreferrer noopener" className="hover:text-fd-foreground">
               GitHub
             </a>
+          </span>
+          <span className="text-xs text-fd-muted-foreground/70">
+            Fork of <a href={site.upstream} target="_blank" rel="noreferrer noopener" className="hover:text-fd-foreground">Arc</a>, by Elia Kuratli.
           </span>
         </div>
       </footer>

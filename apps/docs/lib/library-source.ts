@@ -1,7 +1,7 @@
 import { loader } from "fumadocs-core/source";
 import type { StructuredData } from "fumadocs-core/mdx-plugins";
 import { blockGroups, componentGroups } from "@/lib/registry-groups";
-import registry from "arc/registry.json";
+import registry from "manicat/registry.json";
 
 type Item = (typeof registry.items)[number];
 

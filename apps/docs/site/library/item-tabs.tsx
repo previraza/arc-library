@@ -3,15 +3,25 @@
 import { useState } from "react";
 import { Terminal } from "lucide-react";
 import { CopyCommand } from "@/site/library/install-command";
+import { CodeBlock } from "@/site/library/code-block";
 import type { ApiTable, PropRow } from "@/lib/props";
 
-type SourceFile = { path: string; target: string; type: string; source?: string };
+/** A file of the item, already highlighted on the server. */
+export type SourceFile = {
+  path: string;
+  target: string;
+  type: string;
+  lang: string;
+  code: string;
+  html?: string;
+};
 
 export type ItemTabsProps = {
   command: string;
   registryUrl: string;
   /** The raw shadcn registry payload, shown so an install can be done by hand. */
   registryJson: string;
+  registryHtml?: string;
   files: SourceFile[];
   api?: ApiTable;
   dependencies: { name: string; title: string }[];
@@ -45,13 +55,15 @@ export function ItemTabs(props: ItemTabsProps) {
         {tab === "Install" && <InstallPane {...props} />}
         {tab === "Source" && <SourcePane files={props.files} />}
         {tab === "API" && <ApiPane api={props.api} />}
-        {tab === "Registry" && <RegistryPane json={props.registryJson} url={props.registryUrl} />}
+        {tab === "Registry" && (
+          <RegistryPane json={props.registryJson} html={props.registryHtml} url={props.registryUrl} />
+        )}
       </div>
     </div>
   );
 }
 
-function InstallPane({ command, dependencies, registryJson }: Omit<ItemTabsProps, "files" | "api">) {
+function InstallPane({ command, dependencies, registryJson, registryHtml }: Omit<ItemTabsProps, "files" | "api">) {
   return (
     <div className="grid gap-4">
       <div className="grid gap-2">
@@ -86,16 +98,14 @@ function InstallPane({ command, dependencies, registryJson }: Omit<ItemTabsProps
           <span className="ml-1.5 text-fd-muted-foreground/70 group-open:hidden">(+)</span>
           <span className="ml-1.5 hidden text-fd-muted-foreground/70 group-open:inline">(–)</span>
         </summary>
-        <div className="overflow-hidden rounded-[var(--radius-surface)] border border-fd-border bg-fd-background">
-          <Code text={registryJson} label="registry.json" />
-        </div>
+        <CodeBlock label="registry.json" lang="json" html={registryHtml} code={registryJson} maxHeight={320} />
       </details>
     </div>
   );
 }
 
 function SourcePane({ files }: { files: SourceFile[] }) {
-  const withSource = files.filter((file) => file.source);
+  const withSource = files.filter((file) => file.code);
 
   if (withSource.length === 0) {
     return (
@@ -115,9 +125,7 @@ function SourcePane({ files }: { files: SourceFile[] }) {
               {file.type.replace("registry:", "")}
             </span>
           </div>
-          <div className="overflow-hidden rounded-[var(--radius-surface)] border border-fd-border bg-fd-background">
-            <Code text={file.source!} label={file.path} />
-          </div>
+          <CodeBlock lang={file.lang} html={file.html} code={file.code} maxHeight={480} />
         </div>
       ))}
     </div>
@@ -188,7 +196,7 @@ function PropRowView({ prop }: { prop: PropRow }) {
   );
 }
 
-function RegistryPane({ json, url }: { json: string; url: string }) {
+function RegistryPane({ json, html, url }: { json: string; html?: string; url: string }) {
   return (
     <div className="grid gap-2">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -204,24 +212,7 @@ function RegistryPane({ json, url }: { json: string; url: string }) {
           {url}
         </a>
       </div>
-      <div className="max-h-96 overflow-hidden rounded-[var(--radius-surface)] border border-fd-border bg-fd-background">
-        <Code text={json} label="registry.json" />
-      </div>
-    </div>
-  );
-}
-
-function Code({ text, label }: { text: string; label?: string }) {
-  return (
-    <div className="overflow-auto">
-      {label && (
-        <div className="sticky top-0 z-10 border-b border-fd-border bg-fd-background px-3 py-1.5 font-mono text-[11px] text-fd-muted-foreground">
-          {label}
-        </div>
-      )}
-      <pre className="min-w-full p-3 font-mono text-xs leading-relaxed text-fd-foreground">
-        <code>{text}</code>
-      </pre>
+      <CodeBlock label="registry.json" lang="json" html={html} code={json} maxHeight={480} />
     </div>
   );
 }

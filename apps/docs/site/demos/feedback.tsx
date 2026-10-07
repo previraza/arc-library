@@ -1,21 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Alert } from "arc/registry/components/alert/alert";
-import Toast from "arc/registry/components/toast/toast";
-import { ToastStack, ToastStackProvider, useToastStack } from "arc/registry/components/toast-stack/toast-stack";
-import { AnnouncementBar } from "arc/registry/components/announcement-bar/announcement-bar";
-import { Progress } from "arc/registry/components/progress/progress";
-import { Skeleton } from "arc/registry/components/skeleton/skeleton";
-import { Stepper } from "arc/registry/components/stepper/stepper";
-import { UsageMeter } from "arc/registry/components/usage-meter/usage-meter";
-import { Avatar } from "arc/registry/components/avatar/avatar";
-import { AvatarGroup } from "arc/registry/components/avatar-group/avatar-group";
-import { Badge } from "arc/registry/components/badge/badge";
-import { Card } from "arc/registry/components/card/card";
-import { MetricCard } from "arc/registry/components/metric-card/metric-card";
-import { EmptyState } from "arc/registry/components/empty-state/empty-state";
-import { Button } from "arc/registry/components/button/button";
+import { Alert } from "manicat/registry/components/alert/alert";
+import Toast from "manicat/registry/components/toast/toast";
+import { ToastStack, ToastStackProvider, useToastStack } from "manicat/registry/components/toast-stack/toast-stack";
+import { AnnouncementBar } from "manicat/registry/components/announcement-bar/announcement-bar";
+import { Progress } from "manicat/registry/components/progress/progress";
+import { Skeleton } from "manicat/registry/components/skeleton/skeleton";
+import { Stepper } from "manicat/registry/components/stepper/stepper";
+import { UsageMeter } from "manicat/registry/components/usage-meter/usage-meter";
+import { Avatar } from "manicat/registry/components/avatar/avatar";
+import { AvatarGroup } from "manicat/registry/components/avatar-group/avatar-group";
+import { Badge } from "manicat/registry/components/badge/badge";
+import { Card } from "manicat/registry/components/card/card";
+import { MetricCard } from "manicat/registry/components/metric-card/metric-card";
+import { EmptyState } from "manicat/registry/components/empty-state/empty-state";
+import { Button } from "manicat/registry/components/button/button";
 
 export function AlertDemo() {
   const [open, setOpen] = useState(true);
@@ -26,7 +26,7 @@ export function AlertDemo() {
         Your trial ends in three days. Add a payment method to keep the workspace.
       </Alert>
       <Alert tone="success" title="Deployed">
-        arc-library is live on uiarc.dev.
+        manicat-library is live on manicat.dev.
       </Alert>
       <Alert tone="warning" title="Slow build">
         The last build took 4 minutes 12 seconds.
@@ -93,7 +93,7 @@ export function AnnouncementBarDemo() {
   return (
     <AnnouncementBar
       messages={[
-        { id: "pro", message: "Arc Pro adds 43 motion components and the larger blocks.", action: { label: "See Pro", onClick: () => {} } },
+        { id: "pro", message: "Manicat Pro adds 43 motion components and the larger blocks.", action: { label: "See Pro", onClick: () => {} } },
         { id: "registry", message: "Every item installs with the shadcn CLI.", action: { label: "Installation", onClick: () => {} } },
       ]}
     />

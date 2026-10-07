@@ -7,7 +7,7 @@ import { ItemIndex } from "@/site/library/item-index";
 export const metadata: Metadata = {
   title: "Blocks",
   description:
-    "Whole sections to drop into a page: sign-in, pricing, dashboards and more, built from Arc components.",
+    "Whole sections to drop into a page: sign-in, pricing, dashboards and more, built from Manicat UI components.",
 };
 
 export default function BlocksPage() {
@@ -21,7 +21,7 @@ export default function BlocksPage() {
             Blocks
           </h1>
           <p className="text-fd-muted-foreground">
-            {libraryCounts.blocks} composed sections built from Arc components. Install a block the same way as a
+            {libraryCounts.blocks} composed sections built from Manicat UI components. Install a block the same way as a
             component, and everything it depends on comes with it.
           </p>
         </header>

@@ -1,16 +1,16 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { NextResponse } from "next/server";
-import { arcRoot } from "@/lib/arc-root";
+import { manicatRoot } from "@/lib/manicat-root";
 import { selfLink } from "@/lib/registry";
 
 /**
- * Serves the published registry items from packages/arc/public/r, the single place the shadcn payload is written.
+ * Serves the published registry items from packages/manicat/public/r, the single place the shadcn payload is written.
  *
  * The payloads hardcode upstream origins for their registryDependencies; re-pointing them here keeps an install
  * from this site self-contained instead of pulling foundation files from another host.
  */
-const registryRoot = join(arcRoot, "public", "r");
+const registryRoot = join(manicatRoot, "public", "r");
 
 type Params = { params: Promise<{ name: string }> };
 

@@ -1,7 +1,10 @@
 ---
 title: Installation
-description: Add Arc to a Next.js or Vite project with the shadcn CLI, or copy the source by hand.
+description: Add Manicat UI to a Next.js or Vite project with the shadcn CLI, or copy the source by hand.
 ---
+
+Manicat UI is a fork of [Arc](https://uiarc.dev): the components are still Arc's, we just rebranded the library
+and its install surface and publish the same source from this site's own registry.
 
 ## Requirements
 
@@ -12,16 +15,16 @@ description: Add Arc to a Next.js or Vite project with the shadcn CLI, or copy t
   whatever an item needs.
 - The `@/*` import alias, which Next.js and shadcn set up by default
 
-No Tailwind is required. Arc styles are CSS modules that read CSS variables.
+No Tailwind is required. Manicat UI styles are CSS modules that read CSS variables.
 
 ## With the shadcn CLI
 
-Register the `@uiarc` namespace once in `components.json`:
+Register the `@manicat` namespace once in `components.json`:
 
 ```json title="components.json"
 {
   "registries": {
-    "@uiarc": "https://uiarc.dev/r/{name}.json"
+    "@manicat": "https://manicat.dev/r/{name}.json"
   }
 }
 ```
@@ -29,20 +32,20 @@ Register the `@uiarc` namespace once in `components.json`:
 Then add items by name. Local dependencies, such as the components inside a block, come along automatically:
 
 ```bash
-npx shadcn@latest add @uiarc/button @uiarc/dialog
+npx shadcn@latest add @manicat/button @manicat/dialog
 ```
 
 Every item also installs from its full URL, without touching `components.json`:
 
 ```bash
-npx shadcn@latest add https://uiarc.dev/r/button.json
+npx shadcn@latest add https://manicat.dev/r/button.json
 ```
 
-Your first install adds `arc-foundation`, the design and motion tokens. Import it once at the root of your app:
+Your first install adds `manicat-foundation`, the design and motion tokens. Import it once at the root of your app:
 
 ```tsx title="app/layout.tsx"
 // Next.js. On Vite, use src/main.tsx.
-import "@/components/arc/foundation.css";
+import "@/components/manicat/foundation.css";
 ```
 
 ## Setting up a new project
@@ -104,13 +107,13 @@ Every item page here has a **Manual** tab with the exact files.
 
 ## Usage
 
-The CLI puts every file in an `arc/` folder under the `components` alias in your `components.json`, for example
-`components/arc/button/button.tsx`, or `src/components/arc/...` in a `src/` project or monorepo package. Arc
-files import each other with relative paths, so any alias setup works, and you can move the `arc/` folder as a
-whole. Use them like any local component:
+The CLI puts every file in a `manicat/` folder under the `components` alias in your `components.json`, for
+example `components/manicat/button/button.tsx`, or `src/components/manicat/...` in a `src/` project or monorepo
+package. Manicat UI files import each other with relative paths, so any alias setup works, and you can move the
+`manicat/` folder as a whole. Use them like any local component:
 
 ```tsx
-import { Button } from "@/components/arc/button/button";
+import { Button } from "@/components/manicat/button/button";
 
 export default function Page() {
   return <Button>Save changes</Button>;
@@ -121,18 +124,18 @@ The code is yours: edit it, rename it, move it.
 
 ## Troubleshooting
 
-**Cannot find module `@/registry/...`.** Arc files import each other through the `@/*` alias. Map it to your
-project root in `tsconfig.json`, and in `vite.config.ts` for Vite.
+**Cannot find module `@/registry/...`.** Manicat UI files import each other through the `@/*` alias. Map it to
+your project root in `tsconfig.json`, and in `vite.config.ts` for Vite.
 
 **Components render without styles or colors.** Import the tokens once at the root:
-`import "@/components/arc/foundation.css";`. If the file is missing, run
-`npx shadcn@latest add @uiarc/arc-foundation`.
+`import "@/components/manicat/foundation.css";`. If the file is missing, run
+`npx shadcn@latest add @manicat/manicat-foundation`.
 
-**The CLI says `@uiarc` is an unknown registry.** Add the `registries` entry to `components.json`, or install
-from the full URL: `npx shadcn@latest add https://uiarc.dev/r/<id>.json`.
+**The CLI says `@manicat` is an unknown registry.** Add the `registries` entry to `components.json`, or install
+from the full URL: `npx shadcn@latest add https://manicat.dev/r/<id>.json`.
 
-**Dark mode does not switch.** Arc follows the `data-theme` attribute on `<html>`, not the `dark` class. Set
-`data-theme="dark"` before the page paints to avoid a flash of the light theme.
+**Dark mode does not switch.** Manicat UI follows the `data-theme` attribute on `<html>`, not the `dark` class.
+Set `data-theme="dark"` before the page paints to avoid a flash of the light theme.
 
-**Animations do not play.** Arc honors the reduced motion setting of your operating system and swaps movement
-for simple fades. Turn it off to see the full motion, and make sure `motion` is installed.
+**Animations do not play.** Manicat UI honors the reduced motion setting of your operating system and swaps
+movement for simple fades. Turn it off to see the full motion, and make sure `motion` is installed.

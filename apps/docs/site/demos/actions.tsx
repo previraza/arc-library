@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { MoreHorizontal, Share2, Star, Trash2, Undo2 } from "lucide-react";
-import { Button } from "arc/registry/components/button/button";
-import { ActionButton } from "arc/registry/components/action-button/action-button";
-import { SplitButton } from "arc/registry/components/split-button/split-button";
-import { ButtonGroup } from "arc/registry/components/button-group/button-group";
-import { FloatingButtonGroup } from "arc/registry/components/floating-button-group/floating-button-group";
-import { ExpandingButtonGroup } from "arc/registry/components/expanding-button-group/expanding-button-group";
-import { CopyButton } from "arc/registry/components/copy-button/copy-button";
-import { ConfirmMorph } from "arc/registry/components/confirm-morph/confirm-morph";
-import { HoldToConfirm } from "arc/registry/components/hold-to-confirm/hold-to-confirm";
-import { SwipeActions, SwipeActionsRow } from "arc/registry/components/swipe-actions/swipe-actions";
-import { DropdownMenu } from "arc/registry/components/dropdown-menu/dropdown-menu";
-import { ContextMenu, contextMenuExampleItems } from "arc/registry/components/context-menu/context-menu";
-import { UserMenu } from "arc/registry/components/user-menu/user-menu";
-import { ThemeSwitch } from "arc/registry/components/theme-switch/theme-switch";
+import { Button } from "manicat/registry/components/button/button";
+import { ActionButton } from "manicat/registry/components/action-button/action-button";
+import { SplitButton } from "manicat/registry/components/split-button/split-button";
+import { ButtonGroup } from "manicat/registry/components/button-group/button-group";
+import { FloatingButtonGroup } from "manicat/registry/components/floating-button-group/floating-button-group";
+import { ExpandingButtonGroup } from "manicat/registry/components/expanding-button-group/expanding-button-group";
+import { CopyButton } from "manicat/registry/components/copy-button/copy-button";
+import { ConfirmMorph } from "manicat/registry/components/confirm-morph/confirm-morph";
+import { HoldToConfirm } from "manicat/registry/components/hold-to-confirm/hold-to-confirm";
+import { SwipeActions, SwipeActionsRow } from "manicat/registry/components/swipe-actions/swipe-actions";
+import { DropdownMenu } from "manicat/registry/components/dropdown-menu/dropdown-menu";
+import { ContextMenu, contextMenuExampleItems } from "manicat/registry/components/context-menu/context-menu";
+import { UserMenu } from "manicat/registry/components/user-menu/user-menu";
+import { ThemeSwitch } from "manicat/registry/components/theme-switch/theme-switch";
 import { useTheme } from "fumadocs-ui/provider/base";
 
 export function ButtonDemo() {
@@ -120,7 +120,7 @@ export function ExpandingButtonGroupDemo() {
 }
 
 export function CopyButtonDemo() {
-  return <CopyButton value="npx shadcn@latest add https://uiarc.dev/r/button.json" label="Copy install command" />;
+  return <CopyButton value="npx shadcn@latest add https://manicat.dev/r/button.json" label="Copy install command" />;
 }
 
 export function ConfirmMorphDemo() {
@@ -201,7 +201,7 @@ export function ContextMenuDemo() {
 export function UserMenuDemo() {
   return (
     <UserMenu
-      user={{ name: "Elia Kuratli", email: "hello@uiarc.dev", plan: "Arc Pro" }}
+      user={{ name: "Elia Kuratli", email: "hello@manicat.dev", plan: "Manicat Pro" }}
       items={[{ label: "Settings" }, { label: "Keyboard shortcuts", keys: ["⌘", "/"] }, { label: "Sign out" }]}
       onSignOut={() => {}}
     />

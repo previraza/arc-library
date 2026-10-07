@@ -1,6 +1,6 @@
 /**
  * Turns CHANGELOG.md into content/docs/changelog.mdx, pointing every entry at the local preview page.
- * Usage: pnpm --filter @arc/docs changelog
+ * Usage: pnpm --filter @manicat/docs changelog
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -23,7 +23,7 @@ const body = changelog
 
 const output = `---
 title: Changelog
-description: Every free component and block added to Arc, newest first.
+description: Every free component and block added to Manicat UI, newest first.
 ---
 
 ${body.trim()}

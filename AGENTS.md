@@ -15,20 +15,20 @@ Same rule for this repo: check this file, the docs pages and the relevant module
 
 ```bash
 pnpm install          # clean install if the lockfile or symlinks look broken
-pnpm dev              # docs site on :3000 (pnpm --filter @arc/docs dev)
-pnpm typecheck        # pnpm -r typecheck (arc + @arc/docs)
+pnpm dev              # docs site on :3000 (pnpm --filter @manicat/docs dev)
+pnpm typecheck        # pnpm -r typecheck (arc + @manicat/docs)
 pnpm lint             # eslint . (from the repo root)
-pnpm check:registry   # validates packages/arc/registry.json and its files
+pnpm check:registry   # validates packages/manicat/registry.json and its files
 pnpm check            # typecheck + lint + check:registry
 ```
 
 Generated files: `apps/docs/lib/registry-groups.ts` (from the README tables) and
 `apps/docs/content/docs/changelog.mdx` (from `CHANGELOG.md`) — regenerate with
-`pnpm --filter @arc/docs groups` / `pnpm --filter @arc/docs changelog`, don't edit them by hand.
+`pnpm --filter @manicat/docs groups` / `pnpm --filter @manicat/docs changelog`, don't edit them by hand.
 
 ## Layout
 
-- `packages/arc` — the Arc component library and its shadcn registry (`registry.json`, `registry/`, `public/r/`).
+- `packages/manicat` — the Manicat UI component library and its shadcn registry (`registry.json`, `registry/`, `public/r/`).
 - `apps/docs` — the Fumadocs site (`app/`, `content/docs/`, `site/`, `lib/`).
 
 ## Verification

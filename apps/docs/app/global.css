@@ -2,11 +2,11 @@
 @import "fumadocs-ui/css/preset.css";
 /* Fumadocs ships its --color-fd-* defaults in the color file, including the diff colors the docs CSS uses. */
 @import "fumadocs-ui/css/neutral.css";
-/* Arc design tokens: colors, radii, shadows, motion curves, chart series. */
-@import "../../../packages/arc/registry/foundation.css";
+/* Manicat UI design tokens: colors, radii, shadows, motion curves, chart series. */
+@import "../../../packages/manicat/registry/foundation.css";
 
 /*
- * Fumadocs UI reads its palette from --color-fd-*. We bind those to the Arc tokens above so the
+ * Fumadocs UI reads its palette from --color-fd-*. We bind those to the Manicat UI tokens above so the
  * docs chrome and the live component previews share one source of truth: change a token in
  * foundation.css and the whole site follows, in both themes.
  */
@@ -91,4 +91,83 @@
 /* Fading wordmark in the footer. */
 .arc-wordmark {
   mask-image: linear-gradient(180deg, #000 10%, transparent 88%);
+}
+/*
+ * Code panes on the item pages. Shiki emits one markup with --shiki-light/--shiki-dark on every token; the
+ * theme class next-themes writes on <html> picks which pair applies, so both themes stay correct without
+ * re-highlighting.
+ */
+.shiki {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+.shiki span {
+  color: var(--shiki-light);
+}
+
+.dark .shiki {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+}
+
+.dark .shiki span {
+  color: var(--shiki-dark);
+}
+
+.arc-code pre.shiki {
+  margin: 0;
+  padding: 0.875rem 1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.75;
+  tab-size: 2;
+  white-space: pre;
+}
+
+.arc-code pre.shiki code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+}
+
+/* Highlighted source on item pages. Shiki writes --shiki-light/--shiki-dark on every token and leaves
+   color unset; these pick the pair that matches the theme next-themes writes on <html>. */
+.arc-code {
+  background: var(--color-fd-background);
+  font-family: var(--font-mono);
+}
+
+.arc-code .shiki {
+  margin: 0;
+  overflow-x: auto;
+  padding: 0.875rem 1rem;
+  background: transparent;
+  font-size: 0.75rem;
+  line-height: 1.7;
+}
+
+.arc-code .shiki span {
+  color: var(--shiki-light);
+}
+
+.dark .arc-code .shiki span {
+  color: var(--shiki-dark);
+}
+
+.arc-code pre.shiki code {
+  display: block;
+  width: max-content;
+}
+
+/* No highlighter available: keep the raw text readable and equally scrollable. */
+.arc-code-plain {
+  margin: 0;
+  overflow-x: auto;
+  padding: 0.875rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  white-space: pre;
 }

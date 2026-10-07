@@ -7,7 +7,7 @@ export default defineConfig([
     "**/node_modules/**",
     "**/.next/**",
     "**/.source/**",
-    "packages/arc/public/**",
+    "packages/manicat/public/**",
   ]),
   ...nextVitals,
   ...nextTs,

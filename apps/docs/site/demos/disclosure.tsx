@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import { Settings2 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "arc/registry/components/tabs/tabs";
-import { Accordion } from "arc/registry/components/accordion/accordion";
-import { ScrollArea } from "arc/registry/components/scroll-area/scroll-area";
-import { ExpandableCard } from "arc/registry/components/expandable-card/expandable-card";
-import { ResizablePanel, ResizablePanels } from "arc/registry/components/resizable-panels/resizable-panels";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "arc/registry/components/dialog/dialog";
-import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "arc/registry/components/drawer/drawer";
-import { BottomSheet, BottomSheetClose } from "arc/registry/components/bottom-sheet/bottom-sheet";
-import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from "arc/registry/components/popover/popover";
-import { HoverCard, HoverCardProfile } from "arc/registry/components/hover-card/hover-card";
-import { Tooltip } from "arc/registry/components/tooltip/tooltip";
-import { Button } from "arc/registry/components/button/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "manicat/registry/components/tabs/tabs";
+import { Accordion } from "manicat/registry/components/accordion/accordion";
+import { ScrollArea } from "manicat/registry/components/scroll-area/scroll-area";
+import { ExpandableCard } from "manicat/registry/components/expandable-card/expandable-card";
+import { ResizablePanel, ResizablePanels } from "manicat/registry/components/resizable-panels/resizable-panels";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "manicat/registry/components/dialog/dialog";
+import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "manicat/registry/components/drawer/drawer";
+import { BottomSheet, BottomSheetClose } from "manicat/registry/components/bottom-sheet/bottom-sheet";
+import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from "manicat/registry/components/popover/popover";
+import { HoverCard, HoverCardProfile } from "manicat/registry/components/hover-card/hover-card";
+import { Tooltip } from "manicat/registry/components/tooltip/tooltip";
+import { Button } from "manicat/registry/components/button/button";
 
 export function TabsDemo() {
   return (
@@ -35,7 +35,7 @@ export function AccordionDemo() {
     <Accordion
       defaultOpen={0}
       items={[
-        { title: "Do I need Tailwind?", content: "No. Arc styles are CSS modules that read CSS variables." },
+        { title: "Do I need Tailwind?", content: "No. Manicat UI styles are CSS modules that read CSS variables." },
         { title: "Can I change the tokens?", content: "Change a value in foundation.css and every component follows." },
         { title: "What about dark mode?", content: "Set data-theme=\"dark\" on the html element. Values are tuned, not inverted." },
       ]}
@@ -166,7 +166,7 @@ export function HoverCardDemo() {
         <HoverCardProfile
           name="Elia Kuratli"
           role="Design engineering"
-          bio="Builds Arc, and writes the motion presets behind it."
+          bio="Builds Manicat UI, and writes the motion presets behind it."
           stats={[{ label: "Components", value: "106" }, { label: "Blocks", value: "22" }]}
           meta="Berlin"
         />
