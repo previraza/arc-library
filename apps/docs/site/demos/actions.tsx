@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MoreHorizontal, Share2, Star, Trash2, Undo2 } from "lucide-react";
 import { Button } from "manicat/registry/components/button/button";
 import { ActionButton } from "manicat/registry/components/action-button/action-button";
@@ -17,6 +17,16 @@ import { ContextMenu, contextMenuExampleItems } from "manicat/registry/component
 import { UserMenu } from "manicat/registry/components/user-menu/user-menu";
 import { ThemeSwitch } from "manicat/registry/components/theme-switch/theme-switch";
 import { useTheme } from "fumadocs-ui/provider/base";
+
+// next-themes exposes its stored theme only on the client; render before the frame after mount.
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  return mounted;
+}
 
 export function ButtonDemo() {
   return (
@@ -210,6 +220,11 @@ export function UserMenuDemo() {
 
 export function ThemeSwitchDemo() {
   const { resolvedTheme, setTheme } = useTheme();
+  const mounted = useMounted();
+
+  // next-themes only knows the stored theme on the client, so rendering from resolvedTheme before
+  // hydration settles would mismatch the server's cookie value. Wait for mount, then it's stable.
+  if (!mounted) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -220,6 +235,9 @@ export function ThemeSwitchDemo() {
 
 export function ThemeSwitchEclipseDemo() {
   const { resolvedTheme, setTheme } = useTheme();
+  const mounted = useMounted();
+
+  if (!mounted) return null;
 
   return (
     <ThemeSwitch
@@ -232,6 +250,9 @@ export function ThemeSwitchEclipseDemo() {
 
 export function ThemeSwitchSplitDemo() {
   const { resolvedTheme, setTheme } = useTheme();
+  const mounted = useMounted();
+
+  if (!mounted) return null;
 
   return (
     <ThemeSwitch
@@ -244,6 +265,9 @@ export function ThemeSwitchSplitDemo() {
 
 export function ThemeSwitchRiseDemo() {
   const { resolvedTheme, setTheme } = useTheme();
+  const mounted = useMounted();
+
+  if (!mounted) return null;
 
   return (
     <ThemeSwitch

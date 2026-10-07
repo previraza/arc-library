@@ -32,6 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         } as React.CSSProperties}
       >
         <RootProvider
+          // The header owns the ⌘K search and /api/search answers for it, so keep Fumadocs' own eager
+          // SearchDialog from mounting: it would announce "items?.map is not a function" on our payload.
+          search={{ enabled: false }}
           theme={{
             // Manicat UI keys its dark tokens off [data-theme="dark"], Fumadocs UI off the .dark class. Write both.
             attribute: ["class", "data-theme"],

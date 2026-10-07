@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Search, SearchX } from "lucide-react";
 import type { SearchEntry } from "@/lib/search";
@@ -10,6 +11,8 @@ import type { SearchEntry } from "@/lib/search";
  * server-side, and the list is fully keyboard driven.
  *
  * The dialog panel unmounts when closed, so opening it always starts from an empty query with fresh results.
+ * It portals to <body>: the blurred header would otherwise become the containing block of the fixed overlay,
+ * which would then only cover the header instead of the whole viewport.
  */
 export function SiteSearch() {
   const [open, setOpen] = useState(false);
@@ -39,7 +42,7 @@ export function SiteSearch() {
         <kbd className="hidden rounded border border-fd-border px-1 font-mono text-[10px] sm:inline">⌘K</kbd>
       </button>
 
-      {open && <SearchPanel onClose={close} />}
+      {open && createPortal(<SearchPanel onClose={close} />, document.body)}
     </>
   );
 }
