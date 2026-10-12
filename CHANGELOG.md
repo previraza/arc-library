@@ -2,6 +2,13 @@
 
 New free components and blocks ship regularly. Every entry links to its live preview on uiarc.dev.
 
+## 2026-10-12
+
+### Changed
+
+- Component pages now show a copy-paste ready Usage snippet and concrete, real-world Examples, each with a Preview/Code switch.
+- Code cards put the file name, language badge and copy button on one row; a framework switcher replaces the old type badge.
+
 ## 2026-10-05
 
 ### Added

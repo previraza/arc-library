@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Terminal } from "lucide-react";
 import { CopyCommand } from "@/site/library/install-command";
 import { CodeBlock } from "@/site/library/code-block";
+import { FrameworkSwitch } from "@/site/library/framework-switch";
+import type { FrameworkId } from "@/lib/frameworks";
 import type { ApiTable, PropRow } from "@/lib/props";
 
 /** A file of the item, already highlighted on the server. */
@@ -24,6 +26,7 @@ export type ItemTabsProps = {
   registryHtml?: string;
   files: SourceFile[];
   api?: ApiTable;
+  frameworks: { id: FrameworkId; label: string }[];
   dependencies: { name: string; title: string }[];
 };
 
@@ -53,7 +56,7 @@ export function ItemTabs(props: ItemTabsProps) {
 
       <div className="p-4">
         {tab === "Install" && <InstallPane {...props} />}
-        {tab === "Source" && <SourcePane files={props.files} />}
+        {tab === "Source" && <SourcePane files={props.files} frameworks={props.frameworks} />}
         {tab === "API" && <ApiPane api={props.api} />}
         {tab === "Registry" && (
           <RegistryPane json={props.registryJson} html={props.registryHtml} url={props.registryUrl} />
@@ -63,7 +66,7 @@ export function ItemTabs(props: ItemTabsProps) {
   );
 }
 
-function InstallPane({ command, dependencies, registryJson, registryHtml }: Omit<ItemTabsProps, "files" | "api">) {
+function InstallPane({ command, dependencies, registryJson, registryHtml }: Omit<ItemTabsProps, "files" | "api" | "frameworks">) {
   return (
     <div className="grid gap-4">
       <div className="grid gap-2">
@@ -104,7 +107,8 @@ function InstallPane({ command, dependencies, registryJson, registryHtml }: Omit
   );
 }
 
-function SourcePane({ files }: { files: SourceFile[] }) {
+function SourcePane({ files, frameworks }: { files: SourceFile[]; frameworks: ItemTabsProps["frameworks"] }) {
+  const [framework, setFramework] = useState<FrameworkId>(frameworks[0]?.id ?? "react");
   const withSource = files.filter((file) => file.code);
 
   if (withSource.length === 0) {
@@ -117,16 +121,16 @@ function SourcePane({ files }: { files: SourceFile[] }) {
 
   return (
     <div className="grid gap-4">
+      <FrameworkSwitch options={frameworks} value={framework} onChange={setFramework} />
       {withSource.map((file) => (
-        <div key={file.path} className="grid gap-2">
-          <div className="flex items-baseline justify-between gap-3">
-            <span className="truncate font-mono text-xs text-fd-muted-foreground">{file.target}</span>
-            <span className="shrink-0 rounded-[var(--radius-pill)] border border-fd-border px-2 py-0.5 text-[10px] uppercase tracking-wide text-fd-muted-foreground">
-              {file.type.replace("registry:", "")}
-            </span>
-          </div>
-          <CodeBlock lang={file.lang} html={file.html} code={file.code} maxHeight={480} />
-        </div>
+        <CodeBlock
+          key={file.path}
+          label={file.target.replace(/^@components\//, "")}
+          lang={file.lang}
+          html={file.html}
+          code={file.code}
+          maxHeight={480}
+        />
       ))}
     </div>
   );

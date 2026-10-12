@@ -1,3 +1,4 @@
+import { frameworksOf } from "@/lib/frameworks";
 import { highlight, languageOf } from "@/lib/highlight";
 import { getApiTable, getItemFiles, readSource } from "@/lib/props";
 import {
@@ -27,6 +28,7 @@ export async function getItemReference(item: RegistryItem): Promise<ItemTabsProp
     registryHtml: await highlight(registryJson, "json"),
     files: await Promise.all(getItemFiles(item).map(toSourceFile)),
     api: getApiTable(item),
+    frameworks: frameworksOf(item.meta),
     dependencies: getDependencies(item).map((dependency) => ({
       name: dependency.name,
       title: dependency.title,

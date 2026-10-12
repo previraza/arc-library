@@ -15,7 +15,7 @@ export type CodeBlockProps = {
   maxHeight?: number;
 };
 
-/** A formatted, copyable code area: header with the file name and language, then the highlighted body. */
+/** A formatted, copyable code area: header with `file name · language badge · … · copy`, then the highlighted body. */
 export function CodeBlock({ label, lang, html, code, maxHeight }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
@@ -39,24 +39,23 @@ export function CodeBlock({ label, lang, html, code, maxHeight }: CodeBlockProps
 
   return (
     <div className="arc-code overflow-hidden rounded-[var(--radius-surface)] border border-fd-border bg-fd-background">
-      <div className="flex items-center justify-between gap-3 border-b border-fd-border bg-fd-card px-3 py-1.5">
-        <span className="min-w-0 truncate font-mono text-[11px] text-fd-muted-foreground">{label}</span>
-        <div className="flex shrink-0 items-center gap-2">
-          {lang && (
-            <span className="rounded-[var(--radius-pill)] border border-fd-border px-2 py-0.5 text-[10px] uppercase tracking-wide text-fd-muted-foreground">
-              {lang}
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={copy}
-            aria-label={copied ? "Copied" : "Copy code"}
-            className="flex items-center gap-1.5 rounded-[var(--radius-pill)] border border-fd-border px-2 py-0.5 text-[11px] text-fd-muted-foreground transition-colors hover:text-fd-foreground"
-          >
-            {copied ? <Check className="size-3 text-fd-primary" /> : <Copy className="size-3" />}
-            {copied ? "Copied" : "Copy"}
-          </button>
-        </div>
+      <div className="flex items-center gap-2 border-b border-fd-border bg-fd-card px-3 py-1.5">
+        {label && <span className="min-w-0 truncate font-mono text-[11px] text-fd-foreground">{label}</span>}
+        {lang && (
+          <span className="shrink-0 rounded-[var(--radius-pill)] border border-fd-border px-2 py-0.5 text-[10px] uppercase tracking-wide text-fd-muted-foreground">
+            {lang}
+          </span>
+        )}
+        <span className="flex-1" />
+        <button
+          type="button"
+          onClick={copy}
+          aria-label={copied ? "Copied" : "Copy code"}
+          className="flex shrink-0 items-center gap-1.5 rounded-[var(--radius-pill)] border border-fd-border px-2 py-0.5 text-[11px] text-fd-muted-foreground transition-colors hover:text-fd-foreground"
+        >
+          {copied ? <Check className="size-3 text-fd-primary" /> : <Copy className="size-3" />}
+          {copied ? "Copied" : "Copy"}
+        </button>
       </div>
 
       <div

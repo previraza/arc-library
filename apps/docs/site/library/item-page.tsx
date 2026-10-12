@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getItemReference } from "@/lib/item-reference";
 import { getItemPath, getRelated, getSiblings, type RegistryItem } from "@/lib/registry";
 import { ItemPreview } from "@/site/library/item-preview";
+import { ItemExamples, ItemUsage } from "@/site/library/item-examples";
 import { ItemTabs } from "@/site/library/item-tabs";
 import { ItemCard } from "@/site/library/item-card";
 import type { LibrarySection } from "@/site/library/library-sidebar";
@@ -64,6 +65,9 @@ export async function ItemPage({ item, section }: { item: RegistryItem; section:
       </section>
 
       <ItemTabs {...(await getItemReference(item))} />
+
+      <ItemUsage item={item} />
+      <ItemExamples item={item} />
 
       {related.length > 0 && (
         <section className="grid gap-4">

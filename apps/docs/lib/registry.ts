@@ -18,6 +18,7 @@ export type RegistryItem = {
     docs?: string;
     markdown?: string;
     tags?: string[];
+    frameworks?: string[];
   };
 };
 

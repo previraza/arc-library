@@ -15,6 +15,10 @@ import * as text from "./text";
 export type DemoComponent = ComponentType;
 
 const modules = [actions, blocks, charts, collab, data, disclosure, feedback, inputs, media, navigation, text];
+const files = ["actions", "blocks", "charts", "collab", "data", "disclosure", "feedback", "inputs", "media", "navigation", "text"];
+
+/** Where the source of each demo lives (file relative to site/, export name), so the page can show it. */
+export const demoLocations: Record<string, { file: string; exportName: string }> = {};
 
 /**
  * Demos keyed by registry name, built from the exports themselves: `ButtonDemo` becomes `button`,
@@ -26,14 +30,17 @@ const modules = [actions, blocks, charts, collab, data, disclosure, feedback, in
 function buildDemos(): Record<string, DemoComponent> {
   const found: Record<string, DemoComponent> = {};
 
-  for (const demoModule of modules) {
+  modules.forEach((demoModule, index) => {
     for (const [exportName, value] of Object.entries(demoModule)) {
       if (!exportName.endsWith("Demo") || typeof value !== "function") continue;
 
       const key = kebab(exportName.slice(0, -"Demo".length));
-      if (found[key] === undefined) found[key] = value as DemoComponent;
+      if (found[key] === undefined) {
+        found[key] = value as DemoComponent;
+        demoLocations[key] = { file: `demos/${files[index]}.tsx`, exportName };
+      }
     }
-  }
+  });
 
   return found;
 }
