@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@/lib/cn";
 import Link from "next/link";
 import type { MouseEvent } from "react";
 import { ChevronRight as NavArrowRight } from "lucide-react";
@@ -11,13 +12,21 @@ export interface BreadcrumbItem {
   /** Runs when the crumb is chosen. Without an href the crumb renders as a button, for paths that live in local state. */
   onClick?: (event: MouseEvent<HTMLElement>) => void;
 }
-export interface BreadcrumbProps { items: BreadcrumbItem[]; ariaLabel?: string }
+export interface BreadcrumbProps {
+  items: BreadcrumbItem[];
+  ariaLabel?: string;
+  className?: string;
+  /** Extend the inner, named parts of the breadcrumb: list. */
+  classNames?: {
+    list?: string;
+  };
+}
 /** Crumbs present on first render stay still; crumbs added later slide in from the path before them. */
-export function Breadcrumb({ items, ariaLabel = "Breadcrumb" }: BreadcrumbProps) {
+export function Breadcrumb({ items, ariaLabel = "Breadcrumb", className, classNames }: BreadcrumbProps) {
   const reduced = useReducedMotion() ?? false;
   const still = { duration: 0 };
   const path = items.map(item => item.label).join("/");
-  return <nav aria-label={ariaLabel}><ol className={styles.list}><AnimatePresence mode="popLayout" initial={false}>{items.map((item, index) => {
+  return <nav aria-label={ariaLabel} className={cn(className)}><ol className={cn(styles.list, classNames?.list)}><AnimatePresence mode="popLayout" initial={false}>{items.map((item, index) => {
     const current = index === items.length - 1;
     return <motion.li key={`${item.label}-${index}`}
       layout={reduced ? false : "position"} layoutDependency={path}

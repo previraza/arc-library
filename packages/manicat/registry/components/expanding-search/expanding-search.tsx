@@ -7,6 +7,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useMotionValueEvent, 
 import type { MotionValue } from "motion/react";
 import { Search, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./expanding-search.module.css";
 
 export interface ExpandingSearchItem {
@@ -44,6 +45,32 @@ export interface ExpandingSearchProps {
   /** A short tip under the empty state. */
   emptyHint?: string;
   className?: string;
+  /** Extend the inner, named parts of the expanding search: root, shell, trigger, icon, input, clear, panel, body, listbox, group, groupLabel, option, highlight, optionIcon, optionText, optionTitle, optionMeta, mark, view, empty, emptyTitle, emptyHint, srOnly. */
+  classNames?: {
+    root?: string;
+    shell?: string;
+    trigger?: string;
+    icon?: string;
+    input?: string;
+    clear?: string;
+    panel?: string;
+    body?: string;
+    listbox?: string;
+    group?: string;
+    groupLabel?: string;
+    option?: string;
+    highlight?: string;
+    optionIcon?: string;
+    optionText?: string;
+    optionTitle?: string;
+    optionMeta?: string;
+    mark?: string;
+    view?: string;
+    empty?: string;
+    emptyTitle?: string;
+    emptyHint?: string;
+    srOnly?: string;
+  };
 }
 
 type Group = { name: string; items: ExpandingSearchItem[] };
@@ -75,14 +102,14 @@ function groupBy(list: ExpandingSearchItem[], source: ExpandingSearchItem[]): Gr
   return [...groups].sort((a, b) => (order.get(a[0]) ?? 0) - (order.get(b[0]) ?? 0)).map(([name, items]) => ({ name, items }));
 }
 
-function Match({ text, query }: { text: string; query: string }) {
+function Match({ text, query, classNames }: { text: string; query: string; classNames?: ExpandingSearchProps["classNames"] }) {
   const at = query ? text.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) : -1;
   if (at < 0) return text;
-  return <>{text.slice(0, at)}<mark className={styles.mark}>{text.slice(at, at + query.length)}</mark>{text.slice(at + query.length)}</>;
+  return <>{text.slice(0, at)}<mark className={cn(styles.mark, classNames?.mark)}>{text.slice(at, at + query.length)}</mark>{text.slice(at + query.length)}</>;
 }
 
 /** The panel shares the field's width value, so on first open it unfolds out of the field; afterwards only its height follows the content. */
-function Panel({ width, reduced, children }: { width: MotionValue<number>; reduced: boolean; children: ReactNode }) {
+function Panel({ width, reduced, children, classNames }: { width: MotionValue<number>; reduced: boolean; children: ReactNode; classNames?: ExpandingSearchProps["classNames"] }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const height = useMotionValue(0);
@@ -98,11 +125,11 @@ function Panel({ width, reduced, children }: { width: MotionValue<number>; reduc
     return () => observer.disconnect();
   }, [height, reduced]);
   // Reduced motion skips the unfold: the panel is its content's height from the first frame and only fades.
-  return <motion.div ref={panelRef} className={styles.panel} style={{ width, height: reduced ? "auto" : height }}
+  return <motion.div ref={panelRef} className={cn(styles.panel, classNames?.panel)} style={{ width, height: reduced ? "auto" : height }}
     initial={{ opacity: 0 }}
     animate={{ opacity: 1, transition: { duration: reduced ? .15 : motionTokens.duration.fast, ease: enter } }}
     exit={{ opacity: 0, transition: { duration: reduced ? .1 : motionTokens.duration.instant, ease: standard } }}>
-    <div ref={bodyRef} className={styles.body}>{children}</div>
+    <div ref={bodyRef} className={cn(styles.body, classNames?.body)}>{children}</div>
   </motion.div>;
 }
 
@@ -114,9 +141,9 @@ function offsetWithin(node: HTMLElement, container: HTMLElement) {
   return top;
 }
 
-interface ListboxProps { id: string; label: string; groups: Group[]; query: string; activeIndex: number; optionId: (item: ExpandingSearchItem) => string; reduced: boolean; keyboard: RefObject<boolean>; onHover: (index: number) => void; onChoose: (item: ExpandingSearchItem) => void }
+interface ListboxProps { id: string; label: string; groups: Group[]; query: string; activeIndex: number; optionId: (item: ExpandingSearchItem) => string; reduced: boolean; keyboard: RefObject<boolean>; onHover: (index: number) => void; onChoose: (item: ExpandingSearchItem) => void; classNames?: ExpandingSearchProps["classNames"] }
 
-function Listbox({ id, label, groups, query, activeIndex, optionId, reduced, keyboard, onHover, onChoose }: ListboxProps) {
+function Listbox({ id, label, groups, query, activeIndex, optionId, reduced, keyboard, onHover, onChoose, classNames }: ListboxProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const flat = groups.flatMap(group => group.items);
   const layoutKey = flat.map(item => item.id).join("|");
@@ -148,31 +175,31 @@ function Listbox({ id, label, groups, query, activeIndex, optionId, reduced, key
     if (keyboard.current) row.scrollIntoView({ block: "nearest" });
   }, [activeId, layoutKey, reduced, travel, fade, keyboard]);
 
-  return <div ref={listRef} id={id} role="listbox" aria-label={label} className={styles.listbox}>
+  return <div ref={listRef} id={id} role="listbox" aria-label={label} className={cn(styles.listbox, classNames?.listbox)}>
     <AnimatePresence mode="popLayout" initial={false}>
       {groups.map(group => {
         const headingId = `${id}-${group.name || "results"}`.replace(/\s+/g, "-");
-        return <motion.div key={group.name} role="group" aria-labelledby={group.name ? headingId : undefined} className={styles.group}
+        return <motion.div key={group.name} role="group" aria-labelledby={group.name ? headingId : undefined} className={cn(styles.group, classNames?.group)}
           layout={reduced ? false : "position"} layoutDependency={layoutKey}
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: .08 } }}
           transition={{ opacity: { duration: motionTokens.duration.fast, ease: enter }, layout: motionTokens.spring.smooth }}>
-          {group.name && <div id={headingId} className={styles.groupLabel} role="presentation">{group.name}</div>}
+          {group.name && <div id={headingId} className={cn(styles.groupLabel, classNames?.groupLabel)} role="presentation">{group.name}</div>}
           <AnimatePresence mode="popLayout" initial={false}>
             {group.items.map(item => {
               const position = flat.indexOf(item);
               const active = position === activeIndex;
-              return <motion.div key={item.id} id={optionId(item)} role="option" aria-selected={active} data-active={active || undefined} className={styles.option}
+              return <motion.div key={item.id} id={optionId(item)} role="option" aria-selected={active} data-active={active || undefined} className={cn(styles.option, classNames?.option)}
                 layout={reduced ? false : "position"} layoutDependency={layoutKey}
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: .08 } }}
                 transition={{ opacity: { duration: motionTokens.duration.fast, ease: enter }, layout: motionTokens.spring.smooth }}
                 onPointerMove={() => { if (!active) { keyboard.current = false; onHover(position); } }}
                 onMouseDown={event => event.preventDefault()}
                 onClick={() => onChoose(item)}>
-                {active && <motion.span className={styles.highlight} style={{ y: travel, opacity: fade }} aria-hidden="true" />}
-                {item.icon && <span className={styles.optionIcon} aria-hidden="true">{item.icon}</span>}
-                <span className={styles.optionText}>
-                  <span className={styles.optionTitle}><Match text={item.title} query={query} /></span>
-                  {item.meta && <span className={styles.optionMeta}>{item.meta}</span>}
+                {active && <motion.span className={cn(styles.highlight, classNames?.highlight)} style={{ y: travel, opacity: fade }} aria-hidden="true" />}
+                {item.icon && <span className={cn(styles.optionIcon, classNames?.optionIcon)} aria-hidden="true">{item.icon}</span>}
+                <span className={cn(styles.optionText, classNames?.optionText)}>
+                  <span className={cn(styles.optionTitle, classNames?.optionTitle)}><Match text={item.title} query={query} classNames={classNames} /></span>
+                  {item.meta && <span className={cn(styles.optionMeta, classNames?.optionMeta)}>{item.meta}</span>}
                 </span>
               </motion.div>;
             })}
@@ -183,7 +210,7 @@ function Listbox({ id, label, groups, query, activeIndex, optionId, reduced, key
   </div>;
 }
 
-export function ExpandingSearch({ label, items, suggestions = [], suggestionsLabel = "Recent", placeholder, onSelect, onExpandedChange, expandedWidth = 360, maxResults = 6, anchor = "end", emptyHint = "Try a shorter word or check the spelling.", className }: ExpandingSearchProps) {
+export function ExpandingSearch({ label, items, suggestions = [], suggestionsLabel = "Recent", placeholder, onSelect, onExpandedChange, expandedWidth = 360, maxResults = 6, anchor = "end", emptyHint = "Try a shorter word or check the spelling.", className, classNames }: ExpandingSearchProps) {
   const id = useId();
   const reduced = useReducedMotion() ?? false;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -283,12 +310,12 @@ export function ExpandingSearch({ label, items, suggestions = [], suggestionsLab
 
   const clearHidden = reduced ? { opacity: 0 } : { opacity: 0, scale: .6, filter: `blur(${motionTokens.blur.subtle}px)` };
 
-  return <div ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")} data-anchor={anchor}>
-    <motion.div ref={shellRef} className={styles.shell} data-expanded={expanded || undefined} style={{ width }}>
-      <button ref={buttonRef} type="button" className={styles.trigger} aria-label={label} hidden={expanded} onClick={expand} />
-      <Search className={styles.icon} width={18} height={18} strokeWidth={1.75} aria-hidden="true" />
+  return <div ref={rootRef} className={cn(styles.root, className, classNames?.root)} data-anchor={anchor}>
+    <motion.div ref={shellRef} className={cn(styles.shell, classNames?.shell)} data-expanded={expanded || undefined} style={{ width }}>
+      <button ref={buttonRef} type="button" className={cn(styles.trigger, classNames?.trigger)} aria-label={label} hidden={expanded} onClick={expand} />
+      <Search className={cn(styles.icon, classNames?.icon)} width={18} height={18} strokeWidth={1.75} aria-hidden="true" />
       {/* The placeholder waits for the shape to start moving, then fades in; on close it leaves first. */}
-      <motion.input ref={inputRef} className={styles.input} type="text" role="combobox" inert={!expanded} value={query} placeholder={placeholder ?? label}
+      <motion.input ref={inputRef} className={cn(styles.input, classNames?.input)} type="text" role="combobox" inert={!expanded} value={query} placeholder={placeholder ?? label}
         aria-label={label} aria-expanded={panelOpen} aria-controls={panelOpen && mode !== "empty" ? listboxId : undefined} aria-autocomplete="list"
         aria-activedescendant={panelOpen && activeItem ? optionId(activeItem) : undefined}
         autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search"
@@ -304,7 +331,7 @@ export function ExpandingSearch({ label, items, suggestions = [], suggestionsLab
         }}
         onKeyDown={handleKeyDown} />
       <AnimatePresence initial={false}>
-        {expanded && query && <motion.button key="clear" type="button" tabIndex={-1} className={styles.clear} aria-label="Clear search"
+        {expanded && query && <motion.button key="clear" type="button" tabIndex={-1} className={cn(styles.clear, classNames?.clear)} aria-label="Clear search"
           onMouseDown={event => event.preventDefault()}
           onClick={() => { setQuery(""); setActive(-1); inputRef.current?.focus({ preventScroll: true }); }}
           initial={clearHidden} animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
@@ -315,21 +342,21 @@ export function ExpandingSearch({ label, items, suggestions = [], suggestionsLab
       </AnimatePresence>
     </motion.div>
     <AnimatePresence>
-      {panelOpen && <Panel key="panel" width={width} reduced={reduced}>
+      {panelOpen && <Panel key="panel" width={width} reduced={reduced} classNames={classNames}>
         <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div key={mode} className={styles.view}
+            <motion.div key={mode} className={cn(styles.view, classNames?.view)}
               initial={reduced ? { opacity: 0 } : { opacity: 0, filter: `blur(${motionTokens.blur.subtle}px)` }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, transition: { duration: .1, ease: standard } }}
               transition={{ duration: reduced ? .15 : motionTokens.duration.fast, ease: enter }}>
               {mode === "empty"
-                ? <div className={styles.empty}><p className={styles.emptyTitle}>No results for “{trimmed}”</p><p className={styles.emptyHint}>{emptyHint}</p></div>
-                : <Listbox id={listboxId} label={mode === "suggestions" ? suggestionsLabel : `Results for ${trimmed}`} groups={groups} query={mode === "results" ? trimmed : ""} activeIndex={activeIndex} optionId={optionId} reduced={reduced} keyboard={keyboard} onHover={setActive} onChoose={choose} />}
+                ? <div className={cn(styles.empty, classNames?.empty)}><p className={cn(styles.emptyTitle, classNames?.emptyTitle)}>No results for “{trimmed}”</p><p className={cn(styles.emptyHint, classNames?.emptyHint)}>{emptyHint}</p></div>
+                : <Listbox id={listboxId} label={mode === "suggestions" ? suggestionsLabel : `Results for ${trimmed}`} groups={groups} query={mode === "results" ? trimmed : ""} activeIndex={activeIndex} optionId={optionId} reduced={reduced} keyboard={keyboard} onHover={setActive} onChoose={choose} classNames={classNames} />}
             </motion.div>
         </AnimatePresence>
       </Panel>}
     </AnimatePresence>
-    <span className={styles.srOnly} role="status" aria-live="polite">{announcement}</span>
+    <span className={cn(styles.srOnly, classNames?.srOnly)} role="status" aria-live="polite">{announcement}</span>
   </div>;
 }
 

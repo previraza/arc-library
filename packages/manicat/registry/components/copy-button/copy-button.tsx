@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion, type TargetAndTransition, type Transition } from "motion/react";
 import { CircleAlert, Copy } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import { useCopyFeedback } from "@/lib/use-copy-feedback";
 import styles from "./copy-button.module.css";
 
@@ -11,6 +12,12 @@ export interface CopyButtonProps {
   value: string;
   label?: string;
   className?: string;
+  /** Extend the inner, named parts of the copy button: icon, iconInner or label. */
+  classNames?: {
+    icon?: string;
+    iconInner?: string;
+    label?: string;
+  };
   iconOnly?: boolean;
   variant?: "outline" | "plain";
   disabled?: boolean;
@@ -75,7 +82,7 @@ function MorphText({ text, reduced }: { text: string; reduced: boolean }) {
   </motion.span>;
 }
 
-export function CopyButton({ value, label = "Copy", className, iconOnly = false, variant = "outline", disabled, onCopied }: CopyButtonProps) {
+export function CopyButton({ value, label = "Copy", className, classNames, iconOnly = false, variant = "outline", disabled, onCopied }: CopyButtonProps) {
   const { state, copy } = useCopyFeedback();
   const reduced = useReducedMotion() ?? false;
   const text = state === "copied" ? "Copied" : state === "error" ? "Failed" : label;
@@ -92,14 +99,14 @@ export function CopyButton({ value, label = "Copy", className, iconOnly = false,
     data-copy-state={state}
     disabled={disabled}
   >
-    <span className={styles.icon} aria-hidden="true">
+    <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true">
       <AnimatePresence initial={false}>
-        <motion.span key={state} className={styles.iconInner} data-state={state} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? instant : iconEnter}>
+        <motion.span key={state} className={cn(styles.iconInner, classNames?.iconInner)} data-state={state} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? instant : iconEnter}>
           {state === "copied" ? <DrawnCheck reduced={reduced} /> : state === "error" ? <CircleAlert size={16} strokeWidth={1.75} /> : <Copy size={16} strokeWidth={1.75} />}
         </motion.span>
       </AnimatePresence>
     </span>
-    {!iconOnly && <span className={styles.label} aria-hidden="true">
+    {!iconOnly && <span className={cn(styles.label, classNames?.label)} aria-hidden="true">
       <span className={styles.measure}>{label}</span><span className={styles.measure}>Copied</span><span className={styles.measure}>Failed</span>
       <MorphText text={text} reduced={reduced} />
     </span>}

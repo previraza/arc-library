@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/cn";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./image-compare.module.css";
 
@@ -24,6 +25,18 @@ export interface ImageCompareProps {
   /** Frame proportions, as a CSS aspect-ratio. */
   aspectRatio?: string;
   className?: string;
+  /** Extend the inner, named parts of the image-compare: root, layer, chip, pivot, rotor, handleSlot, handle, chevrons or chevron. */
+  classNames?: {
+    root?: string;
+    layer?: string;
+    chip?: string;
+    pivot?: string;
+    rotor?: string;
+    handleSlot?: string;
+    handle?: string;
+    chevrons?: string;
+    chevron?: string;
+  };
 }
 
 type Metrics = { w: number; h: number; bw: number; bh: number; aw: number; ah: number };
@@ -65,7 +78,7 @@ function halfPlane(w: number, h: number, center: [number, number], angle: number
  * is released. A press on the image springs the divider there; on touch the press waits to see a sideways drag so the page still scrolls.
  * Arrow keys step 1% (Shift for 10%), Home and End reveal one side fully, and a double-click on the handle springs it back to the middle.
  */
-export function ImageCompare({ before, after, position, defaultPosition = 50, onPositionChange, orientation = "horizontal", labels = ["Before", "After"], label = "Before and after", aspectRatio = "3 / 2", className }: ImageCompareProps) {
+export function ImageCompare({ before, after, position, defaultPosition = 50, onPositionChange, orientation = "horizontal", labels = ["Before", "After"], label = "Before and after", aspectRatio = "3 / 2", className, classNames }: ImageCompareProps) {
   const reduced = useReducedMotion();
   const vertical = orientation === "vertical";
   const [internal, setInternal] = useState(defaultPosition);
@@ -253,21 +266,21 @@ export function ImageCompare({ before, after, position, defaultPosition = 50, on
     // Pointer capture sends the double-click to the frame, so it checks where the presses began.
     onDoubleClick={() => { if (pressedHandle.current && latest.current !== 50) commit(50); }}>
     <div className={styles.layer}>{after}</div>
-    <motion.div className={styles.layer} style={{ clipPath }}>{before}</motion.div>
+    <motion.div className={cn(styles.layer, classNames?.layer)} style={{ clipPath }}>{before}</motion.div>
     {labels && <>
-      <motion.span ref={beforeChip} className={styles.chip} style={{ opacity: beforeOpacity }} aria-hidden="true">{labels[0]}</motion.span>
-      <motion.span ref={afterChip} className={styles.chip} data-place="end" style={{ opacity: afterAcross }} aria-hidden="true">{labels[1]}</motion.span>
-      <motion.span className={styles.chip} data-place="bottom" style={{ opacity: afterDown }} aria-hidden="true">{labels[1]}</motion.span>
+      <motion.span ref={beforeChip} className={cn(styles.chip, classNames?.chip)} style={{ opacity: beforeOpacity }} aria-hidden="true">{labels[0]}</motion.span>
+      <motion.span ref={afterChip} className={cn(styles.chip, classNames?.chip)} data-place="end" style={{ opacity: afterAcross }} aria-hidden="true">{labels[1]}</motion.span>
+      <motion.span className={cn(styles.chip, classNames?.chip)} data-place="bottom" style={{ opacity: afterDown }} aria-hidden="true">{labels[1]}</motion.span>
     </>}
-    <motion.div className={styles.pivot} style={{ x: pivotX, y: pivotY }}>
-      <motion.span className={styles.rotor} style={{ rotate: theta }}><span className={styles.line} /></motion.span>
-      <motion.span className={styles.handleSlot} style={{ x: handleX, y: handleY }}>
-        <motion.div ref={handleRef} data-handle="" data-quiet={quiet || undefined} className={styles.handle} role="slider" tabIndex={0} aria-label={label} aria-orientation={orientation}
+    <motion.div className={cn(styles.pivot, classNames?.pivot)} style={{ x: pivotX, y: pivotY }}>
+      <motion.span className={cn(styles.rotor, classNames?.rotor)} style={{ rotate: theta }}><span className={styles.line} /></motion.span>
+      <motion.span className={cn(styles.handleSlot, classNames?.handleSlot)} style={{ x: handleX, y: handleY }}>
+        <motion.div ref={handleRef} data-handle="" data-quiet={quiet || undefined} className={cn(styles.handle, classNames?.handle)} role="slider" tabIndex={0} aria-label={label} aria-orientation={orientation}
           aria-valuemin={0} aria-valuemax={100} aria-valuenow={afterShare} aria-valuetext={`${afterShare}% after`}
           initial={false} animate={capsule} transition={reduced ? { duration: 0 } : spring.morph} onKeyDown={onKeyDown} onBlur={() => setQuiet(false)}>
-          <motion.span className={styles.chevrons} style={{ rotate: theta }} aria-hidden="true">
-            <motion.span className={styles.chevron} initial={false} animate={{ x: dragging ? -4 : 0 }} transition={reduced ? { duration: 0 } : spring.morph}><ChevronLeft size={16} strokeWidth={1.75} /></motion.span>
-            <motion.span className={styles.chevron} initial={false} animate={{ x: dragging ? 4 : 0 }} transition={reduced ? { duration: 0 } : spring.morph}><ChevronRight size={16} strokeWidth={1.75} /></motion.span>
+          <motion.span className={cn(styles.chevrons, classNames?.chevrons)} style={{ rotate: theta }} aria-hidden="true">
+            <motion.span className={cn(styles.chevron, classNames?.chevron)} initial={false} animate={{ x: dragging ? -4 : 0 }} transition={reduced ? { duration: 0 } : spring.morph}><ChevronLeft size={16} strokeWidth={1.75} /></motion.span>
+            <motion.span className={cn(styles.chevron, classNames?.chevron)} initial={false} animate={{ x: dragging ? 4 : 0 }} transition={reduced ? { duration: 0 } : spring.morph}><ChevronRight size={16} strokeWidth={1.75} /></motion.span>
           </motion.span>
         </motion.div>
       </motion.span>

@@ -2,6 +2,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, animate, motion, useReducedMotion, type AnimationPlaybackControls } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./text-morph.module.css";
 
 /**
@@ -9,7 +10,18 @@ import styles from "./text-morph.module.css";
  * and the width follows on a spring so the surrounding layout glides instead of jumping. Use it for status words that change a few letters at a time,
  * such as Publish, Publishing, and Published, or Follow and Following. It stays on one line, and assistive technology reads the plain text.
  */
-export interface TextMorphProps { children: string; as?: "span" | "div" | "p" | "strong" | "h1" | "h2" | "h3"; className?: string; id?: string }
+export interface TextMorphProps {
+  children: string;
+  as?: "span" | "div" | "p" | "strong" | "h1" | "h2" | "h3";
+  className?: string;
+  id?: string;
+  /** Extend the inner, named parts of the text morph: frame, track or glyph. */
+  classNames?: {
+    frame?: string;
+    track?: string;
+    glyph?: string;
+  };
+}
 
 const enter = [...motionTokens.ease.enter] as [number, number, number, number];
 const standard = [...motionTokens.ease.standard] as [number, number, number, number];
@@ -23,7 +35,7 @@ function toGlyphs(text: string) {
 }
 const measure = (element: HTMLElement) => parseFloat(getComputedStyle(element).width);
 
-export function TextMorph({ children, as = "span", className, id }: TextMorphProps) {
+export function TextMorph({ children, as = "span", className, id, classNames }: TextMorphProps) {
   const Tag = as;
   const reduced = useReducedMotion();
   const frame = useRef<HTMLSpanElement>(null);
@@ -62,9 +74,9 @@ export function TextMorph({ children, as = "span", className, id }: TextMorphPro
 
   return <Tag id={id} className={className}>
     <span className={styles.srOnly}>{children}</span>
-    <span ref={frame} className={styles.frame} aria-hidden="true"><span ref={track} className={styles.track}>
+    <span ref={frame} className={cn(styles.frame, classNames?.frame)} aria-hidden="true"><span ref={track} className={cn(styles.track, classNames?.track)}>
       <AnimatePresence mode="popLayout" initial={false}>
-        {glyphs.map(({ char, key }) => { const order = kept.has(key) ? 0 : entering++; return <motion.span key={key} layout="position" className={styles.glyph}
+        {glyphs.map(({ char, key }) => { const order = kept.has(key) ? 0 : entering++; return <motion.span key={key} layout="position" className={cn(styles.glyph, classNames?.glyph)}
           initial={reduced ? false : { opacity: 0, scale: .8, y: "0.14em", filter: blurred }}
           animate={{ opacity: 1, scale: 1, y: "0em", filter: "blur(0px)" }}
           exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, scale: .86, y: "-0.1em", filter: blurred, transition: { duration: motionTokens.duration.exit, ease: standard } }}

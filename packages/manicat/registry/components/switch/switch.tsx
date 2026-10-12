@@ -6,10 +6,17 @@ import * as SwitchPrimitive from "@radix-ui/react-switch";
 import { animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import type { Transition } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./switch.module.css";
 
 export interface SwitchProps extends ComponentPropsWithoutRef<typeof SwitchPrimitive.Root> {
   label?: string;
+  /** Extend the inner, named parts of the switch: track, thumb or label. */
+  classNames?: {
+    track?: string;
+    thumb?: string;
+    label?: string;
+  };
 }
 
 /** Track inner width (42 - 6 padding) minus the 18px thumb; keep in sync with switch.module.css. */
@@ -21,7 +28,7 @@ const stretch = 5;
 const glide: Transition = { type: "spring", visualDuration: 0.3, bounce: 0 };
 
 export const Switch = forwardRef<ElementRef<typeof SwitchPrimitive.Root>, SwitchProps>(function Switch(
-  { label, className, checked, defaultChecked, onCheckedChange, onPointerDown, onPointerUp, onPointerLeave, onPointerCancel, onKeyDown, onKeyUp, onBlur, ...props },
+  { label, className, classNames, checked, defaultChecked, onCheckedChange, onPointerDown, onPointerUp, onPointerLeave, onPointerCancel, onKeyDown, onKeyUp, onBlur, ...props },
   ref,
 ) {
   const reduceMotion = useReducedMotion();
@@ -42,7 +49,7 @@ export const Switch = forwardRef<ElementRef<typeof SwitchPrimitive.Root>, Switch
     return () => controls.stop();
   }, [on, reduceMotion, scaleX]);
   const extra = pressed && !reduceMotion && !props.disabled ? stretch : 0;
-  const classes = [styles.switch, className].filter(Boolean).join(" ");
+  const classes = cn(styles.switch, className);
 
   return (
     <SwitchPrimitive.Root
@@ -60,11 +67,11 @@ export const Switch = forwardRef<ElementRef<typeof SwitchPrimitive.Root>, Switch
       className={classes}
       aria-label={props["aria-label"] ?? label}
     >
-      <span className={styles.track}>
+      <span className={cn(styles.track, classNames?.track)}>
         {/* The thumb stretches like a held finger and keeps its far edge anchored, then travels on a spring. */}
-        <motion.span className={styles.thumb} style={{ scaleX }} initial={false} animate={{ x: on ? travel - extra : 0, width: size + extra }} transition={reduceMotion ? { duration: 0 } : { x: glide, width: motionTokens.spring.snappy }} />
+        <motion.span className={cn(styles.thumb, classNames?.thumb)} style={{ scaleX }} initial={false} animate={{ x: on ? travel - extra : 0, width: size + extra }} transition={reduceMotion ? { duration: 0 } : { x: glide, width: motionTokens.spring.snappy }} />
       </span>
-      {label ? <span className={styles.label}>{label}</span> : null}
+      {label ? <span className={cn(styles.label, classNames?.label)}>{label}</span> : null}
     </SwitchPrimitive.Root>
   );
 });

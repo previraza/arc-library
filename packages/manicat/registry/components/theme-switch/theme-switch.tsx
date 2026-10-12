@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Moon, Sun } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import { Button } from "@/registry/components/button/button";
 import styles from "./theme-switch.module.css";
 
@@ -16,6 +17,13 @@ export interface ThemeSwitchProps {
   onThemeChange: (next: Theme, variant: ThemeSwitchVariant, trigger: HTMLElement) => void;
   label?: string;
   iconOnly?: boolean;
+  className?: string;
+  /** Extend the inner, named parts of the theme switch: iconWrap, icon or label. */
+  classNames?: {
+    iconWrap?: string;
+    icon?: string;
+    label?: string;
+  };
 }
 
 /** Rotation and scale ride the spring; opacity and blur tween so the blur never overshoots below zero. */
@@ -36,14 +44,14 @@ function useSettled() {
 }
 
 /** Both icons turn the same way (clockwise into dark, back out of it), so the swap reads as one rotation rather than two fades. */
-function ThemeIcon({ theme, reduced, settled }: { theme: Theme; reduced: boolean; settled: boolean }) {
+function ThemeIcon({ theme, reduced, settled, classNames }: { theme: Theme; reduced: boolean; settled: boolean; classNames?: ThemeSwitchProps["classNames"] }) {
   const Icon = theme === "light" ? Sun : Moon;
   const angle = theme === "light" ? 30 : -30;
   return (
     <AnimatePresence initial={false} mode="popLayout">
       <motion.span
         key={theme}
-        className={styles.icon}
+        className={cn(styles.icon, classNames?.icon)}
         initial={!settled ? false : reduced ? { opacity: 0 } : { opacity: 0, scale: .7, rotate: angle, filter: blur }}
         animate={{ opacity: 1, scale: 1, rotate: 0, filter: "blur(0px)" }}
         exit={!settled ? { opacity: 0, transition: { duration: 0 } } : reduced ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : { opacity: 0, scale: .7, rotate: angle, filter: blur, transition: iconExit }}
@@ -56,7 +64,7 @@ function ThemeIcon({ theme, reduced, settled }: { theme: Theme; reduced: boolean
   );
 }
 
-export function ThemeSwitch({ theme, variant = "reveal", onThemeChange, label, iconOnly = false }: ThemeSwitchProps) {
+export function ThemeSwitch({ theme, variant = "reveal", onThemeChange, label, iconOnly = false, className, classNames }: ThemeSwitchProps) {
   const reduced = useReducedMotion() ?? false;
   const settled = useSettled();
   const next = theme === "light" ? "dark" : "light";
@@ -67,14 +75,14 @@ export function ThemeSwitch({ theme, variant = "reveal", onThemeChange, label, i
       type="button"
       size="sm"
       variant="secondary"
-      className={classes}
+      className={cn(classes, className)}
       data-theme={theme}
       aria-label={label ?? `Switch to ${next} mode`}
       aria-pressed={theme === "dark"}
       onClick={event => onThemeChange(next, variant, event.currentTarget)}
     >
-      <span className={styles.iconWrap}><ThemeIcon theme={theme} reduced={reduced} settled={settled} /></span>
-      {!iconOnly && <span className={styles.label}>Switch theme</span>}
+      <span className={cn(styles.iconWrap, classNames?.iconWrap)}><ThemeIcon theme={theme} reduced={reduced} settled={settled} classNames={classNames} /></span>
+      {!iconOnly && <span className={cn(styles.label, classNames?.label)}>Switch theme</span>}
     </Button>
   );
 }

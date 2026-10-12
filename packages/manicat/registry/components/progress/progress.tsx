@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion, useTransform, type HTMLMotionProps, type TargetAndTransition, type Transition } from "motion/react";
 import { Check } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./progress.module.css";
 
 export interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
@@ -11,6 +12,17 @@ export interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   max?: number;
   label?: string;
   showValue?: boolean;
+  /** Extend the inner, named parts of the progress: meta, label, line, value, done, count, track or fill. */
+  classNames?: {
+    meta?: string;
+    label?: string;
+    line?: string;
+    value?: string;
+    done?: string;
+    count?: string;
+    track?: string;
+    fill?: string;
+  };
 }
 
 const exitFast: Transition = { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] };
@@ -26,7 +38,7 @@ function Swap(props: HTMLMotionProps<"span">) {
   return <motion.span {...props} aria-hidden={present ? props["aria-hidden"] : true} />;
 }
 
-export function Progress({ value = 0, max = 100, label, showValue = false, className, ...props }: ProgressProps) {
+export function Progress({ value = 0, max = 100, label, showValue = false, className, classNames, ...props }: ProgressProps) {
   const reduce = useReducedMotion();
   const safeMax = max > 0 ? max : 100;
   const safeValue = Math.min(Math.max(value, 0), safeMax);
@@ -43,17 +55,17 @@ export function Progress({ value = 0, max = 100, label, showValue = false, class
     return () => controls.stop();
   }, [percentage, progress, reduce]);
   const enter: Transition = reduce ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] };
-  const classes = [styles.progress, className].filter(Boolean).join(" ");
+  const classes = cn(styles.progress, className);
   return <div {...props} className={classes} data-complete={complete ? "" : undefined} role="progressbar" aria-label={label ?? "Progress"} aria-valuemin={0} aria-valuemax={safeMax} aria-valuenow={safeValue} aria-valuetext={`${percentage}%`}>
-    {(label || showValue) ? <div className={styles.meta}>
-      {label ? <span className={styles.label}><AnimatePresence mode="popLayout" initial={false}><Swap key={label} className={styles.line} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? fadeOut : textOut} transition={enter}>{label}</Swap></AnimatePresence></span> : <span />}
-      {showValue ? <span className={styles.value}>
+    {(label || showValue) ? <div className={cn(styles.meta, classNames?.meta)}>
+      {label ? <span className={cn(styles.label, classNames?.label)}><AnimatePresence mode="popLayout" initial={false}><Swap key={label} className={cn(styles.line, classNames?.line)} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? fadeOut : textOut} transition={enter}>{label}</Swap></AnimatePresence></span> : <span />}
+      {showValue ? <span className={cn(styles.value, classNames?.value)}>
         {/* Completion lands as the fill arrives: a check settles in beside the final count. */}
-        <AnimatePresence initial={false}>{complete && <motion.span key="done" className={styles.done} initial={reduce ? { opacity: 0 } : iconIn} animate={shown} exit={reduce ? fadeOut : { ...iconIn, transition: exitFast }} transition={reduce ? enter : { ...motionTokens.spring.snappy, delay: .24 }}><Check size={14} strokeWidth={1.75} aria-hidden="true" /></motion.span>}</AnimatePresence>
-        <motion.span className={styles.count}>{counted}</motion.span>
+        <AnimatePresence initial={false}>{complete && <motion.span key="done" className={cn(styles.done, classNames?.done)} initial={reduce ? { opacity: 0 } : iconIn} animate={shown} exit={reduce ? fadeOut : { ...iconIn, transition: exitFast }} transition={reduce ? enter : { ...motionTokens.spring.snappy, delay: .24 }}><Check size={14} strokeWidth={1.75} aria-hidden="true" /></motion.span>}</AnimatePresence>
+        <motion.span className={cn(styles.count, classNames?.count)}>{counted}</motion.span>
       </span> : null}
     </div> : null}
-    <div className={styles.track}><motion.span className={styles.fill} style={{ x }} /></div>
+    <div className={cn(styles.track, classNames?.track)}><motion.span className={cn(styles.fill, classNames?.fill)} style={{ x }} /></div>
   </div>;
 }
 

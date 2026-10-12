@@ -38,6 +38,9 @@
       "@/lib/motion-tokens": [
         "../../packages/manicat/lib/motion-tokens.ts"
       ],
+      "@/lib/cn": [
+        "../../packages/manicat/lib/cn.ts"
+      ],
       "@/lib/use-copy-feedback": [
         "../../packages/manicat/lib/use-copy-feedback.ts"
       ]

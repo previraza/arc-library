@@ -3,8 +3,9 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { ChevronLeft as NavArrowLeft, ChevronRight as NavArrowRight } from "lucide-react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, type Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./pagination.module.css";
-export interface PaginationProps { page: number; pageCount: number; onPageChange: (page: number) => void; label?: string }
+export interface PaginationProps { page: number; pageCount: number; onPageChange: (page: number) => void; label?: string; classNames?: { nav?: string } }
 /** When the five page window shifts, numbers travel like a belt: each one moves by the same number of slots. */
 const slot = 1000 / 9; // One button plus the gap (36px + 4px), as a percentage of the button width.
 const slide: Variants = {
@@ -12,7 +13,7 @@ const slide: Variants = {
   center: { opacity: 1, x: "0%" },
   exit: (shift: number) => ({ opacity: 0, x: `${-slot * shift}%`, transition: { x: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } } }),
 };
-export function Pagination({ page, pageCount, onPageChange, label = "Pagination" }: PaginationProps) {
+export function Pagination({ page, pageCount, onPageChange, label = "Pagination", classNames }: PaginationProps) {
   const reduced = useReducedMotion() ?? false;
   const navRef = useRef<HTMLElement>(null);
   const markX = useMotionValue(0);
@@ -45,8 +46,8 @@ export function Pagination({ page, pageCount, onPageChange, label = "Pagination"
     return () => observer.disconnect();
   }, [currentPage, start, safePageCount, reduced, markX, markY]);
 
-  if (!safePageCount) return <nav className={styles.nav} aria-label={label} />;
-  return <nav ref={navRef} className={styles.nav} aria-label={label}><button type="button" className={styles.step} onClick={() => onPageChange(currentPage - 1)} disabled={currentPage <= 1} aria-label="Previous page"><NavArrowLeft width={16} height={16} aria-hidden="true" /></button>
+  if (!safePageCount) return <nav className={cn(styles.nav, classNames?.nav)} aria-label={label} />;
+  return <nav ref={navRef} className={cn(styles.nav, classNames?.nav)} aria-label={label}><button type="button" className={styles.step} onClick={() => onPageChange(currentPage - 1)} disabled={currentPage <= 1} aria-label="Previous page"><NavArrowLeft width={16} height={16} aria-hidden="true" /></button>
     <motion.span aria-hidden="true" className={styles.mark} style={{ x: markX, y: markY }} />
     <AnimatePresence mode="popLayout" initial={false} custom={shift}>
       {visible.map(number => <motion.button type="button" key={number} onClick={() => onPageChange(number)} aria-label={`Page ${number}`} aria-current={currentPage === number ? "page" : undefined}

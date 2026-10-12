@@ -5,6 +5,7 @@ import type { KeyboardEvent, MouseEvent as ReactMouseEvent, ReactNode, RefObject
 import { ArrowUp } from "lucide-react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, type Transition, type Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./sortable-data-table.module.css";
 
 export type SortDirection = "asc" | "desc";
@@ -37,6 +38,20 @@ export type SortableDataTableProps<T extends Record<string, unknown>> = {
   onSelectionChange?: (keys: string[]) => void;
   /** Noun for the count line, as in "6 projects". */
   itemName?: { one: string; other: string };
+  /** Extend the inner, named parts of the sortable data table: wrapper, table, selectCol, sortButton, sortInner, selectCell, number, clear, band. */
+  classNames?: {
+    wrapper?: string;
+    table?: string;
+    selectCol?: string;
+    sortButton?: string;
+    sortInner?: string;
+    selectCell?: string;
+    number?: string;
+    clear?: string;
+    band?: string;
+  };
+  /** Extend the inner, named parts of the <SortableDataTable>. */
+  className?: string;
 };
 
 const collator = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
@@ -59,7 +74,7 @@ const checkPath = "M4.25 9.25 L7.25 12.25 L13.75 5.75";
 const dashPath = "M4.75 9 L9 9 L13.25 9";
 
 /** Text that changes in place. The slot eases to the new width, so the words beside it never jump. */
-function Swap({ value, direction, reduced, className }: { value: string; direction: number; reduced: boolean; className?: string }) {
+function Swap({ value, direction, reduced, className, classNames }: { value: string; direction: number; reduced: boolean; className?: string; classNames?: { swap?: string; swapInner?: string; swapText?: string } }) {
   const inner = useRef<HTMLSpanElement>(null);
   const width = useMotionValue<number | string>("auto");
   useLayoutEffect(() => {
@@ -76,17 +91,17 @@ function Swap({ value, direction, reduced, className }: { value: string; directi
     observer.observe(node);
     return () => observer.disconnect();
   }, [reduced, width]);
-  return <motion.span className={[styles.swap, className].filter(Boolean).join(" ")} style={{ width }}>
-    <span ref={inner} className={styles.swapInner}>
+  return <motion.span className={cn(styles.swap, classNames?.swap, className)} style={{ width }}>
+    <span ref={inner} className={cn(styles.swapInner, classNames?.swapInner)}>
       <AnimatePresence mode="popLayout" initial={false} custom={direction}>
-        <motion.span key={value} className={styles.swapText} custom={direction} variants={reduced ? fade : rise} initial="enter" animate="shown" exit="gone">{value}</motion.span>
+        <motion.span key={value} className={cn(styles.swapText, classNames?.swapText)} custom={direction} variants={reduced ? fade : rise} initial="enter" animate="shown" exit="gone">{value}</motion.span>
       </AnimatePresence>
     </span>
   </motion.span>;
 }
 
 /** The arrow fades in where a column becomes sorted and flips on a spring when the direction changes. */
-function SortGlyph({ active, descending, reduced }: { active: boolean; descending: boolean; reduced: boolean }) {
+function SortGlyph({ active, descending, reduced, classNames }: { active: boolean; descending: boolean; reduced: boolean; classNames?: { sortIcon?: string; sortHint?: string; sortArrow?: string } }) {
   const rotate = useMotionValue(descending ? 180 : 0);
   const seen = useRef({ active, hiddenAt: -Infinity });
   useLayoutEffect(() => {
@@ -100,30 +115,30 @@ function SortGlyph({ active, descending, reduced }: { active: boolean; descendin
     state.active = active;
   }, [active, descending, reduced, rotate]);
   const transition: Transition = reduced ? instant : active ? { opacity: enter, filter: enter, scale: motionTokens.spring.snappy } : { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] };
-  return <span className={styles.sortIcon} aria-hidden="true">
-    <ArrowUp className={styles.sortHint} size={16} strokeWidth={1.75} />
-    <motion.span className={styles.sortArrow} style={{ rotate }} initial={false} animate={active ? { opacity: 1, scale: 1, filter: blur(0) } : { opacity: 0, scale: .6, filter: blur(motionTokens.blur.subtle) }} transition={transition}><ArrowUp size={16} strokeWidth={1.75} /></motion.span>
+  return <span className={cn(styles.sortIcon, classNames?.sortIcon)} aria-hidden="true">
+    <ArrowUp className={cn(styles.sortHint, classNames?.sortHint)} size={16} strokeWidth={1.75} />
+    <motion.span className={cn(styles.sortArrow, classNames?.sortArrow)} style={{ rotate }} initial={false} animate={active ? { opacity: 1, scale: 1, filter: blur(0) } : { opacity: 0, scale: .6, filter: blur(motionTokens.blur.subtle) }} transition={transition}><ArrowUp size={16} strokeWidth={1.75} /></motion.span>
   </span>;
 }
 
-function SelectBox({ checked, mixed = false, label, nav, reduced, onToggle, inputRef }: { checked: boolean; mixed?: boolean; label: string; nav: "head" | "row"; reduced: boolean; onToggle: (extend: boolean) => void; inputRef?: RefObject<HTMLInputElement | null> }) {
+function SelectBox({ checked, mixed = false, label, nav, reduced, onToggle, inputRef, classNames }: { checked: boolean; mixed?: boolean; label: string; nav: "head" | "row"; reduced: boolean; onToggle: (extend: boolean) => void; inputRef?: RefObject<HTMLInputElement | null>; classNames?: { selectHit?: string; selectInput?: string; selectBox?: string; selectFill?: string; selectMark?: string } }) {
   const local = useRef<HTMLInputElement>(null);
   const ref = inputRef ?? local;
   const on = checked || mixed;
   useLayoutEffect(() => { if (ref.current) ref.current.indeterminate = mixed; }, [mixed, ref]);
   const opacity: Transition = { duration: on ? motionTokens.duration.instant : motionTokens.duration.fast, ease: [...motionTokens.ease.standard] };
-  return <label className={styles.selectHit}>
-    <input ref={ref} type="checkbox" className={styles.selectInput} checked={checked} aria-label={label} data-nav={nav} onChange={event => onToggle((event.nativeEvent as MouseEvent).shiftKey === true)} />
-    <span className={styles.selectBox} data-on={on || undefined} aria-hidden="true">
-      <motion.span className={styles.selectFill} initial={false} animate={{ opacity: on ? 1 : 0, scale: on ? 1 : .6 }} transition={reduced ? { duration: 0 } : { scale: motionTokens.spring.snappy, opacity }} />
-      <svg className={styles.selectMark} viewBox="0 0 18 18" fill="none" focusable="false">
+  return <label className={cn(styles.selectHit, classNames?.selectHit)}>
+    <input ref={ref} type="checkbox" className={cn(styles.selectInput, classNames?.selectInput)} checked={checked} aria-label={label} data-nav={nav} onChange={event => onToggle((event.nativeEvent as MouseEvent).shiftKey === true)} />
+    <span className={cn(styles.selectBox, classNames?.selectBox)} data-on={on || undefined} aria-hidden="true">
+      <motion.span className={cn(styles.selectFill, classNames?.selectFill)} initial={false} animate={{ opacity: on ? 1 : 0, scale: on ? 1 : .6 }} transition={reduced ? { duration: 0 } : { scale: motionTokens.spring.snappy, opacity }} />
+      <svg className={cn(styles.selectMark, classNames?.selectMark)} viewBox="0 0 18 18" fill="none" focusable="false">
         <motion.path initial={false} animate={{ d: mixed ? dashPath : checkPath, pathLength: on ? 1 : 0, opacity: on ? 1 : 0 }} transition={reduced ? { duration: 0 } : { d: motionTokens.spring.morph, pathLength: motionTokens.spring.snappy, opacity }} stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </span>
   </label>;
 }
 
-export function SortableDataTable<T extends Record<string, unknown>>({ rows, columns, rowKey, caption = "Data table", emptyMessage = "No rows to show", defaultSort, onSortChange, selectable = false, selectedKeys, defaultSelectedKeys, onSelectionChange, itemName = { one: "row", other: "rows" } }: SortableDataTableProps<T>) {
+export function SortableDataTable<T extends Record<string, unknown>>({ rows, columns, rowKey, caption = "Data table", emptyMessage = "No rows to show", defaultSort, onSortChange, selectable = false, selectedKeys, defaultSelectedKeys, onSelectionChange, itemName = { one: "row", other: "rows" }, className, classNames }: SortableDataTableProps<T>) {
   const reduced = useReducedMotion() ?? false;
   const tableRef = useRef<HTMLTableElement>(null);
   const selectAllRef = useRef<HTMLInputElement>(null);
@@ -266,23 +281,23 @@ export function SortableDataTable<T extends Record<string, unknown>>({ rows, col
     next.focus();
   }
 
-  return <div className={styles.wrapper} onKeyDown={onKeyDown}>
+  return <div className={cn(styles.wrapper, className)} onKeyDown={onKeyDown}>
     <div className={styles.scroller}>
       {band ? <span className={styles.band} style={{ left: band.left, width: band.width }} aria-hidden="true" /> : null}
-      <table ref={tableRef} role="table" className={styles.table} data-fixed={widths ? "" : undefined} data-selectable={selectable || undefined}>
+      <table ref={tableRef} role="table" className={cn(styles.table, classNames?.table)} data-fixed={widths ? "" : undefined} data-selectable={selectable || undefined}>
         <caption>{caption}</caption>
         <colgroup>
-          {selectable ? <col className={styles.selectCol} /> : null}
+          {selectable ? <col className={cn(styles.selectCol, classNames?.selectCol)} /> : null}
           {columns.map((column, index) => <col key={column.key} style={{ width: column.width !== undefined ? (typeof column.width === "number" ? `${column.width}px` : column.width) : widths && index > 0 ? `${widths[column.key]}%` : undefined }} />)}
         </colgroup>
         <thead role="rowgroup"><tr role="row">
-          {selectable ? <th scope="col" role="columnheader" className={styles.selectCell}><SelectBox inputRef={selectAllRef} checked={allSelected} mixed={selectedCount > 0 && !allSelected} label="Select all rows" nav="head" reduced={reduced} onToggle={() => commit(allSelected ? new Set() : new Set(keys))} /></th> : null}
+          {selectable ? <th scope="col" role="columnheader" className={cn(styles.selectCell, classNames?.selectCell)}><SelectBox inputRef={selectAllRef} checked={allSelected} mixed={selectedCount > 0 && !allSelected} label="Select all rows" nav="head" reduced={reduced} onToggle={() => commit(allSelected ? new Set() : new Set(keys))} /></th> : null}
           {columns.map((column, index) => {
             const active = sort?.key === column.key;
             const sortable = column.sortable !== false;
             return <th key={column.key} scope="col" role="columnheader" data-key={column.key} data-primary={index === 0 || undefined} data-sorted={active || undefined} data-numeric={numeric.has(column.key) || undefined} data-sortable={sortable || undefined} aria-sort={!sortable ? undefined : active ? (sort.direction === "asc" ? "ascending" : "descending") : "none"}>
-              {sortable ? <button className={styles.sortButton} type="button" data-nav="head" onClick={() => sortBy(column)} aria-label={`Sort by ${column.label}${active ? `, currently ${sort.direction === "asc" ? "ascending" : "descending"}` : ""}`}>
-                <span className={styles.sortInner}><span>{column.label}</span><SortGlyph active={active} descending={active && sort.direction === "desc"} reduced={reduced} /></span>
+              {sortable ? <button className={cn(styles.sortButton, classNames?.sortButton)} type="button" data-nav="head" onClick={() => sortBy(column)} aria-label={`Sort by ${column.label}${active ? `, currently ${sort.direction === "asc" ? "ascending" : "descending"}` : ""}`}>
+                <span className={cn(styles.sortInner, classNames?.sortInner)}><span>{column.label}</span><SortGlyph active={active} descending={active && sort.direction === "desc"} reduced={reduced} /></span>
               </button> : column.label}
             </th>;
           })}
@@ -291,7 +306,7 @@ export function SortableDataTable<T extends Record<string, unknown>>({ rows, col
           const key = keys[index];
           const selected = selectable && selection.has(key);
           return <motion.tr key={key} role="row" layout={reduced ? false : "position"} layoutDependency={order} transition={motionTokens.spring.smooth} data-selected={selected || undefined} onClick={event => onRowClick(event, key)} onMouseDown={event => { if (selectable && event.shiftKey) event.preventDefault(); }}>
-            {selectable ? <td role="cell" className={styles.selectCell}><SelectBox checked={selected} label={`Select ${String(row[columns[0]?.key] ?? key)}`} nav="row" reduced={reduced} onToggle={extend => toggleRow(key, extend)} /></td> : null}
+            {selectable ? <td role="cell" className={cn(styles.selectCell, classNames?.selectCell)}><SelectBox checked={selected} label={`Select ${String(row[columns[0]?.key] ?? key)}`} nav="row" reduced={reduced} onToggle={extend => toggleRow(key, extend)} /></td> : null}
             {columns.map((column, columnIndex) => <td key={column.key} role="cell" data-label={column.label} data-primary={columnIndex === 0 || undefined} data-sorted={sort?.key === column.key || undefined} data-numeric={numeric.has(column.key) || undefined}>{column.render ? column.render(row[column.key], row) : String(row[column.key] ?? "–")}</td>)}
           </motion.tr>;
         }) : <tr role="row"><td role="cell" className={styles.empty} colSpan={columns.length + (selectable ? 1 : 0)}>{emptyMessage}</td></tr>}</tbody>
@@ -300,10 +315,10 @@ export function SortableDataTable<T extends Record<string, unknown>>({ rows, col
     {selectable ? <div className={styles.footer}>
       <span className={styles.srOnly}>{shownCount} {noun}</span>
       <span className={styles.count} data-active={selectedCount > 0 || undefined} aria-hidden="true">
-        <Swap className={styles.number} value={String(shownCount)} direction={countDirection} reduced={reduced} />
+        <Swap className={cn(styles.number, classNames?.number)} value={String(shownCount)} direction={countDirection} reduced={reduced} />
         <Swap value={noun} direction={selectedCount ? 1 : -1} reduced={reduced} />
       </span>
-      <AnimatePresence initial={false}>{selectedCount ? <motion.button key="clear" type="button" className={styles.clear} data-clear="" onClick={clearSelection} initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .96, filter: blur(motionTokens.blur.soft) }} animate={{ opacity: 1, scale: 1, filter: blur(0) }} exit={reduced ? { opacity: 0, transition: instant } : { opacity: 0, scale: .98, filter: blur(motionTokens.blur.subtle), transition: leave }} transition={reduced ? instant : enter} whileTap={reduced ? undefined : { scale: .97, transition: { duration: motionTokens.duration.instant } }}>Clear selection</motion.button> : null}</AnimatePresence>
+      <AnimatePresence initial={false}>{selectedCount ? <motion.button key="clear" type="button" className={cn(styles.clear, classNames?.clear)} data-clear="" onClick={clearSelection} initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .96, filter: blur(motionTokens.blur.soft) }} animate={{ opacity: 1, scale: 1, filter: blur(0) }} exit={reduced ? { opacity: 0, transition: instant } : { opacity: 0, scale: .98, filter: blur(motionTokens.blur.subtle), transition: leave }} transition={reduced ? instant : enter} whileTap={reduced ? undefined : { scale: .97, transition: { duration: motionTokens.duration.instant } }}>Clear selection</motion.button> : null}</AnimatePresence>
     </div> : null}
     <p className={styles.srOnly} role="status">{announcement}</p>
   </div>;

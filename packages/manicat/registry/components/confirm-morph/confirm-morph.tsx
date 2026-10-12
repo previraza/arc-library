@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useRedu
 import type { AnimationPlaybackControls, Transition, Variants } from "motion/react";
 import { CircleAlert, LoaderCircle } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./confirm-morph.module.css";
 
 /** Where the control is in its life: resting, asking, working, finished, or failed. */
@@ -54,6 +55,18 @@ export interface ConfirmMorphProps {
   cancelOnOutsidePress?: boolean;
   disabled?: boolean;
   className?: string;
+  /** Extend the inner, named parts of the confirm morph: prompt, secondary, primary, status, spinner, statusText, trigger, icon or surface. */
+  classNames?: {
+    prompt?: string;
+    secondary?: string;
+    primary?: string;
+    status?: string;
+    spinner?: string;
+    statusText?: string;
+    trigger?: string;
+    icon?: string;
+    surface?: string;
+  };
   /** Receives the root element, which also takes focus while the action is pending. */
   ref?: Ref<HTMLDivElement>;
 }
@@ -121,7 +134,7 @@ function Check({ reduced }: { reduced: boolean }) {
 export function ConfirmMorph({
   label, icon, prompt, confirmLabel = "Delete", cancelLabel = "Cancel", pendingLabel = "Deleting", doneLabel = "Deleted", errorLabel = "Couldn’t finish",
   retryLabel = "Retry", undoLabel = "Undo", undoingLabel = "Restoring", tone = "danger", onConfirm, onUndo, onCancel,
-  state: stateProp, defaultState = "idle", onStateChange, confirmTimeout = 6000, resultTimeout = 5000, cancelOnOutsidePress = true, disabled = false, className, ref,
+  state: stateProp, defaultState = "idle", onStateChange, confirmTimeout = 6000, resultTimeout = 5000, cancelOnOutsidePress = true, disabled = false, className, classNames, ref,
 }: ConfirmMorphProps) {
   const reduced = useReducedFlag();
   const uid = useId();
@@ -252,24 +265,24 @@ export function ConfirmMorph({
   const face = (() => {
     switch (state) {
       case "confirming": return <>
-        <span id={promptId} className={styles.prompt}>{shownPrompt}</span>
-        <button type="button" className={styles.secondary} data-autofocus onClick={cancel}>{cancelLabel}</button>
-        <button type="button" className={styles.primary} onClick={() => void perform("confirm")}>{confirmLabel}</button>
+        <span id={promptId} className={cn(styles.prompt, classNames?.prompt)}>{shownPrompt}</span>
+        <button type="button" className={cn(styles.secondary, classNames?.secondary)} data-autofocus onClick={cancel}>{cancelLabel}</button>
+        <button type="button" className={cn(styles.primary, classNames?.primary)} onClick={() => void perform("confirm")}>{confirmLabel}</button>
       </>;
-      case "pending": return <span className={styles.status}>
-        <LoaderCircle className={styles.spinner} size={16} strokeWidth={1.75} aria-hidden="true" />
+      case "pending": return <span className={cn(styles.status, classNames?.status)}>
+        <LoaderCircle className={cn(styles.spinner, classNames?.spinner)} size={16} strokeWidth={1.75} aria-hidden="true" />
         <span>{working === "undo" ? undoingLabel : pendingLabel}</span>
       </span>;
       case "done": return <>
-        <span className={styles.status} data-tone="success"><Check reduced={reduced} /><span className={styles.statusText}>{doneLabel}</span></span>
-        {onUndo && <button type="button" className={styles.secondary} data-autofocus onClick={() => void perform("undo")}>{undoLabel}</button>}
+        <span className={cn(styles.status, classNames?.status)} data-tone="success"><Check reduced={reduced} /><span className={cn(styles.statusText, classNames?.statusText)}>{doneLabel}</span></span>
+        {onUndo && <button type="button" className={cn(styles.secondary, classNames?.secondary)} data-autofocus onClick={() => void perform("undo")}>{undoLabel}</button>}
       </>;
       case "error": return <>
-        <span className={styles.status} data-tone="danger"><CircleAlert size={16} strokeWidth={1.75} aria-hidden="true" /><span className={styles.statusText}>{errorLabel}</span></span>
-        <button type="button" className={styles.secondary} data-autofocus onClick={() => void perform(working)}>{retryLabel}</button>
+        <span className={cn(styles.status, classNames?.status)} data-tone="danger"><CircleAlert size={16} strokeWidth={1.75} aria-hidden="true" /><span className={cn(styles.statusText, classNames?.statusText)}>{errorLabel}</span></span>
+        <button type="button" className={cn(styles.secondary, classNames?.secondary)} data-autofocus onClick={() => void perform(working)}>{retryLabel}</button>
       </>;
-      default: return <button type="button" className={styles.trigger} data-autofocus disabled={disabled} onClick={() => { setAnnouncement(typeof shownPrompt === "string" ? shownPrompt : ""); go("confirming"); }}>
-        {icon && <span className={styles.icon} aria-hidden="true">{icon}</span>}
+      default: return <button type="button" className={cn(styles.trigger, classNames?.trigger)} data-autofocus disabled={disabled} onClick={() => { setAnnouncement(typeof shownPrompt === "string" ? shownPrompt : ""); go("confirming"); }}>
+        {icon && <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true">{icon}</span>}
         <span>{label}</span>
       </button>;
     }
@@ -279,7 +292,7 @@ export function ConfirmMorph({
     tabIndex={-1} onKeyDown={onKeyDown} aria-busy={state === "pending" || undefined}
     onPointerEnter={() => { holds.current.hover = true; sync(); }} onPointerLeave={() => { holds.current.hover = false; sync(); }}
     onPointerCancel={() => { holds.current.hover = false; sync(); }}>
-    <motion.div className={styles.surface} style={{ width }}>
+    <motion.div className={cn(styles.surface, classNames?.surface)} style={{ width }}>
       <AnimatePresence initial={false} custom={direction}>
         <Face key={state} id={state} direction={direction} reduced={reduced} onSize={onFaceSize} labelledBy={state === "confirming" ? promptId : undefined}>{face}</Face>
       </AnimatePresence>

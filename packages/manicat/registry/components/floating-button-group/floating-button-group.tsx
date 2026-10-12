@@ -6,6 +6,7 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion } from "motion/react";
 import type { TargetAndTransition } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import { Tooltip } from "@/registry/components/tooltip/tooltip";
 import styles from "./floating-button-group.module.css";
 
@@ -53,6 +54,16 @@ export interface FloatingButtonGroupProps {
   tooltipSide?: "top" | "bottom" | "left" | "right";
   /** Called with the item id after the item's own onSelect. */
   onAction?: (id: string) => void;
+  /** Extend the inner, named parts of the floating button group: item, slot, ghost, text, icon, separator. */
+  classNames?: {
+    item?: string;
+    slot?: string;
+    ghost?: string;
+    text?: string;
+    icon?: string;
+    separator?: string;
+  };
+  /** Extend the inner, named parts of the <FloatingButtonGroup>. */
   className?: string;
   style?: CSSProperties;
 }
@@ -76,17 +87,17 @@ function Phase({ children, reduced }: { children: ReactNode; reduced: boolean })
  * Icon and label. Every label the item can show is laid out invisibly in the same grid cell, so the button always has the width
  * of the widest one: a label change crossfades in place and never resizes the button, its neighbours or the tray.
  */
-function ItemBody({ label, icon, iconOnly, reserve, reduced }: { label: string; icon?: ReactNode; iconOnly: boolean; reserve: readonly string[]; reduced: boolean }) {
+function ItemBody({ label, icon, iconOnly, reserve, reduced, classNames }: { label: string; icon?: ReactNode; iconOnly: boolean; reserve: readonly string[]; reduced: boolean; classNames?: FloatingButtonGroupProps["classNames"] }) {
   const ghosts = iconOnly ? [] : Array.from(new Set([label, ...reserve]));
-  return <span className={styles.slot}>
-    {ghosts.map(text => <span key={text} className={styles.ghost} aria-hidden="true">
+  return <span className={cn(styles.slot, classNames?.slot)}>
+    {ghosts.map(text => <span key={text} className={cn(styles.ghost, classNames?.ghost)} aria-hidden="true">
       {icon ? <span className={styles.iconSpace} /> : null}
-      <span className={styles.text}>{text}</span>
+      <span className={cn(styles.text, classNames?.text)}>{text}</span>
     </span>)}
     <AnimatePresence initial={false}>
       <Phase key={label} reduced={reduced}>
-        {icon ? <span className={styles.icon} aria-hidden="true">{icon}</span> : null}
-        {iconOnly ? null : <span className={styles.text}>{label}</span>}
+        {icon ? <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true">{icon}</span> : null}
+        {iconOnly ? null : <span className={cn(styles.text, classNames?.text)}>{label}</span>}
       </Phase>
     </AnimatePresence>
   </span>;
@@ -111,7 +122,7 @@ function SideTip({ side, content, children }: { side: "left" | "right"; content:
  * or keyboard focus is on, fades when the pointer leaves the tray, and settles darker in place while a button is pressed.
  * It is the toolbar's only hover and focus indicator. Arrow keys move focus, Home and End jump to the ends, Enter and Space act.
  */
-export function FloatingButtonGroup({ items, label, variant = "muted", size = "md", orientation = "horizontal", iconOnly: groupIconOnly = false, tooltipSide, onAction, className, style }: FloatingButtonGroupProps) {
+export function FloatingButtonGroup({ items, label, variant = "muted", size = "md", orientation = "horizontal", iconOnly: groupIconOnly = false, tooltipSide, onAction, className, classNames, style }: FloatingButtonGroupProps) {
   const reduced = useReducedMotion() ?? false;
   const tray = useRef<HTMLDivElement>(null);
   const nodes = useRef(new Map<string, HTMLButtonElement>());
@@ -253,13 +264,13 @@ export function FloatingButtonGroup({ items, label, variant = "muted", size = "m
   >
     <motion.span className={styles.highlight} data-pressing={pressing && activeId ? "" : undefined} style={{ x, y, width, height, opacity, scale }} aria-hidden="true" />
     {items.map((item, position) => {
-      if (!isAction(item)) return <span key={item.id ?? `separator-${position}`} className={styles.separator} role="separator" aria-orientation={vertical ? "horizontal" : "vertical"} />;
+      if (!isAction(item)) return <span key={item.id ?? `separator-${position}`} className={cn(styles.separator, classNames?.separator)} role="separator" aria-orientation={vertical ? "horizontal" : "vertical"} />;
       const { id, label: itemLabel, icon, onSelect, disabled = false, pressed, shortcut, reserveLabels = [] } = item;
       const iconOnly = !!icon && (item.iconOnly ?? groupIconOnly);
       const button = <button
         ref={node => { if (node) nodes.current.set(id, node); else nodes.current.delete(id); }}
         type="button"
-        className={styles.item}
+        className={cn(styles.item, classNames?.item)}
         data-fbg-item=""
         data-active={activeId === id ? "" : undefined}
         data-icon={icon ? "" : undefined}
@@ -287,7 +298,7 @@ export function FloatingButtonGroup({ items, label, variant = "muted", size = "m
           onAction?.(id);
         }}
       >
-        <ItemBody label={itemLabel} icon={icon} iconOnly={iconOnly} reserve={reserveLabels} reduced={reduced} />
+        <ItemBody label={itemLabel} icon={icon} iconOnly={iconOnly} reserve={reserveLabels} reduced={reduced} classNames={classNames} />
       </button>;
       // Tooltips render no wrapper element, so every button stays a direct child of the tray and measures against it.
       if (!iconOnly && !shortcut) return <Fragment key={id}>{button}</Fragment>;

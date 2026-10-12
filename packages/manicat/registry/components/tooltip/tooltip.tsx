@@ -5,12 +5,19 @@ import type { ReactElement, ReactNode } from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./tooltip.module.css";
 
 export interface TooltipProps {
   content: ReactNode;
   children: ReactElement;
   side?: "top" | "bottom";
+  className?: string;
+  /** Extend the inner, named parts of the tooltip: text or line. */
+  classNames?: {
+    text?: string;
+    line?: string;
+  };
 }
 
 const DELAY = 250;
@@ -30,7 +37,7 @@ const warmth = {
 };
 
 /** String content crossfades when it changes while open, and the bubble springs to the new text size. */
-function TooltipText({ text }: { text: string }) {
+function TooltipText({ text, classNames }: { text: string; classNames?: TooltipProps["classNames"] }) {
   const reduced = useReducedMotion();
   const measure = useRef<HTMLSpanElement>(null);
   const measured = useRef<string | null>(null);
@@ -48,15 +55,15 @@ function TooltipText({ text }: { text: string }) {
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
-  return <motion.span className={styles.text} initial={false} animate={size ? { width: size.width, height: size.height } : undefined} transition={size?.animate && !reduced ? motionTokens.spring.morph : { duration: 0 }}>
+  return <motion.span className={cn(styles.text, classNames?.text)} initial={false} animate={size ? { width: size.width, height: size.height } : undefined} transition={size?.animate && !reduced ? motionTokens.spring.morph : { duration: 0 }}>
     <span ref={measure} className={styles.measure} aria-hidden="true">{text}</span>
     <AnimatePresence mode="popLayout" initial={false}>
-      <motion.span key={text} className={styles.line} initial={reduced ? false : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }} transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{text}</motion.span>
+      <motion.span key={text} className={cn(styles.line, classNames?.line)} initial={reduced ? false : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }} transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{text}</motion.span>
     </AnimatePresence>
   </motion.span>;
 }
 
-export function Tooltip({ content, children, side = "top" }: TooltipProps) {
+export function Tooltip({ content, children, side = "top", className, classNames }: TooltipProps) {
   const isWarm = useSyncExternalStore(warmth.subscribe, warmth.get, () => false);
   // Controlled so the instant flag lands in the same render that mounts the content (Radix reports uncontrolled changes a frame late).
   const [open, setOpen] = useState(false);
@@ -70,8 +77,8 @@ export function Tooltip({ content, children, side = "top" }: TooltipProps) {
     <TooltipPrimitive.Root open={open} delayDuration={isWarm ? 0 : DELAY} onOpenChange={next => { if (next) setInstant(warmth.get()); setOpen(next); }}>
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
       <TooltipPrimitive.Portal>
-        <TooltipPrimitive.Content className={styles.tooltip} data-instant={instant || undefined} side={side} sideOffset={8} collisionPadding={12}>
-          {typeof content === "string" || typeof content === "number" ? <TooltipText text={String(content)}/> : content}
+        <TooltipPrimitive.Content className={cn(styles.tooltip, className)} data-instant={instant || undefined} side={side} sideOffset={8} collisionPadding={12}>
+          {typeof content === "string" || typeof content === "number" ? <TooltipText text={String(content)} classNames={classNames}/> : content}
         </TooltipPrimitive.Content>
       </TooltipPrimitive.Portal>
     </TooltipPrimitive.Root>

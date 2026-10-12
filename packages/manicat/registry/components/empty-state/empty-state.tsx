@@ -4,6 +4,7 @@ import { isValidElement, useEffect, useLayoutEffect, useRef, type ReactNode } fr
 import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion, type AnimationPlaybackControls, type HTMLMotionProps, type MotionProps, type TargetAndTransition, type Transition } from "motion/react";
 import { Folder } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./empty-state.module.css";
 
 export interface EmptyStateProps {
@@ -12,6 +13,13 @@ export interface EmptyStateProps {
   action?: ReactNode;
   icon?: ReactNode;
   className?: string;
+  /** Extend the inner, named parts of the empty state: icon, glyph, line or action. */
+  classNames?: {
+    icon?: string;
+    glyph?: string;
+    line?: string;
+    action?: string;
+  };
   /** Optional accessible label for the state region. */
   label?: string;
 }
@@ -68,19 +76,19 @@ function HeightFrame({ reduce, morphKey, children }: { reduce: boolean | null; m
   </motion.div>;
 }
 
-export function EmptyState({ title, description, action, icon, className, label }: EmptyStateProps) {
+export function EmptyState({ title, description, action, icon, className, classNames, label }: EmptyStateProps) {
   const reduce = useReducedMotion();
   const glyph = icon ?? <Folder width={24} height={24} strokeWidth={1.5} />;
   const enter: Transition = reduce ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] };
   const swap: MotionProps = { initial: reduce ? { opacity: 0 } : textIn, animate: shown, exit: reduce ? fadeOut : textOut, transition: enter };
   // The result of an action morphs in place: the icon crossfades and the copy rises in while the old copy leaves.
   return <section className={[styles.root, className].filter(Boolean).join(" ")} aria-label={label}>
-    <div className={styles.icon} aria-hidden="true"><AnimatePresence mode="popLayout" initial={false}><Swap key={iconKey(glyph)} className={styles.glyph} initial={reduce ? { opacity: 0 } : iconIn} animate={shown} exit={reduce ? fadeOut : { ...iconIn, transition: exitFast }} transition={reduce ? enter : motionTokens.spring.snappy}>{glyph}</Swap></AnimatePresence></div>
+    <div className={cn(styles.icon, classNames?.icon)} aria-hidden="true"><AnimatePresence mode="popLayout" initial={false}><Swap key={iconKey(glyph)} className={cn(styles.glyph, classNames?.glyph)} initial={reduce ? { opacity: 0 } : iconIn} animate={shown} exit={reduce ? fadeOut : { ...iconIn, transition: exitFast }} transition={reduce ? enter : motionTokens.spring.snappy}>{glyph}</Swap></AnimatePresence></div>
     <HeightFrame reduce={reduce} morphKey={`${title}\n${description}`}>
-      <h3><AnimatePresence mode="popLayout" initial={false}><Swap key={title} className={styles.line} {...swap}>{title}</Swap></AnimatePresence></h3>
-      <p><AnimatePresence mode="popLayout" initial={false}><Swap key={description} className={styles.line} {...swap}>{description}</Swap></AnimatePresence></p>
+      <h3><AnimatePresence mode="popLayout" initial={false}><Swap key={title} className={cn(styles.line, classNames?.line)} {...swap}>{title}</Swap></AnimatePresence></h3>
+      <p><AnimatePresence mode="popLayout" initial={false}><Swap key={description} className={cn(styles.line, classNames?.line)} {...swap}>{description}</Swap></AnimatePresence></p>
     </HeightFrame>
-    {action && <div className={styles.action}>{action}</div>}
+    {action && <div className={cn(styles.action, classNames?.action)}>{action}</div>}
   </section>;
 }
 

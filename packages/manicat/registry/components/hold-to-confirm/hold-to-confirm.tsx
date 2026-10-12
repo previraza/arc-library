@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, use
 import type { AnimationPlaybackControls, MotionValue, TargetAndTransition } from "motion/react";
 import { Trash2 } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./hold-to-confirm.module.css";
 
 /**
@@ -29,6 +30,15 @@ export interface HoldToConfirmProps extends Omit<ButtonHTMLAttributes<HTMLButton
   confirmed?: boolean;
   /** Reports when a hold starts and ends, for surrounding hints such as “Keep holding”. */
   onHoldChange?: (holding: boolean) => void;
+  /** Extend the inner, named parts of the button: face, iconSlot, iconPhase, labelFrame, label or fill. */
+  classNames?: {
+    face?: string;
+    iconSlot?: string;
+    iconPhase?: string;
+    labelFrame?: string;
+    label?: string;
+    fill?: string;
+  };
 }
 
 const enter = [...motionTokens.ease.enter] as [number, number, number, number];
@@ -50,22 +60,22 @@ function DrawnCheck({ reduced }: { reduced: boolean }) {
   </svg>;
 }
 
-type FaceProps = { icon: ReactNode; text: string; done: boolean; width: MotionValue<number | "auto">; reduced: boolean; measure?: (node: HTMLSpanElement | null) => void };
+type FaceProps = { icon: ReactNode; text: string; done: boolean; width: MotionValue<number | "auto">; reduced: boolean; measure?: (node: HTMLSpanElement | null) => void; classNames?: { face?: string; iconSlot?: string; iconPhase?: string; labelFrame?: string; label?: string } };
 
 /** Icon and label. The button renders it twice: once on the surface and once inside the fill, so the text changes colour exactly at the fill edge. */
-function Face({ icon, text, done, width, reduced, measure }: FaceProps) {
-  return <span className={styles.face}>
-    <span className={styles.iconSlot}>
+function Face({ icon, text, done, width, reduced, measure, classNames }: FaceProps) {
+  return <span className={cn(styles.face, classNames?.face)}>
+    <span className={cn(styles.iconSlot, classNames?.iconSlot)}>
       <AnimatePresence initial={false}>
-        <motion.span key={done ? "done" : "idle"} className={styles.iconPhase} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: motionTokens.duration.fast } : iconEnter}>
+        <motion.span key={done ? "done" : "idle"} className={cn(styles.iconPhase, classNames?.iconPhase)} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: motionTokens.duration.fast } : iconEnter}>
           {done ? <DrawnCheck reduced={reduced} /> : icon}
         </motion.span>
       </AnimatePresence>
     </span>
-    <motion.span className={styles.labelFrame} style={{ width }}>
+    <motion.span className={cn(styles.labelFrame, classNames?.labelFrame)} style={{ width }}>
       {measure && <span ref={measure} className={styles.measure}>{text}</span>}
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={text} className={styles.label} initial={reduced ? fadeIn : textIn} animate={rest} exit={reduced ? fadeOut : textOut} transition={{ duration: reduced ? motionTokens.duration.fast : motionTokens.duration.standard, ease: enter }}>{text}</motion.span>
+        <motion.span key={text} className={cn(styles.label, classNames?.label)} initial={reduced ? fadeIn : textIn} animate={rest} exit={reduced ? fadeOut : textOut} transition={{ duration: reduced ? motionTokens.duration.fast : motionTokens.duration.standard, ease: enter }}>{text}</motion.span>
       </AnimatePresence>
     </motion.span>
   </span>;
@@ -95,7 +105,7 @@ function useLabelWidth(reduced: boolean) {
   return [width, setNode] as const;
 }
 
-export function HoldToConfirm({ label, confirmedLabel = "Done", onConfirm, duration = 1200, icon = <Trash2 strokeWidth={1.75} />, tone = "accent", confirmed, onHoldChange, className, disabled, ...props }: HoldToConfirmProps) {
+export function HoldToConfirm({ label, confirmedLabel = "Done", onConfirm, duration = 1200, icon = <Trash2 strokeWidth={1.75} />, tone = "accent", confirmed, onHoldChange, className, classNames, disabled, ...props }: HoldToConfirmProps) {
   const reduced = useReducedMotion() ?? false;
   const hintId = useId();
   const [ownDone, setOwnDone] = useState(false);
@@ -192,13 +202,13 @@ export function HoldToConfirm({ label, confirmedLabel = "Done", onConfirm, durat
   }
 
   return <>
-    <motion.button {...props} ref={button} type="button" className={[styles.button, className].filter(Boolean).join(" ")} data-tone={tone} data-state={done ? "done" : holding ? "holding" : "idle"}
+    <motion.button {...props} ref={button} type="button" className={cn(styles.button, className)} data-tone={tone} data-state={done ? "done" : holding ? "holding" : "idle"}
       disabled={disabled} aria-disabled={done || undefined} aria-label={text} aria-describedby={done ? undefined : hintId} style={{ scale }}
       onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={release} onPointerCancel={release} onLostPointerCapture={release}
       onKeyDown={onKeyDown} onKeyUp={onKeyUp} onBlur={release} onContextMenu={event => event.preventDefault()}>
-      <Face icon={icon} text={text} done={done} width={width} reduced={reduced} measure={measure} />
-      <motion.span className={styles.fill} style={{ clipPath }} aria-hidden="true">
-        <Face icon={icon} text={text} done={done} width={width} reduced={reduced} />
+      <Face icon={icon} text={text} done={done} width={width} reduced={reduced} measure={measure} classNames={classNames} />
+      <motion.span className={cn(styles.fill, classNames?.fill)} style={{ clipPath }} aria-hidden="true">
+        <Face icon={icon} text={text} done={done} width={width} reduced={reduced} classNames={classNames} />
       </motion.span>
     </motion.button>
     <span id={hintId} className={styles.srOnly}>{`Press and hold for ${seconds} seconds to confirm. With a keyboard, hold Space or Enter.`}</span>

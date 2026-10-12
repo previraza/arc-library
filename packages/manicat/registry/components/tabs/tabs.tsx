@@ -7,13 +7,28 @@ import { ChevronLeft as NavArrowLeft, ChevronRight as NavArrowRight } from "luci
 import { AnimatePresence, LayoutGroup, animate, motion, useReducedMotion } from "motion/react";
 import type { AnimationPlaybackControls, Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./tabs.module.css";
 
 type RootProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Root>;
+type TabsClassNames = {
+  listShell?: string;
+  scrollButton?: string;
+  viewport?: string;
+  list?: string;
+  trigger?: string;
+  selection?: string;
+  triggerLabel?: string;
+  content?: string;
+};
+export interface TabsProps extends RootProps {
+  /** Extend the inner, named parts of the tabs: listShell, scrollButton, viewport, list, trigger, selection, triggerLabel or content. */
+  classNames?: TabsClassNames;
+}
 /** `direction` is +1 when the new tab sits after the old one; `panelHeightRef` holds the visible panel height so the next panel can morph from it; `leavingRectRef` pins the outgoing panel where it was on screen. */
-const TabsContext = createContext<{ active: string; layoutId: string; direction: number; panelHeightRef: RefObject<number | null>; leavingRectRef: RefObject<DOMRect | null> }>({ active: "", layoutId: "tabs", direction: 1, panelHeightRef: { current: null }, leavingRectRef: { current: null } });
+const TabsContext = createContext<{ active: string; layoutId: string; direction: number; panelHeightRef: RefObject<number | null>; leavingRectRef: RefObject<DOMRect | null>; classNames?: TabsClassNames }>({ active: "", layoutId: "tabs", direction: 1, panelHeightRef: { current: null }, leavingRectRef: { current: null } });
 
-export function Tabs({ value, defaultValue, onValueChange, className, ...props }: RootProps) {
+export function Tabs({ value, defaultValue, onValueChange, className, classNames, ...props }: TabsProps) {
   const [internal, setInternal] = useState(defaultValue ?? "");
   const [direction, setDirection] = useState(1);
   const active = value ?? internal;
@@ -29,11 +44,11 @@ export function Tabs({ value, defaultValue, onValueChange, className, ...props }
     if (from >= 0 && to >= 0 && from !== to) setDirection(to > from ? 1 : -1);
     if (value === undefined) setInternal(next); onValueChange?.(next);
   }
-  return <TabsContext.Provider value={{ active, layoutId, direction, panelHeightRef, leavingRectRef }}><LayoutGroup id={layoutId}><TabsPrimitive.Root {...props} ref={root} className={[styles.root, className].filter(Boolean).join(" ")} value={active} onValueChange={handleChange}/></LayoutGroup></TabsContext.Provider>;
+  return <TabsContext.Provider value={{ active, layoutId, direction, panelHeightRef, leavingRectRef, classNames }}><LayoutGroup id={layoutId}><TabsPrimitive.Root {...props} ref={root} className={[styles.root, className].filter(Boolean).join(" ")} value={active} onValueChange={handleChange}/></LayoutGroup></TabsContext.Provider>;
 }
 
 export function TabsList({ className, ...props }: ComponentPropsWithoutRef<typeof TabsPrimitive.List>) {
-  const { active } = useContext(TabsContext);
+  const { active, classNames } = useContext(TabsContext);
   const reduced = useReducedMotion();
   const shell = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
@@ -73,22 +88,22 @@ export function TabsList({ className, ...props }: ComponentPropsWithoutRef<typeo
   }, [update]);
   useLayoutEffect(() => { reveal(list.current?.querySelector<HTMLElement>('[role="tab"][data-state="active"]') ?? null); }, [active, reveal]);
   const scrollTabs = (direction: number) => viewport.current?.scrollBy({ left: direction * (viewport.current?.clientWidth ?? 0) * .75, behavior: reduced ? "instant" : "smooth" });
-  return <div ref={shell} className={styles.listShell} data-overflow={edges.overflow} data-left={edges.left} data-right={edges.right}>
-    {edges.overflow && <button type="button" className={`${styles.scrollButton} ${styles.scrollLeft}`} aria-label="Scroll tabs left" disabled={!edges.left} onClick={() => scrollTabs(-1)}><NavArrowLeft width={17} height={17} aria-hidden="true"/></button>}
-    <motion.div ref={viewport} layoutScroll className={styles.viewport} onFocusCapture={event => { if (event.target instanceof HTMLElement && event.target.getAttribute("role") === "tab") reveal(event.target); }}>
-      <TabsPrimitive.List {...props} ref={list} className={[styles.list, className].filter(Boolean).join(" ")}/>
+  return <div ref={shell} className={cn(styles.listShell, classNames?.listShell)} data-overflow={edges.overflow} data-left={edges.left} data-right={edges.right}>
+    {edges.overflow && <button type="button" className={cn(styles.scrollButton, styles.scrollLeft, classNames?.scrollButton)} aria-label="Scroll tabs left" disabled={!edges.left} onClick={() => scrollTabs(-1)}><NavArrowLeft width={17} height={17} aria-hidden="true"/></button>}
+    <motion.div ref={viewport} layoutScroll className={cn(styles.viewport, classNames?.viewport)} onFocusCapture={event => { if (event.target instanceof HTMLElement && event.target.getAttribute("role") === "tab") reveal(event.target); }}>
+      <TabsPrimitive.List {...props} ref={list} className={cn(styles.list, className, classNames?.list)}/>
     </motion.div>
-    {edges.overflow && <button type="button" className={`${styles.scrollButton} ${styles.scrollRight}`} aria-label="Scroll tabs right" disabled={!edges.right} onClick={() => scrollTabs(1)}><NavArrowRight width={17} height={17} aria-hidden="true"/></button>}
+    {edges.overflow && <button type="button" className={cn(styles.scrollButton, styles.scrollRight, classNames?.scrollButton)} aria-label="Scroll tabs right" disabled={!edges.right} onClick={() => scrollTabs(1)}><NavArrowRight width={17} height={17} aria-hidden="true"/></button>}
   </div>;
 }
 
 export function TabsTrigger({ className, children, value, ...props }: ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>) {
-  const { active } = useContext(TabsContext);
+  const { active, classNames } = useContext(TabsContext);
   const reduced = useReducedMotion();
   // The LayoutGroup in Tabs scopes the highlight to this instance, so it glides between triggers but never flies in from another tab set.
-  return <TabsPrimitive.Trigger {...props} value={value} data-value={value} className={[styles.trigger, className].filter(Boolean).join(" ")}>
-    {active === value && <motion.span className={styles.selection} layoutId="selection" layoutDependency={active} transition={reduced ? { duration: 0 } : motionTokens.spring.morph} aria-hidden="true"/>}
-    <span className={styles.triggerLabel}>{children}</span>
+  return <TabsPrimitive.Trigger {...props} value={value} data-value={value} className={cn(styles.trigger, className, classNames?.trigger)}>
+    {active === value && <motion.span className={cn(styles.selection, classNames?.selection)} layoutId="selection" layoutDependency={active} transition={reduced ? { duration: 0 } : motionTokens.spring.morph} aria-hidden="true"/>}
+    <span className={cn(styles.triggerLabel, classNames?.triggerLabel)}>{children}</span>
   </TabsPrimitive.Trigger>;
 }
 
@@ -105,11 +120,11 @@ const panelFade: Variants = {
 };
 
 export function TabsContent({ className, value, forceMount, children, ...props }: ComponentPropsWithoutRef<typeof TabsPrimitive.Content>) {
-  const { active, direction, panelHeightRef, leavingRectRef } = useContext(TabsContext);
+  const { active, direction, panelHeightRef, leavingRectRef, classNames } = useContext(TabsContext);
   const reduced = useReducedMotion();
   const panel = useRef<HTMLDivElement>(null);
   const selected = active === value;
-  const classes = [styles.content, className].filter(Boolean).join(" ");
+  const classes = cn(styles.content, className, classNames?.content);
   // The incoming panel starts at the outgoing panel's height and settles at its own, so content below glides instead of jumping.
   useLayoutEffect(() => {
     const node = panel.current;

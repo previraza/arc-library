@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./stepper.module.css";
 
 export type StepperOrientation = "horizontal" | "vertical";
@@ -40,6 +41,21 @@ export interface StepperProps {
   label?: string;
   /** Announced, and shown in the compact caption, once every step is complete. */
   completeLabel?: string;
+  /** Extend the inner, named parts of the stepper: root, list, item, text, label, srOnly, connector, fill, head, caption, captionLabel. */
+  classNames?: {
+    root?: string;
+    list?: string;
+    item?: string;
+    text?: string;
+    label?: string;
+    srOnly?: string;
+    connector?: string;
+    fill?: string;
+    head?: string;
+    caption?: string;
+    captionLabel?: string;
+  };
+  /** Extend the inner, named parts of the stepper. */
   className?: string;
 }
 
@@ -114,7 +130,7 @@ function Marker({ number, kind, current, glyphDelay, ringDelay, reduced }: { num
 
 const statusText: Record<StepperStatus, string> = { complete: "Completed", current: "", upcoming: "Not started", error: "Error" };
 
-export function Stepper({ steps, current, orientation = "horizontal", onStepSelect, details = "all", compact = false, label = "Progress", completeLabel = "All steps complete", className }: StepperProps) {
+export function Stepper({ steps, current, orientation = "horizontal", onStepSelect, details = "all", compact = false, label = "Progress", completeLabel = "All steps complete", className, classNames }: StepperProps) {
   const reduced = useReducedMotion() ?? false;
   const count = steps.length;
   const active = Math.min(Math.max(Math.round(current), 0), count);
@@ -148,9 +164,9 @@ export function Stepper({ steps, current, orientation = "horizontal", onStepSele
   }
 
   const Root = interactive ? "nav" : "div";
-  const classes = [styles.root, vertical ? styles.vertical : styles.horizontal, compact ? styles.compact : "", className].filter(Boolean).join(" ");
+  const classes = [styles.root, classNames?.root, vertical ? styles.vertical : styles.horizontal, compact ? styles.compact : "", className].filter(Boolean).join(" ");
   return <Root className={classes} aria-label={label} role={interactive ? undefined : "group"}>
-    <ol className={styles.list} style={vertical ? undefined : { gridTemplateColumns: count > 1 ? `repeat(${count - 1}, minmax(0, 1fr)) auto` : "auto" }} onKeyDown={interactive ? onKeyDown : undefined}>
+    <ol className={cn(styles.list, classNames?.list)} style={vertical ? undefined : { gridTemplateColumns: count > 1 ? `repeat(${count - 1}, minmax(0, 1fr)) auto` : "auto" }} onKeyDown={interactive ? onKeyDown : undefined}>
       {steps.map((step, index) => {
         const isCurrent = index === active;
         const status: StepperStatus = step.error ? "error" : index < active ? "complete" : isCurrent ? "current" : "upcoming";
@@ -159,24 +175,24 @@ export function Stepper({ steps, current, orientation = "horizontal", onStepSele
         const kind: GlyphKind = step.error ? "error" : index < active ? "check" : "number";
         const content: ReactNode = <>
           <Marker number={index + 1} kind={kind} current={isCurrent} glyphDelay={delayAt(index)} ringDelay={ringDelay} reduced={reduced} />
-          <span className={styles.text}>
-            <span className={styles.label}>{step.label}</span>
+          <span className={cn(styles.text, classNames?.text)}>
+            <span className={cn(styles.label, classNames?.label)}>{step.label}</span>
             {statusText[status] ? <span className={styles.srOnly}>, {statusText[status]}</span> : null}
             <SwapText text={detail} className={step.error ? styles.error : styles.description} reduced={reduced} />
           </span>
         </>;
-        return <li key={step.id} className={styles.item} data-status={status}>
-          {index < count - 1 ? <span className={styles.connector} aria-hidden="true">
-            <motion.span key={orientation} className={styles.fill} initial={false} animate={vertical ? { scaleY: index < active ? 1 : 0 } : { scaleX: index < active ? 1 : 0 }} transition={reduced ? still : { ...motionTokens.spring.smooth, delay: delayAt(index) }} />
+        return <li key={step.id} className={cn(styles.item, classNames?.item)} data-status={status}>
+          {index < count - 1 ? <span className={cn(styles.connector, classNames?.connector)} aria-hidden="true">
+            <motion.span key={orientation} className={cn(styles.fill, classNames?.fill)} initial={false} animate={vertical ? { scaleY: index < active ? 1 : 0 } : { scaleX: index < active ? 1 : 0 }} transition={reduced ? still : { ...motionTokens.spring.smooth, delay: delayAt(index) }} />
           </span> : null}
           {interactive
-            ? <button type="button" className={styles.head} data-clickable={clickable || undefined} data-reachable={index <= active || undefined} aria-current={isCurrent ? "step" : undefined} aria-disabled={clickable ? undefined : true} tabIndex={clickable ? undefined : -1} onClick={clickable ? () => onStepSelect?.(index) : undefined}>{content}</button>
-            : <span className={styles.head} aria-current={isCurrent ? "step" : undefined}>{content}</span>}
+            ? <button type="button" className={cn(styles.head, classNames?.head)} data-clickable={clickable || undefined} data-reachable={index <= active || undefined} aria-current={isCurrent ? "step" : undefined} aria-disabled={clickable ? undefined : true} tabIndex={clickable ? undefined : -1} onClick={clickable ? () => onStepSelect?.(index) : undefined}>{content}</button>
+            : <span className={cn(styles.head, classNames?.head)} aria-current={isCurrent ? "step" : undefined}>{content}</span>}
         </li>;
       })}
     </ol>
-    {vertical ? null : <span className={styles.caption} aria-hidden="true">
-      <SwapText text={now?.label ?? completeLabel} className={styles.captionLabel} reduced={reduced} />
+    {vertical ? null : <span className={cn(styles.caption, classNames?.caption)} aria-hidden="true">
+      <SwapText text={now?.label ?? completeLabel} className={cn(styles.captionLabel, classNames?.captionLabel)} reduced={reduced} />
       <SwapText text={now?.error ?? now?.description} className={now?.error ? styles.error : styles.description} reduced={reduced} />
     </span>}
     <span className={styles.srOnly} aria-live="polite">{now ? `Step ${active + 1} of ${count}: ${now.label}` : completeLabel}</span>

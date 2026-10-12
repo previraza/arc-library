@@ -5,6 +5,7 @@ import type { ClipboardEvent, KeyboardEvent, ChangeEvent, FocusEvent } from "rea
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
 import type { Transition } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./otp-input.module.css";
 
 export interface OtpInputProps {
@@ -18,6 +19,10 @@ export interface OtpInputProps {
   disabled?: boolean;
   inputMode?: "numeric" | "text";
   className?: string;
+  classNames?: {
+    /** Slot for each OTP digit input */
+    input?: string;
+  };
 }
 
 /** Changed words rise in and unblur while unchanged words hold still. Assistive tech reads the plain copy. */
@@ -52,7 +57,7 @@ function MessageRow({ id, text, className, alert }: { id?: string; text: string;
   </motion.span>;
 }
 
-export function OtpInput({ length = 6, value = "", onChange, label, description, error, autoFocus = false, disabled = false, inputMode = "numeric", className }: OtpInputProps) {
+export function OtpInput({ length = 6, value = "", onChange, label, description, error, autoFocus = false, disabled = false, inputMode = "numeric", className, classNames }: OtpInputProps) {
   const generatedId = useId();
   const reduced = useReducedMotion();
   const [scope, animate] = useAnimate<HTMLDivElement>();
@@ -148,7 +153,7 @@ export function OtpInput({ length = 6, value = "", onChange, label, description,
       {values.map((character, index) => <div key={`${generatedId}-${index}`} className={styles.slot}>
         <input
           ref={(node) => { inputRefs.current[index] = node; }}
-          className={styles.input}
+          className={cn(styles.input, classNames?.input)}
           aria-label={`${label}, digit ${index + 1} of ${length}`}
           aria-describedby={describedBy}
           aria-invalid={error ? true : undefined}

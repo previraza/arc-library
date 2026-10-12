@@ -7,6 +7,7 @@ import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useRedu
 import type { AnimationPlaybackControls, MotionValue } from "motion/react";
 import { MoreHorizontal } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./swipe-actions.module.css";
 
 export interface SwipeAction {
@@ -25,7 +26,7 @@ export interface SwipeAction {
  * Only one row stays open at a time; touching anywhere else or pressing Escape puts it away. Every row also has a More actions menu with the same
  * actions, so keyboard and screen reader users never need the gesture.
  */
-export interface SwipeActionsProps { label: string; children: ReactNode; className?: string }
+export interface SwipeActionsProps { label: string; children: ReactNode; /** Extend the inner, named parts of <SwipeActions>. */ classNames?: { surface?: string; list?: string; more?: string; menu?: string; item?: string; itemIcon?: string; }; /** Extend the inner, named parts of <SwipeActions>. */ className?: string; }
 
 /** One row. `leading` actions sit under the left edge and `trailing` actions under the right; the outermost action on each side commits on a full swipe. */
 export interface SwipeActionsRowProps {
@@ -36,6 +37,9 @@ export interface SwipeActionsRowProps {
   /** Lets a long swipe commit the outermost action without a tap. On by default. */
   fullSwipe?: boolean;
   children: ReactNode;
+  /** Extend the inner, named parts of <SwipeActionsRow>. */
+  classNames?: { row?: string; content?: string; more?: string; menu?: string; item?: string; itemIcon?: string; }
+  /** Extend the inner, named parts of <SwipeActionsRow>. */
   className?: string;
 }
 
@@ -58,7 +62,7 @@ const sideOf = (value: number): Side | null => value > 0 ? "leading" : value < 0
 
 const GroupContext = createContext<Group>({ openId: null, setOpenId: () => {}, rows: new Map() });
 
-export function SwipeActions({ label, children, className }: SwipeActionsProps) {
+export function SwipeActions({ label, children, className, classNames }: SwipeActionsProps) {
   const [openId, setOpenId] = useState<string | null>(null);
   const [rows] = useState(() => new Map<string, HTMLElement>());
   useEffect(() => {
@@ -71,8 +75,8 @@ export function SwipeActions({ label, children, className }: SwipeActionsProps) 
   }, [openId, rows]);
   const group = useMemo(() => ({ openId, setOpenId, rows }), [openId, rows]);
   return <GroupContext.Provider value={group}>
-    <div className={[styles.surface, className].filter(Boolean).join(" ")}>
-      <ul role="list" aria-label={label} tabIndex={-1} className={styles.list}>
+    <div className={cn(styles.surface, className)}>
+      <ul role="list" aria-label={label} tabIndex={-1} className={cn(styles.list, classNames?.list)}>
         <AnimatePresence initial={false}>{children}</AnimatePresence>
       </ul>
     </div>
@@ -86,7 +90,7 @@ function velocityOf(samples: [number, number][]) {
   return elapsed > 0 ? (last[1] - first[1]) / elapsed : 0;
 }
 
-export function SwipeActionsRow({ label, leading = [], trailing = [], fullSwipe = true, children, className }: SwipeActionsRowProps) {
+export function SwipeActionsRow({ label, leading = [], trailing = [], fullSwipe = true, children, className, classNames }: SwipeActionsRowProps) {
   const { openId, setOpenId, rows } = useContext(GroupContext);
   const id = useId();
   const reduced = useReducedMotion() ?? false;
@@ -284,7 +288,7 @@ export function SwipeActionsRow({ label, leading = [], trailing = [], fullSwipe 
     ? { opacity: 0, transition: { duration: .15 } }
     : { height: 0, opacity: 0, transition: { height: { ...motionTokens.spring.smooth, delay: .12 }, opacity: { duration: motionTokens.duration.instant, delay: .34 } } };
 
-  return <motion.li ref={rowRef} className={[styles.row, className].filter(Boolean).join(" ")} style={{ "--swipe-action-width": `${ACTION}px` } as CSSProperties}
+  return <motion.li ref={rowRef} className={cn(styles.row, className, classNames?.row)} style={{ "--swipe-action-width": `${ACTION}px` } as CSSProperties}
     initial={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={collapse}
     transition={reduced ? { duration: .15 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] } }}>
     {(["leading", "trailing"] as const).map(side => actionsOf(side).map((action, index) => {
@@ -297,14 +301,14 @@ export function SwipeActionsRow({ label, leading = [], trailing = [], fullSwipe 
       <div className={styles.body}>{children}</div>
       {menuItems.length > 0 && <Menu.Root open={menuOpen} onOpenChange={setMenuOpen}>
         {/* Opens on click rather than on press, so a swipe that starts on the button still moves the row. */}
-        <Menu.Trigger className={styles.more} data-swipe-more="" aria-label={`More actions for ${label}`} onPointerDown={event => event.preventDefault()} onClick={event => { if (event.detail > 0) setMenuOpen(open => !open); }}>
+        <Menu.Trigger className={cn(styles.more, classNames?.more)} data-swipe-more="" aria-label={`More actions for ${label}`} onPointerDown={event => event.preventDefault()} onClick={event => { if (event.detail > 0) setMenuOpen(open => !open); }}>
           <MoreHorizontal size={18} strokeWidth={1.75} aria-hidden="true" />
         </Menu.Trigger>
         <Menu.Portal>
-          <Menu.Content className={styles.menu} align="end" sideOffset={6} collisionPadding={12} loop onCloseAutoFocus={event => { if (!focusNeighbour.current) return; focusNeighbour.current = false; event.preventDefault(); moveFocusToNeighbour(); }}>
-            {menuItems.map(({ action, side, index }, order) => <Menu.Item key={`${side}-${index}`} className={styles.item} data-tone={action.tone} style={{ "--i": order } as CSSProperties} onSelect={() => { focusNeighbour.current = !action.keepRow; commit(side, index); }}>
-              <span className={styles.itemIcon} aria-hidden="true">{action.icon}</span>{action.label}
-            </Menu.Item>)}
+          <Menu.Content className={cn(styles.menu, classNames?.menu)} align="end" sideOffset={6} collisionPadding={12} loop onCloseAutoFocus={event => { if (!focusNeighbour.current) return; focusNeighbour.current = false; event.preventDefault(); moveFocusToNeighbour(); }}>
+{menuItems.map(({ action, side, index }, order) => <Menu.Item key={`${side}-${index}`} className={cn(styles.item, classNames?.item)} data-tone={action.tone} style={{ "--i": order } as CSSProperties} onSelect={() => { focusNeighbour.current = !action.keepRow; commit(side, index); }}>
+                <span className={cn(styles.itemIcon, classNames?.itemIcon)} aria-hidden="true">{action.icon}</span>{action.label}
+              </Menu.Item>)}
           </Menu.Content>
         </Menu.Portal>
       </Menu.Root>}

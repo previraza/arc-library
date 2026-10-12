@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { Transition } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./timeline.module.css";
 
 export interface TimelineEvent {
@@ -52,6 +53,30 @@ export interface TimelineProps {
   /** Heading level for the day labels. */
   headingLevel?: 2 | 3 | 4 | 5 | 6;
   className?: string;
+  /** Extend the inner, named parts of the timeline: day, count, rolling, place, group, list, item, marker, segment, content, trigger, text, title, actor, meta, time, rise, riseLine, chevron, detail or detailInner. */
+  classNames?: {
+    day?: string;
+    count?: string;
+    rolling?: string;
+    place?: string;
+    group?: string;
+    list?: string;
+    item?: string;
+    marker?: string;
+    segment?: string;
+    content?: string;
+    trigger?: string;
+    text?: string;
+    title?: string;
+    actor?: string;
+    meta?: string;
+    time?: string;
+    rise?: string;
+    riseLine?: string;
+    chevron?: string;
+    detail?: string;
+    detailInner?: string;
+  };
 }
 
 type Row = TimelineEvent & { time: number; day: string };
@@ -76,10 +101,10 @@ type Clock = { schedule: () => number; reduced: boolean; fresh: Set<string> };
 const RevealClock = createContext<Clock | null>(null);
 
 /** Text that changes in place: the new value rises in from a soft blur while the old one lifts away a little faster. */
-function RiseText({ text, reduced, direction = 1 }: { text: string; reduced: boolean; direction?: number }) {
-  return <span className={styles.rise} aria-hidden="true">
+function RiseText({ text, reduced, direction = 1, classNames }: { text: string; reduced: boolean; direction?: number; classNames?: TimelineProps["classNames"] }) {
+  return <span className={cn(styles.rise, classNames?.rise)} aria-hidden="true">
     <AnimatePresence mode="popLayout" initial={false} custom={direction}>
-      <motion.span key={text} className={styles.riseLine} custom={direction}
+      <motion.span key={text} className={cn(styles.riseLine, classNames?.riseLine)} custom={direction}
         variants={{
           from: (dir: number) => reduced ? { opacity: 0 } : { opacity: 0, y: `${.3 * dir}em`, filter: `blur(${motionTokens.blur.soft}px)` },
           to: { opacity: 1, y: "0em", filter: "blur(0px)" },
@@ -91,12 +116,12 @@ function RiseText({ text, reduced, direction = 1 }: { text: string; reduced: boo
 }
 
 /** The day's update count rolls digit by digit in the direction it moved. */
-function RollingCount({ value, reduced }: { value: number; reduced: boolean }) {
+function RollingCount({ value, reduced, classNames }: { value: number; reduced: boolean; classNames?: TimelineProps["classNames"] }) {
   const [state, setState] = useState({ value, direction: 1 });
   if (state.value !== value) setState({ value, direction: value > state.value ? 1 : -1 });
   const chars = [...String(value)];
-  return <span className={styles.rolling} aria-hidden="true">
-    {chars.map((char, index) => <span key={chars.length - index} className={styles.place}><RiseText text={char} reduced={reduced} direction={state.direction} /></span>)}
+  return <span className={cn(styles.rolling, classNames?.rolling)} aria-hidden="true">
+    {chars.map((char, index) => <span key={chars.length - index} className={cn(styles.place, classNames?.place)}><RiseText text={char} reduced={reduced} direction={state.direction} classNames={classNames} /></span>)}
   </span>;
 }
 
@@ -115,9 +140,9 @@ function relative(time: number, now: number) {
 }
 
 /** A day's section. A new day opens from nothing and pushes the older days down; it clips only while it grows. */
-function DaySection({ id, fresh, reduced, children }: { id: string; fresh: boolean; reduced: boolean; children: ReactNode }) {
+function DaySection({ id, fresh, reduced, children, classNames }: { id: string; fresh: boolean; reduced: boolean; children: ReactNode; classNames?: TimelineProps["classNames"] }) {
   const [entering, setEntering] = useState(fresh);
-  return <motion.section className={styles.group} aria-labelledby={id} data-entering={entering || undefined}
+  return <motion.section className={cn(styles.group, classNames?.group)} aria-labelledby={id} data-entering={entering || undefined}
     initial={fresh ? { height: 0, opacity: 0 } : false} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0, transition: { duration: reduced ? motionTokens.duration.instant : motionTokens.duration.exit, ease: standard } }}
     transition={reduced ? { duration: .15 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.standard, ease: enter } }}
     onAnimationComplete={() => setEntering(false)}>
@@ -125,7 +150,7 @@ function DaySection({ id, fresh, reduced, children }: { id: string; fresh: boole
   </motion.section>;
 }
 
-function TimelineRow({ row, last, expanded, onToggle, timeLabel, timeFull }: { row: Row; last: boolean; expanded: boolean; onToggle: () => void; timeLabel: string; timeFull: string }) {
+function TimelineRow({ row, last, expanded, onToggle, timeLabel, timeFull, classNames }: { row: Row; last: boolean; expanded: boolean; onToggle: () => void; timeLabel: string; timeFull: string; classNames?: TimelineProps["classNames"] }) {
   const clock = useContext(RevealClock)!;
   const { reduced } = clock;
   const detailId = useId();
@@ -140,30 +165,30 @@ function TimelineRow({ row, last, expanded, onToggle, timeLabel, timeFull }: { r
   const tone = row.avatar ? undefined : row.tone ?? "neutral";
   const Trigger = row.detail ? "button" : "div";
 
-  return <motion.li className={styles.item} data-entering={entering || undefined}
+  return <motion.li className={cn(styles.item, classNames?.item)} data-entering={entering || undefined}
     initial={fresh ? { height: 0 } : false} animate={{ height: "auto" }} exit={{ height: 0, opacity: 0, transition: reduced ? { duration: .1 } : { height: { ...motionTokens.spring.smooth, visualDuration: .3 }, opacity: { duration: .12 } } }}
     transition={reduced ? { duration: 0 } : motionTokens.spring.smooth} onAnimationComplete={() => setEntering(false)}
     onViewportEnter={() => setRevealDelay(current => current ?? clock.schedule())} viewport={{ once: true, amount: .2 }}>
-    <motion.span className={styles.marker} data-tone={tone} aria-hidden="true" initial={{ scale: .4, opacity: 0 }} animate={shown ? { scale: 1, opacity: 1 } : undefined} transition={pop}>
+    <motion.span className={cn(styles.marker, classNames?.marker)} data-tone={tone} aria-hidden="true" initial={{ scale: .4, opacity: 0 }} animate={shown ? { scale: 1, opacity: 1 } : undefined} transition={pop}>
       {/* eslint-disable-next-line @next/next/no-img-element -- registry components stay framework agnostic */}
       {row.avatar ? <img src={row.avatar} alt="" width={28} height={28} decoding="async" /> : row.icon}
     </motion.span>
-    {!last && <motion.span className={styles.segment} aria-hidden="true" initial={{ scaleY: 0 }} animate={shown ? { scaleY: 1 } : undefined} transition={draw} />}
-    <motion.div className={styles.content} initial={fresh ? (reduced ? { opacity: 0 } : { opacity: 0, y: -10, filter: `blur(${motionTokens.blur.soft}px)` }) : false} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+    {!last && <motion.span className={cn(styles.segment, classNames?.segment)} aria-hidden="true" initial={{ scaleY: 0 }} animate={shown ? { scaleY: 1 } : undefined} transition={draw} />}
+    <motion.div className={cn(styles.content, classNames?.content)} initial={fresh ? (reduced ? { opacity: 0 } : { opacity: 0, y: -10, filter: `blur(${motionTokens.blur.soft}px)` }) : false} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       transition={reduced ? { duration: .15 } : { y: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.standard, ease: enter, delay: .05 }, filter: { duration: motionTokens.duration.standard, ease: enter, delay: .05 } }}>
-      <Trigger className={styles.trigger} {...(row.detail ? { type: "button" as const, "data-timeline-trigger": "", "aria-expanded": expanded, "aria-controls": expanded ? detailId : undefined, onClick: onToggle } : {})}>
-        <span className={styles.text}>
-          <span className={styles.title}>{row.actor && <span className={styles.actor}>{row.actor}</span>}{row.actor ? " " : ""}{row.title}</span>
-          {row.meta && <span className={styles.meta}>{row.meta}</span>}
+      <Trigger className={cn(styles.trigger, classNames?.trigger)} {...(row.detail ? { type: "button" as const, "data-timeline-trigger": "", "aria-expanded": expanded, "aria-controls": expanded ? detailId : undefined, onClick: onToggle } : {})}>
+        <span className={cn(styles.text, classNames?.text)}>
+          <span className={cn(styles.title, classNames?.title)}>{row.actor && <span className={cn(styles.actor, classNames?.actor)}>{row.actor}</span>}{row.actor ? " " : ""}{row.title}</span>
+          {row.meta && <span className={cn(styles.meta, classNames?.meta)}>{row.meta}</span>}
         </span>
-        <time className={styles.time} dateTime={new Date(row.time).toISOString()} title={timeFull}><RiseText text={timeLabel} reduced={reduced} /><span className={styles.srOnly}>{timeFull}</span></time>
-        {row.detail && <motion.span className={styles.chevron} aria-hidden="true" initial={false} animate={{ rotate: expanded ? 180 : 0 }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy}><ChevronDown size={16} strokeWidth={1.75} /></motion.span>}
+        <time className={cn(styles.time, classNames?.time)} dateTime={new Date(row.time).toISOString()} title={timeFull}><RiseText text={timeLabel} reduced={reduced} classNames={classNames} /><span className={styles.srOnly}>{timeFull}</span></time>
+        {row.detail && <motion.span className={cn(styles.chevron, classNames?.chevron)} aria-hidden="true" initial={false} animate={{ rotate: expanded ? 180 : 0 }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy}><ChevronDown size={16} strokeWidth={1.75} /></motion.span>}
       </Trigger>
       <AnimatePresence initial={false}>
-        {expanded && row.detail && <motion.div key="detail" id={detailId} className={styles.detail}
+        {expanded && row.detail && <motion.div key="detail" id={detailId} className={cn(styles.detail, classNames?.detail)}
           initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0, transition: reduced ? { duration: 0 } : { ...motionTokens.spring.smooth, visualDuration: .28 } }}
           transition={reduced ? { duration: 0 } : motionTokens.spring.smooth}>
-          <motion.div className={styles.detailInner} initial={reduced ? { opacity: 0 } : { opacity: 0, y: -4, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          <motion.div className={cn(styles.detailInner, classNames?.detailInner)} initial={reduced ? { opacity: 0 } : { opacity: 0, y: -4, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, transition: { duration: motionTokens.duration.instant, ease: standard } }} transition={reduced ? { duration: .15 } : { duration: motionTokens.duration.standard, ease: enter, delay: .06 }}>{row.detail}</motion.div>
         </motion.div>}
       </AnimatePresence>
@@ -171,7 +196,7 @@ function TimelineRow({ row, last, expanded, onToggle, timeLabel, timeFull }: { r
   </motion.li>;
 }
 
-export function Timeline({ events, now, label, timeZone = "UTC", locale = "en-US", maxHeight, scrollToNew = true, defaultExpanded = [], headingLevel = 3, className }: TimelineProps) {
+export function Timeline({ events, now, label, timeZone = "UTC", locale = "en-US", maxHeight, scrollToNew = true, defaultExpanded = [], headingLevel = 3, className, classNames }: TimelineProps) {
   const reduced = useReducedMotionSafe();
   const id = useId();
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -251,19 +276,19 @@ export function Timeline({ events, now, label, timeZone = "UTC", locale = "en-US
       <div ref={scrollerRef} className={styles.scroller} data-scrolls={scrolls || undefined} style={scrolls ? { "--timeline-height": typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight } as CSSProperties : undefined} onKeyDown={onKeyDown}>
         {/* Presence starts enabled so markers keep their hidden first frame; rows and days present at mount opt out of entering themselves. */}
         <div ref={trackRef}><AnimatePresence>
-          {groups.map(group => <DaySection key={group.day} id={`${id}-${group.day}`} fresh={!initialDays.has(group.day)} reduced={reduced}>
-            <div className={styles.day} role="heading" aria-level={headingLevel} id={`${id}-${group.day}`}>
+          {groups.map(group => <DaySection key={group.day} id={`${id}-${group.day}`} fresh={!initialDays.has(group.day)} reduced={reduced} classNames={classNames}>
+            <div className={cn(styles.day, classNames?.day)} role="heading" aria-level={headingLevel} id={`${id}-${group.day}`}>
               <span>{group.label}</span>
-              <span className={styles.count} aria-hidden="true"><RollingCount value={group.rows.length} reduced={reduced} /> {group.rows.length === 1 ? "update" : "updates"}</span>
+              <span className={cn(styles.count, classNames?.count)} aria-hidden="true"><RollingCount value={group.rows.length} reduced={reduced} classNames={classNames} /> {group.rows.length === 1 ? "update" : "updates"}</span>
               <span className={styles.srOnly}>{`, ${group.rows.length} ${group.rows.length === 1 ? "update" : "updates"}`}</span>
             </div>
-            <ol className={styles.list}>
+            <ol className={cn(styles.list, classNames?.list)}>
               <AnimatePresence>
                 {group.rows.map((row, index) => {
                   const today = group.label === "Today" && now - row.time < 12 * HOUR;
                   const time = today ? relative(row.time, now) : { short: formats.clock.format(new Date(row.time)), long: "" };
                   return <TimelineRow key={row.id} row={row} last={index === group.rows.length - 1} expanded={expanded.has(row.id)} onToggle={() => toggle(row.id)}
-                    timeLabel={time.short} timeFull={today ? `${time.long}, ${formats.full.format(new Date(row.time))}` : formats.full.format(new Date(row.time))} />;
+                    timeLabel={time.short} timeFull={today ? `${time.long}, ${formats.full.format(new Date(row.time))}` : formats.full.format(new Date(row.time))} classNames={classNames} />;
                 })}
               </AnimatePresence>
             </ol>

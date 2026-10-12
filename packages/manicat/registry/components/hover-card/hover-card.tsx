@@ -4,6 +4,7 @@ import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useRef, use
 import type { FocusEvent, HTMLAttributes, PointerEvent, ReactElement, ReactNode } from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { AnimatePresence, animate, motion, useMotionValue, usePresence, useReducedMotion } from "motion/react";
+import { cn } from "@/lib/cn";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./hover-card.module.css";
 
@@ -50,13 +51,17 @@ export interface HoverCardProps {
   /** Milliseconds of grace after the pointer leaves, so it can travel into the card. */
   closeDelay?: number;
   className?: string;
+  /** Extend the inner, named parts of the hover-card: card. */
+  classNames?: {
+    card?: string;
+  };
 }
 
-interface SurfaceProps extends Omit<HTMLAttributes<HTMLDivElement>, "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"> { instant: boolean; reduced: boolean }
+interface SurfaceProps extends Omit<HTMLAttributes<HTMLDivElement>, "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"> { instant: boolean; reduced: boolean; classNames?: { card?: string } }
 
 /** Grows from the trigger edge: scale from .96 around the placed origin and a 4px offset toward the trigger on one smooth spring, with its own fade.
  *  Both retarget from where they are if the pointer comes back mid-exit, so the card turns around instead of jumping. */
-const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface({ instant, reduced, className, style, children, ...props }, forwardedRef) {
+const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface({ instant, reduced, className, classNames, style, children, ...props }, forwardedRef) {
   const [isPresent, safeToRemove] = usePresence();
   const node = useRef<HTMLDivElement | null>(null);
   const progress = useMotionValue(0);
@@ -91,12 +96,12 @@ const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface({ inst
     return () => { cancelled = true; unsubscribe(); controls.stop(); fade.stop(); };
   }, [isPresent, still, reduced, progress, x, y, scale, opacity, safeToRemove]);
 
-  return <motion.div {...props} ref={setRef} className={[styles.card, className].filter(Boolean).join(" ")} style={{ ...style, x, y, scale, opacity }}>
+  return <motion.div {...props} ref={setRef} className={cn(styles.card, classNames?.card, className)} style={{ ...style, x, y, scale, opacity }}>
     {children}
   </motion.div>;
 });
 
-export function HoverCard({ children, content, side = "bottom", align = "start", openDelay = OPEN_DELAY, closeDelay = CLOSE_DELAY, className }: HoverCardProps) {
+export function HoverCard({ children, content, side = "bottom", align = "start", openDelay = OPEN_DELAY, closeDelay = CLOSE_DELAY, className, classNames }: HoverCardProps) {
   const id = useId();
   const cardId = `${id}-card`;
   const state = useSyncExternalStore(cards.subscribe, cards.get, cards.server);
@@ -155,7 +160,7 @@ export function HoverCard({ children, content, side = "bottom", align = "start",
           onInteractOutside={event => { if (triggerRef.current?.contains(event.target as Node)) event.preventDefault(); }}
           onPointerEnter={(event: PointerEvent) => { if (!mouse(event)) return; inside.current.card = true; window.clearTimeout(timers.current.close); }}
           onPointerLeave={(event: PointerEvent) => { if (!mouse(event)) return; inside.current.card = false; scheduleClose(); }}>
-          <Surface instant={state.instant} reduced={reduced} className={className}>{content}</Surface>
+          <Surface instant={state.instant} reduced={reduced} className={className} classNames={classNames}>{content}</Surface>
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>}
     </AnimatePresence>

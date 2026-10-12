@@ -13,6 +13,7 @@ import {
 } from "react";
 import type { InputHTMLAttributes, KeyboardEvent, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./combobox.module.css";
 
 export interface ComboboxOption {
@@ -33,6 +34,19 @@ export interface ComboboxProps
   placeholder?: string;
   emptyMessage?: string;
   className?: string;
+  /** Extend the inner, named parts of the combobox: control, searchIcon, clear, chevron, hint, popover, listbox, option, check or empty. */
+  classNames?: {
+    control?: string;
+    searchIcon?: string;
+    clear?: string;
+    chevron?: string;
+    hint?: string;
+    popover?: string;
+    listbox?: string;
+    option?: string;
+    check?: string;
+    empty?: string;
+  };
 }
 
 /** Follows the listbox height with a critically damped spring, so filtering never snaps the menu. */
@@ -61,6 +75,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     emptyMessage = "No matches found",
     id,
     className,
+    classNames,
     disabled,
     onFocus,
     ...inputProps
@@ -194,10 +209,10 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
   const activeOption = activeIndex >= 0 ? filteredOptions[activeIndex] : undefined;
 
   return (
-    <div ref={rootRef} className={styles.field}>
+    <div ref={rootRef} className={cn(styles.field, className)}>
       <label htmlFor={controlId}>{label}</label>
-      <div className={[styles.control, open ? styles.open : "", disabled ? styles.disabled : "", className ?? ""].filter(Boolean).join(" ")}>
-        <Search className={styles.searchIcon} size={16} strokeWidth={1.75} aria-hidden="true" />
+      <div className={cn(styles.control, open && styles.open, disabled && styles.disabled, className, classNames?.control)}>
+        <Search className={cn(styles.searchIcon, classNames?.searchIcon)} size={16} strokeWidth={1.75} aria-hidden="true" />
         <input
           {...inputProps}
           ref={inputRef}
@@ -229,7 +244,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
           {selectedOption && !disabled && (
             <motion.button
               type="button"
-              className={styles.clear}
+              className={cn(styles.clear, classNames?.clear)}
               aria-label="Clear selection"
               onMouseDown={event => event.preventDefault()}
               onClick={clear}
@@ -242,26 +257,26 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
             </motion.button>
           )}
         </AnimatePresence>
-        <ChevronDown className={styles.chevron} size={16} strokeWidth={1.75} aria-hidden="true" />
+        <ChevronDown className={cn(styles.chevron, classNames?.chevron)} size={16} strokeWidth={1.75} aria-hidden="true" />
       </div>
-      {description && <span id={hintId} className={styles.hint}>{description}</span>}
+      {description && <span id={hintId} className={cn(styles.hint, classNames?.hint)}>{description}</span>}
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
-            className={styles.popover}
+            className={cn(styles.popover, classNames?.popover)}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1, transition: reduceMotion ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] } } }}
             exit={{ opacity: 0, ...(reduceMotion ? {} : { y: -4, scale: 0.98 }), transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
             role="presentation"
           >
             <AutoHeight reduceMotion={reduceMotion}>
-            <div id={listboxId} className={styles.listbox} role="listbox" aria-label={`${label} options`}>
+            <div id={listboxId} className={cn(styles.listbox, classNames?.listbox)} role="listbox" aria-label={`${label} options`}>
               {filteredOptions.length ? filteredOptions.map((option, index) => (
                 <div
                   key={option.value}
                   ref={(element) => { optionRefs.current[option.value] = element; }}
                   id={`${controlId}-option-${option.value}`}
-                  className={styles.option}
+                  className={cn(styles.option, classNames?.option)}
                   data-active={index === activeIndex ? "true" : undefined}
                   data-disabled={option.disabled ? "true" : undefined}
                   role="option"
@@ -272,9 +287,9 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
                   onClick={() => choose(option)}
                 >
                   <span>{option.label}</span>
-                  {option.value === selectedValue && <Check className={styles.check} size={16} strokeWidth={1.75} aria-hidden="true" />}
+                  {option.value === selectedValue && <Check className={cn(styles.check, classNames?.check)} size={16} strokeWidth={1.75} aria-hidden="true" />}
                 </div>
-              )) : <motion.div className={styles.empty} role="status" initial={reduceMotion ? false : { opacity: 0, y: 4, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{emptyMessage}</motion.div>}
+              )) : <motion.div className={cn(styles.empty, classNames?.empty)} role="status" initial={reduceMotion ? false : { opacity: 0, y: 4, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{emptyMessage}</motion.div>}
             </div>
             </AutoHeight>
           </motion.div>

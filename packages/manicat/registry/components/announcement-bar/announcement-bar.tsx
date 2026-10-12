@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useRedu
 import type { AnimationPlaybackControls, Transition, Variants } from "motion/react";
 import { ArrowRight, ChevronDown, ChevronUp, Pause, Play, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./announcement-bar.module.css";
 
 export interface AnnouncementAction {
@@ -54,6 +55,29 @@ export interface AnnouncementBarProps {
   /** Accessible name of the region. */
   label?: string;
   className?: string;
+  /** Extend the inner, named parts of the announcement bar: bar, viewport, face, message, text, cta, countdown, countdownLabel, time, unit, unitMark, sep, digit, digitFace, controls, icon, ring, ringTrack, ringFill or ringIcon. */
+  classNames?: {
+    bar?: string;
+    viewport?: string;
+    face?: string;
+    message?: string;
+    text?: string;
+    cta?: string;
+    countdown?: string;
+    countdownLabel?: string;
+    time?: string;
+    unit?: string;
+    unitMark?: string;
+    sep?: string;
+    digit?: string;
+    digitFace?: string;
+    controls?: string;
+    icon?: string;
+    ring?: string;
+    ringTrack?: string;
+    ringFill?: string;
+    ringIcon?: string;
+  };
 }
 
 const storageKey = (id: string) => `arc-announcement:${id}`;
@@ -89,18 +113,18 @@ const pad = (value: number) => String(value).padStart(2, "0");
  * One character cell. A changed digit drops in from above while the old one falls away, like a counter winding down.
  * The invisible sizer keeps the cell in the text flow, so it shares the baseline of the words around it.
  */
-function Digit({ char, reduced }: { char: string; reduced: boolean }) {
-  return <span className={styles.digit}>
+function Digit({ char, reduced, classNames }: { char: string; reduced: boolean; classNames?: AnnouncementBarProps["classNames"] }) {
+  return <span className={cn(styles.digit, classNames?.digit)}>
     <span className={styles.digitSizer} aria-hidden="true">0</span>
     <AnimatePresence initial={false}>
-      <motion.span key={char} className={styles.digitFace}
+      <motion.span key={char} className={cn(styles.digitFace, classNames?.digitFace)}
         initial={reduced ? { opacity: 0 } : { y: "-70%", opacity: 0 }} animate={{ y: "0%", opacity: 1 }} exit={reduced ? { opacity: 0 } : { y: "70%", opacity: 0 }}
         transition={reduced ? { duration: motionTokens.duration.instant } : { y: physical(.32, .08), opacity: { duration: motionTokens.duration.fast, ease: standard } }}>{char}</motion.span>
     </AnimatePresence>
   </span>;
 }
 
-function Countdown({ to, label, reduced, onEnd }: { to: Date | string | number; label?: string; reduced: boolean; onEnd?: () => void }) {
+function Countdown({ to, label, reduced, onEnd, classNames }: { to: Date | string | number; label?: string; reduced: boolean; onEnd?: () => void; classNames?: AnnouncementBarProps["classNames"] }) {
   const target = new Date(to).getTime();
   const [now, setNow] = useState<number | null>(null);
   const ended = useRef(false);
@@ -124,17 +148,17 @@ function Countdown({ to, label, reduced, onEnd }: { to: Date | string | number; 
   const { d, h, m, s } = parts(now === null ? 0 : target - now);
   const pending = now === null;
   const spoken = pending ? "" : `${d ? `${d} days ` : ""}${h} hours ${m} minutes`;
-  const digits = (value: string, key: string) => value.split("").map((char, index) => <Digit key={`${key}${value.length - index}`} char={pending ? "0" : char} reduced={reduced} />);
-  return <span className={styles.countdown}>
-    {label ? <span className={styles.countdownLabel}>{label}</span> : null}
-    <span role="timer" aria-live="off" aria-label={spoken} className={styles.time} data-pending={pending || undefined}>
-      {d ? <><span className={styles.unit}>{digits(String(d), "d")}<span className={styles.unitMark} aria-hidden="true">d</span></span><span className={styles.gap} aria-hidden="true" /></> : null}
-      {digits(pad(h), "h")}<span className={styles.sep} aria-hidden="true">:</span>{digits(pad(m), "m")}<span className={styles.sep} aria-hidden="true">:</span>{digits(pad(s), "s")}
+  const digits = (value: string, key: string) => value.split("").map((char, index) => <Digit key={`${key}${value.length - index}`} char={pending ? "0" : char} reduced={reduced} classNames={classNames} />);
+  return <span className={cn(styles.countdown, classNames?.countdown)}>
+    {label ? <span className={cn(styles.countdownLabel, classNames?.countdownLabel)}>{label}</span> : null}
+    <span role="timer" aria-live="off" aria-label={spoken} className={cn(styles.time, classNames?.time)} data-pending={pending || undefined}>
+      {d ? <><span className={cn(styles.unit, classNames?.unit)}>{digits(String(d), "d")}<span className={cn(styles.unitMark, classNames?.unitMark)} aria-hidden="true">d</span></span><span className={styles.gap} aria-hidden="true" /></> : null}
+      {digits(pad(h), "h")}<span className={cn(styles.sep, classNames?.sep)} aria-hidden="true">:</span>{digits(pad(m), "m")}<span className={cn(styles.sep, classNames?.sep)} aria-hidden="true">:</span>{digits(pad(s), "s")}
     </span>
   </span>;
 }
 
-function Face({ announcement, direction, reduced, position, total, onSize, onAction, onCountdownEnd }: { announcement: Announcement; direction: number; reduced: boolean; position: number; total: number; onSize: (height: number) => void; onAction?: (announcement: Announcement) => void; onCountdownEnd?: (announcement: Announcement) => void }) {
+function Face({ announcement, direction, reduced, position, total, onSize, onAction, onCountdownEnd, classNames }: { announcement: Announcement; direction: number; reduced: boolean; position: number; total: number; onSize: (height: number) => void; onAction?: (announcement: Announcement) => void; onCountdownEnd?: (announcement: Announcement) => void; classNames?: AnnouncementBarProps["classNames"] }) {
   const ref = useRef<HTMLDivElement>(null);
   const present = useIsPresent();
   useLayoutEffect(() => {
@@ -149,13 +173,13 @@ function Face({ announcement, direction, reduced, position, total, onSize, onAct
   }, [onSize, present]);
   const { action, countdown } = announcement;
   const cta = action ? action.href
-    ? <a className={styles.cta} href={action.href} onClick={() => { action.onClick?.(); onAction?.(announcement); }}>{action.label}<ArrowRight size={14} strokeWidth={1.75} aria-hidden="true" /></a>
-    : <button type="button" className={styles.cta} onClick={() => { action.onClick?.(); onAction?.(announcement); }}>{action.label}<ArrowRight size={14} strokeWidth={1.75} aria-hidden="true" /></button> : null;
-  return <motion.div ref={ref} className={styles.face} custom={direction} variants={reduced ? fadeVariants : faceVariants} initial="hidden" animate="shown" exit="gone"
+    ? <a className={cn(styles.cta, classNames?.cta)} href={action.href} onClick={() => { action.onClick?.(); onAction?.(announcement); }}>{action.label}<ArrowRight size={14} strokeWidth={1.75} aria-hidden="true" /></a>
+    : <button type="button" className={cn(styles.cta, classNames?.cta)} onClick={() => { action.onClick?.(); onAction?.(announcement); }}>{action.label}<ArrowRight size={14} strokeWidth={1.75} aria-hidden="true" /></button> : null;
+  return <motion.div ref={ref} className={cn(styles.face, classNames?.face)} custom={direction} variants={reduced ? fadeVariants : faceVariants} initial="hidden" animate="shown" exit="gone"
     role={total > 1 ? "group" : undefined} aria-roledescription={total > 1 ? "slide" : undefined} aria-label={total > 1 ? `${position} of ${total}` : undefined} inert={!present || undefined}>
-    <p className={styles.message}>
-      <span className={styles.text}>{announcement.message}</span>
-      {countdown ? <Countdown to={countdown.to} label={countdown.label} reduced={reduced} onEnd={() => onCountdownEnd?.(announcement)} /> : null}
+    <p className={cn(styles.message, classNames?.message)}>
+      <span className={cn(styles.text, classNames?.text)}>{announcement.message}</span>
+      {countdown ? <Countdown to={countdown.to} label={countdown.label} reduced={reduced} onEnd={() => onCountdownEnd?.(announcement)} classNames={classNames} /> : null}
       {cta}
     </p>
   </motion.div>;
@@ -165,7 +189,7 @@ const RING = 2 * Math.PI * 8;
 
 export const AnnouncementBar = forwardRef<HTMLElement, AnnouncementBarProps>(function AnnouncementBar({
   messages, id, open: openProp, defaultOpen = true, onOpenChange, index: indexProp, defaultIndex = 0, onIndexChange,
-  interval = 6000, autoPlay = true, controls = false, dismissible = true, tone = "neutral", onAction, onCountdownEnd, label = "Announcements", className,
+  interval = 6000, autoPlay = true, controls = false, dismissible = true, tone = "neutral", onAction, onCountdownEnd, label = "Announcements", className, classNames,
 }, ref) {
   const reduced = !!useReducedMotion();
   const uid = useId();
@@ -253,27 +277,27 @@ export const AnnouncementBar = forwardRef<HTMLElement, AnnouncementBarProps>(fun
       transition={reduced ? { duration: motionTokens.duration.fast } : { height: COLLAPSE, opacity: { duration: motionTokens.duration.standard, ease: enter } }}
       onPointerEnter={event => { if (event.pointerType === "mouse") setHovered(true); }} onPointerLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false); }}>
-      <div className={styles.bar} data-tone={tone} style={{ "--controls": controlCount } as CSSProperties}>
+      <div className={cn(styles.bar, classNames?.bar)} data-tone={tone} style={{ "--controls": controlCount } as CSSProperties}>
         <div className={styles.side} aria-hidden="true" />
-        <motion.div className={styles.viewport} style={{ height }} id={`${uid}-slides`} aria-live={running ? "off" : "polite"} aria-atomic="false">
+        <motion.div className={cn(styles.viewport, classNames?.viewport)} style={{ height }} id={`${uid}-slides`} aria-live={running ? "off" : "polite"} aria-atomic="false">
           <AnimatePresence initial={false} custom={direction}>
             <Face key={announcement.id} announcement={announcement} direction={direction} reduced={reduced} position={current + 1} total={total}
-              onSize={onSize} onAction={onAction} onCountdownEnd={onCountdownEnd} />
+              onSize={onSize} onAction={onAction} onCountdownEnd={onCountdownEnd} classNames={classNames} />
           </AnimatePresence>
         </motion.div>
-        <div className={styles.controls}>
+        <div className={cn(styles.controls, classNames?.controls)}>
           {navigable ? <>
-            <button type="button" className={styles.icon} aria-label="Previous announcement" aria-controls={`${uid}-slides`} onClick={() => go(-1)}><ChevronUp size={16} strokeWidth={1.75} aria-hidden="true" /></button>
-            {rotating ? <button type="button" className={styles.ring} aria-label={userPaused ? "Resume announcements" : "Pause announcements"} aria-pressed={userPaused} onClick={() => setUserPaused(paused => !paused)}>
+            <button type="button" className={cn(styles.icon, classNames?.icon)} aria-label="Previous announcement" aria-controls={`${uid}-slides`} onClick={() => go(-1)}><ChevronUp size={16} strokeWidth={1.75} aria-hidden="true" /></button>
+            {rotating ? <button type="button" className={cn(styles.ring, classNames?.ring)} aria-label={userPaused ? "Resume announcements" : "Pause announcements"} aria-pressed={userPaused} onClick={() => setUserPaused(paused => !paused)}>
               <svg viewBox="0 0 20 20" aria-hidden="true">
-                <circle cx="10" cy="10" r="8" className={styles.ringTrack} />
-                <motion.circle cx="10" cy="10" r="8" className={styles.ringFill} strokeDasharray={RING} style={{ strokeDashoffset: dash }} />
+                <circle cx="10" cy="10" r="8" className={cn(styles.ringTrack, classNames?.ringTrack)} />
+                <motion.circle cx="10" cy="10" r="8" className={cn(styles.ringFill, classNames?.ringFill)} strokeDasharray={RING} style={{ strokeDashoffset: dash }} />
               </svg>
-              <span className={styles.ringIcon}>{userPaused ? <Play size={9} strokeWidth={2.4} aria-hidden="true" /> : <Pause size={9} strokeWidth={2.4} aria-hidden="true" />}</span>
+              <span className={cn(styles.ringIcon, classNames?.ringIcon)}>{userPaused ? <Play size={9} strokeWidth={2.4} aria-hidden="true" /> : <Pause size={9} strokeWidth={2.4} aria-hidden="true" />}</span>
             </button> : null}
-            <button type="button" className={styles.icon} aria-label="Next announcement" aria-controls={`${uid}-slides`} onClick={() => go(1)}><ChevronDown size={16} strokeWidth={1.75} aria-hidden="true" /></button>
+            <button type="button" className={cn(styles.icon, classNames?.icon)} aria-label="Next announcement" aria-controls={`${uid}-slides`} onClick={() => go(1)}><ChevronDown size={16} strokeWidth={1.75} aria-hidden="true" /></button>
           </> : null}
-          {dismissible ? <button type="button" className={styles.icon} aria-label="Dismiss" onClick={dismiss}><X size={16} strokeWidth={1.75} aria-hidden="true" /></button> : null}
+          {dismissible ? <button type="button" className={cn(styles.icon, classNames?.icon)} aria-label="Dismiss" onClick={dismiss}><X size={16} strokeWidth={1.75} aria-hidden="true" /></button> : null}
         </div>
       </div>
     </motion.section> : null}

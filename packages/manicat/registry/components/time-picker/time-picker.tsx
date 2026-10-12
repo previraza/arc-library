@@ -5,6 +5,7 @@ import type { Variants } from "motion/react";
 import { ChevronDown, Clock3 } from "lucide-react";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./time-picker.module.css";
 
 export interface TimePickerProps {
@@ -18,6 +19,20 @@ export interface TimePickerProps {
   format?: "12h" | "24h";
   disabled?: boolean;
   className?: string;
+  /** Extend the inner, named parts of the time picker: label, anchor, trigger, valueText, value, placeholder, chevron, menu, option, dot or description. */
+  classNames?: {
+    label?: string;
+    anchor?: string;
+    trigger?: string;
+    valueText?: string;
+    value?: string;
+    placeholder?: string;
+    chevron?: string;
+    menu?: string;
+    option?: string;
+    dot?: string;
+    description?: string;
+  };
 }
 
 const pad = (value: number) => String(value).padStart(2, "0");
@@ -33,7 +48,7 @@ const valueRoll: Variants = {
 /** Reduced motion keeps a short crossfade; the resting state matches valueRoll so server and client markup agree. */
 const valueFade: Variants = { enter: { opacity: 0 }, center: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: motionTokens.duration.instant } }, exit: { opacity: 0, transition: { duration: motionTokens.duration.instant } } };
 
-export function TimePicker({ label, value, defaultValue = "09:00", onChange, description, placeholder = "Select a time", minuteStep = 15, format = "12h", disabled = false, className }: TimePickerProps) {
+export function TimePicker({ label, value, defaultValue = "09:00", onChange, description, placeholder = "Select a time", minuteStep = 15, format = "12h", disabled = false, className, classNames }: TimePickerProps) {
   const id = useId();
   const labelId = `${id}-label`;
   const valueId = `${id}-value`;
@@ -86,21 +101,21 @@ export function TimePicker({ label, value, defaultValue = "09:00", onChange, des
     }
   };
   return <div ref={rootRef} className={[styles.field, className].filter(Boolean).join(" ")}>
-    <span id={labelId} className={styles.label}>{label}</span>
-    <div className={styles.anchor}>
-      <button type="button" className={styles.trigger} disabled={disabled} aria-labelledby={`${labelId} ${valueId}`} aria-haspopup="listbox" aria-expanded={open} aria-controls={`${id}-listbox`} onClick={() => open ? setOpen(false) : openMenu()} onKeyDown={onKeyDown}>
+    <span id={labelId} className={cn(styles.label, classNames?.label)}>{label}</span>
+    <div className={cn(styles.anchor, classNames?.anchor)}>
+      <button type="button" className={cn(styles.trigger, classNames?.trigger)} disabled={disabled} aria-labelledby={`${labelId} ${valueId}`} aria-haspopup="listbox" aria-expanded={open} aria-controls={`${id}-listbox`} onClick={() => open ? setOpen(false) : openMenu()} onKeyDown={onKeyDown}>
         <Clock3 size={16} aria-hidden="true" />
         <span id={valueId} className={styles.srOnly}>{selected ? display(selected) : placeholder}</span>
-        <span className={styles.valueText} aria-hidden="true"><AnimatePresence initial={false} custom={direction}><motion.span key={selected || "placeholder"} className={selected ? styles.value : styles.placeholder} custom={direction} variants={reduce ? valueFade : valueRoll} initial="enter" animate="center" exit="exit">{selected ? display(selected) : placeholder}</motion.span></AnimatePresence></span>
-        <ChevronDown className={styles.chevron} size={16} aria-hidden="true" />
+        <span className={cn(styles.valueText, classNames?.valueText)} aria-hidden="true"><AnimatePresence initial={false} custom={direction}><motion.span key={selected || "placeholder"} className={cn(selected ? styles.value : styles.placeholder, selected ? classNames?.value : classNames?.placeholder)} custom={direction} variants={reduce ? valueFade : valueRoll} initial="enter" animate="center" exit="exit">{selected ? display(selected) : placeholder}</motion.span></AnimatePresence></span>
+        <ChevronDown className={cn(styles.chevron, classNames?.chevron)} size={16} aria-hidden="true" />
       </button>
-      <AnimatePresence initial={false}>{open && <motion.div id={`${id}-listbox`} className={styles.menu} role="listbox" aria-label={`${label} options`} 
+      <AnimatePresence initial={false}>{open && <motion.div id={`${id}-listbox`} className={cn(styles.menu, classNames?.menu)} role="listbox" aria-label={`${label} options`} 
         initial={reduce ? { opacity: 0 } : { opacity: 0, y: -6, scale: .97 }}
         animate={{ opacity: 1, y: 0, scale: 1, transition: reduce ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: enter } } }}
         exit={{ opacity: 0, ...(reduce ? {} : { y: -4, scale: .98 }), transition: { duration: motionTokens.duration.instant, ease: standard } }}>
-        {options.map((option, index) => <button ref={node => { optionRefs.current[index] = node; }} id={`${id}-option-${index}`} type="button" role="option" aria-selected={option === selected} data-active={activeIndex === index || undefined} className={styles.option} key={option} onPointerMove={() => { if (activeIndex !== index) setActiveIndex(index); }} onClick={() => choose(option)}>{display(option)}{option === selected && <span className={styles.dot} aria-hidden="true" />}</button>)}
+        {options.map((option, index) => <button ref={node => { optionRefs.current[index] = node; }} id={`${id}-option-${index}`} type="button" role="option" aria-selected={option === selected} data-active={activeIndex === index || undefined} className={cn(styles.option, classNames?.option)} key={option} onPointerMove={() => { if (activeIndex !== index) setActiveIndex(index); }} onClick={() => choose(option)}>{display(option)}{option === selected && <span className={cn(styles.dot, classNames?.dot)} aria-hidden="true" />}</button>)}
       </motion.div>}</AnimatePresence>
     </div>
-    {description && <span className={styles.description}>{description}</span>}
+    {description && <span className={cn(styles.description, classNames?.description)}>{description}</span>}
   </div>;
 }

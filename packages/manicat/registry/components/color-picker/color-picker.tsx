@@ -7,6 +7,7 @@ import type { Transition } from "motion/react";
 import { Check, Pipette, Plus } from "lucide-react";
 import { TextMorph } from "@/registry/components/text-morph/text-morph";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./color-picker.module.css";
 
 export type ColorFormat = "hex" | "rgb" | "hsl" | "oklch";
@@ -35,6 +36,40 @@ export interface ColorPickerProps {
   maxSwatches?: number;
   defaultFormat?: ColorFormat;
   className?: string;
+  /** Extend the inner, named parts of the color picker: trigger, triggerText, name, hex, float, panel, head, headActions, iconButton, body, area, areaThumb, hue, alpha, field, format, inputWrap, input, morph, error, contrast, sample, ratio, against, grade, swatches, add, swatchList, swatchSlot, swatch or swatchChip. */
+  classNames?: {
+    trigger?: string;
+    triggerText?: string;
+    name?: string;
+    hex?: string;
+    float?: string;
+    panel?: string;
+    head?: string;
+    headActions?: string;
+    iconButton?: string;
+    body?: string;
+    area?: string;
+    areaThumb?: string;
+    hue?: string;
+    alpha?: string;
+    field?: string;
+    format?: string;
+    inputWrap?: string;
+    input?: string;
+    morph?: string;
+    error?: string;
+    contrast?: string;
+    sample?: string;
+    ratio?: string;
+    against?: string;
+    grade?: string;
+    swatches?: string;
+    add?: string;
+    swatchList?: string;
+    swatchSlot?: string;
+    swatch?: string;
+    swatchChip?: string;
+  };
 }
 
 export type Hsva = { h: number; s: number; v: number; a: number };
@@ -239,7 +274,7 @@ const newId = () => `swatch-${Date.now().toString(36)}-${swatchCount++}`;
 
 export function ColorPicker({
   value, defaultValue = "#2F6BFF", onValueChange, background = "#FFFFFF", label = "Color", swatches: swatchesProp, defaultSwatches, onSwatchesChange,
-  maxSwatches = 7, defaultFormat = "hex", className,
+  maxSwatches = 7, defaultFormat = "hex", className, classNames,
 }: ColorPickerProps) {
   const uid = useId().replace(/[^a-zA-Z0-9-]/g, "");
   const hydrated = useHydrated();
@@ -434,26 +469,26 @@ export function ColorPicker({
   const style = { "--picker-color": css, "--picker-opaque": opaque, "--picker-hue": pure, "--picker-bg": background } as CSSProperties;
 
   return <div ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")} style={style}>
-    <button ref={triggerRef} type="button" className={styles.trigger} aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? `${uid}-panel` : undefined}
+          <button ref={triggerRef} type="button" className={cn(styles.trigger, classNames?.trigger)} aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? `${uid}-panel` : undefined}
       onClick={() => open ? hide() : show()}>
       <Chip color={css} />
-      <span className={styles.triggerText}><span className={styles.name}>{label}</span><span className={styles.hex}>{hex}</span></span>
+      <span className={cn(styles.triggerText, classNames?.triggerText)}><span className={cn(styles.name, classNames?.name)}>{label}</span><span className={cn(styles.hex, classNames?.hex)}>{hex}</span></span>
     </button>
 
-    {shown && <div className={styles.float} data-open={open || undefined}>
-      <motion.div ref={panelRef} id={`${uid}-panel`} role="dialog" aria-label={`${label} color`} className={styles.panel} inert={!open} style={{ clipPath, opacity: fade }}>
-        <div className={styles.head}>
+    {shown && <div className={cn(styles.float, classNames?.float)} data-open={open || undefined}>
+      <motion.div ref={panelRef} id={`${uid}-panel`} role="dialog" aria-label={`${label} color`} className={cn(styles.panel, classNames?.panel)} inert={!open} style={{ clipPath, opacity: fade }}>
+        <div className={cn(styles.head, classNames?.head)}>
           <Chip color={css} />
-          <span className={styles.triggerText}><span className={styles.name}>{label}</span><span className={styles.hex}>{hex}</span></span>
-          <motion.span className={styles.headActions} style={{ opacity: contentOpacity }}>
-            {canPick && <button type="button" className={styles.iconButton} aria-label="Pick a color from the screen" onClick={pickFromScreen}><Pipette size={18} strokeWidth={1.75} aria-hidden="true" /></button>}
-            <button type="button" className={styles.iconButton} aria-label="Done" onClick={() => hide()}><Check size={18} strokeWidth={1.75} aria-hidden="true" /></button>
+          <span className={cn(styles.triggerText, classNames?.triggerText)}><span className={cn(styles.name, classNames?.name)}>{label}</span><span className={cn(styles.hex, classNames?.hex)}>{hex}</span></span>
+          <motion.span className={cn(styles.headActions, classNames?.headActions)} style={{ opacity: contentOpacity }}>
+            {canPick && <button type="button" className={cn(styles.iconButton, classNames?.iconButton)} aria-label="Pick a color from the screen" onClick={pickFromScreen}><Pipette size={18} strokeWidth={1.75} aria-hidden="true" /></button>}
+            <button type="button" className={cn(styles.iconButton, classNames?.iconButton)} aria-label="Done" onClick={() => hide()}><Check size={18} strokeWidth={1.75} aria-hidden="true" /></button>
           </motion.span>
         </div>
 
-        <motion.div className={styles.body} style={{ opacity: contentOpacity, y: contentY }}>
-          <div className={styles.area} data-active={active === "area" || undefined} {...areaPad}>
-            <motion.div ref={areaThumb} className={styles.areaThumb} role="slider" tabIndex={0} aria-roledescription="2D slider"
+          <motion.div className={cn(styles.body, classNames?.body)} style={{ opacity: contentOpacity, y: contentY }}>
+            <div className={cn(styles.area, classNames?.area)} data-active={active === "area" || undefined} {...areaPad}>
+              <motion.div ref={areaThumb} className={cn(styles.areaThumb, classNames?.areaThumb)} role="slider" tabIndex={0} aria-roledescription="2D slider"
               aria-label="Saturation and brightness" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(hsva.s * 100)}
               aria-valuetext={`Saturation ${Math.round(hsva.s * 100)}%, brightness ${Math.round(hsva.v * 100)}%`}
               style={{ left: areaLeft, top: areaTop }}
@@ -465,17 +500,17 @@ export function ColorPicker({
               }} />
           </div>
 
-          <Slider label="Hue" value={hsva.h} valueText={`${Math.round(hsva.h)} degrees`} max={360} unit={1} className={styles.hue} reduced={reduced} fill={pure}
+          <Slider label="Hue" value={hsva.h} valueText={`${Math.round(hsva.h)} degrees`} max={360} unit={1} className={cn(styles.hue, classNames?.hue)} reduced={reduced} fill={pure}
             onChange={h => commit({ ...hsva, h: clamp(h, 0, 359.9) })} active={active === "hue"} onActive={on => setActive(on ? "hue" : null)} />
-          <Slider label="Opacity" value={hsva.a * 100} valueText={`${Math.round(hsva.a * 100)}%`} max={100} unit={1} className={styles.alpha} reduced={reduced} fill={css}
+          <Slider label="Opacity" value={hsva.a * 100} valueText={`${Math.round(hsva.a * 100)}%`} max={100} unit={1} className={cn(styles.alpha, classNames?.alpha)} reduced={reduced} fill={css}
             onChange={a => commit({ ...hsva, a: clamp(a / 100) })} active={active === "alpha"} onActive={on => setActive(on ? "alpha" : null)} />
 
-          <motion.div className={styles.field} data-invalid={invalid || undefined} style={{ x: fieldX }}>
-            <button type="button" className={styles.format} onClick={cycleFormat} aria-label={`Format: ${formatNames[kind]}. Switch format`}>
+          <motion.div className={cn(styles.field, classNames?.field)} data-invalid={invalid || undefined} style={{ x: fieldX }}>
+            <button type="button" className={cn(styles.format, classNames?.format)} onClick={cycleFormat} aria-label={`Format: ${formatNames[kind]}. Switch format`}>
               <TextMorph>{formatNames[kind]}</TextMorph>
             </button>
-            <span className={styles.inputWrap}>
-              <input ref={inputRef} className={styles.input} value={draft ?? text} spellCheck={false} autoComplete="off" aria-label={`${label} in ${formatNames[kind]}`}
+            <span className={cn(styles.inputWrap, classNames?.inputWrap)}>
+              <input ref={inputRef} className={cn(styles.input, classNames?.input)} value={draft ?? text} spellCheck={false} autoComplete="off" aria-label={`${label} in ${formatNames[kind]}`}
                 aria-invalid={invalid || undefined} aria-describedby={invalid ? `${uid}-error` : undefined} data-morphing={morph ? "" : undefined}
                 onChange={event => { setDraft(event.target.value); setInvalid(false); }}
                 onKeyDown={event => {
@@ -483,16 +518,16 @@ export function ColorPicker({
                   if (event.key === "Escape" && draft !== null) { event.stopPropagation(); event.nativeEvent.stopImmediatePropagation(); setDraft(null); setInvalid(false); }
                 }}
                 onBlur={() => { if (!submitDraft()) { setDraft(null); setInvalid(false); } }} />
-              {morph && <span className={styles.morph} aria-hidden="true"><TextMorph>{morph.phase === 0 ? morph.from : morph.to}</TextMorph></span>}
+                {morph && <span className={cn(styles.morph, classNames?.morph)} aria-hidden="true"><TextMorph>{morph.phase === 0 ? morph.from : morph.to}</TextMorph></span>}
             </span>
           </motion.div>
-          <p id={`${uid}-error`} className={styles.error} aria-live="polite">{invalid ? "Enter a hex, RGB, HSL, or OKLCH color" : ""}</p>
+          <p id={`${uid}-error`} className={cn(styles.error, classNames?.error)} aria-live="polite">{invalid ? "Enter a hex, RGB, HSL, or OKLCH color" : ""}</p>
 
-          <div className={styles.contrast}>
-            <span className={styles.sample} aria-hidden="true">Aa</span>
-            <span className={styles.ratio}><motion.span>{ratioText}</motion.span>:1</span>
-            <span className={styles.against}>against background</span>
-            <span className={styles.grade} data-grade={grade === "Fails" ? "fail" : grade === "AA large" ? "large" : "pass"}>
+          <div className={cn(styles.contrast, classNames?.contrast)}>
+            <span className={cn(styles.sample, classNames?.sample)} aria-hidden="true">Aa</span>
+            <span className={cn(styles.ratio, classNames?.ratio)}><motion.span>{ratioText}</motion.span>:1</span>
+            <span className={cn(styles.against, classNames?.against)}>against background</span>
+            <span className={cn(styles.grade, classNames?.grade)} data-grade={grade === "Fails" ? "fail" : grade === "AA large" ? "large" : "pass"}>
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span key={grade} initial={hidden} animate={{ opacity: 1, y: "0em", filter: "blur(0px)" }}
                   exit={{ ...hidden, transition: { duration: duration.instant } }} transition={reduced ? { duration: duration.instant } : { duration: duration.standard, ease: [...ease.enter] }}>{grade}</motion.span>
@@ -501,21 +536,21 @@ export function ColorPicker({
             <span className={styles.srOnly}>{`Contrast ${ratio.toFixed(2)} to 1, ${grade === "Fails" ? "fails" : `passes ${grade}`}`}</span>
           </div>
 
-          <div className={styles.swatches}>
-            <button type="button" className={styles.add} onClick={saveSwatch} aria-label={`Save ${hex}`}><Plus size={16} strokeWidth={1.75} aria-hidden="true" /></button>
-            <Reorder.Group as="div" axis="x" values={swatches} onReorder={setSwatches} className={styles.swatchList} role="listbox" aria-label="Saved colors" aria-orientation="horizontal">
+          <div className={cn(styles.swatches, classNames?.swatches)}>
+            <button type="button" className={cn(styles.add, classNames?.add)} onClick={saveSwatch} aria-label={`Save ${hex}`}><Plus size={16} strokeWidth={1.75} aria-hidden="true" /></button>
+            <Reorder.Group as="div" axis="x" values={swatches} onReorder={setSwatches} className={cn(styles.swatchList, classNames?.swatchList)} role="listbox" aria-label="Saved colors" aria-orientation="horizontal">
               <AnimatePresence initial={false}>
-                {swatches.map((entry, index) => <Reorder.Item key={entry.id} value={entry} as="div" className={styles.swatchSlot} dragElastic={.12}
+                {swatches.map((entry, index) => <Reorder.Item key={entry.id} value={entry} as="div" className={cn(styles.swatchSlot, classNames?.swatchSlot)} dragElastic={.12}
                   initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .4 }} animate={{ opacity: 1, scale: 1 }}
                   exit={reduced ? { opacity: 0 } : { opacity: 0, scale: .4, transition: { duration: duration.fast } }}
                   transition={reduced ? instant : { ...spring.snappy, layout: spring.smooth }} whileDrag={reduced ? undefined : { scale: 1.15, zIndex: 2 }}
                   onDragStart={() => { dragged.current = true; }} onDragEnd={() => requestAnimationFrame(() => { dragged.current = false; })}>
                   <button ref={node => { if (node) swatchRefs.current.set(entry.id, node); else swatchRefs.current.delete(entry.id); }}
-                    type="button" role="option" aria-selected={entry.color.toUpperCase() === hex} className={styles.swatch} data-current={entry.color.toUpperCase() === hex || undefined}
+                    type="button" role="option" aria-selected={entry.color.toUpperCase() === hex} className={cn(styles.swatch, classNames?.swatch)} data-current={entry.color.toUpperCase() === hex || undefined}
                     aria-label={`${entry.color}. Alt and arrow keys to move, Delete to remove`} tabIndex={entry.id === swatchTab ? 0 : -1}
                     onFocus={() => setFocusSwatch(entry.id)} onKeyDown={event => onSwatchKey(event, index)}
                     onClick={() => { if (dragged.current) return; const next = parseColor(entry.color, hsva.h); if (next) commit(next); }}>
-                    <Chip color={entry.color} className={styles.swatchChip} />
+                    <Chip color={entry.color} className={cn(styles.swatchChip, classNames?.swatchChip)} />
                   </button>
                 </Reorder.Item>)}
               </AnimatePresence>

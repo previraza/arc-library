@@ -6,6 +6,7 @@ import { ArrowUp, CircleAlert, File as FileIcon, FileArchive, FileImage, FilePla
 import { AnimatePresence, animate, motion, useIsPresent, useMotionTemplate, useMotionValue, useMotionValueEvent, useReducedMotion, useSpring, useTransform } from "motion/react";
 import type { HTMLMotionProps, TargetAndTransition, Transition } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./file-dropzone.module.css";
 
 export type FileDropzoneStatus = "uploading" | "uploaded" | "failed";
@@ -31,6 +32,57 @@ export type FileDropzoneProps = {
   dropLabel?: string;
   /** Once the list holds this many files, the prompt folds to a slim bar so the list has room. A file dragged over brings the icon back. */
   compactAt?: number;
+  className?: string;
+  /** Extend the inner, named parts of the file dropzone: wrapper, dropzone, wash, edge, glow, trigger, iconSlot, sheets, sheet, label, labelText, hint, noteSlot, note, input, list, item, row, fileIcon, thumb, copy, name, meta, dot, phase, state, uploaded, failed, reason, percent, barFrame, bar, barFill, actions, retrySlot, retryInner, retry, retryLabel, remove, messageSlot, error, errorIcon, errorCopy, srOnly, words, word, stateIcon. */
+  classNames?: {
+    wrapper?: string;
+    dropzone?: string;
+    wash?: string;
+    edge?: string;
+    glow?: string;
+    trigger?: string;
+    iconSlot?: string;
+    sheets?: string;
+    sheet?: string;
+    label?: string;
+    labelText?: string;
+    hint?: string;
+    noteSlot?: string;
+    note?: string;
+    input?: string;
+    list?: string;
+    item?: string;
+    row?: string;
+    fileIcon?: string;
+    thumb?: string;
+    copy?: string;
+    name?: string;
+    meta?: string;
+    dot?: string;
+    phase?: string;
+    state?: string;
+    uploaded?: string;
+    failed?: string;
+    reason?: string;
+    percent?: string;
+    barFrame?: string;
+    bar?: string;
+    barFill?: string;
+    actions?: string;
+    retrySlot?: string;
+    retryInner?: string;
+    retry?: string;
+    retryLabel?: string;
+    remove?: string;
+    messageSlot?: string;
+    error?: string;
+    errorIcon?: string;
+    errorCopy?: string;
+    srOnly?: string;
+    words?: string;
+    word?: string;
+    stateIcon?: string;
+  };
 };
 
 const MB = 1024 * 1024;
@@ -114,7 +166,7 @@ function DrawnCheck({ reduce }: { reduce: boolean }) {
   </svg>;
 }
 
-type RowProps = { item: FileDropzoneItem; reduce: boolean; delay: number; fresh: boolean; canRetry: boolean; onRemove: () => void; onRetry: () => void; removeRef: (node: HTMLButtonElement | null) => void };
+type RowProps = { item: FileDropzoneItem; reduce: boolean; delay: number; fresh: boolean; canRetry: boolean; onRemove: () => void; onRetry: () => void; removeRef: (node: HTMLButtonElement | null) => void; classNames?: FileDropzoneProps["classNames"] };
 
 function Thumb({ item }: { item: FileDropzoneItem }) {
   const [broken, setBroken] = useState(false);
@@ -123,7 +175,7 @@ function Thumb({ item }: { item: FileDropzoneItem }) {
   return <span className={styles.thumb}><img src={item.preview} alt="" width={40} height={40} decoding="async" onError={() => setBroken(true)} /></span>;
 }
 
-function FileRow({ item, reduce, delay, fresh, canRetry, onRemove, onRetry, removeRef }: RowProps) {
+function FileRow({ item, reduce, delay, fresh, canRetry, onRemove, onRetry, removeRef, classNames }: RowProps) {
   const { status } = item;
   const rowRef = useRef<HTMLDivElement>(null);
   // A failure shakes the row once: a file refused on arrival after it lands, an upload that fails at the moment it fails.
@@ -157,20 +209,20 @@ function FileRow({ item, reduce, delay, fresh, canRetry, onRemove, onRetry, remo
   useMotionValueEvent(progress, "change", value => { if (status === "uploaded" && value >= 99.5) setFilled(true); });
   const failed = status === "failed";
   const retry = failed && canRetry && item.retryable !== false;
-  return <motion.li className={styles.item} initial={reduce ? { opacity: 0 } : { height: 0 }} animate={{ height: "auto", opacity: 1 }}
+  return <motion.li className={cn(styles.item, classNames?.item)} initial={reduce ? { opacity: 0 } : { height: 0 }} animate={{ height: "auto", opacity: 1 }}
     exit={reduce ? { opacity: 0, transition: fade } : { height: 0, opacity: 0, transition: { height: collapse, opacity: { ...exitFast, delay: .04 } } }}
     transition={reduce ? fade : { height: { ...motionTokens.spring.smooth, delay }, opacity: fade }}>
     {/* New rows rise a little and unblur while their height opens, so the rows below make room instead of jumping. */}
-    <motion.div ref={rowRef} className={`${styles.row} ${failed ? styles.isFailed : ""}`} initial={reduce ? false : { opacity: 0, y: -22, scale: .94, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+    <motion.div ref={rowRef} className={cn(styles.row, failed ? styles.isFailed : "", classNames?.row)} initial={reduce ? false : { opacity: 0, y: -22, scale: .94, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
       exit={reduce ? undefined : { scale: .97, filter: `blur(${motionTokens.blur.subtle}px)`, transition: exitFast }}
       transition={reduce ? instant : { y: { ...land, delay }, scale: { ...land, delay }, opacity: { ...enter, delay }, filter: { ...enter, delay } }}>
       <Thumb item={item} />
-      <span className={styles.copy}>
-        <span className={styles.name} title={item.name}>{item.name}</span>
-        <span className={styles.meta}>
+      <span className={cn(styles.copy, classNames?.copy)}>
+        <span className={cn(styles.name, classNames?.name)} title={item.name}>{item.name}</span>
+        <span className={cn(styles.meta, classNames?.meta)}>
           <span>{formatFileSize(item.size)}</span>
-          {phase && <><span className={styles.dot} aria-hidden="true">·</span><span className={styles.phase}><AnimatePresence mode="popLayout" initial={false}>
-            <Swap key={phase} className={`${styles.state} ${phase === "uploaded" ? styles.uploaded : phase === "failed" ? styles.failed : ""}`} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? { opacity: 0, transition: fade } : textOut} transition={reduce ? fade : enter}>
+          {phase && <><span className={cn(styles.dot, classNames?.dot)} aria-hidden="true">·</span><span className={cn(styles.phase, classNames?.phase)}><AnimatePresence mode="popLayout" initial={false}>
+            <Swap key={phase} className={cn(styles.state, classNames?.state, phase === "uploaded" ? styles.uploaded : phase === "failed" ? styles.failed : "")} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? { opacity: 0, transition: fade } : textOut} transition={reduce ? fade : enter}>
               {phase === "uploading" ? <span>Uploading <motion.span className={styles.percent}>{percent}</motion.span></span>
                 : phase === "uploaded" ? <><DrawnCheck reduce={reduce} /><span>Uploaded</span></>
                 : <><CircleAlert className={styles.stateIcon} size={14} strokeWidth={2.25} aria-hidden="true" /><span className={styles.reason} title={item.error}><span className={styles.srOnly}>Failed: </span>{item.error || "Upload failed"}</span></>}
@@ -178,28 +230,28 @@ function FileRow({ item, reduce, delay, fresh, canRetry, onRemove, onRetry, remo
           </AnimatePresence></span></>}
         </span>
         {/* The bar opens with the upload, fills on a spring, then folds away just after the check draws. */}
-        <AnimatePresence initial={false}>{phase === "uploading" && <motion.span key="bar" className={styles.barFrame} initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+        <AnimatePresence initial={false}>{phase === "uploading" && <motion.span key="bar" className={cn(styles.barFrame, classNames?.barFrame)} initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
           exit={reduce ? { opacity: 0, transition: fade } : { height: 0, opacity: 0, transition: { height: { ...collapse, delay: .22 }, opacity: { ...exitFast, delay: .16 } } }}
           transition={reduce ? fade : { height: motionTokens.spring.smooth, opacity: enter }}>
-          <span className={styles.bar} role="progressbar" aria-label={`Uploading ${item.name}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(clamp(target))}><motion.span className={styles.barFill} style={{ x }} /></span>
+          <span className={cn(styles.bar, classNames?.bar)} role="progressbar" aria-label={`Uploading ${item.name}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(clamp(target))}><motion.span className={cn(styles.barFill, classNames?.barFill)} style={{ x }} /></span>
         </motion.span>}</AnimatePresence>
       </span>
-      <span className={styles.actions}>
+      <span className={cn(styles.actions, classNames?.actions)}>
         {/* Retry opens its own width, so the name column narrows on a spring instead of losing space in one frame. */}
-        <AnimatePresence initial={false}>{retry && <motion.span key="retry" className={styles.retrySlot} initial={reduce ? { opacity: 0 } : { width: 0, opacity: 0 }} animate={{ width: "auto", opacity: 1 }}
+        <AnimatePresence initial={false}>{retry && <motion.span key="retry" className={cn(styles.retrySlot, classNames?.retrySlot)} initial={reduce ? { opacity: 0 } : { width: 0, opacity: 0 }} animate={{ width: "auto", opacity: 1 }}
           exit={reduce ? { opacity: 0, transition: fade } : { width: 0, opacity: 0, transition: { width: collapse, opacity: { duration: motionTokens.duration.instant } } }}
           transition={reduce ? fade : { width: motionTokens.spring.smooth, opacity: enter }}>
-          <motion.span className={styles.retryInner} initial={reduce ? false : { scale: .8, filter: `blur(${motionTokens.blur.subtle}px)` }} animate={{ scale: 1, filter: "blur(0px)" }} transition={reduce ? instant : motionTokens.spring.snappy}>
-            <button type="button" className={styles.retry} onClick={onRetry} aria-label={`Retry ${item.name}`} title="Retry"><RotateCw size={14} strokeWidth={2} aria-hidden="true" /><span className={styles.retryLabel}>Retry</span></button>
+          <motion.span className={cn(styles.retryInner, classNames?.retryInner)} initial={reduce ? false : { scale: .8, filter: `blur(${motionTokens.blur.subtle}px)` }} animate={{ scale: 1, filter: "blur(0px)" }} transition={reduce ? instant : motionTokens.spring.snappy}>
+            <button type="button" className={cn(styles.retry, classNames?.retry)} onClick={onRetry} aria-label={`Retry ${item.name}`} title="Retry"><RotateCw size={14} strokeWidth={2} aria-hidden="true" /><span className={cn(styles.retryLabel, classNames?.retryLabel)}>Retry</span></button>
           </motion.span>
         </motion.span>}</AnimatePresence>
-        <button ref={removeRef} type="button" className={styles.remove} onClick={onRemove} aria-label={`Remove ${item.name}`} title="Remove"><X size={16} strokeWidth={1.75} aria-hidden="true" /></button>
+        <button ref={removeRef} type="button" className={cn(styles.remove, classNames?.remove)} onClick={onRemove} aria-label={`Remove ${item.name}`} title="Remove"><X size={16} strokeWidth={1.75} aria-hidden="true" /></button>
       </span>
     </motion.div>
   </motion.li>;
 }
 
-export function FileDropzone({ accept, multiple = true, maxFiles = 5, onFilesChange, label = "Add files", description = "Drop files here or choose from your device", defaultItems, onUpload, maxSize, listPlacement = "below", note, dropLabel, compactAt }: FileDropzoneProps) {
+export function FileDropzone({ accept, multiple = true, maxFiles = 5, onFilesChange, label = "Add files", description = "Drop files here or choose from your device", defaultItems, onUpload, maxSize, listPlacement = "below", note, dropLabel, compactAt, className, classNames }: FileDropzoneProps) {
   const [items, setItems] = useState<FileDropzoneItem[]>(() => defaultItems ?? []);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
@@ -399,40 +451,40 @@ export function FileDropzone({ accept, multiple = true, maxFiles = 5, onFilesCha
   const rowsInside = inside && items.length > 0;
 
   // The list's own padding opens with the first row, so the gap under the target never appears in one frame.
-  const list = <motion.ul className={styles.list} aria-label="Files" aria-hidden={items.length ? undefined : true} onKeyDown={moveFocus} initial={false}
+  const list = <motion.ul className={cn(styles.list, classNames?.list)} aria-label="Files" aria-hidden={items.length ? undefined : true} onKeyDown={moveFocus} initial={false}
     animate={{ paddingTop: items.length && !inside ? 4 : 0, paddingBottom: items.length && inside ? 12 : 0 }} transition={reduce ? instant : motionTokens.spring.smooth}>
     <AnimatePresence initial={false}>{items.map((item, index) => <FileRow key={item.id} item={item} reduce={reduce} delay={reduce ? 0 : Math.min(Math.max(0, index - batchStart), 7) * motionTokens.stagger.item * 1.6} fresh={freshIds.has(item.id)} canRetry={!!onUpload}
-      onRemove={() => removeItem(item)} onRetry={() => retryItem(item)} removeRef={node => { if (node) removeRefs.current.set(item.id, node); else removeRefs.current.delete(item.id); }} />)}</AnimatePresence>
+      onRemove={() => removeItem(item)} onRetry={() => retryItem(item)} removeRef={node => { if (node) removeRefs.current.set(item.id, node); else removeRefs.current.delete(item.id); }} classNames={classNames} />)}</AnimatePresence>
   </motion.ul>;
 
-  return <div className={styles.wrapper} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)}
+  return <div className={cn(styles.wrapper, className)} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)}
     onFocus={() => setFocusWithin(true)} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocusWithin(false); }}>
-    <div ref={zoneRef} className={`${styles.dropzone} ${dragging ? styles.dragging : ""} ${inside ? styles.inside : ""} ${compact ? styles.compact : ""}`}
+    <div ref={zoneRef} className={cn(styles.dropzone, classNames?.dropzone, dragging ? styles.dragging : "", inside ? styles.inside : "", compact ? styles.compact : "")}
       onDragEnter={event => { if (!carriesFiles(event)) return; event.preventDefault(); if (!dragDepth.current) track(event); dragDepth.current += 1; setDragging(true); }}
       onDragOver={event => { if (!carriesFiles(event)) return; event.preventDefault(); event.dataTransfer.dropEffect = "copy"; track(event); }}
       onDragLeave={event => { if (!carriesFiles(event)) return; dragDepth.current = Math.max(0, dragDepth.current - 1); if (!dragDepth.current) setDragging(false); }}
       onDrop={event => { event.preventDefault(); dragDepth.current = 0; setDragging(false); if (event.dataTransfer.files.length) addFiles(event.dataTransfer.files); }}>
-      <motion.span className={styles.wash} style={{ backgroundImage: washLight }} aria-hidden="true" />
-      <svg className={styles.edge} aria-hidden="true"><rect ref={edgeRef} width="100%" height="100%" rx={33.5} pathLength={1358} /></svg>
-      <motion.span className={styles.glow} style={{ backgroundImage: edgeLight }} aria-hidden="true" />
+      <motion.span className={cn(styles.wash, classNames?.wash)} style={{ backgroundImage: washLight }} aria-hidden="true" />
+      <svg className={cn(styles.edge, classNames?.edge)} aria-hidden="true"><rect ref={edgeRef} width="100%" height="100%" rx={33.5} pathLength={1358} /></svg>
+      <motion.span className={cn(styles.glow, classNames?.glow)} style={{ backgroundImage: edgeLight }} aria-hidden="true" />
       {/* Children ignore pointer events, so the whole target is one hit area for clicks and drags. */}
-      <motion.button ref={dropRef} type="button" className={styles.trigger} onClick={() => inputRef.current?.click()} aria-describedby={compact ? descriptionId : `${descriptionId} ${noteId}`}
+      <motion.button ref={dropRef} type="button" className={cn(styles.trigger, classNames?.trigger)} onClick={() => inputRef.current?.click()} aria-describedby={compact ? descriptionId : `${descriptionId} ${noteId}`}
         initial={false} animate={{ paddingTop: compact ? 16 : 26, paddingBottom: compact ? (rowsInside ? 8 : 16) : rowsInside ? 26 : 34 }} transition={reduce ? instant : motionTokens.spring.smooth}>
         {/* Three sheets fan open on hover and spread wider under a file; a folded prompt opens them again to receive it. */}
-        <AnimatePresence initial={false}>{(!compact || dragging) && <motion.span key="icon" className={styles.iconSlot} {...slot}>
+        <AnimatePresence initial={false}>{(!compact || dragging) && <motion.span key="icon" className={cn(styles.iconSlot, classNames?.iconSlot)} {...slot}>
           <span className={styles.sheets} aria-hidden="true">
             <span className={styles.sheet} data-sheet="back" />
             <span className={styles.sheet} data-sheet="side" />
             <span className={styles.sheet} data-sheet="front"><ArrowUp size={14} strokeWidth={2} /></span>
           </span>
         </motion.span>}</AnimatePresence>
-        <strong className={styles.label}><TextSwap text={dragging ? dropCopy : label} className={styles.labelText} reduce={reduce} /></strong>
-        <span id={descriptionId} className={styles.hint}>{description}</span>
-        <AnimatePresence initial={false}>{!compact && <motion.span key="note" className={styles.noteSlot} {...slot}><small id={noteId} className={styles.note}>{noteCopy}</small></motion.span>}</AnimatePresence>
+        <strong className={cn(styles.label, classNames?.label)}><TextSwap text={dragging ? dropCopy : label} className={cn(styles.labelText, classNames?.labelText)} reduce={reduce} /></strong>
+        <span id={descriptionId} className={cn(styles.hint, classNames?.hint)}>{description}</span>
+        <AnimatePresence initial={false}>{!compact && <motion.span key="note" className={cn(styles.noteSlot, classNames?.noteSlot)} {...slot}><small id={noteId} className={cn(styles.note, classNames?.note)}>{noteCopy}</small></motion.span>}</AnimatePresence>
       </motion.button>
       {inside && list}
     </div>
-    <input ref={inputRef} className={styles.input} type="file" accept={accept} multiple={multiple} tabIndex={-1} aria-hidden="true" onChange={event => { if (event.target.files) addFiles(event.target.files); event.target.value = ""; }} />
+    <input ref={inputRef} className={cn(styles.input, classNames?.input)} type="file" accept={accept} multiple={multiple} tabIndex={-1} aria-hidden="true" onChange={event => { if (event.target.files) addFiles(event.target.files); event.target.value = ""; }} />
     <AnimatePresence initial={false}>{error ? <ErrorRow key="error" text={error} /> : null}</AnimatePresence>
     {!inside && list}
     <span className={styles.srOnly} role="status" aria-live="polite">{announcement}</span>

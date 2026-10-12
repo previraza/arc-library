@@ -6,6 +6,7 @@ import type { CSSProperties, FocusEvent, KeyboardEvent, PointerEvent as ReactPoi
 import { AnimatePresence, animate, motion, useMotionValue, usePresence, useReducedMotion, useTransform } from "motion/react";
 import { X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./bottom-sheet.module.css";
 
 /**
@@ -28,6 +29,19 @@ export interface BottomSheetProps {
   onDetentChange?: (index: number) => void;
   closeLabel?: string;
   className?: string;
+  /** Extend the inner, named parts of the sheet: overlay, header, grabber, grabberBar, headRow, headText, title, description, close or body. */
+  classNames?: {
+    overlay?: string;
+    header?: string;
+    grabber?: string;
+    grabberBar?: string;
+    headRow?: string;
+    headText?: string;
+    title?: string;
+    description?: string;
+    close?: string;
+    body?: string;
+  };
   children: ReactNode;
 }
 
@@ -65,7 +79,7 @@ function velocityOf(samples: Drag["samples"], now: number) {
   return (last.y - first.y) / ((last.t - first.t) / 1000);
 }
 
-export function BottomSheet({ trigger, open: openProp, defaultOpen = false, onOpenChange, ...props }: BottomSheetProps) {
+export function BottomSheet({ trigger, open: openProp, defaultOpen = false, onOpenChange, classNames, ...props }: BottomSheetProps) {
   const [uncontrolled, setUncontrolled] = useState(defaultOpen);
   const open = openProp ?? uncontrolled;
   const setOpen = useCallback((next: boolean) => {
@@ -76,11 +90,11 @@ export function BottomSheet({ trigger, open: openProp, defaultOpen = false, onOp
   return <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
     {trigger ? <DialogPrimitive.Trigger asChild>{trigger}</DialogPrimitive.Trigger> : null}
     {/* The sheet stays mounted while it leaves, so a close can be caught and reversed mid-flight. */}
-    <AnimatePresence>{open && <DialogPrimitive.Portal key="sheet" forceMount><Sheet {...props} onDismiss={dismiss} /></DialogPrimitive.Portal>}</AnimatePresence>
+    <AnimatePresence>{open && <DialogPrimitive.Portal key="sheet" forceMount><Sheet {...props} classNames={classNames} onDismiss={dismiss} /></DialogPrimitive.Portal>}</AnimatePresence>
   </DialogPrimitive.Root>;
 }
 
-function Sheet({ title, description, detents = [.45, .92], initialDetent = 0, onDetentChange, closeLabel = "Close", className, children, onDismiss }: Omit<BottomSheetProps, "trigger" | "open" | "defaultOpen" | "onOpenChange"> & { onDismiss: () => void }) {
+function Sheet({ title, description, detents = [.45, .92], initialDetent = 0, onDetentChange, closeLabel = "Close", className, classNames, children, onDismiss }: Omit<BottomSheetProps, "trigger" | "open" | "defaultOpen" | "onOpenChange"> & { onDismiss: () => void }) {
   const [isPresent, safeToRemove] = usePresence();
   const reduced = useReducedMotion() ?? false;
   const detentKey = detents.join(",");
@@ -350,7 +364,7 @@ function Sheet({ title, description, detents = [.45, .92], initialDetent = 0, on
 
   return <>
     <DialogPrimitive.Overlay asChild forceMount>
-      <motion.div className={styles.overlay} style={{ opacity: backdrop }} />
+      <motion.div className={cn(styles.overlay, classNames?.overlay)} style={{ opacity: backdrop }} />
     </DialogPrimitive.Overlay>
     <DialogPrimitive.Content
       asChild

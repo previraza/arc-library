@@ -19,7 +19,7 @@ export function ItemPreview({ item }: { item: RegistryItem }) {
         backgroundSize: "16px 16px",
       }}
     >
-      <div className="relative z-10 flex w-full max-w-md items-center justify-center">
+      <div className="relative z-10 flex w-full max-w-2xl items-center justify-center">
         <Demo />
       </div>
     </div>

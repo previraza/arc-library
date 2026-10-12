@@ -3,6 +3,7 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type PointerEvent } from "react";
 import { AnimatePresence, animate, cancelFrame, frame, motion, useInView, useMotionValue, usePresence, useReducedMotion, useTransform, type MotionValue, type Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./bar-chart.module.css";
 
 export interface BarChartDatum {
@@ -35,6 +36,35 @@ export interface BarChartProps {
   /** Plot height in pixels. */
   height?: number;
   formatValue?: (value: number) => string;
+  className?: string;
+  /** Extend the inner, named parts of the bar chart: header, kind, value, unit, when, chart, plot, svg, cursor, baseline, mean, bar, grid, gutter, tick, tickText, meanLabel, axis, axisLabel, scrubber, swap, swapText, roll, digits or digit. */
+  classNames?: {
+    header?: string;
+    kind?: string;
+    value?: string;
+    unit?: string;
+    when?: string;
+    chart?: string;
+    plot?: string;
+    svg?: string;
+    cursor?: string;
+    baseline?: string;
+    mean?: string;
+    bar?: string;
+    grid?: string;
+    gutter?: string;
+    tick?: string;
+    tickText?: string;
+    meanLabel?: string;
+    axis?: string;
+    axisLabel?: string;
+    scrubber?: string;
+    swap?: string;
+    swapText?: string;
+    roll?: string;
+    digits?: string;
+    digit?: string;
+  };
 }
 
 const { spring, duration, ease, blur, stagger } = motionTokens;
@@ -92,7 +122,7 @@ function usePlace(place: number, reduced: boolean) {
 type Frame = { width: MotionValue<number>; unit: MotionValue<number> };
 const centerOf = ({ width, unit }: Frame, place: number) => width.get() - (place + .5) * width.get() * unit.get();
 
-function Bar({ id, place, value, delay, shown, active, frame, scale, height, reduced }: { id: string; place: number; value: number; delay: number; shown: boolean; active: boolean; frame: Frame; scale: MotionValue<number>; height: number; reduced: boolean }) {
+function Bar({ id, place, value, delay, shown, active, frame, scale, height, reduced, classNames }: { id: string; place: number; value: number; delay: number; shown: boolean; active: boolean; frame: Frame; scale: MotionValue<number>; height: number; reduced: boolean; classNames?: BarChartProps["classNames"] }) {
   const [isPresent, safeToRemove] = usePresence();
   const amount = useMotionValue(0);
   const slot = usePlace(place, reduced);
@@ -122,7 +152,7 @@ function Bar({ id, place, value, delay, shown, active, frame, scale, height, red
     const w = frame.width.get() * frame.unit.get(), size = Math.min(w * FILL, MAX_BAR), center = centerOf(frame, slot.get());
     return barPath(center - size / 2, size, (amount.get() / scale.get()) * (height - TOP), height);
   });
-  return <motion.path className={styles.bar} data-key={id} data-active={active || undefined} d={d} />;
+  return <motion.path className={cn(styles.bar, classNames?.bar)} data-key={id} data-active={active || undefined} d={d} />;
 }
 
 /** A value on the axis: its gridline and label ride the scale, so a taller range slides them down while new rows fade in above. */
@@ -130,26 +160,26 @@ function useRowY(value: number, scale: MotionValue<number>, height: number) {
   return useTransform(() => Math.round(height - (value / scale.get()) * (height - TOP)) + .5);
 }
 
-function Gridline({ value, scale, height }: { value: number; scale: MotionValue<number>; height: number }) {
+function Gridline({ value, scale, height, classNames }: { value: number; scale: MotionValue<number>; height: number; classNames?: BarChartProps["classNames"] }) {
   const y = useRowY(value, scale, height);
   if (value === 0) return null;
-  return <motion.line className={styles.grid} x1={0} x2="100%" y1={y} y2={y} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }} />;
+  return <motion.line className={cn(styles.grid, classNames?.grid)} x1={0} x2="100%" y1={y} y2={y} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }} />;
 }
 
-function TickLabel({ value, scale, height, avoid, format }: { value: number; scale: MotionValue<number>; height: number; avoid: MotionValue<number> | null; format: (value: number) => string }) {
+function TickLabel({ value, scale, height, avoid, format, classNames }: { value: number; scale: MotionValue<number>; height: number; avoid: MotionValue<number> | null; format: (value: number) => string; classNames?: BarChartProps["classNames"] }) {
   const y = useRowY(value, scale, height);
   // A tick label makes way where the average label sits beside it.
   const opacity = useTransform(() => avoid ? clamp((Math.abs(y.get() - avoid.get()) - 10) / 6, 0, 1) : 1);
-  return <motion.span className={styles.tick} style={{ y }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }}>
-    <motion.span className={styles.tickText} style={{ opacity }}>{format(value)}</motion.span>
+  return <motion.span className={cn(styles.tick, classNames?.tick)} style={{ y }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }}>
+    <motion.span className={cn(styles.tickText, classNames?.tickText)} style={{ opacity }}>{format(value)}</motion.span>
   </motion.span>;
 }
 
-function AxisLabel({ text, size, shift, place, frame, reduced }: { text: string; size: number; shift: number; place: number; frame: Frame; reduced: boolean }) {
+function AxisLabel({ text, size, shift, place, frame, reduced, classNames }: { text: string; size: number; shift: number; place: number; frame: Frame; reduced: boolean; classNames?: BarChartProps["classNames"] }) {
   const slot = usePlace(place, reduced);
   // Centred under its bar and carried by the zoom. A label at either end keeps the nudge that holds it inside the settled plot.
   const x = useTransform(() => centerOf(frame, slot.get()) - size / 2 + shift);
-  return <motion.span className={styles.axisLabel} style={{ x }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }}>{text}</motion.span>;
+  return <motion.span className={cn(styles.axisLabel, classNames?.axisLabel)} style={{ x }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }}>{text}</motion.span>;
 }
 
 /** Axis labels that fit once the range has settled: every label, else every second, third, and so on, counted back from the latest so the newest date always shows and spacing stays even. */
@@ -181,14 +211,14 @@ const rise: Variants = {
 };
 const fade: Variants = { hidden: { opacity: 0, y: 0, filter: "blur(0px)" }, shown: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: duration.fast } }, gone: { opacity: 0, y: 0, filter: "blur(0px)", transition: { duration: duration.instant } } };
 
-function Swap({ text, direction, reduced }: { text: string; direction: number; reduced: boolean }) {
-  return <span className={styles.swap}><AnimatePresence mode="popLayout" initial={false} custom={direction}>
-    <motion.span key={text} className={styles.swapText} custom={direction} variants={reduced ? fade : rise} initial="hidden" animate="shown" exit="gone">{text}</motion.span>
+function Swap({ text, direction, reduced, classNames }: { text: string; direction: number; reduced: boolean; classNames?: BarChartProps["classNames"] }) {
+  return <span className={cn(styles.swap, classNames?.swap)}><AnimatePresence mode="popLayout" initial={false} custom={direction}>
+    <motion.span key={text} className={cn(styles.swapText, classNames?.swapText)} custom={direction} variants={reduced ? fade : rise} initial="hidden" animate="shown" exit="gone">{text}</motion.span>
   </AnimatePresence></span>;
 }
 
 /** A number rolls digit by digit, keyed by place from the right, so unchanged digits hold still. Its width springs to fit, so the unit beside it glides instead of jumping. */
-function Roll({ text, direction, reduced }: { text: string; direction: number; reduced: boolean }) {
+function Roll({ text, direction, reduced, classNames }: { text: string; direction: number; reduced: boolean; classNames?: BarChartProps["classNames"] }) {
   const sizer = useRef<HTMLSpanElement>(null);
   const width = useMotionValue<number | "auto">("auto");
   useLayoutEffect(() => {
@@ -207,12 +237,12 @@ function Roll({ text, direction, reduced }: { text: string; direction: number; r
   }, [reduced, width]);
   const chars = [...text];
   const variants = reduced ? fade : rise;
-  return <motion.span className={styles.roll} style={{ width }}>
+  return <motion.span className={cn(styles.roll, classNames?.roll)} style={{ width }}>
     <span ref={sizer} className={styles.sizer} aria-hidden="true">{text}</span>
-    <span className={styles.digits}><AnimatePresence mode="popLayout" initial={false} custom={direction} anchorX="right">
-      {chars.map((char, index) => <motion.span key={`p${chars.length - index}`} className={styles.digit} custom={direction} variants={variants} initial="hidden" animate="shown" exit="gone">
+    <span className={cn(styles.digits, classNames?.digits)}><AnimatePresence mode="popLayout" initial={false} custom={direction} anchorX="right">
+      {chars.map((char, index) => <motion.span key={`p${chars.length - index}`} className={cn(styles.digit, classNames?.digit)} custom={direction} variants={variants} initial="hidden" animate="shown" exit="gone">
         <AnimatePresence mode="popLayout" initial={false} custom={direction} anchorX="right">
-          <motion.span key={char} className={styles.digit} custom={direction} variants={variants} initial="hidden" animate="shown" exit="gone">{char}</motion.span>
+          <motion.span key={char} className={cn(styles.digit, classNames?.digit)} custom={direction} variants={variants} initial="hidden" animate="shown" exit="gone">{char}</motion.span>
         </AnimatePresence>
       </motion.span>)}
     </AnimatePresence></span>
@@ -226,7 +256,7 @@ function useReducedMotionSafe() {
   return !!useReducedMotion() && hydrated;
 }
 
-export function BarChart({ data, label, period, unit = "", averageLabel = "Daily average", valueLabel = "Total", categoryLabel = "Day", showAverage = true, height = 176, formatValue = value => grouped.format(value) }: BarChartProps) {
+export function BarChart({ data, label, period, unit = "", averageLabel = "Daily average", valueLabel = "Total", categoryLabel = "Day", showAverage = true, height = 176, formatValue = value => grouped.format(value), className, classNames }: BarChartProps) {
   const reduced = useReducedMotionSafe();
   const figure = useRef<HTMLElement>(null);
   const plot = useRef<HTMLDivElement>(null);
@@ -348,37 +378,37 @@ export function BarChart({ data, label, period, unit = "", averageLabel = "Daily
   const shown = inView || reduced;
   const avoid = showAverage ? meanY : null;
 
-  return <figure ref={figure} className={styles.figure} aria-labelledby={titleId}>
+  return <figure ref={figure} className={cn(styles.figure, className)} aria-labelledby={titleId}>
     <figcaption id={titleId} className={styles.srOnly}>{label}, {period}</figcaption>
-    <div className={styles.header} aria-hidden="true">
-      <span className={styles.kind}><Swap text={scrubbing ? valueLabel : averageLabel} direction={1} reduced={reduced} /></span>
-      <span className={styles.value}><Roll text={formatValue(scrubbing ? data[index].value : Math.round(average))} direction={trend.valueWay} reduced={reduced} />{unit && <span className={styles.unit}>{unit}</span>}</span>
-      <span className={styles.when}><Swap text={scrubbed ? scrubbed.label : period} direction={scrubbing ? trend.indexWay : 1} reduced={reduced} /></span>
+    <div className={cn(styles.header, classNames?.header)} aria-hidden="true">
+      <span className={cn(styles.kind, classNames?.kind)}><Swap text={scrubbing ? valueLabel : averageLabel} direction={1} reduced={reduced} classNames={classNames} /></span>
+      <span className={cn(styles.value, classNames?.value)}><Roll text={formatValue(scrubbing ? data[index].value : Math.round(average))} direction={trend.valueWay} reduced={reduced} classNames={classNames} />{unit && <span className={cn(styles.unit, classNames?.unit)}>{unit}</span>}</span>
+      <span className={cn(styles.when, classNames?.when)}><Swap text={scrubbed ? scrubbed.label : period} direction={scrubbing ? trend.indexWay : 1} reduced={reduced} classNames={classNames} /></span>
     </div>
-    <div className={styles.chart} data-scrubbing={scrubbing || undefined}>
-      <div ref={plot} className={styles.plot} style={{ height }}>
-        <svg className={styles.svg} width="100%" height={height} role="img" aria-label={summary}>
-          <AnimatePresence initial={false}>{ticks.map(value => <Gridline key={value} value={value} scale={scale} height={height} />)}</AnimatePresence>
-          <motion.line className={styles.cursor} x1={cursorX} x2={cursorX} y1={TOP} y2={height} initial={false} animate={{ opacity: scrubbing ? 1 : 0 }} transition={reduced ? { duration: 0 } : fadeFast} />
+    <div className={cn(styles.chart, classNames?.chart)} data-scrubbing={scrubbing || undefined}>
+      <div ref={plot} className={cn(styles.plot, classNames?.plot)} style={{ height }}>
+        <svg className={cn(styles.svg, classNames?.svg)} width="100%" height={height} role="img" aria-label={summary}>
+          <AnimatePresence initial={false}>{ticks.map(value => <Gridline key={value} value={value} scale={scale} height={height} classNames={classNames} />)}</AnimatePresence>
+          <motion.line className={cn(styles.cursor, classNames?.cursor)} x1={cursorX} x2={cursorX} y1={TOP} y2={height} initial={false} animate={{ opacity: scrubbing ? 1 : 0 }} transition={reduced ? { duration: 0 } : fadeFast} />
           <AnimatePresence initial={false}>
-            {data.map((item, at) => <Bar key={item.key} id={item.key} place={last - at} value={item.value} delay={known.fresh.get(item.key) ?? at * revealStep} shown={shown} active={index === at} frame={frame} scale={scale} height={height} reduced={reduced} />)}
+            {data.map((item, at) => <Bar key={item.key} id={item.key} place={last - at} value={item.value} delay={known.fresh.get(item.key) ?? at * revealStep} shown={shown} active={index === at} frame={frame} scale={scale} height={height} reduced={reduced} classNames={classNames} />)}
           </AnimatePresence>
-          <line className={styles.baseline} x1={0} x2="100%" y1={height - .5} y2={height - .5} />
-          {showAverage && <motion.line className={styles.mean} x1={0} x2="100%" y1={meanY} y2={meanY} initial={false} animate={{ opacity: shown ? 1 : 0 }} transition={reduced ? { duration: 0 } : { duration: duration.standard, delay: .12 }} />}
+          <line className={cn(styles.baseline, classNames?.baseline)} x1={0} x2="100%" y1={height - .5} y2={height - .5} />
+          {showAverage && <motion.line className={cn(styles.mean, classNames?.mean)} x1={0} x2="100%" y1={meanY} y2={meanY} initial={false} animate={{ opacity: shown ? 1 : 0 }} transition={reduced ? { duration: 0 } : { duration: duration.standard, delay: .12 }} />}
         </svg>
       </div>
-      <div className={styles.gutter} aria-hidden="true">
-        <AnimatePresence initial={false}>{ticks.map(value => <TickLabel key={value} value={value} scale={scale} height={height} avoid={avoid} format={formatValue} />)}</AnimatePresence>
-        {showAverage && <motion.span className={styles.meanLabel} style={{ y: meanY }} initial={false} animate={{ opacity: shown ? 1 : 0 }} transition={reduced ? { duration: 0 } : { duration: duration.standard, delay: .12 }}><motion.span className={styles.tickText}>{meanText}</motion.span></motion.span>}
+      <div className={cn(styles.gutter, classNames?.gutter)} aria-hidden="true">
+        <AnimatePresence initial={false}>{ticks.map(value => <TickLabel key={value} value={value} scale={scale} height={height} avoid={avoid} format={formatValue} classNames={classNames} />)}</AnimatePresence>
+        {showAverage && <motion.span className={cn(styles.meanLabel, classNames?.meanLabel)} style={{ y: meanY }} initial={false} animate={{ opacity: shown ? 1 : 0 }} transition={reduced ? { duration: 0 } : { duration: duration.standard, delay: .12 }}><motion.span className={cn(styles.tickText, classNames?.tickText)}>{meanText}</motion.span></motion.span>}
       </div>
-      <div className={styles.axis} aria-hidden="true">
+      <div className={cn(styles.axis, classNames?.axis)} aria-hidden="true">
         <AnimatePresence initial={false}>
-          {data.map((item, at) => item.axisLabel && shownLabels.has(item.key) ? <AxisLabel key={`${item.key}:${item.axisLabel}`} text={item.axisLabel} size={labelSizes[item.axisLabel] ?? 0} shift={shownLabels.get(item.key) ?? 0} place={last - at} frame={frame} reduced={reduced} /> : null)}
+          {data.map((item, at) => item.axisLabel && shownLabels.has(item.key) ? <AxisLabel key={`${item.key}:${item.axisLabel}`} text={item.axisLabel} size={labelSizes[item.axisLabel] ?? 0} shift={shownLabels.get(item.key) ?? 0} place={last - at} frame={frame} reduced={reduced} classNames={classNames} /> : null)}
         </AnimatePresence>
         <span ref={measure} className={styles.measure}>{labelTexts.split("\n").filter(Boolean).map(text => <span key={text} data-text={text}>{text}</span>)}</span>
       </div>
       {/* The scrubber lies over the plot: hover or drag across it, or focus it and use the arrow keys. Vertical swipes still scroll the page. */}
-      <div className={styles.scrubber} role="slider" tabIndex={0} aria-label={`${label}, explore by ${categoryLabel.toLowerCase()}`} aria-orientation="horizontal" aria-valuemin={1} aria-valuemax={Math.max(1, data.length)} aria-valuenow={(index ?? last) + 1} aria-valuetext={valueText}
+      <div className={cn(styles.scrubber, classNames?.scrubber)} role="slider" tabIndex={0} aria-label={`${label}, explore by ${categoryLabel.toLowerCase()}`} aria-orientation="horizontal" aria-valuemin={1} aria-valuemax={Math.max(1, data.length)} aria-valuenow={(index ?? last) + 1} aria-valuetext={valueText}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={release} onPointerCancel={() => setActive(null)} onPointerLeave={event => { if (event.pointerType === "mouse") setActive(null); }} onKeyDown={onKeyDown} onBlur={() => setActive(null)}
         onFocus={event => { if (event.currentTarget.matches(":focus-visible") && last >= 0) setActive(current => current ?? last); }} />
     </div>

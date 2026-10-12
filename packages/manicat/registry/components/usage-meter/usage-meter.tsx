@@ -4,6 +4,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalSto
 import { AnimatePresence, animate, cancelFrame, frame, motion, motionValue, useInView, useMotionValue, useReducedMotion, useTransform, type AnimationPlaybackControls, type MotionValue, type Variants } from "motion/react";
 import { CircleAlert, TriangleAlert } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./usage-meter.module.css";
 
 export interface UsageMeterSegment {
@@ -28,6 +29,40 @@ export interface UsageMeterProps {
   overLabel?: string;
   /** Share of the limit at which the meter warns that it is almost full. */
   warnAt?: number;
+  className?: string;
+  /** Extend the inner, named parts of the usage meter: top, title, badge, badgeInner, badgeIcon, total, amount, ticker, column, glyph, symbol, caption, swap, swapText, bar, track, segment, overflow, hatch, overTint, limit, legend, item, itemHead, key, keyIcon, swatch, itemLabel, itemValue or itemUnit. */
+  classNames?: {
+    top?: string;
+    title?: string;
+    badge?: string;
+    badgeInner?: string;
+    badgeIcon?: string;
+    total?: string;
+    amount?: string;
+    ticker?: string;
+    column?: string;
+    glyph?: string;
+    symbol?: string;
+    caption?: string;
+    swap?: string;
+    swapText?: string;
+    bar?: string;
+    track?: string;
+    segment?: string;
+    overflow?: string;
+    hatch?: string;
+    overTint?: string;
+    limit?: string;
+    legend?: string;
+    item?: string;
+    itemHead?: string;
+    key?: string;
+    keyIcon?: string;
+    swatch?: string;
+    itemLabel?: string;
+    itemValue?: string;
+    itemUnit?: string;
+  };
 }
 
 const { spring, duration, ease, blur } = motionTokens;
@@ -66,9 +101,9 @@ const pop: Variants = {
 };
 const fade: Variants = { hidden: { opacity: 0, y: 0, scale: 1, filter: "blur(0px)" }, shown: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: duration.fast } }, gone: { opacity: 0, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: duration.instant } } };
 
-function Swap({ text, reduced, direction = 1 }: { text: string; reduced: boolean; direction?: number }) {
-  return <span className={styles.swap}><AnimatePresence mode="popLayout" initial={false} custom={direction}>
-    <motion.span key={text} className={styles.swapText} custom={direction} variants={reduced ? fade : rise} initial="hidden" animate="shown" exit="gone">{text}</motion.span>
+function Swap({ text, reduced, direction = 1, classNames }: { text: string; reduced: boolean; direction?: number; classNames: UsageMeterProps["classNames"] }) {
+  return <span className={cn(styles.swap, classNames?.swap)}><AnimatePresence mode="popLayout" initial={false} custom={direction}>
+    <motion.span key={text} className={cn(styles.swapText, classNames?.swapText)} custom={direction} variants={reduced ? fade : rise} initial="hidden" animate="shown" exit="gone">{text}</motion.span>
   </AnimatePresence></span>;
 }
 
@@ -89,18 +124,18 @@ function partsFor(value: number, decimals: number): Part[] {
 const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 /** One digit on a wheel; its distance from the wheel position sets where it sits and how clearly it shows. */
-function Glyph({ position, digit }: { position: MotionValue<number>; digit: number }) {
+function Glyph({ position, digit, classNames }: { position: MotionValue<number>; digit: number; classNames: UsageMeterProps["classNames"] }) {
   const offset = useTransform(position, current => ((((digit - current) % 10) + 15) % 10) - 5);
   const y = useTransform(offset, current => `${current}em`);
   const opacity = useTransform(offset, current => Math.max(0, 1 - Math.abs(current)));
   const filter = useTransform(offset, current => Math.abs(current) < .02 || Math.abs(current) >= 1 ? "none" : `blur(${(Math.abs(current) * blur.subtle).toFixed(2)}px)`);
-  return <motion.span className={styles.glyph} style={{ y, opacity, filter }}>{digit}</motion.span>;
+  return <motion.span className={cn(styles.glyph, classNames?.glyph)} style={{ y, opacity, filter }}>{digit}</motion.span>;
 }
 
 const column = { initial: { width: 0, opacity: 0 }, animate: { width: "auto", opacity: 1 }, exit: { width: 0, opacity: 0 } };
 
 /** A digit wheel that always turns the way the whole number moved, wrapping 9 → 0 like an odometer. */
-function Column({ digit, direction, reduced }: { digit: number; direction: number; reduced: boolean }) {
+function Column({ digit, direction, reduced, classNames }: { digit: number; direction: number; reduced: boolean; classNames: UsageMeterProps["classNames"] }) {
   const position = useMotionValue(digit);
   const wheel = useRef({ digit, target: digit });
   const running = useRef<(() => void) | null>(null);
@@ -115,27 +150,27 @@ function Column({ digit, direction, reduced }: { digit: number; direction: numbe
     const target = state.target;
     running.current = soon(() => animate(position, target, turn));
   }, [digit, direction, position, reduced]);
-  return <motion.span className={styles.column} {...column} transition={reduced ? { duration: 0 } : fit}>
+  return <motion.span className={cn(styles.column, classNames?.column)} {...column} transition={reduced ? { duration: 0 } : fit}>
     <span className={styles.sizer}>0</span>
-    {DIGITS.map(item => <Glyph key={item} position={position} digit={item} />)}
+    {DIGITS.map(item => <Glyph key={item} position={position} digit={item} classNames={classNames} />)}
   </motion.span>;
 }
 
 /** A number that rolls to each new value. It is decoration over text that screen readers get elsewhere. */
-function Ticker({ value, decimals, reduced }: { value: number; decimals: number; reduced: boolean }) {
+function Ticker({ value, decimals, reduced, classNames }: { value: number; decimals: number; reduced: boolean; classNames: UsageMeterProps["classNames"] }) {
   const [trend, setTrend] = useState({ value, direction: 1 });
   if (trend.value !== value) setTrend({ value, direction: value > trend.value ? 1 : -1 });
-  return <span className={styles.ticker} aria-hidden="true"><AnimatePresence initial={false}>
+  return <span className={cn(styles.ticker, classNames?.ticker)} aria-hidden="true"><AnimatePresence initial={false}>
     {partsFor(value, decimals).map(part => "digit" in part
-      ? <Column key={part.key} digit={part.digit} direction={trend.direction} reduced={reduced} />
-      : <motion.span key={part.key} className={styles.symbol} {...column} transition={reduced ? { duration: 0 } : fit}>{part.text}</motion.span>)}
+      ? <Column key={part.key} digit={part.digit} direction={trend.direction} reduced={reduced} classNames={classNames} />
+      : <motion.span key={part.key} className={cn(styles.symbol, classNames?.symbol)} {...column} transition={reduced ? { duration: 0 } : fit}>{part.text}</motion.span>)}
   </AnimatePresence></span>;
 }
 
 type Status = "ok" | "near" | "over";
 
 /** The plan status as a compact mark. Its width springs to each new message and the warning icon grows in beside the words. */
-function StatusBadge({ status, text, reduced }: { status: Status; text: string; reduced: boolean }) {
+function StatusBadge({ status, text, reduced, classNames }: { status: Status; text: string; reduced: boolean; classNames: UsageMeterProps["classNames"] }) {
   const inner = useRef<HTMLSpanElement>(null);
   const width = useMotionValue<number | "auto">("auto");
   useLayoutEffect(() => {
@@ -152,17 +187,17 @@ function StatusBadge({ status, text, reduced }: { status: Status; text: string; 
     return () => observer.disconnect();
   }, [reduced, width]);
   const Icon = status === "over" ? TriangleAlert : CircleAlert;
-  return <motion.span className={styles.badge} data-status={status} style={{ width }}>
-    <span ref={inner} className={styles.badgeInner}>
+  return <motion.span className={cn(styles.badge, classNames?.badge)} data-status={status} style={{ width }}>
+    <span ref={inner} className={cn(styles.badgeInner, classNames?.badgeInner)}>
       <AnimatePresence mode="popLayout" initial={false}>
-        {status !== "ok" && <motion.span key={status} className={styles.badgeIcon} variants={reduced ? fade : pop} initial="hidden" animate="shown" exit="gone"><Icon size={14} strokeWidth={2} aria-hidden="true" /></motion.span>}
+        {status !== "ok" && <motion.span key={status} className={cn(styles.badgeIcon, classNames?.badgeIcon)} variants={reduced ? fade : pop} initial="hidden" animate="shown" exit="gone"><Icon size={14} strokeWidth={2} aria-hidden="true" /></motion.span>}
       </AnimatePresence>
-      <Swap text={text} reduced={reduced} />
+      <Swap text={text} reduced={reduced} classNames={classNames} />
     </span>
   </motion.span>;
 }
 
-function Segment({ index, amounts, span, width, highlight }: { index: number; amounts: MotionValue<number>[]; span: MotionValue<number>; width: MotionValue<number>; highlight: "on" | "off" | undefined }) {
+function Segment({ index, amounts, span, width, highlight, classNames }: { index: number; amounts: MotionValue<number>[]; span: MotionValue<number>; width: MotionValue<number>; highlight: "on" | "off" | undefined; classNames: UsageMeterProps["classNames"] }) {
   // Each segment starts where the ones before it end, so growth in any of them pushes the rest along in the same frame.
   const x = useTransform(() => { let start = 0; for (let at = 0; at < index; at++) start += amounts[at].get(); return (start / span.get()) * width.get(); });
   const scaleX = useTransform(() => {
@@ -171,10 +206,10 @@ function Segment({ index, amounts, span, width, highlight }: { index: number; am
     const size = (amounts[index].get() / span.get()) * w, rest = w - x.get() - size;
     return Math.max(0, size - Math.min(GAP, size, Math.max(0, rest))) / w;
   });
-  return <motion.span className={styles.segment} data-index={index} data-highlight={highlight} style={{ x, scaleX, originX: 0 }} />;
+  return <motion.span className={cn(styles.segment, classNames?.segment)} data-index={index} data-highlight={highlight} style={{ x, scaleX, originX: 0 }} />;
 }
 
-export function UsageMeter({ label, segments, limit, unit = "", decimals = 1, freeLabel = "Free", overLabel = "Over limit", warnAt = .9 }: UsageMeterProps) {
+export function UsageMeter({ label, segments, limit, unit = "", decimals = 1, freeLabel = "Free", overLabel = "Over limit", warnAt = .9, className, classNames }: UsageMeterProps) {
   const { reduced, hydrated } = useReducedMotionSafe();
   const root = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -292,44 +327,44 @@ export function UsageMeter({ label, segments, limit, unit = "", decimals = 1, fr
   const [announced, setAnnounced] = useState({ notice, message: "" });
   if (announced.notice !== notice) setAnnounced({ notice, message: status === "over" ? `Over the plan limit by ${format(over)}.` : status === "near" ? `Almost full. ${format(free)} free.` : `Under the limit. ${format(free)} free.` });
 
-  return <div ref={root} className={styles.meter} role="group" aria-labelledby={titleId} data-status={status}>
-    <div className={styles.top}>
-      <span id={titleId} className={styles.title}>{label}</span>
-      <StatusBadge status={status} text={badge} reduced={reduced} />
+  return <div ref={root} className={cn(styles.meter, className)} role="group" aria-labelledby={titleId} data-status={status}>
+    <div className={cn(styles.top, classNames?.top)}>
+      <span id={titleId} className={cn(styles.title, classNames?.title)}>{label}</span>
+      <StatusBadge status={status} text={badge} reduced={reduced} classNames={classNames} />
     </div>
-    <p className={styles.total}>
+    <p className={cn(styles.total, classNames?.total)}>
       <span className={styles.srOnly}>{format(total)} of {limitText} used</span>
-      <span className={styles.amount} aria-hidden="true"><Ticker value={headline} decimals={decimals} reduced={reduced} /></span>
-      <span className={styles.caption} aria-hidden="true"><Swap text={caption} reduced={reduced} /></span>
+      <span className={cn(styles.amount, classNames?.amount)} aria-hidden="true"><Ticker value={headline} decimals={decimals} reduced={reduced} classNames={classNames} /></span>
+      <span className={cn(styles.caption, classNames?.caption)} aria-hidden="true"><Swap text={caption} reduced={reduced} classNames={classNames} /></span>
     </p>
-    <div className={styles.bar}>
-      <div ref={trackRef} className={styles.track} role="img" aria-label={summary} data-active={active ?? undefined} onPointerMove={onTrackMove} onPointerLeave={() => setHovered(null)} onPointerUp={onTrackTap}>
-        {segments.map((segment, index) => <Segment key={segment.id} index={index} amounts={amounts} span={span} width={width} highlight={active ? active === segment.id ? "on" : "off" : undefined} />)}
+    <div className={cn(styles.bar, classNames?.bar)}>
+      <div ref={trackRef} className={cn(styles.track, classNames?.track)} role="img" aria-label={summary} data-active={active ?? undefined} onPointerMove={onTrackMove} onPointerLeave={() => setHovered(null)} onPointerUp={onTrackTap}>
+        {segments.map((segment, index) => <Segment key={segment.id} index={index} amounts={amounts} span={span} width={width} highlight={active ? active === segment.id ? "on" : "off" : undefined} classNames={classNames} />)}
         {/* Past the limit the bar is struck through: the overflow keeps its colours, hatched so it reads as over without colour. */}
-        <motion.svg className={styles.overflow} data-highlight={active ? active === "free" ? "on" : "off" : undefined} style={{ clipPath: overClip, opacity: markerOpacity }} aria-hidden="true" focusable="false">
-          <defs><pattern id={hatchId} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width={2.5} height={6} className={styles.hatch} /></pattern></defs>
-          <rect className={styles.overTint} width="100%" height="100%" />
+        <motion.svg className={cn(styles.overflow, classNames?.overflow)} data-highlight={active ? active === "free" ? "on" : "off" : undefined} style={{ clipPath: overClip, opacity: markerOpacity }} aria-hidden="true" focusable="false">
+          <defs><pattern id={hatchId} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width={2.5} height={6} className={cn(styles.hatch, classNames?.hatch)} /></pattern></defs>
+          <rect className={cn(styles.overTint, classNames?.overTint)} width="100%" height="100%" />
           <rect width="100%" height="100%" fill={`url(#${hatchId})`} />
         </motion.svg>
       </div>
-      <motion.span className={styles.limit} style={{ x: limitX, opacity: markerOpacity }} aria-hidden="true" />
+      <motion.span className={cn(styles.limit, classNames?.limit)} style={{ x: limitX, opacity: markerOpacity }} aria-hidden="true" />
     </div>
-    <div ref={legend} className={styles.legend} role="group" aria-label={`${label} by category`} onKeyDown={onLegendKey}>
+    <div ref={legend} className={cn(styles.legend, classNames?.legend)} role="group" aria-label={`${label} by category`} onKeyDown={onLegendKey}>
       {items.map((item, index) => {
         const warning = item.id === "free" && status === "over";
-        return <button key={item.id} type="button" className={styles.item} data-highlight={active ? active === item.id ? "on" : "off" : undefined} aria-pressed={pinned === item.id} aria-label={`${item.label}, ${format(item.value)}`} tabIndex={index === roving ? 0 : -1}
+        return <button key={item.id} type="button" className={cn(styles.item, classNames?.item)} data-highlight={active ? active === item.id ? "on" : "off" : undefined} aria-pressed={pinned === item.id} aria-label={`${item.label}, ${format(item.value)}`} tabIndex={index === roving ? 0 : -1}
           onClick={() => { setRoving(index); setPinned(current => current === item.id ? null : item.id); }}
           onFocus={() => { setRoving(index); setFocused(item.id); }} onBlur={() => setFocused(null)}
           onPointerEnter={event => { if (event.pointerType === "mouse") setHovered(item.id); }} onPointerLeave={event => { if (event.pointerType === "mouse") setHovered(null); }}>
-          <span className={styles.itemHead}>
-            <span className={styles.key} aria-hidden="true"><AnimatePresence mode="popLayout" initial={false}>
+          <span className={cn(styles.itemHead, classNames?.itemHead)}>
+            <span className={cn(styles.key, classNames?.key)} aria-hidden="true"><AnimatePresence mode="popLayout" initial={false}>
               {warning
-                ? <motion.span key="alert" className={styles.keyIcon} variants={reduced ? fade : pop} initial="hidden" animate="shown" exit="gone"><TriangleAlert size={12} strokeWidth={2} /></motion.span>
-                : <motion.span key="swatch" className={styles.swatch} data-index={item.id === "free" ? "free" : index} variants={reduced ? fade : pop} initial="hidden" animate="shown" exit="gone" />}
+                ? <motion.span key="alert" className={cn(styles.keyIcon, classNames?.keyIcon)} variants={reduced ? fade : pop} initial="hidden" animate="shown" exit="gone"><TriangleAlert size={12} strokeWidth={2} /></motion.span>
+                : <motion.span key="swatch" className={cn(styles.swatch, classNames?.swatch)} data-index={item.id === "free" ? "free" : index} variants={reduced ? fade : pop} initial="hidden" animate="shown" exit="gone" />}
             </AnimatePresence></span>
-            <span className={styles.itemLabel}><Swap text={item.label} reduced={reduced} /></span>
+            <span className={cn(styles.itemLabel, classNames?.itemLabel)}><Swap text={item.label} reduced={reduced} classNames={classNames} /></span>
           </span>
-          <span className={styles.itemValue}><Ticker value={item.value} decimals={decimals} reduced={reduced} />{unit && <span className={styles.itemUnit}>{unit}</span>}</span>
+          <span className={cn(styles.itemValue, classNames?.itemValue)}><Ticker value={item.value} decimals={decimals} reduced={reduced} classNames={classNames} />{unit && <span className={cn(styles.itemUnit, classNames?.itemUnit)}>{unit}</span>}</span>
         </button>;
       })}
     </div>

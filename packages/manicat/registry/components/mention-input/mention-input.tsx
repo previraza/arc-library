@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import type { Transition } from "motion/react";
 import { Hash } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./mention-input.module.css";
 
 export type MentionKind = "person" | "channel";
@@ -76,6 +77,22 @@ export interface MentionInputProps {
   "aria-label"?: string;
   "aria-describedby"?: string;
   className?: string;
+  classNames?: {
+    /** Slot for the root element */
+    root?: string;
+    /** Slot for the popover */
+    popover?: string;
+    /** Slot for the popover body */
+    popoverBody?: string;
+    /** Slot for the suggestion list */
+    list?: string;
+    /** Slot for each suggestion option */
+    option?: string;
+    /** Slot for the option text */
+    optionText?: string;
+    /** Slot for the option label */
+    optionLabel?: string;
+  };
 }
 
 type Suggestion = { kind: "person"; item: MentionPerson } | { kind: "channel"; item: MentionChannel };
@@ -166,7 +183,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(function MentionInput({
   value: valueProp, defaultValue, onChange, people, channels, onMentionAdd, onSubmit, submitOnEnter = false,
   placeholder, minRows = 1, maxRows = 8, placement = "auto", maxSuggestions = 6, disabled, name, id,
-  "aria-label": ariaLabel, "aria-describedby": describedBy, className,
+  "aria-label": ariaLabel, "aria-describedby": describedBy, className, classNames,
 }, ref) {
   const reduced = !!useReducedMotion();
   const uid = useId();
@@ -444,7 +461,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(fu
   const popIn = reduced ? { opacity: 0 } : { opacity: 0, scale: .96, y: anchor?.above ? 4 : -4 };
   const countLabel = open ? (suggestions.length ? `${suggestions.length} ${trigger?.kind === "person" ? (suggestions.length === 1 ? "person" : "people") : (suggestions.length === 1 ? "channel" : "channels")}` : "No matches") : "";
 
-  return <div ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")} data-disabled={disabled || undefined}>
+  return <div ref={rootRef} className={cn(styles.root, className, classNames?.root)} data-disabled={disabled || undefined}>
     <motion.div ref={fieldRef} className={styles.field} style={{ height }} data-focused={focused || undefined}>
       <div ref={backdropRef} className={styles.backdrop} aria-hidden="true">{mirror}{"\u200b"}</div>
       <textarea
@@ -477,7 +494,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(fu
     <AnimatePresence>
       {open && anchor && <motion.div
         key={trigger?.start}
-        className={styles.popover}
+        className={cn(styles.popover, classNames?.popover)}
         data-above={anchor.above || undefined}
         style={{ left: anchor.x, top: anchor.y, height: panelHeight, transformOrigin: anchor.above ? "14px 100%" : "14px 0" }}
         initial={popIn}
@@ -485,8 +502,8 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(fu
         exit={{ ...popIn, transition: { duration: duration.exit * .7, ease: standard } }}
         onMouseDown={event => event.preventDefault()}
       >
-        <div ref={bodyRef} className={styles.popoverBody}>
-          {suggestions.length ? <ul ref={listRef} id={listId} role="listbox" aria-label={trigger?.kind === "person" ? "People" : "Channels"} className={styles.list}>
+        <div ref={bodyRef} className={cn(styles.popoverBody, classNames?.popoverBody)}>
+          {suggestions.length ? <ul ref={listRef} id={listId} role="listbox" aria-label={trigger?.kind === "person" ? "People" : "Channels"} className={cn(styles.list, classNames?.list)}>
             <motion.li aria-hidden="true" className={styles.highlight} style={{ y: hy, height: hh }} />
             {suggestions.map((suggestion, index) => <li
               key={`${suggestion.kind}-${suggestion.item.id}`}
@@ -494,7 +511,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(fu
               role="option"
               aria-selected={index === activeIndex}
               data-index={index}
-              className={styles.option}
+              className={cn(styles.option, classNames?.option)}
               onPointerMove={() => { if (index !== activeIndex) setActive(index); }}
               onClick={() => choose(suggestion)}
             >
@@ -504,8 +521,8 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(fu
                   ? <img src={suggestion.item.avatar} alt="" width={28} height={28} loading="lazy" />
                   : initials(suggestion.item.name)}</span>
                 : <span className={styles.glyph} aria-hidden="true"><Hash size={16} strokeWidth={1.75} /></span>}
-              <span className={styles.optionText}>
-                <span className={styles.optionLabel}><Highlight text={suggestion.item.name} query={trigger?.query.trim() ?? ""} /></span>
+              <span className={cn(styles.optionText, classNames?.optionText)}>
+                <span className={cn(styles.optionLabel, classNames?.optionLabel)}><Highlight text={suggestion.item.name} query={trigger?.query.trim() ?? ""} /></span>
                 {suggestion.kind === "person"
                   ? suggestion.item.role && <span className={styles.optionMeta}>{suggestion.item.role}</span>
                   : suggestion.item.description && <span className={styles.optionMeta}>{suggestion.item.description}</span>}

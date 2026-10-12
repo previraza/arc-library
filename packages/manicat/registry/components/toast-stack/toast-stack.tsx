@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, usePres
 import type { HTMLMotionProps, MotionProps, TargetAndTransition, Transition } from "motion/react";
 import { CircleCheck, CircleX, Info, TriangleAlert, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./toast-stack.module.css";
 
 export type ToastType = "success" | "info" | "warning" | "error" | "loading";
@@ -60,6 +61,23 @@ export interface ToastStackProps {
   /** Alt+T moves focus into the stack. */
   hotkey?: boolean;
   className?: string;
+  /** Extend the inner, named parts of the toast stack: list, item, card, content, icon, glyph, spinner, copy, title, line, description, actionSlot, action or close. */
+  classNames?: {
+    list?: string;
+    item?: string;
+    card?: string;
+    content?: string;
+    icon?: string;
+    glyph?: string;
+    spinner?: string;
+    copy?: string;
+    title?: string;
+    line?: string;
+    description?: string;
+    actionSlot?: string;
+    action?: string;
+    close?: string;
+  };
 }
 
 type ToastRecord = { id: string; type: ToastType; title: string; description?: string; action?: ToastAction; duration: number; seq: number; version: number };
@@ -201,9 +219,10 @@ interface ToastItemProps {
   onDragChange: (dragging: boolean) => void;
   onTap: () => void;
   onHandOff: (leaving: HTMLElement, keyboard: boolean) => void;
+  classNames?: ToastStackProps["classNames"];
 }
 
-function ToastItem({ toast, target, expanded, front, hidden, paused, reduce, store, onMeasure, onDragChange, onTap, onHandOff }: ToastItemProps) {
+function ToastItem({ toast, target, expanded, front, hidden, paused, reduce, store, onMeasure, onDragChange, onTap, onHandOff, classNames }: ToastItemProps) {
   const { id } = toast;
   const [isPresent, safeToRemove] = usePresence();
   const itemRef = useRef<HTMLLIElement>(null);
@@ -363,27 +382,27 @@ function ToastItem({ toast, target, expanded, front, hidden, paused, reduce, sto
   const Icon = toast.type === "loading" ? null : icons[toast.type];
   const swap = reduce ? fadeOnly : textSwap;
 
-  return <motion.li ref={itemRef} className={styles.item} style={{ y, scale, height, opacity, zIndex: toast.seq }} data-front={front} data-expanded={expanded} inert={hidden} onKeyDown={onKeyDown}>
-    <motion.div ref={cardRef} className={styles.card} style={{ x, opacity: swipeFade }} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={event => onPointerEnd(event, false)} onPointerCancel={event => onPointerEnd(event, true)} onClick={onCardClick}>
-      <motion.div ref={contentRef} className={styles.content} style={{ opacity: contentOpacity }}>
+  return <motion.li ref={itemRef} className={cn(styles.item, classNames?.item)} style={{ y, scale, height, opacity, zIndex: toast.seq }} data-front={front} data-expanded={expanded} inert={hidden} onKeyDown={onKeyDown}>
+    <motion.div ref={cardRef} className={cn(styles.card, classNames?.card)} style={{ x, opacity: swipeFade }} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={event => onPointerEnd(event, false)} onPointerCancel={event => onPointerEnd(event, true)} onClick={onCardClick}>
+      <motion.div ref={contentRef} className={cn(styles.content, classNames?.content)} style={{ opacity: contentOpacity }}>
         {/* A new type morphs its icon in place: the old glyph shrinks into a blur while the new one grows out of it. */}
-        <span className={styles.icon} data-type={toast.type} aria-hidden="true">
+        <span className={cn(styles.icon, classNames?.icon)} data-type={toast.type} aria-hidden="true">
           <AnimatePresence mode="popLayout" initial={false}>
-            <Swap key={toast.type} className={styles.glyph} {...(reduce ? fadeOnly : iconSwap)}>{Icon ? <Icon width={18} height={18} strokeWidth={1.75} /> : <span className={styles.spinner} />}</Swap>
+            <Swap key={toast.type} className={cn(styles.glyph, classNames?.glyph)} {...(reduce ? fadeOnly : iconSwap)}>{Icon ? <Icon width={18} height={18} strokeWidth={1.75} /> : <span className={cn(styles.spinner, classNames?.spinner)} />}</Swap>
           </AnimatePresence>
         </span>
-        <div className={styles.copy}>
+        <div className={cn(styles.copy, classNames?.copy)}>
           <span className={styles.srOnly}>{typeLabels[toast.type]}: </span>
-          <span className={styles.title}><AnimatePresence mode="popLayout" initial={false}><Swap key={toast.title} className={styles.line} {...swap}>{toast.title}</Swap></AnimatePresence></span>
-          <AnimatePresence mode="popLayout" initial={false}>{toast.description ? <Swap key={toast.description} className={styles.description} {...swap}>{toast.description}</Swap> : null}</AnimatePresence>
+          <span className={cn(styles.title, classNames?.title)}><AnimatePresence mode="popLayout" initial={false}><Swap key={toast.title} className={cn(styles.line, classNames?.line)} {...swap}>{toast.title}</Swap></AnimatePresence></span>
+          <AnimatePresence mode="popLayout" initial={false}>{toast.description ? <Swap key={toast.description} className={cn(styles.description, classNames?.description)} {...swap}>{toast.description}</Swap> : null}</AnimatePresence>
         </div>
         {/* The action folds its width away when an update removes it, so the copy widens instead of snapping. */}
         <AnimatePresence initial={false}>
-          {toast.action ? <motion.div key="action" ref={actionRef} className={styles.actionSlot} initial={reduce ? { opacity: 0 } : { width: 0, opacity: 0 }} animate={{ width: "auto", opacity: 1 }} exit={reduce ? { opacity: 0 } : { width: 0, opacity: 0 }} transition={reduce ? reducedFade : { width: motionTokens.spring.smooth, opacity: fade }} onAnimationStart={() => markMoving(true)} onAnimationComplete={() => markMoving(false)}>
-            <button type="button" className={styles.action} onClick={runAction}>{toast.action.label}</button>
+          {toast.action ? <motion.div key="action" ref={actionRef} className={cn(styles.actionSlot, classNames?.actionSlot)} initial={reduce ? { opacity: 0 } : { width: 0, opacity: 0 }} animate={{ width: "auto", opacity: 1 }} exit={reduce ? { opacity: 0 } : { width: 0, opacity: 0 }} transition={reduce ? reducedFade : { width: motionTokens.spring.smooth, opacity: fade }} onAnimationStart={() => markMoving(true)} onAnimationComplete={() => markMoving(false)}>
+            <button type="button" className={cn(styles.action, classNames?.action)} onClick={runAction}>{toast.action.label}</button>
           </motion.div> : null}
         </AnimatePresence>
-        <button ref={closeRef} type="button" className={styles.close} aria-label="Dismiss notification" onClick={() => store.dismiss(id)}>
+        <button ref={closeRef} type="button" className={cn(styles.close, classNames?.close)} aria-label="Dismiss notification" onClick={() => store.dismiss(id)}>
           <X width={16} height={16} strokeWidth={1.75} aria-hidden="true" />
         </button>
       </motion.div>
@@ -391,7 +410,7 @@ function ToastItem({ toast, target, expanded, front, hidden, paused, reduce, sto
   </motion.li>;
 }
 
-export function ToastStack({ label = "Notifications", position = "bottom-right", contained = false, visibleToasts = 3, hotkey = true, className }: ToastStackProps) {
+export function ToastStack({ label = "Notifications", position = "bottom-right", contained = false, visibleToasts = 3, hotkey = true, className, classNames }: ToastStackProps) {
   const store = useStore();
   const toasts = useSyncExternalStore(store.subscribe, store.getSnapshot, getServerSnapshot);
   const reduce = !!useReducedMotion();
@@ -460,9 +479,9 @@ export function ToastStack({ label = "Notifications", position = "bottom-right",
   }
 
   return <section ref={regionRef} className={[styles.viewport, styles[position], contained && styles.contained, className].filter(Boolean).join(" ")} aria-label={hotkey ? `${label} (Alt+T)` : label} aria-live="polite" aria-relevant="additions text" aria-atomic="false" onFocus={onFocus} onBlur={onBlur}>
-    <ol ref={listRef} className={styles.list} style={{ height: listHeight }} data-expanded={expanded} onPointerEnter={event => { if (event.pointerType === "mouse") setHovered(true); }} onPointerMove={event => { if (event.pointerType === "mouse" && !hovered) setHovered(true); }} onPointerLeave={event => { if (event.pointerType === "mouse") setHovered(false); }}>
+    <ol ref={listRef} className={cn(styles.list, classNames?.list)} style={{ height: listHeight }} data-expanded={expanded} onPointerEnter={event => { if (event.pointerType === "mouse") setHovered(true); }} onPointerMove={event => { if (event.pointerType === "mouse" && !hovered) setHovered(true); }} onPointerLeave={event => { if (event.pointerType === "mouse") setHovered(false); }}>
       <AnimatePresence onExitComplete={prune}>
-        {toasts.map((item, index) => <ToastItem key={item.id} toast={item} target={targets[index]} expanded={expanded} front={index === 0} hidden={index >= visibleToasts} paused={paused} reduce={reduce} store={store} onMeasure={measure} onDragChange={setDragging} onTap={toggleTap} onHandOff={handOff} />)}
+        {toasts.map((item, index) => <ToastItem key={item.id} toast={item} target={targets[index]} expanded={expanded} front={index === 0} hidden={index >= visibleToasts} paused={paused} reduce={reduce} store={store} onMeasure={measure} onDragChange={setDragging} onTap={toggleTap} onHandOff={handOff} classNames={classNames} />)}
       </AnimatePresence>
     </ol>
   </section>;

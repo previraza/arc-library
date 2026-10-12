@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useRedu
 import type { Transition, Variants } from "motion/react";
 import { ArrowLeft, Bold, Check, Code, Heading1, Heading2, Heading3, Italic, Link, List, ListOrdered, Minus, Pilcrow, Quote, SquareCode, Strikethrough, Unlink } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./rich-text-editor.module.css";
 
 /* ------------------------------------------------------------------------------------------------
@@ -583,6 +584,27 @@ export interface RichTextEditorProps {
   "aria-label"?: string;
   className?: string;
   style?: CSSProperties;
+  /** Extend the inner, named parts of the rich text editor: editor, toolbar, face, row, tool, blockTools, divider, linkRow, linkInput, apply, slash, slashBody, slashList, slashHighlight, slashOption, slashIcon, slashLabel or slashHint. */
+  classNames?: {
+    editor?: string;
+    toolbar?: string;
+    face?: string;
+    row?: string;
+    tool?: string;
+    blockTools?: string;
+    divider?: string;
+    linkRow?: string;
+    linkInput?: string;
+    apply?: string;
+    slash?: string;
+    slashBody?: string;
+    slashList?: string;
+    slashHighlight?: string;
+    slashOption?: string;
+    slashIcon?: string;
+    slashLabel?: string;
+    slashHint?: string;
+  };
 }
 
 type Formats = { bold: boolean; italic: boolean; strike: boolean; code: boolean; link: string | null; block: string };
@@ -621,7 +643,7 @@ const faceVariants: Variants = {
 const fadeVariants: Variants = { hidden: { opacity: 0 }, shown: { opacity: 1, transition: { duration: .14 } }, gone: { opacity: 0, transition: { duration: .1 } } };
 
 /** A toolbar face reports its natural size while current, so the shared surface can spring to it. */
-function Face({ direction, reduced, onSize, children }: { direction: number; reduced: boolean; onSize: (width: number, height: number) => void; children: ReactNode }) {
+function Face({ direction, reduced, onSize, classNames, children }: { direction: number; reduced: boolean; onSize: (width: number, height: number) => void; classNames: RichTextEditorProps["classNames"]; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const present = useIsPresent();
   useLayoutEffect(() => {
@@ -634,11 +656,11 @@ function Face({ direction, reduced, onSize, children }: { direction: number; red
     observer.observe(node);
     return () => observer.disconnect();
   }, [onSize, present]);
-  return <motion.div ref={ref} className={styles.face} custom={direction} variants={reduced ? fadeVariants : faceVariants} initial="hidden" animate="shown" exit="gone" inert={!present || undefined}>{children}</motion.div>;
+  return <motion.div ref={ref} className={cn(styles.face, classNames?.face)} custom={direction} variants={reduced ? fadeVariants : faceVariants} initial="hidden" animate="shown" exit="gone" inert={!present || undefined}>{children}</motion.div>;
 }
 
-function ToolButton({ label, pressed, shortcut, onPress, children }: { label: string; pressed: boolean; shortcut?: string; onPress: () => void; children: ReactNode }) {
-  return <button type="button" className={styles.tool} aria-label={label} aria-pressed={pressed} title={shortcut ? `${label} (${shortcut})` : label} onMouseDown={event => event.preventDefault()} onClick={onPress}>{children}</button>;
+function ToolButton({ label, pressed, shortcut, onPress, classNames, children }: { label: string; pressed: boolean; shortcut?: string; onPress: () => void; classNames: RichTextEditorProps["classNames"]; children: ReactNode }) {
+  return <button type="button" className={cn(styles.tool, classNames?.tool)} aria-label={label} aria-pressed={pressed} title={shortcut ? `${label} (${shortcut})` : label} onMouseDown={event => event.preventDefault()} onClick={onPress}>{children}</button>;
 }
 
 /**
@@ -647,7 +669,7 @@ function ToolButton({ label, pressed, shortcut, onPress, children }: { label: st
  */
 export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(function RichTextEditor({
   value, defaultValue, defaultMarkdown, onChange, onHistoryChange, placeholder = "Start writing", blockHint = "Type / for blocks",
-  readOnly = false, autoFocus = false, "aria-label": ariaLabel = "Editor", className, style,
+  readOnly = false, autoFocus = false, "aria-label": ariaLabel = "Editor", className, style, classNames,
 }, ref) {
   const reduced = !!useReducedMotion();
   const uid = useId();
@@ -1460,7 +1482,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
   return <div ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")} style={style}>
     <div
       ref={editorRef}
-      className={styles.editor}
+      className={cn(styles.editor, classNames?.editor)}
       style={cssVars}
       contentEditable={!readOnly}
       suppressContentEditableWarning
@@ -1487,7 +1509,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
         data-toolbar={uid}
         role="toolbar"
         aria-label="Formatting"
-        className={styles.toolbar}
+        className={cn(styles.toolbar, classNames?.toolbar)}
         data-below={bar.below || undefined}
         style={{ left: tx, top: ty, width: tw, height: th, visibility: toolbarVisibility, transformOrigin: bar.below ? "50% 0" : "50% 100%" }}
         initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .94, y: bar.below ? -4 : 4 }}
@@ -1497,26 +1519,26 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
         onKeyDown={onToolbarKey}
       >
         <AnimatePresence initial={false} custom={direction}>
-          {face === "format" ? <Face key="format" direction={direction} reduced={reduced} onSize={onFaceSize}>
-            <div className={styles.row}>
-              <ToolButton label="Bold" pressed={formats.bold} shortcut="⌘B" onPress={() => toggleMark("bold")}><Bold {...icon} /></ToolButton>
-              <ToolButton label="Italic" pressed={formats.italic} shortcut="⌘I" onPress={() => toggleMark("italic")}><Italic {...icon} /></ToolButton>
-              <ToolButton label="Strikethrough" pressed={formats.strike} shortcut="⌘⇧X" onPress={() => toggleMark("strike")}><Strikethrough {...icon} /></ToolButton>
-              <ToolButton label="Inline code" pressed={formats.code} shortcut="⌘E" onPress={() => toggleMark("code")}><Code {...icon} /></ToolButton>
-              <ToolButton label={formats.link ? "Edit link" : "Link"} pressed={!!formats.link} shortcut="⌘K" onPress={openLink}><Link {...icon} /></ToolButton>
-              <span className={styles.blockTools}>
-              <span className={styles.divider} aria-hidden="true" />
-              <ToolButton label="Heading 1" pressed={formats.block === "h1"} onPress={() => run(() => applyBlock("h1"))}><Heading1 {...icon} /></ToolButton>
-              <ToolButton label="Heading 2" pressed={formats.block === "h2"} onPress={() => run(() => applyBlock("h2"))}><Heading2 {...icon} /></ToolButton>
-              <ToolButton label="Quote" pressed={formats.block === "blockquote"} onPress={() => run(() => applyBlock("blockquote"))}><Quote {...icon} /></ToolButton>
+          {face === "format" ? <Face key="format" direction={direction} reduced={reduced} onSize={onFaceSize} classNames={classNames}>
+            <div className={cn(styles.row, classNames?.row)}>
+              <ToolButton label="Bold" pressed={formats.bold} shortcut="⌘B" onPress={() => toggleMark("bold")} classNames={classNames}><Bold {...icon} /></ToolButton>
+              <ToolButton label="Italic" pressed={formats.italic} shortcut="⌘I" onPress={() => toggleMark("italic")} classNames={classNames}><Italic {...icon} /></ToolButton>
+              <ToolButton label="Strikethrough" pressed={formats.strike} shortcut="⌘⇧X" onPress={() => toggleMark("strike")} classNames={classNames}><Strikethrough {...icon} /></ToolButton>
+              <ToolButton label="Inline code" pressed={formats.code} shortcut="⌘E" onPress={() => toggleMark("code")} classNames={classNames}><Code {...icon} /></ToolButton>
+              <ToolButton label={formats.link ? "Edit link" : "Link"} pressed={!!formats.link} shortcut="⌘K" onPress={openLink} classNames={classNames}><Link {...icon} /></ToolButton>
+              <span className={cn(styles.blockTools, classNames?.blockTools)}>
+              <span className={cn(styles.divider, classNames?.divider)} aria-hidden="true" />
+              <ToolButton label="Heading 1" pressed={formats.block === "h1"} onPress={() => run(() => applyBlock("h1"))} classNames={classNames}><Heading1 {...icon} /></ToolButton>
+              <ToolButton label="Heading 2" pressed={formats.block === "h2"} onPress={() => run(() => applyBlock("h2"))} classNames={classNames}><Heading2 {...icon} /></ToolButton>
+              <ToolButton label="Quote" pressed={formats.block === "blockquote"} onPress={() => run(() => applyBlock("blockquote"))} classNames={classNames}><Quote {...icon} /></ToolButton>
               </span>
             </div>
-          </Face> : <Face key="link" direction={direction} reduced={reduced} onSize={onFaceSize}>
-            <form className={styles.linkRow} onSubmit={event => { event.preventDefault(); applyLink(); }}>
-              <button type="button" className={styles.tool} aria-label="Back to formatting" onClick={() => closeLink()}><ArrowLeft {...icon} /></button>
+          </Face> : <Face key="link" direction={direction} reduced={reduced} onSize={onFaceSize} classNames={classNames}>
+            <form className={cn(styles.linkRow, classNames?.linkRow)} onSubmit={event => { event.preventDefault(); applyLink(); }}>
+              <button type="button" className={cn(styles.tool, classNames?.tool)} aria-label="Back to formatting" onClick={() => closeLink()}><ArrowLeft {...icon} /></button>
               <input
                 ref={linkInputRef}
-                className={styles.linkInput}
+                className={cn(styles.linkInput, classNames?.linkInput)}
                 value={linkDraft}
                 onChange={event => setLinkDraft(event.target.value)}
                 onKeyDown={event => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); closeLink(); } }}
@@ -1526,8 +1548,8 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
                 autoComplete="off"
                 spellCheck={false}
               />
-              {formats.link && <button type="button" className={styles.tool} aria-label="Remove link" onClick={() => applyLink(true)}><Unlink {...icon} /></button>}
-              <button type="submit" className={styles.apply} aria-label="Apply link" data-ready={!!linkDraft.trim() || undefined}><Check size={16} strokeWidth={2} aria-hidden="true" /></button>
+              {formats.link && <button type="button" className={cn(styles.tool, classNames?.tool)} aria-label="Remove link" onClick={() => applyLink(true)}><Unlink {...icon} /></button>}
+              <button type="submit" className={cn(styles.apply, classNames?.apply)} aria-label="Apply link" data-ready={!!linkDraft.trim() || undefined}><Check size={16} strokeWidth={2} aria-hidden="true" /></button>
             </form>
           </Face>}
         </AnimatePresence>
@@ -1538,7 +1560,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
       {slashOpen && slash && <motion.div
         key={`${slash.offset}-${slash.y}`}
         ref={slashPanel}
-        className={styles.slash}
+        className={cn(styles.slash, classNames?.slash)}
         data-above={slash.above || undefined}
         style={{ left: slash.x, top: slash.y, height: panelHeight, maxHeight: slashMax, transformOrigin: slash.above ? "16px 100%" : "16px 0" }}
         initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .96, y: slash.above ? 4 : -4 }}
@@ -1547,14 +1569,14 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
         transition={reduced ? { duration: duration.fast } : { ...spring.snappy, opacity: { duration: duration.fast, ease: enter } }}
         onMouseDown={event => event.preventDefault()}
       >
-        <div ref={panelBody} className={styles.slashBody}>
-          <ul ref={listRef} id={`${uid}-slash`} role="listbox" aria-label="Blocks" className={styles.slashList}>
-            <motion.li aria-hidden="true" className={styles.slashHighlight} style={{ y: hy, height: hh }} />
-            {slashResults.map((item, index) => <li key={item.type} id={optionId(index)} role="option" aria-selected={index === slashIndex} data-index={index} className={styles.slashOption}
+        <div ref={panelBody} className={cn(styles.slashBody, classNames?.slashBody)}>
+          <ul ref={listRef} id={`${uid}-slash`} role="listbox" aria-label="Blocks" className={cn(styles.slashList, classNames?.slashList)}>
+            <motion.li aria-hidden="true" className={cn(styles.slashHighlight, classNames?.slashHighlight)} style={{ y: hy, height: hh }} />
+            {slashResults.map((item, index) => <li key={item.type} id={optionId(index)} role="option" aria-selected={index === slashIndex} data-index={index} className={cn(styles.slashOption, classNames?.slashOption)}
               onPointerMove={() => { if (index !== slashIndex) setSlashActive(index); }} onClick={() => chooseSlash(item)}>
-              <span className={styles.slashIcon}>{item.icon}</span>
-              <span className={styles.slashLabel}>{item.label}</span>
-              {item.hint && <kbd className={styles.slashHint}>{item.hint}</kbd>}
+              <span className={cn(styles.slashIcon, classNames?.slashIcon)}>{item.icon}</span>
+              <span className={cn(styles.slashLabel, classNames?.slashLabel)}>{item.label}</span>
+              {item.hint && <kbd className={cn(styles.slashHint, classNames?.slashHint)}>{item.hint}</kbd>}
             </li>)}
           </ul>
         </div>

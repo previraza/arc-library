@@ -2,6 +2,7 @@
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef } from "react";
 import type { CSSProperties, HTMLAttributes, PointerEvent as ReactPointerEvent, ReactNode, Ref, UIEvent } from "react";
+import { cn } from "@/lib/cn";
 import styles from "./scroll-area.module.css";
 
 type Axis = "y" | "x";
@@ -38,13 +39,19 @@ export interface ScrollAreaProps extends Omit<HTMLAttributes<HTMLDivElement>, "o
   onScroll?: (event: UIEvent<HTMLDivElement>) => void;
   /** Called when content starts or stops extending past an edge. */
   onEdgeChange?: (edges: ScrollAreaEdges) => void;
+  /** Extend the inner, named parts of the scroll area: viewport, track or thumb. */
+  classNames?: {
+    viewport?: string;
+    track?: string;
+    thumb?: string;
+  };
 }
 
 const MIN_THUMB = 28;
 
 export const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(function ScrollArea({
   children, orientation = "vertical", fade = 28, scrollbars = "auto", hideDelay = 900, maxHeight, snap, label,
-  wheelToHorizontal = true, viewportClassName, viewportStyle, viewportRef, onScroll, onEdgeChange, className, ...rest
+  wheelToHorizontal = true, viewportClassName, viewportStyle, viewportRef, onScroll, onEdgeChange, className, classNames, ...rest
 }, forwardedRef) {
   const rootRef = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
@@ -178,14 +185,14 @@ export const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(function S
     node.scrollBy({ [axis === "y" ? "top" : "left"]: page, behavior: reduce ? "auto" : "smooth" });
   };
 
-  const bar = (axis: Axis) => <div ref={node => { tracks.current[axis] = node; }} className={styles.track} data-axis={axis} data-hidden="" aria-hidden="true"
+  const bar = (axis: Axis) => <div ref={node => { tracks.current[axis] = node; }} className={cn(styles.track, classNames?.track)} data-axis={axis} data-hidden="" aria-hidden="true"
     onPointerDown={event => onTrackDown(event, axis)}>
-    <div ref={node => { thumbs.current[axis] = node; }} className={styles.thumb}
+    <div ref={node => { thumbs.current[axis] = node; }} className={cn(styles.thumb, classNames?.thumb)}
       onPointerDown={event => onThumbDown(event, axis)} onPointerMove={onThumbMove} onPointerUp={onThumbUp} onPointerCancel={onThumbUp} />
   </div>;
 
   return <div ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")} data-orientation={orientation} data-scrollbars={scrollbars} {...rest}>
-    <div ref={viewport} className={[styles.viewport, viewportClassName].filter(Boolean).join(" ")} data-fade={fade > 0 ? orientation : undefined}
+    <div ref={viewport} className={cn(styles.viewport, viewportClassName, classNames?.viewport)} data-fade={fade > 0 ? orientation : undefined}
       style={{ maxHeight, scrollSnapType: snap, ...viewportStyle }} tabIndex={0} role={label ? "region" : undefined} aria-label={label} onScroll={handleScroll}>
       {children}
     </div>

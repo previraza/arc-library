@@ -3,6 +3,7 @@
 import { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type KeyboardEvent, type PointerEvent, type Ref } from "react";
 import { animate, motion, useInView, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./ridgeline.module.css";
 
 export interface RidgelineSeries {
@@ -39,6 +40,37 @@ export interface RidgelineProps {
   emptyLabel?: string;
   ref?: Ref<HTMLElement>;
   className?: string;
+  /** Extend the inner, named parts of the ridgeline: plot, ticks, tick, tickLabel, crosshair, svg, ridge, fill, median, line, lens, lensFill, lensBand, lensMedian, lensLine, labels, rowLabel, message, tooltip, tipTitle, tipValue, tipRow, tipKey, tipNote, scale, scaleLabel, steps or step. */
+  classNames?: {
+    plot?: string;
+    ticks?: string;
+    tick?: string;
+    tickLabel?: string;
+    crosshair?: string;
+    svg?: string;
+    ridge?: string;
+    fill?: string;
+    median?: string;
+    line?: string;
+    lens?: string;
+    lensFill?: string;
+    lensBand?: string;
+    lensMedian?: string;
+    lensLine?: string;
+    labels?: string;
+    rowLabel?: string;
+    message?: string;
+    tooltip?: string;
+    tipTitle?: string;
+    tipValue?: string;
+    tipRow?: string;
+    tipKey?: string;
+    tipNote?: string;
+    scale?: string;
+    scaleLabel?: string;
+    steps?: string;
+    step?: string;
+  };
 }
 
 type Stats = { q1: number; median: number; q3: number; min: number; max: number; n: number; sorted: number[] };
@@ -103,7 +135,7 @@ function useReducedMotionSafe() {
   return !!useReducedMotion() && hydrated;
 }
 
-export function Ridgeline({ series, label, unit = "", formatValue, domain, overlap = 2.4, rowHeight = 30, bandwidth, tint = true, active, defaultActive = null, onActiveChange, emptyLabel = "No data yet", ref, className }: RidgelineProps) {
+export function Ridgeline({ series, label, unit = "", formatValue, domain, overlap = 2.4, rowHeight = 30, bandwidth, tint = true, active, defaultActive = null, onActiveChange, emptyLabel = "No data yet", ref, className, classNames }: RidgelineProps) {
   const reduced = useReducedMotionSafe();
   const figure = useRef<HTMLElement>(null);
   const plot = useRef<HTMLDivElement>(null);
@@ -301,46 +333,46 @@ export function Ridgeline({ series, label, unit = "", formatValue, domain, overl
   const describe = (entry: RidgelineSeries) => { const s = model.stats.get(entry.id)!; return `${entry.label}: median ${format(s.median)}, middle half ${format(s.q1)} to ${format(s.q3)}, range ${format(s.min)} to ${format(s.max)}, ${s.n} values`; };
 
   return <figure ref={figure} className={[styles.figure, className].filter(Boolean).join(" ")} aria-label={label}>
-    <div ref={plot} className={styles.plot} style={{ height }} data-active={current ? true : undefined} data-cursor={reading ? true : undefined} role="group" tabIndex={empty ? -1 : 0} aria-roledescription="ridgeline chart"
+    <div ref={plot} className={cn(styles.plot, classNames?.plot)} style={{ height }} data-active={current ? true : undefined} data-cursor={reading ? true : undefined} role="group" tabIndex={empty ? -1 : 0} aria-roledescription="ridgeline chart"
       aria-label={`${label}. Up and down arrows choose a ridge, left and right arrows move along the values.`}
       onPointerMove={onPointerMove} onPointerDown={onPointerMove} onPointerLeave={event => { if (event.pointerType === "mouse") { setCurrent(null); setCursor(null); } }} onKeyDown={onKeyDown} onBlur={() => { setCurrent(null); setCursor(null); }}>
-      <div className={styles.ticks} aria-hidden="true" style={{ height: height - AXIS + 22 }}>
-        {ticks.map(value => <div key={value} ref={element => { if (element) tickRefs.current.set(value, element); else tickRefs.current.delete(value); }} className={styles.tick} style={{ top: top - rowHeight * .5 }}>
-          <span className={styles.tickLabel}>{format(value)}</span>
+      <div className={cn(styles.ticks, classNames?.ticks)} aria-hidden="true" style={{ height: height - AXIS + 22 }}>
+        {ticks.map(value => <div key={value} ref={element => { if (element) tickRefs.current.set(value, element); else tickRefs.current.delete(value); }} className={cn(styles.tick, classNames?.tick)} style={{ top: top - rowHeight * .5 }}>
+          <span className={cn(styles.tickLabel, classNames?.tickLabel)}>{format(value)}</span>
         </div>)}
       </div>
-      <div ref={cross} className={styles.crosshair} style={{ top: top - rowHeight * .5, height: height - AXIS - top + rowHeight * .5 }} aria-hidden="true" />
-      <svg className={styles.svg} width={width || undefined} height={height} viewBox={`0 0 ${Math.max(1, width)} ${height}`} aria-hidden="true" focusable="false">
-        {series.map(entry => <g key={entry.id} className={styles.ridge} data-dim={current !== null && current !== entry.id || undefined} data-lifted={current === entry.id || undefined} style={{ "--ridge": ridgeColor(model.stats.get(entry.id)?.median ?? model.lo) } as CSSProperties}>
-          <path ref={element => { if (element) fills.current.set(entry.id, element); else fills.current.delete(entry.id); }} className={styles.fill} />
-          <line ref={element => { if (element) medians.current.set(entry.id, element); else medians.current.delete(entry.id); }} className={styles.median} />
-          <path ref={element => { if (element) lines.current.set(entry.id, element); else lines.current.delete(entry.id); }} className={styles.line} />
+      <div ref={cross} className={cn(styles.crosshair, classNames?.crosshair)} style={{ top: top - rowHeight * .5, height: height - AXIS - top + rowHeight * .5 }} aria-hidden="true" />
+      <svg className={cn(styles.svg, classNames?.svg)} width={width || undefined} height={height} viewBox={`0 0 ${Math.max(1, width)} ${height}`} aria-hidden="true" focusable="false">
+        {series.map(entry => <g key={entry.id} className={cn(styles.ridge, classNames?.ridge)} data-dim={current !== null && current !== entry.id || undefined} data-lifted={current === entry.id || undefined} style={{ "--ridge": ridgeColor(model.stats.get(entry.id)?.median ?? model.lo) } as CSSProperties}>
+          <path ref={element => { if (element) fills.current.set(entry.id, element); else fills.current.delete(entry.id); }} className={cn(styles.fill, classNames?.fill)} />
+          <line ref={element => { if (element) medians.current.set(entry.id, element); else medians.current.delete(entry.id); }} className={cn(styles.median, classNames?.median)} />
+          <path ref={element => { if (element) lines.current.set(entry.id, element); else lines.current.delete(entry.id); }} className={cn(styles.line, classNames?.line)} />
         </g>)}
-        <g ref={element => { lifted.current.group = element; }} className={styles.lens} data-on={current ? true : undefined} style={tipStats ? { "--ridge": ridgeColor(tipStats.median) } as CSSProperties : undefined}>
-          <path ref={element => { lifted.current.fill = element; }} className={styles.lensFill} />
-          <path ref={element => { lifted.current.band = element; }} className={styles.lensBand} />
-          <line ref={element => { lifted.current.median = element; }} className={styles.lensMedian} />
-          <path ref={element => { lifted.current.line = element; }} className={styles.lensLine} />
+        <g ref={element => { lifted.current.group = element; }} className={cn(styles.lens, classNames?.lens)} data-on={current ? true : undefined} style={tipStats ? { "--ridge": ridgeColor(tipStats.median) } as CSSProperties : undefined}>
+          <path ref={element => { lifted.current.fill = element; }} className={cn(styles.lensFill, classNames?.lensFill)} />
+          <path ref={element => { lifted.current.band = element; }} className={cn(styles.lensBand, classNames?.lensBand)} />
+          <line ref={element => { lifted.current.median = element; }} className={cn(styles.lensMedian, classNames?.lensMedian)} />
+          <path ref={element => { lifted.current.line = element; }} className={cn(styles.lensLine, classNames?.lensLine)} />
         </g>
       </svg>
-      <div className={styles.labels} aria-hidden="true">
-        {series.map((entry, index) => <span key={entry.id} className={styles.rowLabel} data-active={current === entry.id || undefined} style={{ top: baselineOf(index) - 18, width: gutter - 10 }}>{entry.label}</span>)}
+      <div className={cn(styles.labels, classNames?.labels)} aria-hidden="true">
+        {series.map((entry, index) => <span key={entry.id} className={cn(styles.rowLabel, classNames?.rowLabel)} data-active={current === entry.id || undefined} style={{ top: baselineOf(index) - 18, width: gutter - 10 }}>{entry.label}</span>)}
       </div>
-      {empty && <p className={styles.message}>{emptyLabel}</p>}
-      <motion.div ref={tip} className={styles.tooltip} style={{ x: reduced ? tipX : tipSpringX, y: reduced ? tipY : tipSpringY }} aria-hidden="true">
+      {empty && <p className={cn(styles.message, classNames?.message)}>{emptyLabel}</p>}
+      <motion.div ref={tip} className={cn(styles.tooltip, classNames?.tooltip)} style={{ x: reduced ? tipX : tipSpringX, y: reduced ? tipY : tipSpringY }} aria-hidden="true">
         {tipSeries && tipStats && <>
-          <p className={styles.tipTitle}>{tipSeries.label}</p>
-          <p className={styles.tipValue}><span className={styles.tipKey}>Median</span><span>{format(tipStats.median)}</span></p>
-          <p className={styles.tipRow}><span className={styles.tipKey}>Middle half</span><span>{format(tipStats.q1)} to {format(tipStats.q3)}</span></p>
-          <p className={styles.tipRow}><span className={styles.tipKey}>Range</span><span>{format(tipStats.min)} to {format(tipStats.max)}</span></p>
-          {held?.value != null && <p className={styles.tipNote}>{percent.format(tipBelow)} at or below {format(held.value)}</p>}
+          <p className={cn(styles.tipTitle, classNames?.tipTitle)}>{tipSeries.label}</p>
+          <p className={cn(styles.tipValue, classNames?.tipValue)}><span className={cn(styles.tipKey, classNames?.tipKey)}>Median</span><span>{format(tipStats.median)}</span></p>
+          <p className={cn(styles.tipRow, classNames?.tipRow)}><span className={cn(styles.tipKey, classNames?.tipKey)}>Middle half</span><span>{format(tipStats.q1)} to {format(tipStats.q3)}</span></p>
+          <p className={cn(styles.tipRow, classNames?.tipRow)}><span className={cn(styles.tipKey, classNames?.tipKey)}>Range</span><span>{format(tipStats.min)} to {format(tipStats.max)}</span></p>
+          {held?.value != null && <p className={cn(styles.tipNote, classNames?.tipNote)}>{percent.format(tipBelow)} at or below {format(held.value)}</p>}
         </>}
       </motion.div>
     </div>
-    {tint && !empty && <div className={styles.scale} aria-hidden="true">
-      <span className={styles.scaleLabel}>Median</span>
+    {tint && !empty && <div className={cn(styles.scale, classNames?.scale)} aria-hidden="true">
+      <span className={cn(styles.scaleLabel, classNames?.scaleLabel)}>Median</span>
       <span>{format(model.lo)}</span>
-      <span className={styles.steps}>{[0, .25, .5, .75, 1].map(step => <span key={step} className={styles.step} style={{ "--ridge": toneOf(step) } as CSSProperties} />)}</span>
+      <span className={cn(styles.steps, classNames?.steps)}>{[0, .25, .5, .75, 1].map(step => <span key={step} className={cn(styles.step, classNames?.step)} style={{ "--ridge": toneOf(step) } as CSSProperties} />)}</span>
       <span>{format(model.hi)}</span>
     </div>}
     <p className={styles.srOnly} aria-live="polite" aria-atomic="true">{activeSeries ? `${describe(activeSeries)}${reading ? `. ${percent.format(reading.below)} at or below ${format(reading.value)}` : ""}` : ""}</p>

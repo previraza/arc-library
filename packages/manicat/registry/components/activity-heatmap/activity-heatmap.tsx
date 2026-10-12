@@ -5,6 +5,7 @@ import type { CSSProperties, FocusEvent, KeyboardEvent, PointerEvent, ReactNode 
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion } from "motion/react";
 import type { Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./activity-heatmap.module.css";
 
 export interface ActivityDay {
@@ -38,6 +39,45 @@ export interface ActivityHeatmapProps {
   /** Formatting locale. Fixed by default so server and client render the same labels. */
   locale?: string;
   className?: string;
+  /** Extend the inner, named parts of the activity heatmap: rollingFrame, rolling, place, placeChar, rise, riseLine, header, summary, total, period, actions, scroller, canvas, months, month, weekdays, weekday, plot, grid, row, cell, ring, legend, caption, captionLong, captionShort, scale, legendText, swatches, swatch, tip, bubble, tipBody, tipLines, tipPrimary or tipSecondary. */
+  classNames?: {
+    rollingFrame?: string;
+    rolling?: string;
+    place?: string;
+    placeChar?: string;
+    rise?: string;
+    riseLine?: string;
+    header?: string;
+    summary?: string;
+    total?: string;
+    period?: string;
+    actions?: string;
+    scroller?: string;
+    canvas?: string;
+    months?: string;
+    month?: string;
+    weekdays?: string;
+    weekday?: string;
+    plot?: string;
+    grid?: string;
+    row?: string;
+    cell?: string;
+    ring?: string;
+    legend?: string;
+    caption?: string;
+    captionLong?: string;
+    captionShort?: string;
+    scale?: string;
+    legendText?: string;
+    swatches?: string;
+    swatch?: string;
+    tip?: string;
+    bubble?: string;
+    tipBody?: string;
+    tipLines?: string;
+    tipPrimary?: string;
+    tipSecondary?: string;
+  };
 }
 
 type Model = {
@@ -102,7 +142,7 @@ const tipText = (reduced: boolean): Variants => ({
 
 /** A total that rolls digit by digit in the direction it moved. Places keep their identity, so only changed digits turn,
  *  and when the number gains or loses a digit the width follows on a spring instead of shifting the sentence in one frame. */
-function RollingNumber({ value, locale, reduced }: { value: number; locale: string; reduced: boolean }) {
+function RollingNumber({ value, locale, reduced, classNames }: { value: number; locale: string; reduced: boolean; classNames?: ActivityHeatmapProps["classNames"] }) {
   const [state, setState] = useState({ value, direction: 1 });
   if (state.value !== value) setState({ value, direction: value > state.value ? 1 : -1 });
   const inner = useRef<HTMLSpanElement>(null);
@@ -130,12 +170,12 @@ function RollingNumber({ value, locale, reduced }: { value: number; locale: stri
     to: { opacity: 1, y: "0em", filter: "blur(0px)" },
     gone: (direction: number) => reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: `${-.3 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: standard } },
   };
-  return <motion.span className={styles.rollingFrame} style={{ width }} aria-hidden="true"><span ref={inner} className={styles.rolling}>
+  return <motion.span className={cn(styles.rollingFrame, classNames?.rollingFrame)} style={{ width }} aria-hidden="true"><span ref={inner} className={cn(styles.rolling, classNames?.rolling)}>
     {chars.map((char, index) => {
       const place = chars.length - index;
-      return <span key={place} className={styles.place}>
+      return <span key={place} className={cn(styles.place, classNames?.place)}>
         <AnimatePresence mode="popLayout" initial={false} custom={state.direction}>
-          <motion.span key={char} className={styles.placeChar} custom={state.direction} variants={variants} initial="from" animate="to" exit="gone"
+          <motion.span key={char} className={cn(styles.placeChar, classNames?.placeChar)} custom={state.direction} variants={variants} initial="from" animate="to" exit="gone"
             transition={reduced ? { duration: motionTokens.duration.fast } : { duration: motionTokens.duration.standard, ease: enter, delay: Math.min(place * .018, .09) }}>{char}</motion.span>
         </AnimatePresence>
       </span>;
@@ -144,17 +184,17 @@ function RollingNumber({ value, locale, reduced }: { value: number; locale: stri
 }
 
 /** A short word that changes rises in from a soft blur while the old one lifts away a little faster. */
-function RiseText({ text, reduced, children }: { text: string; reduced: boolean; children?: ReactNode }) {
-  return <span className={styles.rise} aria-hidden="true">
+function RiseText({ text, reduced, children, classNames }: { text: string; reduced: boolean; children?: ReactNode; classNames?: ActivityHeatmapProps["classNames"] }) {
+  return <span className={cn(styles.rise, classNames?.rise)} aria-hidden="true">
     <AnimatePresence mode="popLayout" initial={false}>
-      <motion.span key={text} className={styles.riseLine} initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: "0em", filter: "blur(0px)" }}
+      <motion.span key={text} className={cn(styles.riseLine, classNames?.riseLine)} initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: "0em", filter: "blur(0px)" }}
         exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: standard } }}
         transition={{ duration: reduced ? motionTokens.duration.fast : motionTokens.duration.standard, ease: enter }}>{children ?? text}</motion.span>
     </AnimatePresence>
   </span>;
 }
 
-export function ActivityHeatmap({ days, label, period, unit: unitProp = CONTRIBUTIONS, thresholds, weekStartsOn = 0, selectedDate = null, onSelectDate, actions, locale = "en-US", className }: ActivityHeatmapProps) {
+export function ActivityHeatmap({ days, label, period, unit: unitProp = CONTRIBUTIONS, thresholds, weekStartsOn = 0, selectedDate = null, onSelectDate, actions, locale = "en-US", className, classNames }: ActivityHeatmapProps) {
   const reduced = useReducedMotionSafe();
   const id = useId();
   // Keyed by its words, so an inline unit object does not rebuild every cell on each render.
@@ -326,19 +366,19 @@ export function ActivityHeatmap({ days, label, period, unit: unitProp = CONTRIBU
 
   const maxDiagonal = Math.max(1, model.weeks - 1 + 6);
   const step = Math.min(12, WAVE / maxDiagonal);
-  const cells = useMemo(() => Array.from({ length: 7 }, (_, row) => <div key={row} role="row" className={styles.row}>
+  const cells = useMemo(() => Array.from({ length: 7 }, (_, row) => <div key={row} role="row" className={cn(styles.row, classNames?.row)}>
     {Array.from({ length: model.weeks }, (_, col) => {
       const index = col * 7 + row - model.lead;
       const inRange = index >= 0 && index < model.length;
       const wave = { "--wave": `${Math.round((col + row) * step)}ms`, "--wave-back": `${Math.round((maxDiagonal - col - row) * step)}ms` } as CSSProperties;
-      if (!inRange) return <span key={col} className={styles.cell} data-empty="" style={wave} aria-hidden="true" />;
+      if (!inRange) return <span key={col} className={cn(styles.cell, classNames?.cell)} data-empty="" style={wave} aria-hidden="true" />;
       const count = model.counts[index];
       const date = new Date(model.start + index * DAY);
-      return <span key={col} role="gridcell" className={styles.cell} style={wave} data-index={index} data-level={model.levels[index]} tabIndex={index === tabIndexDay ? 0 : -1}
+      return <span key={col} role="gridcell" className={cn(styles.cell, classNames?.cell)} style={wave} data-index={index} data-level={model.levels[index]} tabIndex={index === tabIndexDay ? 0 : -1}
         aria-selected={onSelectDate ? index === selectedIndex : undefined} aria-label={`${count ? formats.number.format(count) : "No"} ${noun(count, unit)}, ${formats.long.format(date)}`}
         onClick={() => onSelectDate?.(toIso(date.getTime()))} />;
     })}
-  </div>), [model, step, maxDiagonal, tabIndexDay, selectedIndex, formats, unit, onSelectDate]);
+  </div>), [model, step, maxDiagonal, tabIndexDay, selectedIndex, formats, unit, onSelectDate, classNames]);
 
   const weekdayLabels = useMemo(() => Array.from({ length: 7 }, (_, row) => {
     const weekday = (row + weekStartsOn) % 7;
@@ -351,60 +391,60 @@ export function ActivityHeatmap({ days, label, period, unit: unitProp = CONTRIBU
   const summary = `${formats.number.format(model.total)} ${noun(model.total, unit)} in ${period}`;
 
   return <div ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")}>
-    <div className={styles.header}>
-      <p className={styles.summary}>
-        <span className={styles.total}><RollingNumber value={model.total} locale={locale} reduced={reduced} /> {noun(model.total, unit)}</span>{" "}
-        <span className={styles.period}>in <RiseText text={period} reduced={reduced} /></span>
+    <div className={cn(styles.header, classNames?.header)}>
+      <p className={cn(styles.summary, classNames?.summary)}>
+        <span className={cn(styles.total, classNames?.total)}><RollingNumber value={model.total} locale={locale} reduced={reduced} classNames={classNames} /> {noun(model.total, unit)}</span>{" "}
+        <span className={cn(styles.period, classNames?.period)}>in <RiseText text={period} reduced={reduced} classNames={classNames} /></span>
         <span className={styles.srOnly} role="status">{summary}</span>
       </p>
-      {actions && <div className={styles.actions}>{actions}</div>}
+      {actions && <div className={cn(styles.actions, classNames?.actions)}>{actions}</div>}
     </div>
 
-    <div ref={scrollerRef} className={styles.scroller}>
-      <div className={styles.canvas} style={{ "--weeks": model.weeks } as CSSProperties}>
-        <div className={styles.months} aria-hidden="true">
-          {model.months.map((month, order) => <span key={`${month.month % 12}-${model.months.findIndex(item => item.month % 12 === month.month % 12) === order ? 0 : 1}`} className={styles.month} style={{ "--col": month.col } as CSSProperties}>{month.label}</span>)}
+    <div ref={scrollerRef} className={cn(styles.scroller, classNames?.scroller)}>
+      <div className={cn(styles.canvas, classNames?.canvas)} style={{ "--weeks": model.weeks } as CSSProperties}>
+        <div className={cn(styles.months, classNames?.months)} aria-hidden="true">
+          {model.months.map((month, order) => <span key={`${month.month % 12}-${model.months.findIndex(item => item.month % 12 === month.month % 12) === order ? 0 : 1}`} className={cn(styles.month, classNames?.month)} style={{ "--col": month.col } as CSSProperties}>{month.label}</span>)}
         </div>
-        <div className={styles.weekdays} aria-hidden="true">{weekdayLabels.map((text, row) => <span key={row} className={styles.weekday}>{text}</span>)}</div>
-        <div ref={plotRef} className={styles.plot}>
-          <div ref={gridRef} role="grid" aria-label={label} aria-readonly="true" aria-describedby={`${id}-legend`} className={styles.grid}
+        <div className={cn(styles.weekdays, classNames?.weekdays)} aria-hidden="true">{weekdayLabels.map((text, row) => <span key={row} className={cn(styles.weekday, classNames?.weekday)}>{text}</span>)}</div>
+        <div ref={plotRef} className={cn(styles.plot, classNames?.plot)}>
+          <div ref={gridRef} role="grid" aria-label={label} aria-readonly="true" aria-describedby={`${id}-legend`} className={cn(styles.grid, classNames?.grid)}
             data-reveal={reveal} data-direction={range.direction < 0 ? "back" : undefined} data-highlight={highlight ?? undefined}
             onPointerOver={onGridPointerOver} onPointerLeave={onGridPointerLeave} onFocus={onGridFocus} onBlur={onGridBlur} onKeyDown={onGridKeyDown}>
             {cells}
           </div>
-          <span ref={ringRef} className={styles.ring} data-shown={ringShown || undefined} style={{ "--col": selectedCol, "--row": selectedRow } as CSSProperties} aria-hidden="true" />
+          <span ref={ringRef} className={cn(styles.ring, classNames?.ring)} data-shown={ringShown || undefined} style={{ "--col": selectedCol, "--row": selectedRow } as CSSProperties} aria-hidden="true" />
         </div>
       </div>
     </div>
 
-    <div className={styles.legend}>
+    <div className={cn(styles.legend, classNames?.legend)}>
       <span id={`${id}-legend`} className={styles.srOnly}>Darker squares mean more {unit.other}. Levels: {ranges.join(", ")}.</span>
-      <span className={styles.caption} aria-live="polite">
-        <RiseText text={caption} reduced={reduced}>{caption && <><span className={styles.captionLong}>{caption}</span><span className={styles.captionShort}>{dayCount}</span></>}</RiseText>
+      <span className={cn(styles.caption, classNames?.caption)} aria-live="polite">
+        <RiseText text={caption} reduced={reduced} classNames={classNames}>{caption && <><span className={cn(styles.captionLong, classNames?.captionLong)}>{caption}</span><span className={cn(styles.captionShort, classNames?.captionShort)}>{dayCount}</span></>}</RiseText>
         <span className={styles.srOnly}>{caption}</span>
       </span>
-      <span className={styles.scale}>
-      <span className={styles.legendText} aria-hidden="true">Less</span>
-      <div className={styles.swatches} role="group" aria-label="Highlight days by level" onKeyDown={onLegendKeyDown}>
-        {LEVELS.map(level => <button key={level} type="button" className={styles.swatch} data-level-key={level} data-level={level} tabIndex={level === legendFocus ? 0 : -1}
+      <span className={cn(styles.scale, classNames?.scale)}>
+      <span className={cn(styles.legendText, classNames?.legendText)} aria-hidden="true">Less</span>
+      <div className={cn(styles.swatches, classNames?.swatches)} role="group" aria-label="Highlight days by level" onKeyDown={onLegendKeyDown}>
+        {LEVELS.map(level => <button key={level} type="button" className={cn(styles.swatch, classNames?.swatch)} data-level-key={level} data-level={level} tabIndex={level === legendFocus ? 0 : -1}
           aria-pressed={pinned === level} aria-label={`Highlight days with ${ranges[level]}`}
           onClick={() => setPinned(current => current === level ? null : level)}
           onPointerEnter={() => previewLevel(level)} onPointerLeave={() => previewLevel(null)}
           onFocus={() => { setLegendFocus(level); previewLevel(level); }} onBlur={() => previewLevel(null)} />)}
       </div>
-      <span className={styles.legendText} aria-hidden="true">More</span>
+      <span className={cn(styles.legendText, classNames?.legendText)} aria-hidden="true">More</span>
       </span>
     </div>
 
-    <motion.div className={styles.tip} style={{ x: tipX, y: tipY }} aria-hidden="true">
-      <motion.div className={styles.bubble} style={{ x: "-50%" }} initial={false} animate={open && tip ? { opacity: 1, scale: 1 } : { opacity: 0, scale: reduced ? 1 : .96 }}
+    <motion.div className={cn(styles.tip, classNames?.tip)} style={{ x: tipX, y: tipY }} aria-hidden="true">
+      <motion.div className={cn(styles.bubble, classNames?.bubble)} style={{ x: "-50%" }} initial={false} animate={open && tip ? { opacity: 1, scale: 1 } : { opacity: 0, scale: reduced ? 1 : .96 }}
         transition={reduced ? { duration: open ? motionTokens.duration.fast : motionTokens.duration.instant } : open ? { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: enter } } : { duration: motionTokens.duration.instant, ease: standard }}>
-        <motion.span className={styles.tipBody} style={{ width: tipWidth }}>
-          <span ref={measureRef} className={styles.tipMeasure}><span className={styles.tipPrimary}>{tip?.primary}</span><span className={styles.tipSecondary}>{tip?.secondary}</span></span>
+        <motion.span className={cn(styles.tipBody, classNames?.tipBody)} style={{ width: tipWidth }}>
+          <span ref={measureRef} className={styles.tipMeasure}><span className={cn(styles.tipPrimary, classNames?.tipPrimary)}>{tip?.primary}</span><span className={cn(styles.tipSecondary, classNames?.tipSecondary)}>{tip?.secondary}</span></span>
           <AnimatePresence mode="popLayout" initial={false} custom={change}>
-            {tip && <motion.span key={tip.key} className={styles.tipLines} custom={change} variants={tipText(reduced)} initial="from" animate="to" exit="gone" transition={{ duration: reduced ? motionTokens.duration.fast : motionTokens.duration.standard, ease: enter }}>
-              <span className={styles.tipPrimary}>{tip.primary}</span>
-              <span className={styles.tipSecondary}>{tip.secondary}</span>
+            {tip && <motion.span key={tip.key} className={cn(styles.tipLines, classNames?.tipLines)} custom={change} variants={tipText(reduced)} initial="from" animate="to" exit="gone" transition={{ duration: reduced ? motionTokens.duration.fast : motionTokens.duration.standard, ease: enter }}>
+              <span className={cn(styles.tipPrimary, classNames?.tipPrimary)}>{tip.primary}</span>
+              <span className={cn(styles.tipSecondary, classNames?.tipSecondary)}>{tip.secondary}</span>
             </motion.span>}
           </AnimatePresence>
         </motion.span>

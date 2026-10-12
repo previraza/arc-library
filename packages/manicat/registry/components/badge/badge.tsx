@@ -4,6 +4,7 @@ import { isValidElement, useEffect, useLayoutEffect, useRef } from "react";
 import type { HTMLAttributes, ReactNode } from "react";
 import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion, type AnimationPlaybackControls, type HTMLMotionProps, type TargetAndTransition, type Transition } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./badge.module.css";
 
 export type BadgeTone = "neutral" | "success" | "info" | "warning" | "danger";
@@ -13,6 +14,15 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: BadgeTone;
   size?: BadgeSize;
   icon?: ReactNode;
+  /** Extend the inner, named parts of the badge: body, content, icon, glyph, label or text. */
+  classNames?: {
+    body?: string;
+    content?: string;
+    icon?: string;
+    glyph?: string;
+    label?: string;
+    text?: string;
+  };
 }
 
 const exitFast: Transition = { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] };
@@ -35,7 +45,7 @@ function iconKey(icon: ReactNode) {
   return typeof type === "string" ? type : type.displayName ?? type.name ?? "icon";
 }
 
-export function Badge({ tone = "neutral", size = "md", icon, className, children, ...props }: BadgeProps) {
+export function Badge({ tone = "neutral", size = "md", icon, className, classNames, children, ...props }: BadgeProps) {
   const reduce = useReducedMotion();
   const text = typeof children === "string" || typeof children === "number" ? String(children) : null;
   const glyphKey = icon ? iconKey(icon) : "";
@@ -66,13 +76,13 @@ export function Badge({ tone = "neutral", size = "md", icon, className, children
     return () => { observer.disconnect(); controls?.stop(); };
   }, [width, reduce]);
   const enter: Transition = reduce ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] };
-  const classes = [styles.badge, styles[tone], styles[size], className].filter(Boolean).join(" ");
+  const classes = cn(styles.badge, styles[tone], styles[size], className);
   // The pill follows its content: text and icon swap in place while the width springs to the new size.
   return <span {...props} className={classes}>
-    <motion.span ref={body} className={styles.body} style={{ width }}>
-      <span ref={content} className={styles.content}>
-        {icon ? <span className={styles.icon} aria-hidden="true"><AnimatePresence mode="popLayout" initial={false}><Swap key={glyphKey} className={styles.glyph} initial={reduce ? { opacity: 0 } : iconIn} animate={shown} exit={reduce ? fadeOnly : { ...iconIn, transition: exitFast }} transition={reduce ? enter : motionTokens.spring.snappy}>{icon}</Swap></AnimatePresence></span> : null}
-        {text === null ? children : <span className={styles.label}><AnimatePresence mode="popLayout" initial={false}><Swap key={text} className={styles.text} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? fadeOnly : textOut} transition={enter}>{text}</Swap></AnimatePresence></span>}
+    <motion.span ref={body} className={cn(styles.body, classNames?.body)} style={{ width }}>
+      <span ref={content} className={cn(styles.content, classNames?.content)}>
+        {icon ? <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true"><AnimatePresence mode="popLayout" initial={false}><Swap key={glyphKey} className={cn(styles.glyph, classNames?.glyph)} initial={reduce ? { opacity: 0 } : iconIn} animate={shown} exit={reduce ? fadeOnly : { ...iconIn, transition: exitFast }} transition={reduce ? enter : motionTokens.spring.snappy}>{icon}</Swap></AnimatePresence></span> : null}
+        {text === null ? children : <span className={cn(styles.label, classNames?.label)}><AnimatePresence mode="popLayout" initial={false}><Swap key={text} className={cn(styles.text, classNames?.text)} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? fadeOnly : textOut} transition={enter}>{text}</Swap></AnimatePresence></span>}
       </span>
     </motion.span>
   </span>;

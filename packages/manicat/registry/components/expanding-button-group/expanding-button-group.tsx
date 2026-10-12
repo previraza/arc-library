@@ -5,6 +5,7 @@ import type { CSSProperties, FocusEvent, KeyboardEvent, PointerEvent, ReactNode 
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import type { TargetAndTransition, Transition, Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./expanding-button-group.module.css";
 
 export type ExpandingButtonGroupSize = "sm" | "md";
@@ -41,6 +42,17 @@ export interface ExpandingButtonGroupProps {
   confirmDuration?: number;
   className?: string;
   style?: CSSProperties;
+  /** Extend the inner, named parts of the expanding button group: group, item, icon, glyph, label, word, sizer, srOnly. */
+  classNames?: {
+    group?: string;
+    item?: string;
+    icon?: string;
+    glyph?: string;
+    label?: string;
+    word?: string;
+    sizer?: string;
+    srOnly?: string;
+  };
 }
 
 /** Geometry per size. The icon keeps the same left inset collapsed and expanded, so it never moves while the label is revealed. */
@@ -96,7 +108,7 @@ interface ItemProps {
   onFocus: (item: ExpandingButtonGroupItem, event: FocusEvent<HTMLButtonElement>) => void;
 }
 
-function Item({ item, size, expanded, done, busy, tabStop, reduced, onPointerDown, onClick, onFocus }: ItemProps) {
+function Item({ item, size, expanded, done, busy, tabStop, reduced, onPointerDown, onClick, onFocus, classNames }: ItemProps & { classNames?: ExpandingButtonGroupProps["classNames"] }) {
   const m = metrics[size];
   const labelRef = useRef<HTMLSpanElement>(null);
   const doneRef = useRef<HTMLSpanElement>(null);
@@ -138,7 +150,7 @@ function Item({ item, size, expanded, done, busy, tabStop, reduced, onPointerDow
   const word = showDone ? item.doneLabel! : item.label;
   return <motion.button
     type="button"
-    className={styles.item}
+    className={cn(styles.item, classNames?.item)}
     style={{ width }}
     data-ebg-item=""
     data-id={item.id}
@@ -154,19 +166,19 @@ function Item({ item, size, expanded, done, busy, tabStop, reduced, onPointerDow
     onClick={() => onClick(item)}
     onFocus={event => onFocus(item, event)}
   >
-    <span className={styles.icon} aria-hidden="true">
+    <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true">
       <AnimatePresence initial={false}>
-        <motion.span key={showDone ? "done" : "icon"} className={styles.glyph} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? instant : iconEnter}>
+        <motion.span key={showDone ? "done" : "icon"} className={cn(styles.glyph, classNames?.glyph)} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? instant : iconEnter}>
           {showDone ? <DrawnCheck reduced={reduced} /> : item.icon}
         </motion.span>
       </AnimatePresence>
     </span>
-    <motion.span className={styles.label} aria-hidden="true" variants={reduced ? reducedLabelVariants : labelVariants} initial={false} animate={expanded ? "shown" : "hidden"}>
+    <motion.span className={cn(styles.label, classNames?.label)} aria-hidden="true" variants={reduced ? reducedLabelVariants : labelVariants} initial={false} animate={expanded ? "shown" : "hidden"}>
       <AnimatePresence initial={false}>
-        <motion.span key={word} className={styles.word} initial={reduced ? fadeIn : textIn} animate={rest} exit={reduced ? fadeOut : textOut} transition={reduced ? instant : textEnter}>{word}</motion.span>
+        <motion.span key={word} className={cn(styles.word, classNames?.word)} initial={reduced ? fadeIn : textIn} animate={rest} exit={reduced ? fadeOut : textOut} transition={reduced ? instant : textEnter}>{word}</motion.span>
       </AnimatePresence>
-      <span ref={labelRef} className={styles.sizer}>{item.label}</span>
-      {item.doneLabel ? <span ref={doneRef} className={styles.sizer}>{item.doneLabel}</span> : null}
+      <span ref={labelRef} className={cn(styles.sizer, classNames?.sizer)}>{item.label}</span>
+      {item.doneLabel ? <span ref={doneRef} className={cn(styles.sizer, classNames?.sizer)}>{item.doneLabel}</span> : null}
     </motion.span>
   </motion.button>;
 }
@@ -176,7 +188,7 @@ function Item({ item, size, expanded, done, busy, tabStop, reduced, onPointerDow
  * label while its neighbours slide aside, and an action can confirm in place: the icon draws a check and the label becomes a past tense word.
  * On touch, the first tap reveals the label and a second tap runs the action.
  */
-export function ExpandingButtonGroup({ items, label, size = "md", defaultExpanded = null, onAction, confirmDuration = 1400, className, style }: ExpandingButtonGroupProps) {
+export function ExpandingButtonGroup({ items, label, size = "md", defaultExpanded = null, onAction, confirmDuration = 1400, className, style, classNames }: ExpandingButtonGroupProps) {
   const reduced = useReducedMotion() ?? false;
   const root = useRef<HTMLDivElement>(null);
   const [intent, setIntent] = useState<string | null>(null);
@@ -340,7 +352,7 @@ export function ExpandingButtonGroup({ items, label, size = "md", defaultExpande
     role="toolbar"
     aria-label={label}
     aria-orientation="horizontal"
-    className={[styles.group, styles[size], className].filter(Boolean).join(" ")}
+    className={cn(styles.group, styles[size], className, classNames?.group)}
     style={vars}
     onKeyDown={onKeyDown}
     onBlur={onBlur}
@@ -359,8 +371,9 @@ export function ExpandingButtonGroup({ items, label, size = "md", defaultExpande
       onPointerDown={onItemPointerDown}
       onClick={onItemClick}
       onFocus={onItemFocus}
+      classNames={classNames}
     />)}
-    <span className={styles.srOnly} role="status" aria-live="polite">{announcement}</span>
+    <span className={cn(styles.srOnly, classNames?.srOnly)} role="status" aria-live="polite">{announcement}</span>
   </div>;
 }
 

@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { Variants } from "motion/react";
 import { RotateCcw, Search, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./shortcut-recorder.module.css";
 
 /* ================================================================================================
@@ -215,6 +216,24 @@ export interface ShortcutRecorderProps {
   disabled?: boolean;
   id?: string;
   className?: string;
+  /** Extend the inner, named parts of the shortcut recorder: label, control, recorder, row, dot, chipSlot, placeholder, actions, action, messageSlot, message, messageText, messageActions, link or strong. */
+  classNames?: {
+    label?: string;
+    control?: string;
+    recorder?: string;
+    row?: string;
+    dot?: string;
+    chipSlot?: string;
+    placeholder?: string;
+    actions?: string;
+    action?: string;
+    messageSlot?: string;
+    message?: string;
+    messageText?: string;
+    messageActions?: string;
+    link?: string;
+    strong?: string;
+  };
 }
 
 const RESERVED: ShortcutBinding[] = [
@@ -239,7 +258,7 @@ const chipFade: Variants = { enter: { opacity: 0 }, rest: { opacity: 1, scale: 1
  */
 export function ShortcutRecorder({
   label, hideLabel = false, value, defaultValue = null, onValueChange, resetValue, bindings = [], warnReserved = true, requireModifier = true,
-  platform: platformProp, placeholder = "Record shortcut", description, disabled = false, id, className,
+  platform: platformProp, placeholder = "Record shortcut", description, disabled = false, id, className, classNames,
 }: ShortcutRecorderProps) {
   const reduced = useReducedFlag();
   const platform = usePlatform(platformProp);
@@ -343,7 +362,7 @@ export function ShortcutRecorder({
   const canReset = !recording && (pending !== null || (current ?? null) !== (restoreTo ?? null));
   const canClear = !recording && !!current && !pending;
   const message = pending
-    ? { tone: "warning" as const, key: `c-${pending.shortcut}`, body: <>{pending.reserved ? "Reserved for" : "Already used by"} <strong className={styles.strong}>{pending.conflict.label}</strong></> }
+    ? { tone: "warning" as const, key: `c-${pending.shortcut}`, body: <>{pending.reserved ? "Reserved for" : "Already used by"} <strong className={cn(styles.strong, classNames?.strong)}>{pending.conflict.label}</strong></> }
     : nudge ? { tone: "hint" as const, key: `n-${nudge}`, body: <>{nudge}</> }
     : recording ? { tone: "hint" as const, key: "rec", body: <>Esc to cancel, Backspace to clear</> }
     : description ? { tone: "hint" as const, key: "d", body: <>{description}</> } : null;
@@ -355,21 +374,21 @@ export function ShortcutRecorder({
   }, [settled]);
 
   return <div className={[styles.field, className].filter(Boolean).join(" ")} data-disabled={disabled || undefined}>
-    <span id={labelId} className={hideLabel ? styles.srOnly : styles.label}>{label}</span>
-    <div className={styles.control} data-state={state}>
-      <button ref={buttonRef} id={buttonId} type="button" className={styles.recorder} disabled={disabled} aria-labelledby={`${labelId} ${buttonId}`} aria-describedby={message ? messageId : undefined}
+    <span id={labelId} className={hideLabel ? styles.srOnly : cn(styles.label, classNames?.label)}>{label}</span>
+    <div className={cn(styles.control, classNames?.control)} data-state={state}>
+      <button ref={buttonRef} id={buttonId} type="button" className={cn(styles.recorder, classNames?.recorder)} disabled={disabled} aria-labelledby={`${labelId} ${buttonId}`} aria-describedby={message ? messageId : undefined}
         aria-pressed={recording}
         onClick={event => { if (recording) { if (event.detail !== 0) { stop(); setAnnouncement("Recording canceled"); } return; } start(); }}
         onKeyDown={onKeyDown} onKeyUp={onKeyUp} onBlur={() => { if (recording) { stop(); setNudge(null); } }}>
         <span className={styles.srOnly}>{recording ? "Recording" : shown ? spoken(shown) : placeholder}</span>
-        <span className={styles.row} aria-hidden="true">
-          {recording && <span className={styles.dot} data-reduced={reduced || undefined} />}
+        <span className={cn(styles.row, classNames?.row)} aria-hidden="true">
+          {recording && <span className={cn(styles.dot, classNames?.dot)} data-reduced={reduced || undefined} />}
           <AnimatePresence initial={false} mode="popLayout">
             {tokens.map((token, index) => <motion.span key={`${token.id}`} layout={reduced ? false : "position"} custom={recording ? 0 : index} variants={reduced ? chipFade : chip} initial="enter" animate="rest" exit="exit"
-              transition={reduced ? { duration: 0 } : { layout: motionTokens.spring.snappy }} className={styles.chipSlot}>
+              transition={reduced ? { duration: 0 } : { layout: motionTokens.spring.snappy }} className={cn(styles.chipSlot, classNames?.chipSlot)}>
               <Kbd pressed={recording || (settled > 0 && !pending)} data-tone={pending ? "warning" : undefined}>{token.label}</Kbd>
             </motion.span>)}
-            {tokens.length === 0 && <motion.span key={recording ? "prompt" : "placeholder"} className={styles.placeholder} data-recording={recording || undefined}
+            {tokens.length === 0 && <motion.span key={recording ? "prompt" : "placeholder"} className={cn(styles.placeholder, classNames?.placeholder)} data-recording={recording || undefined}
               initial={reduced ? { opacity: 0 } : { opacity: 0, y: 4, filter: `blur(${motionTokens.blur.subtle}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, transition: { duration: .08 } }} transition={reduced ? { duration: .1 } : { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] }}>
               {recording ? "Press keys" : placeholder}
@@ -378,14 +397,14 @@ export function ShortcutRecorder({
         </span>
       </button>
 
-      <span className={styles.actions}>
+      <span className={cn(styles.actions, classNames?.actions)}>
         <AnimatePresence initial={false}>
-          {canReset && <motion.button key="reset" type="button" className={styles.action} aria-label={`Reset to ${restoreTo ? formatShortcut(restoreTo, platform).spoken : "none"}`}
+          {canReset && <motion.button key="reset" type="button" className={cn(styles.action, classNames?.action)} aria-label={`Reset to ${restoreTo ? formatShortcut(restoreTo, platform).spoken : "none"}`}
             onClick={() => { commit(restoreTo ?? null); buttonRef.current?.focus(); }}
             initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .6, transition: { duration: .1 } }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy}>
             <RotateCcw size={16} strokeWidth={1.75} aria-hidden="true" />
           </motion.button>}
-          {canClear && <motion.button key="clear" type="button" className={styles.action} aria-label="Clear shortcut" onClick={() => { commit(null); buttonRef.current?.focus(); }}
+          {canClear && <motion.button key="clear" type="button" className={cn(styles.action, classNames?.action)} aria-label="Clear shortcut" onClick={() => { commit(null); buttonRef.current?.focus(); }}
             initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .6, transition: { duration: .1 } }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy}>
             <X size={16} strokeWidth={1.75} aria-hidden="true" />
           </motion.button>}
@@ -394,18 +413,18 @@ export function ShortcutRecorder({
     </div>
 
     <AnimatePresence initial={false}>
-      {message && <motion.div key="slot" className={styles.messageSlot} initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height: messageHeight ?? "auto", opacity: 1 }}
+      {message && <motion.div key="slot" className={cn(styles.messageSlot, classNames?.messageSlot)} initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height: messageHeight ?? "auto", opacity: 1 }}
         exit={{ height: 0, opacity: 0, transition: reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: .1 } } }}
         transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast } }}>
         <div ref={measureMessage}>
           <AnimatePresence initial={false} mode="popLayout">
-            <motion.div key={message.key} id={messageId} className={styles.message} data-tone={message.tone}
+            <motion.div key={message.key} id={messageId} className={cn(styles.message, classNames?.message)} data-tone={message.tone}
               initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.35em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, transition: { duration: .08 } }} transition={{ duration: reduced ? .1 : motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>
-              <span className={styles.messageText}>{message.body}</span>
-              {pending && <span className={styles.messageActions}>
-                <button type="button" className={styles.link} onClick={() => { const taken = pending; commit(taken.shortcut, taken.reserved ? undefined : taken.conflict); buttonRef.current?.focus(); }}>Use anyway</button>
-                <button type="button" className={styles.link} data-quiet="" onClick={() => { setPending(null); setAnnouncement("Kept the previous shortcut"); buttonRef.current?.focus(); }}>Cancel</button>
+              <span className={cn(styles.messageText, classNames?.messageText)}>{message.body}</span>
+              {pending && <span className={cn(styles.messageActions, classNames?.messageActions)}>
+                <button type="button" className={cn(styles.link, classNames?.link)} onClick={() => { const taken = pending; commit(taken.shortcut, taken.reserved ? undefined : taken.conflict); buttonRef.current?.focus(); }}>Use anyway</button>
+                <button type="button" className={cn(styles.link, classNames?.link)} data-quiet="" onClick={() => { setPending(null); setAnnouncement("Kept the previous shortcut"); buttonRef.current?.focus(); }}>Cancel</button>
               </span>}
             </motion.div>
           </AnimatePresence>

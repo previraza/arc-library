@@ -7,6 +7,7 @@ import type { Variants } from "motion/react";
 import { CalendarDays, ChevronDown } from "lucide-react";
 import { Calendar, type CalendarDateMatcher } from "@/registry/components/calendar/calendar";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./date-picker.module.css";
 
 export interface DatePickerProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value" | "onChange"> {
@@ -22,6 +23,22 @@ export interface DatePickerProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   format?: Intl.DateTimeFormatOptions;
   /** Adds a Today button to the calendar header. */
   showToday?: boolean;
+  /** Extend the inner, named parts of the date picker: label, anchor, trigger, valueText, value, part, partValue, placeholder, chevron, popover, footer, status or description. */
+  classNames?: {
+    label?: string;
+    anchor?: string;
+    trigger?: string;
+    valueText?: string;
+    value?: string;
+    part?: string;
+    partValue?: string;
+    placeholder?: string;
+    chevron?: string;
+    popover?: string;
+    footer?: string;
+    status?: string;
+    description?: string;
+  };
 }
 
 const monthStart = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1);
@@ -42,7 +59,7 @@ const statusRise: Variants = {
   exit: { opacity: 0, y: "-0.3em", filter: `blur(${blur.subtle}px)`, transition: { duration: 0.14, ease: ease.standard } },
 };
 
-export function DatePicker({ label, value, onChange, description, placeholder = "Select a date", minDate, maxDate, disabledDates, locale = "en-US", format = { month: "short", day: "numeric", year: "numeric" }, showToday, id, className, disabled, ...buttonProps }: DatePickerProps) {
+export function DatePicker({ label, value, onChange, description, placeholder = "Select a date", minDate, maxDate, disabledDates, locale = "en-US", format = { month: "short", day: "numeric", year: "numeric" }, showToday, id, className, classNames, disabled, ...buttonProps }: DatePickerProps) {
   const generatedId = useId();
   const controlId = id ?? generatedId;
   const hintId = description ? `${controlId}-description` : undefined;
@@ -100,32 +117,32 @@ export function DatePicker({ label, value, onChange, description, placeholder = 
   };
 
   return <div className={[styles.field, className].filter(Boolean).join(" ")} ref={rootRef} onBlur={onBlur}>
-    <label className={styles.label} htmlFor={controlId}>{label}</label>
-    <div className={styles.anchor}>
-      <button {...buttonProps} ref={triggerRef} id={controlId} type="button" disabled={disabled} aria-haspopup="dialog" aria-expanded={open} aria-describedby={hintId} className={styles.trigger} onClick={() => (open ? close() : show())} onKeyDown={onTriggerKeyDown}>
+    <label className={cn(styles.label, classNames?.label)} htmlFor={controlId}>{label}</label>
+    <div className={cn(styles.anchor, classNames?.anchor)}>
+      <button {...buttonProps} ref={triggerRef} id={controlId} type="button" disabled={disabled} aria-haspopup="dialog" aria-expanded={open} aria-describedby={hintId} className={cn(styles.trigger, classNames?.trigger)} onClick={() => (open ? close() : show())} onKeyDown={onTriggerKeyDown}>
         <CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" />
         <span className={styles.srOnly}>{shown}</span>
-        <span className={styles.valueText} aria-hidden="true">
+        <span className={cn(styles.valueText, classNames?.valueText)} aria-hidden="true">
           <AnimatePresence mode="popLayout" initial={false} custom={1}>
-            {value ? <motion.span key="value" className={styles.value} custom={1} variants={reduce ? valueFade : valueRoll} initial="enter" animate="center" exit="exit">
-              {parts.map((part, index) => <motion.span key={`${index}-${part.type}`} className={styles.part} layout="position" layoutDependency={time} transition={partMotion}>
-                {part.type === "literal" ? <span className={styles.partValue}>{part.value}</span> : <AnimatePresence mode="popLayout" initial={false} custom={direction}><motion.span key={part.value} className={styles.partValue} custom={direction} variants={reduce ? valueFade : valueRoll} initial="enter" animate="center" exit="exit">{part.value}</motion.span></AnimatePresence>}
+            {value ? <motion.span key="value" className={cn(styles.value, classNames?.value)} custom={1} variants={reduce ? valueFade : valueRoll} initial="enter" animate="center" exit="exit">
+              {parts.map((part, index) => <motion.span key={`${index}-${part.type}`} className={cn(styles.part, classNames?.part)} layout="position" layoutDependency={time} transition={partMotion}>
+                {part.type === "literal" ? <span className={cn(styles.partValue, classNames?.partValue)}>{part.value}</span> : <AnimatePresence mode="popLayout" initial={false} custom={direction}><motion.span key={part.value} className={cn(styles.partValue, classNames?.partValue)} custom={direction} variants={reduce ? valueFade : valueRoll} initial="enter" animate="center" exit="exit">{part.value}</motion.span></AnimatePresence>}
               </motion.span>)}
-            </motion.span> : <motion.span key="placeholder" className={styles.placeholder} custom={-1} variants={reduce ? valueFade : valueRoll} initial="enter" animate="center" exit="exit">{placeholder}</motion.span>}
+            </motion.span> : <motion.span key="placeholder" className={cn(styles.placeholder, classNames?.placeholder)} custom={-1} variants={reduce ? valueFade : valueRoll} initial="enter" animate="center" exit="exit">{placeholder}</motion.span>}
           </AnimatePresence>
         </span>
-        <ChevronDown className={styles.chevron} size={16} strokeWidth={1.75} aria-hidden="true" />
+        <ChevronDown className={cn(styles.chevron, classNames?.chevron)} size={16} strokeWidth={1.75} aria-hidden="true" />
       </button>
       <AnimatePresence>
-        {open && <motion.div ref={popoverRef} className={styles.popover} role="dialog" aria-label={`${label} calendar`} onKeyDown={(event) => { if (event.key === "Escape") { event.stopPropagation(); close(); } }}
+        {open && <motion.div ref={popoverRef} className={cn(styles.popover, classNames?.popover)} role="dialog" aria-label={`${label} calendar`} onKeyDown={(event) => { if (event.key === "Escape") { event.stopPropagation(); close(); } }}
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: -8, scale: .95 }}
           animate={{ opacity: 1, y: 0, scale: 1, transition: reduce ? instant : { ...spring.snappy, opacity: { duration: duration.fast, ease: ease.enter } } }}
           exit={{ opacity: 0, ...(reduce ? {} : { y: -6, scale: .97 }), transition: { duration: 0.14, ease: ease.standard } }}>
           <Calendar value={value} onChange={selectDate} month={month} onMonthChange={setMonth} minDate={minDate} maxDate={maxDate} disabledDates={disabledDates} locale={locale} showToday={showToday} />
-          <div className={styles.footer}><button type="button" onClick={() => selectDate(undefined)} disabled={!value}>Clear</button><span className={styles.status}><AnimatePresence initial={false}><motion.span key={time ?? "none"} variants={reduce ? valueFade : statusRise} initial="enter" animate="center" exit="exit">{value ? `Selected ${formatter.format(value)}` : "Choose a day"}</motion.span></AnimatePresence></span></div>
+          <div className={cn(styles.footer, classNames?.footer)}><button type="button" onClick={() => selectDate(undefined)} disabled={!value}>Clear</button><span className={cn(styles.status, classNames?.status)}><AnimatePresence initial={false}><motion.span key={time ?? "none"} variants={reduce ? valueFade : statusRise} initial="enter" animate="center" exit="exit">{value ? `Selected ${formatter.format(value)}` : "Choose a day"}</motion.span></AnimatePresence></span></div>
         </motion.div>}
       </AnimatePresence>
     </div>
-    {description && <span id={hintId} className={styles.description}>{description}</span>}
+    {description && <span id={hintId} className={cn(styles.description, classNames?.description)}>{description}</span>}
   </div>;
 }

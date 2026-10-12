@@ -18,6 +18,7 @@
       "@/registry.json": ["./registry.json"],
       "@/lib/media": ["./lib/media.ts"],
       "@/lib/motion-tokens": ["./lib/motion-tokens.ts"],
+      "@/lib/cn": ["./lib/cn.ts"],
       "@/lib/use-copy-feedback": ["./lib/use-copy-feedback.ts"]
     }
   },

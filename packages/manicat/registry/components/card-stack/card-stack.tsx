@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/cn";
 import { useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
@@ -33,6 +34,15 @@ export interface CardStackProps<T> {
   /** Shown once every card has been decided. Receives a function that brings all cards back. */
   renderEmpty?: (reset: () => void) => ReactNode;
   className?: string;
+  /** Extend the inner, named parts of the card stack: root, stage, empty, control, controlLabel or emptyTitle. */
+  classNames?: {
+    root?: string;
+    stage?: string;
+    empty?: string;
+    control?: string;
+    controlLabel?: string;
+    emptyTitle?: string;
+  };
 }
 
 type Point = { x: number; y: number };
@@ -237,15 +247,15 @@ function StackCard({ id, depth, decision, returnFrom, interactive, zIndex, label
   </motion.div>;
 }
 
-function Control({ children, onClick, disabled, reduced, tone }: { children: ReactNode; onClick: () => void; disabled: boolean; reduced: boolean; tone?: "primary" | "quiet" }) {
+function Control({ children, onClick, disabled, reduced, tone, classNames }: { children: ReactNode; onClick: () => void; disabled: boolean; reduced: boolean; tone?: "primary" | "quiet"; classNames?: CardStackProps<unknown>["classNames"] }) {
   // aria-disabled keeps focus on the button when the stack runs out, instead of dropping it to the page.
-  return <motion.button type="button" className={styles.control} data-tone={tone} aria-disabled={disabled || undefined} onClick={() => { if (!disabled) onClick(); }} whileTap={{ scale: reduced || disabled ? 1 : .97 }} transition={motionTokens.spring.snappy}>{children}</motion.button>;
+  return <motion.button type="button" className={cn(styles.control, classNames?.control)} data-tone={tone} aria-disabled={disabled || undefined} onClick={() => { if (!disabled) onClick(); }} whileTap={{ scale: reduced || disabled ? 1 : .97 }} transition={motionTokens.spring.snappy}>{children}</motion.button>;
 }
 
 /** Renders a custom empty state; the reset handler travels as a prop so render never touches the stack's refs. */
 function EmptySlot({ render, onReset }: { render: (reset: () => void) => ReactNode; onReset: () => void }) { return <>{render(onReset)}</>; }
 
-export function CardStack<T>({ items, getKey, getLabel, renderCard, onDecide, onUndo, onReset, labels = { left: "Pass", right: "Keep" }, outcomes, label = "Cards", renderEmpty, className }: CardStackProps<T>) {
+export function CardStack<T>({ items, getKey, getLabel, renderCard, onDecide, onUndo, onReset, labels = { left: "Pass", right: "Keep" }, outcomes, label = "Cards", renderEmpty, className, classNames }: CardStackProps<T>) {
   const hydrated = useSyncExternalStore(noop, () => true, () => false);
   const reduced = !!useReducedMotion() && hydrated;
   const hintId = useId();
@@ -327,8 +337,8 @@ export function CardStack<T>({ items, getKey, getLabel, renderCard, onDecide, on
   const rendered = items.filter(item => windowKeys.has(getKey(item)) || flying.includes(getKey(item)));
   const empty = position >= items.length && flying.length === 0;
 
-  return <div className={[styles.root, className].filter(Boolean).join(" ")}>
-    <div className={styles.stage} role="group" aria-roledescription="card stack" aria-label={label} aria-describedby={hintId} tabIndex={0} onKeyDown={key}>
+  return <div className={cn(styles.root, className, classNames?.root)}>
+    <div className={cn(styles.stage, classNames?.stage)} role="group" aria-roledescription="card stack" aria-label={label} aria-describedby={hintId} tabIndex={0} onKeyDown={key}>
       {rendered.map(item => {
         const id = getKey(item), index = items.indexOf(item), decision = decided.get(id) ?? null;
         const depth = decision ? 0 : index - position;
@@ -353,16 +363,16 @@ export function CardStack<T>({ items, getKey, getLabel, renderCard, onDecide, on
       <AnimatePresence initial={false}>
         {empty && <motion.div key="empty" className={styles.empty} initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, transition: { duration: motionTokens.duration.instant } }} transition={reduced ? reducedFade : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>
           {renderEmpty ? <EmptySlot render={renderEmpty} onReset={reset} /> : <>
-            <p className={styles.emptyTitle}>All cards reviewed</p>
+            <p className={cn(styles.emptyTitle, classNames?.emptyTitle)}>All cards reviewed</p>
             <button type="button" className={styles.control} onClick={reset}><RotateCcw size={16} strokeWidth={1.75} aria-hidden="true" />Start over</button>
           </>}
         </motion.div>}
       </AnimatePresence>
     </div>
     <div className={styles.controls}>
-      <Control onClick={() => decide("left")} disabled={!top} reduced={reduced}><X size={16} strokeWidth={1.75} aria-hidden="true" />{labels.left}</Control>
-      <Control onClick={undo} disabled={!history.length} reduced={reduced} tone="quiet"><RotateCcw size={16} strokeWidth={1.75} aria-hidden="true" /><span className={styles.controlLabel}>Undo</span></Control>
-      <Control onClick={() => decide("right")} disabled={!top} reduced={reduced} tone="primary"><Check size={16} strokeWidth={1.75} aria-hidden="true" />{labels.right}</Control>
+      <Control onClick={() => decide("left")} disabled={!top} reduced={reduced} classNames={classNames}><X size={16} strokeWidth={1.75} aria-hidden="true" />{labels.left}</Control>
+      <Control onClick={undo} disabled={!history.length} reduced={reduced} tone="quiet" classNames={classNames}><RotateCcw size={16} strokeWidth={1.75} aria-hidden="true" /><span className={cn(styles.controlLabel, classNames?.controlLabel)}>Undo</span></Control>
+      <Control onClick={() => decide("right")} disabled={!top} reduced={reduced} tone="primary" classNames={classNames}><Check size={16} strokeWidth={1.75} aria-hidden="true" />{labels.right}</Control>
     </div>
     <p id={hintId} className={styles.srOnly}>Drag the top card, or use the left and right arrow keys to {labels.left.toLowerCase()} or {labels.right.toLowerCase()} it. Backspace undoes the last decision.</p>
     <p className={styles.srOnly} role="status" aria-live="polite">{message}</p>

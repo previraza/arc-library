@@ -3,6 +3,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type FocusEvent, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useTransform, type MotionStyle, type MotionValue, type Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./slider.module.css";
 
 export type SliderValue = number | [number, number];
@@ -39,6 +40,32 @@ export interface SliderProps<T extends SliderValue = number> {
   name?: string;
   disabled?: boolean;
   className?: string;
+  /** Extend the inner, named parts of the slider: header, label, readout, dash, body, start, control, track, tick, fill, thumbs, end, marks, markLabel, glyph, sizer, number, column, symbol, thumbLayer, thumb, bubbleAnchor or bubble. */
+  classNames?: {
+    header?: string;
+    label?: string;
+    readout?: string;
+    dash?: string;
+    body?: string;
+    start?: string;
+    control?: string;
+    track?: string;
+    tick?: string;
+    fill?: string;
+    thumbs?: string;
+    end?: string;
+    marks?: string;
+    markLabel?: string;
+    glyph?: string;
+    sizer?: string;
+    number?: string;
+    column?: string;
+    symbol?: string;
+    thumbLayer?: string;
+    thumb?: string;
+    bubbleAnchor?: string;
+    bubble?: string;
+  };
 }
 
 type Part = { key: string; digit: number } | { key: string; text: string };
@@ -87,17 +114,17 @@ const slot: Variants = {
 const still: Variants = { enter: { width: "auto", scale: 1, opacity: 0, y: 0, filter: "none" }, center: { width: "auto", scale: 1, opacity: 1, y: 0, filter: "none", transition: { duration: duration.instant } }, exit: { width: 0, opacity: 0, transition: { duration: 0 } } };
 
 /** One digit on the wheel. Its distance from the wheel position sets where it sits, how clear it is, and whether it shows. */
-function Glyph({ position, digit }: { position: MotionValue<number>; digit: number }) {
+function Glyph({ position, digit, classNames }: { position: MotionValue<number>; digit: number; classNames: SliderProps["classNames"] }) {
   const offset = (current: number) => ((((digit - current) % 10) + 15) % 10) - 5;
   const y = useTransform(position, current => `${offset(current) * 1.05}em`);
   const opacity = useTransform(position, current => Math.max(0, 1 - Math.abs(offset(current)) ** 1.5 * 1.1));
   const visibility = useTransform(position, current => Math.abs(offset(current)) >= 1 ? "hidden" : "visible");
   const filter = useTransform(position, current => { const distance = Math.abs(offset(current)); return distance < .02 || distance >= 1 ? "none" : `blur(${(distance * blur.soft * .75).toFixed(2)}px)`; });
-  return <motion.span className={styles.glyph} style={{ y, opacity, filter, visibility }}>{digit}</motion.span>;
+  return <motion.span className={cn(styles.glyph, classNames?.glyph)} style={{ y, opacity, filter, visibility }}>{digit}</motion.span>;
 }
 
 /** An odometer wheel. It turns the way the value moved, wraps 9 → 0, and retargets mid spin while a drag keeps it busy. */
-function Wheel({ digit, direction }: { digit: number; direction: number }) {
+function Wheel({ digit, direction, classNames }: { digit: number; direction: number; classNames: SliderProps["classNames"] }) {
   const reduced = useReducedMotion();
   const position = useMotionValue(digit);
   const wheel = useRef({ digit, target: digit });
@@ -109,17 +136,17 @@ function Wheel({ digit, direction }: { digit: number; direction: number }) {
     if (reduced) position.jump(state.target);
     else animate(position, state.target, thumbSpring);
   }, [digit, direction, position, reduced]);
-  return <><span className={styles.sizer}>0</span>{DIGITS.map(item => <Glyph key={item} position={position} digit={item} />)}</>;
+  return <><span className={cn(styles.sizer, classNames?.sizer)}>0</span>{DIGITS.map(item => <Glyph key={item} position={position} digit={item} classNames={classNames} />)}</>;
 }
 
 /** A formatted value whose digits roll in the direction it moved and whose width follows new columns on a spring. */
-function RollingNumber({ value, text }: { value: number; text: string }) {
+function RollingNumber({ value, text, classNames }: { value: number; text: string; classNames: SliderProps["classNames"] }) {
   const reduced = useReducedMotion();
   const [trail, setTrail] = useState({ value, direction: 1 });
   if (trail.value !== value) setTrail({ value, direction: value > trail.value ? 1 : -1 });
   const direction = trail.value === value ? trail.direction : value > trail.value ? 1 : -1;
-  return <span className={styles.number}><AnimatePresence initial={false} custom={direction}>{partsOf(text).map(part => <motion.span key={part.key} className={"digit" in part ? styles.column : styles.symbol} custom={direction} variants={reduced ? still : slot} initial="enter" animate="center" exit="exit">
-    {"digit" in part ? <Wheel digit={part.digit} direction={direction} /> : part.text}
+  return <span className={cn(styles.number, classNames?.number)}><AnimatePresence initial={false} custom={direction}>{partsOf(text).map(part => <motion.span key={part.key} className={cn("digit" in part ? styles.column : styles.symbol, "digit" in part ? classNames?.column : classNames?.symbol)} custom={direction} variants={reduced ? still : slot} initial="enter" animate="center" exit="exit">
+    {"digit" in part ? <Wheel digit={part.digit} direction={direction} classNames={classNames} /> : part.text}
   </motion.span>)}</AnimatePresence></span>;
 }
 
@@ -128,19 +155,19 @@ const bubbleRest = { opacity: 1, scale: 1, y: 0, filter: "blur(0px)", transition
 const bubbleOut = { opacity: 0, scale: .8, y: 4, filter: `blur(${blur.subtle}px)`, transition: { duration: duration.instant, ease: exitEase } };
 const bubbleEnter = { ...spring.snappy, opacity: { duration: duration.fast, ease: enterEase }, filter: { duration: duration.fast, ease: enterEase } };
 
-interface ThumbProps { quiet: boolean; index: number; shown: MotionValue<number>; value: number; text: string; low: number; high: number; ariaLabel?: string; labelledBy?: string; active: boolean; lifted: boolean; bubble: boolean; disabled?: boolean; onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void; onFocus: (event: FocusEvent<HTMLDivElement>) => void; onBlur: () => void; }
+interface ThumbProps { quiet: boolean; index: number; shown: MotionValue<number>; value: number; text: string; low: number; high: number; ariaLabel?: string; labelledBy?: string; active: boolean; lifted: boolean; bubble: boolean; disabled?: boolean; classNames: SliderProps["classNames"]; onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void; onFocus: (event: FocusEvent<HTMLDivElement>) => void; onBlur: () => void; }
 
 /** The thumb rides a layer as wide as the track, so a percentage transform places it with no measuring, on the server too. */
-function Thumb({ quiet, index, shown, value, text, low, high, ariaLabel, labelledBy, active, lifted, bubble, disabled, onKeyDown, onFocus, onBlur }: ThumbProps) {
+function Thumb({ quiet, index, shown, value, text, low, high, ariaLabel, labelledBy, active, lifted, bubble, disabled, classNames, onKeyDown, onFocus, onBlur }: ThumbProps) {
   const reduced = useReducedMotion();
   const x = useTransform(shown, current => `${current - 100}%`);
-  return <motion.div className={styles.thumbLayer} style={{ x, zIndex: active ? 2 : 1 }}>
-    <motion.div role="slider" data-thumb="" data-index={index} data-active={lifted || undefined} data-quiet={quiet || undefined} className={styles.thumb} tabIndex={disabled ? -1 : 0}
+  return <motion.div className={cn(styles.thumbLayer, classNames?.thumbLayer)} style={{ x, zIndex: active ? 2 : 1 }}>
+    <motion.div role="slider" data-thumb="" data-index={index} data-active={lifted || undefined} data-quiet={quiet || undefined} className={cn(styles.thumb, classNames?.thumb)} tabIndex={disabled ? -1 : 0}
       aria-label={ariaLabel} aria-labelledby={ariaLabel ? undefined : labelledBy} aria-valuemin={low} aria-valuemax={high} aria-valuenow={value} aria-valuetext={text} aria-orientation="horizontal" aria-disabled={disabled || undefined}
       initial={false} animate={{ scale: lifted ? 1.16 : 1 }} transition={reduced ? { duration: 0 } : spring.snappy} onKeyDown={onKeyDown} onFocus={onFocus} onBlur={onBlur} />
-    <motion.span className={styles.bubbleAnchor} style={{ "--at": shown } as MotionStyle}>
-      <AnimatePresence>{bubble && <motion.span key="bubble" className={styles.bubble} aria-hidden="true" initial={reduced ? { opacity: 0 } : bubbleIn} animate={bubbleRest} exit={reduced ? { opacity: 0, transition: { duration: duration.instant } } : bubbleOut} transition={reduced ? { duration: duration.instant } : bubbleEnter}>
-        <RollingNumber value={value} text={text} />
+    <motion.span className={cn(styles.bubbleAnchor, classNames?.bubbleAnchor)} style={{ "--at": shown } as MotionStyle}>
+      <AnimatePresence>{bubble && <motion.span key="bubble" className={cn(styles.bubble, classNames?.bubble)} aria-hidden="true" initial={reduced ? { opacity: 0 } : bubbleIn} animate={bubbleRest} exit={reduced ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : bubbleOut} transition={reduced ? { duration: motionTokens.duration.instant } : bubbleEnter}>
+        <RollingNumber value={value} text={text} classNames={classNames} />
       </motion.span>}</AnimatePresence>
     </motion.span>
   </motion.div>;
@@ -151,7 +178,7 @@ function Thumb({ quiet, index, shown, value, text, low, high, ariaLabel, labelle
  * the velocity of the release; pressing the track springs the nearest thumb there. A bubble with rolling digits rides the thumb while
  * it is dragged or keyboard focused. Arrows, Shift+arrows, PageUp, PageDown, Home, and End work as in a native range input.
  */
-export function Slider<T extends SliderValue = number>({ label, value, defaultValue, onValueChange, onValueCommit, min = 0, max = 100, step: stepProp = 1, largeStep, marks, minStepsBetweenThumbs = 0, format, showValue = true, thumbLabels, start, end, name, disabled, className }: SliderProps<T>) {
+export function Slider<T extends SliderValue = number>({ label, value, defaultValue, onValueChange, onValueCommit, min = 0, max = 100, step: stepProp = 1, largeStep, marks, minStepsBetweenThumbs = 0, format, showValue = true, thumbLabels, start, end, name, disabled, className, classNames }: SliderProps<T>) {
   const reduced = useReducedMotion();
   const labelId = useId();
   const step = stepProp > 0 ? stepProp : 1;
@@ -373,29 +400,29 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
   const names = thumbLabels ?? [`${label}, minimum`, `${label}, maximum`];
 
   return <div className={[styles.root, className].filter(Boolean).join(" ")} data-disabled={disabled || undefined} data-dragging={dragging !== null || undefined} data-marks={labelled.length > 0 || undefined}>
-    <div className={styles.header}>
-      <span id={labelId} className={styles.label}>{label}</span>
-      {showValue && <span className={styles.readout} aria-hidden="true">
-        <RollingNumber value={values[0]} text={formatValue(values[0])} />
-        {isRange && <><span className={styles.dash}>–</span><RollingNumber value={values[1]} text={formatValue(values[1])} /></>}
+    <div className={cn(styles.header, classNames?.header)}>
+      <span id={labelId} className={cn(styles.label, classNames?.label)}>{label}</span>
+      {showValue && <span className={cn(styles.readout, classNames?.readout)} aria-hidden="true">
+        <RollingNumber value={values[0]} text={formatValue(values[0])} classNames={classNames} />
+        {isRange && <><span className={cn(styles.dash, classNames?.dash)}>–</span><RollingNumber value={values[1]} text={formatValue(values[1])} classNames={classNames} /></>}
       </span>}
     </div>
-    <div className={styles.body}>
-      {start && <div className={styles.start}>{start}</div>}
-      <div className={styles.control} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerEnd} onPointerCancel={onPointerEnd} onLostPointerCapture={onPointerEnd} onMouseDown={event => event.preventDefault()}>
-        <div ref={trackRef} className={styles.track}>
-          {ticks.map(mark => <span key={mark.value} className={styles.tick} style={{ left: `${pct(mark.value)}%` }} />)}
-          <motion.div className={styles.fill} style={{ clipPath }}>{ticks.map(mark => <span key={mark.value} className={styles.tick} style={{ left: `${pct(mark.value)}%` }} />)}</motion.div>
+    <div className={cn(styles.body, classNames?.body)}>
+      {start && <div className={cn(styles.start, classNames?.start)}>{start}</div>}
+      <div className={cn(styles.control, classNames?.control)} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerEnd} onPointerCancel={onPointerEnd} onLostPointerCapture={onPointerEnd} onMouseDown={event => event.preventDefault()}>
+        <div ref={trackRef} className={cn(styles.track, classNames?.track)}>
+          {ticks.map(mark => <span key={mark.value} className={cn(styles.tick, classNames?.tick)} style={{ left: `${pct(mark.value)}%` }} />)}
+          <motion.div className={cn(styles.fill, classNames?.fill)} style={{ clipPath }}>{ticks.map(mark => <span key={mark.value} className={cn(styles.tick, classNames?.tick)} style={{ left: `${pct(mark.value)}%` }} />)}</motion.div>
         </div>
-        <div ref={thumbsRef} className={styles.thumbs}>
+        <div ref={thumbsRef} className={cn(styles.thumbs, classNames?.thumbs)}>
           {values.map((item, index) => <Thumb key={index} quiet={quiet === index} index={index} shown={thumbs[index].shown} value={item} text={formatValue(item)} low={lowOf(index, values)} high={highOf(index, values)}
-            ariaLabel={isRange ? names[index] : undefined} labelledBy={labelId} active={lastActive === index} lifted={dragging === index} bubble={dragging === index || keyFocus === index || linger === index} disabled={disabled}
+            ariaLabel={isRange ? names[index] : undefined} labelledBy={labelId} active={lastActive === index} lifted={dragging === index} bubble={dragging === index || keyFocus === index || linger === index} disabled={disabled} classNames={classNames}
             onKeyDown={event => onKeyDown(index, event)} onFocus={event => { if (!pointerFocus.current && event.currentTarget.matches(":focus-visible")) setKeyFocus(index); }} onBlur={() => { setKeyFocus(current => current === index ? null : current); setQuiet(current => current === index ? null : current); }} />)}
         </div>
       </div>
-      {end && <div className={styles.end}>{end}</div>}
-      {labelled.length > 0 && <div className={styles.marks} aria-hidden="true">
-        {labelled.map(mark => <span key={mark.value} className={styles.markLabel} data-on={inRange(mark.value) || undefined} data-edge={mark.value === min ? "start" : mark.value === max ? "end" : undefined} style={{ left: `${pct(mark.value)}%` }} onClick={() => jumpTo(mark.value)}>{mark.label}</span>)}
+      {end && <div className={cn(styles.end, classNames?.end)}>{end}</div>}
+      {labelled.length > 0 && <div className={cn(styles.marks, classNames?.marks)} aria-hidden="true">
+        {labelled.map(mark => <span key={mark.value} className={cn(styles.markLabel, classNames?.markLabel)} data-on={inRange(mark.value) || undefined} data-edge={mark.value === min ? "start" : mark.value === max ? "end" : undefined} style={{ left: `${pct(mark.value)}%` }} onClick={() => jumpTo(mark.value)}>{mark.label}</span>)}
       </div>}
     </div>
     {name && values.map((item, index) => <input key={index} type="hidden" name={name} value={item} disabled={disabled} />)}

@@ -5,6 +5,7 @@ import type { KeyboardEvent, MouseEvent } from "react";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
 import { X as Xmark } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./tag-input.module.css";
 
 export interface TagInputProps {
@@ -15,25 +16,39 @@ export interface TagInputProps {
   placeholder?: string;
   description?: string;
   id?: string;
+  className?: string;
+  /** Extend the inner, named parts of the tag input: control, content, ring, placeholder, tag, tagLabel, messageSlot, hint, words or word. */
+  classNames?: {
+    control?: string;
+    content?: string;
+    ring?: string;
+    placeholder?: string;
+    tag?: string;
+    tagLabel?: string;
+    messageSlot?: string;
+    hint?: string;
+    words?: string;
+    word?: string;
+  };
 }
 
 /** Changed words rise in and unblur while unchanged words hold still. Assistive tech reads the plain copy. */
-function MotionText({ text }: { text: string }) {
+function MotionText({ text, classNames }: { text: string; classNames?: TagInputProps["classNames"] }) {
   const reduced = useReducedMotion();
   const words = text.split(" ");
-  return <><span className={styles.srOnly}>{text}</span><span className={styles.words} aria-hidden="true"><AnimatePresence initial={false} mode="popLayout">{words.map((word, index) => <motion.span key={`${index}:${word}`} className={styles.word}
+  return <><span className={styles.srOnly}>{text}</span><span className={cn(styles.words, classNames?.words)} aria-hidden="true"><AnimatePresence initial={false} mode="popLayout">{words.map((word, index) => <motion.span key={`${index}:${word}`} className={cn(styles.word, classNames?.word)}
     initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.35em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
     exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.35em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
     transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{index < words.length - 1 ? `${word} ` : word}</motion.span>)}</AnimatePresence></span></>;
 }
 
 /** Helper copy: the row opens its height on a spring, then the words settle in. */
-function FieldMessage({ id, text, className }: { id?: string; text?: string; className: string }) {
-  return <AnimatePresence initial={false}>{text ? <MessageRow key="message" id={id} text={text} className={className} /> : null}</AnimatePresence>;
+function FieldMessage({ id, text, className, classNames }: { id?: string; text?: string; className: string; classNames?: TagInputProps["classNames"] }) {
+  return <AnimatePresence initial={false}>{text ? <MessageRow key="message" id={id} text={text} className={className} classNames={classNames} /> : null}</AnimatePresence>;
 }
 
 /** The row tracks the measured copy, so a longer message that wraps opens its next line instead of snapping. */
-function MessageRow({ id, text, className }: { id?: string; text: string; className: string }) {
+function MessageRow({ id, text, className, classNames }: { id?: string; text: string; className: string; classNames?: TagInputProps["classNames"] }) {
   const reduced = useReducedMotion();
   const copyRef = useRef<HTMLSpanElement>(null);
   const [height, setHeight] = useState<number | "auto">("auto");
@@ -45,8 +60,8 @@ function MessageRow({ id, text, className }: { id?: string; text: string; classN
     return () => observer.disconnect();
   }, []);
   // Reduced motion mounts the row at full height: a zero-duration open would still paint one collapsed frame.
-  return <motion.span className={styles.messageSlot} initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height, opacity: 1 }} exit={{ height: 0, opacity: 0, transition: reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.instant } } }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast } }}>
-    <motion.span ref={copyRef} id={id} className={className} initial={reduced ? false : { y: "0.35em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ y: 0, filter: "blur(0px)" }} transition={{ duration: reduced ? 0 : motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}><MotionText text={text} /></motion.span>
+  return <motion.span className={cn(styles.messageSlot, classNames?.messageSlot)} initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height, opacity: 1 }} exit={{ height: 0, opacity: 0, transition: reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.instant } } }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast } }}>
+    <motion.span ref={copyRef} id={id} className={className} initial={reduced ? false : { y: "0.35em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ y: 0, filter: "blur(0px)" }} transition={{ duration: reduced ? 0 : motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}><MotionText text={text} classNames={classNames} /></motion.span>
   </motion.span>;
 }
 
@@ -55,7 +70,7 @@ function MessageRow({ id, text, className }: { id?: string; text: string; classN
  * leaves its slot and the rest glide in, and the shell follows wrapped rows on a spring. Backspace or the arrow keys
  * pick a tag first, a ring glides to it, and the next Backspace removes it.
  */
-export function TagInput({ label, value, defaultValue = [], onValueChange, placeholder = "Add a tag", description, id }: TagInputProps) {
+export function TagInput({ label, value, defaultValue = [], onValueChange, placeholder = "Add a tag", description, id, className, classNames }: TagInputProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const hintId = description ? `${inputId}-description` : undefined;
@@ -128,23 +143,23 @@ export function TagInput({ label, value, defaultValue = [], onValueChange, place
   }
   const move = reduced ? { duration: 0 } : motionTokens.spring.morph;
   const glide = reduced ? { duration: 0 } : motionTokens.spring.smooth;
-  return <div className={styles.field}>
+  return <div className={cn(styles.field, className)}>
     <label htmlFor={inputId}>{label}</label>
-    <motion.div ref={scope} className={styles.control} initial={false} animate={{ height }} transition={glide}>
-      <div ref={contentRef} className={styles.content} onClick={event => { if (event.target === event.currentTarget) inputRef.current?.focus(); }}>
-        <span ref={ringRef} className={styles.ring} aria-hidden="true" />
-        <AnimatePresence initial={false}>{!draft && !tags.length && <motion.span key="placeholder" className={styles.placeholder} aria-hidden="true"
+    <motion.div ref={scope} className={cn(styles.control, classNames?.control)} initial={false} animate={{ height }} transition={glide}>
+      <div ref={contentRef} className={cn(styles.content, classNames?.content)} onClick={event => { if (event.target === event.currentTarget) inputRef.current?.focus(); }}>
+        <span ref={ringRef} className={cn(styles.ring, classNames?.ring)} aria-hidden="true" />
+        <AnimatePresence initial={false}>{!draft && !tags.length && <motion.span key="placeholder" className={cn(styles.placeholder, classNames?.placeholder)} aria-hidden="true"
           initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, transition: { duration: 0 } }}
           transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{placeholder}</motion.span>}</AnimatePresence>
-        <AnimatePresence initial={false} mode="popLayout">{tags.map(tag => <motion.span layout={reduced ? false : "position"} className={styles.tag} key={tag} data-tag={tag} data-picked={tag === active || undefined}
+        <AnimatePresence initial={false} mode="popLayout">{tags.map(tag => <motion.span layout={reduced ? false : "position"} className={cn(styles.tag, classNames?.tag)} key={tag} data-tag={tag} data-picked={tag === active || undefined}
           onMouseDown={event => onTagPointer(event)} onClick={event => onTagPointer(event, tag)}
           initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .9, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)", transitionEnd: { filter: "none" } }}
           exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, scale: .9, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
-          transition={reduced ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.morph, layout: move, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] }, filter: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] } }}><span className={styles.tagLabel}>{tag}</span><button type="button" onClick={() => remove(tag)} aria-label={`Remove ${tag}`}><Xmark width={14} height={14} aria-hidden="true" /></button></motion.span>)}</AnimatePresence>
+          transition={reduced ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.morph, layout: move, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] }, filter: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] } }}><span className={cn(styles.tagLabel, classNames?.tagLabel)}>{tag}</span><button type="button" onClick={() => remove(tag)} aria-label={`Remove ${tag}`}><Xmark width={14} height={14} aria-hidden="true" /></button></motion.span>)}</AnimatePresence>
         <motion.input layout={reduced ? false : "position"} transition={{ layout: move }} ref={inputRef} id={inputId} value={draft} onChange={event => { setDraft(event.currentTarget.value); setPicked(null); }} onKeyDown={onKeyDown} onBlur={() => { add(); setPicked(null); }} placeholder={tags.length ? "" : placeholder} aria-describedby={hintId} />
       </div>
     </motion.div>
     <span className={styles.srOnly} aria-live="polite">{notice}</span>
-    <FieldMessage id={hintId} text={description} className={styles.hint} />
+    <FieldMessage id={hintId} text={description} className={cn(styles.hint, classNames?.hint)} />
   </div>;
 }

@@ -4,6 +4,7 @@ import { useCallback, useLayoutEffect, useRef, useState, type KeyboardEvent } fr
 import { AnimatePresence, motion, useReducedMotion, type Transition, type Variants } from "motion/react";
 import { AnimatedCounter } from "@/registry/components/animated-counter/animated-counter";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./billing-toggle.module.css";
 
 export interface BillingToggleOption {
@@ -23,6 +24,17 @@ export interface BillingToggleProps {
   label?: string;
   size?: "md" | "lg";
   className?: string;
+  /** Extend the inner, named parts of the toggle: thumb, thumbStatic, option, content, label, badge, swap or swapText. */
+  classNames?: {
+    thumb?: string;
+    thumbStatic?: string;
+    option?: string;
+    content?: string;
+    label?: string;
+    badge?: string;
+    swap?: string;
+    swapText?: string;
+  };
 }
 
 const { duration, ease, blur } = motionTokens;
@@ -46,12 +58,12 @@ const still: Variants = { hidden: { opacity: 0 }, shown: { opacity: 1, transitio
  * Text that swaps in place. Every candidate sits in the same grid cell, so the box always has the
  * width of the longest one and nothing around it moves when the text changes.
  */
-function StableSwap({ text, candidates, reduced, className }: { text: string; candidates: string[]; reduced: boolean; className?: string }) {
+function StableSwap({ text, candidates, reduced, className, classNames }: { text: string; candidates: string[]; reduced: boolean; className?: string; classNames?: BillingToggleProps["classNames"] }) {
   return (
-    <span className={[styles.swap, className].filter(Boolean).join(" ")}>
+    <span className={cn(styles.swap, className, classNames?.swap)}>
       {[...new Set(candidates)].map(candidate => <span key={candidate} className={styles.swapSizer} aria-hidden="true">{candidate}</span>)}
       <AnimatePresence initial={false}>
-        <motion.span key={text} className={styles.swapText} variants={reduced ? still : swap} initial="hidden" animate="shown" exit="gone">{text}</motion.span>
+        <motion.span key={text} className={cn(styles.swapText, classNames?.swapText)} variants={reduced ? still : swap} initial="hidden" animate="shown" exit="gone">{text}</motion.span>
       </AnimatePresence>
     </span>
   );
@@ -63,7 +75,7 @@ type Thumb = { x: number; width: number };
  * A billing period switch. One thumb glides between the options on a critically damped spring, and
  * the savings note on the cheaper period tints and rewrites itself in place once it is chosen.
  */
-export function BillingToggle({ value, onValueChange, options = DEFAULT_OPTIONS, label = "Billing period", size = "md", className }: BillingToggleProps) {
+export function BillingToggle({ value, onValueChange, options = DEFAULT_OPTIONS, label = "Billing period", size = "md", className, classNames }: BillingToggleProps) {
   const reduced = !!useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -98,7 +110,7 @@ export function BillingToggle({ value, onValueChange, options = DEFAULT_OPTIONS,
     <div ref={rootRef} role="radiogroup" aria-label={label} className={[styles.root, className].filter(Boolean).join(" ")} data-size={size}>
       {thumb ? (
         <motion.span
-          className={styles.thumb}
+          className={cn(styles.thumb, classNames?.thumb)}
           aria-hidden="true"
           initial={false}
           animate={{ x: thumb.x, width: thumb.width }}
@@ -117,17 +129,17 @@ export function BillingToggle({ value, onValueChange, options = DEFAULT_OPTIONS,
             role="radio"
             aria-checked={selected}
             tabIndex={selected ? 0 : -1}
-            className={styles.option}
+            className={cn(styles.option, classNames?.option)}
             data-selected={selected || undefined}
             onClick={() => onValueChange(option.value)}
             onKeyDown={event => onKeyDown(event, index)}
           >
-            {selected && !thumb ? <span className={styles.thumbStatic} aria-hidden="true" /> : null}
-            <span className={styles.content}>
-              <span className={styles.label}>{option.label}</span>
+            {selected && !thumb ? <span className={cn(styles.thumbStatic, classNames?.thumbStatic)} aria-hidden="true" /> : null}
+            <span className={cn(styles.content, classNames?.content)}>
+              <span className={cn(styles.label, classNames?.label)}>{option.label}</span>
               {badgeText ? (
-                <span className={styles.badge} data-active={selected || undefined}>
-                  <StableSwap text={badgeText} candidates={candidates} reduced={reduced} />
+                <span className={cn(styles.badge, classNames?.badge)} data-active={selected || undefined}>
+                  <StableSwap text={badgeText} candidates={candidates} reduced={reduced} classNames={classNames} />
                 </span>
               ) : null}
             </span>

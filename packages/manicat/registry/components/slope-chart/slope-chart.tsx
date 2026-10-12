@@ -3,6 +3,7 @@
 import { useImperativeHandle, useLayoutEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type PointerEvent, type Ref } from "react";
 import { AnimatePresence, motion, useInView, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./slope-chart.module.css";
 
 export interface SlopeItem {
@@ -40,6 +41,33 @@ export interface SlopeChartProps {
   emptyLabel?: string;
   ref?: Ref<HTMLElement>;
   className?: string;
+  /** Extend the inner, named parts of the slope chart: stage, columns, column, plot, svg, axis, item, leader, line, dot, labels, start, name, value, end, tooltip, tipTitle, tipRow, tipName, tipValue, tipMeta, message, rank or rankSwap. */
+  classNames?: {
+    stage?: string;
+    columns?: string;
+    column?: string;
+    plot?: string;
+    svg?: string;
+    axis?: string;
+    item?: string;
+    leader?: string;
+    line?: string;
+    dot?: string;
+    labels?: string;
+    start?: string;
+    name?: string;
+    value?: string;
+    end?: string;
+    tooltip?: string;
+    tipTitle?: string;
+    tipRow?: string;
+    tipName?: string;
+    tipValue?: string;
+    tipMeta?: string;
+    message?: string;
+    rank?: string;
+    rankSwap?: string;
+  };
 }
 
 type Row = { item: SlopeItem; y0: number; y1: number; l0: number; l1: number; rank0: number; rank1: number; order: number };
@@ -79,11 +107,11 @@ function spread(wanted: number[], gap: number, low: number, high: number): numbe
 }
 
 /** Rank change arrow: up, down, or level. The number rolls in when it changes. */
-function Rank({ move, reduced }: { move: number; reduced: boolean }) {
+function Rank({ move, reduced, classNames }: { move: number; reduced: boolean; classNames: SlopeChartProps["classNames"] }) {
   const text = move === 0 ? "=" : `${Math.abs(move)}`;
-  return <span className={styles.rank} data-move={move > 0 ? "up" : move < 0 ? "down" : "level"} aria-hidden="true">
+  return <span className={cn(styles.rank, classNames?.rank)} data-move={move > 0 ? "up" : move < 0 ? "down" : "level"} aria-hidden="true">
     {move !== 0 && <svg width="8" height="8" viewBox="0 0 8 8"><path d={move > 0 ? "M4 7V1M1.5 3.5 4 1l2.5 2.5" : "M4 1v6M1.5 4.5 4 7l2.5-2.5"} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" /></svg>}
-    <span className={styles.rankSwap}>
+    <span className={cn(styles.rankSwap, classNames?.rankSwap)}>
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span key={text} initial={reduced ? { opacity: 0 } : { opacity: 0, y: move >= 0 ? 6 : -6 }} animate={{ opacity: 1, y: 0 }} exit={reduced ? { opacity: 0 } : { opacity: 0, y: move >= 0 ? -6 : 6 }} transition={reduced ? { duration: 0 } : spring.snappy}>{text}</motion.span>
       </AnimatePresence>
@@ -91,7 +119,7 @@ function Rank({ move, reduced }: { move: number; reduced: boolean }) {
   </span>;
 }
 
-export function SlopeChart({ data, label, startLabel, endLabel, formatValue, formatChange, height, highlightKey = null, activeKey, onActiveChange, ranks = true, emptyLabel = "No data", ref, className }: SlopeChartProps) {
+export function SlopeChart({ data, label, startLabel, endLabel, formatValue, formatChange, height, highlightKey = null, activeKey, onActiveChange, ranks = true, emptyLabel = "No data", ref, className, classNames }: SlopeChartProps) {
   const reduced = useReducedMotionSafe();
   const figure = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -192,56 +220,56 @@ export function SlopeChart({ data, label, startLabel, endLabel, formatValue, for
   const drawn = inView || reduced;
 
   return <figure ref={figure} className={[styles.figure, className].filter(Boolean).join(" ")} aria-label={label}>
-    <div ref={stage} className={styles.stage} data-narrow={narrow || undefined} data-active={active ? true : undefined}
+    <div ref={stage} className={cn(styles.stage, classNames?.stage)} data-narrow={narrow || undefined} data-active={active ? true : undefined}
       role="group" tabIndex={empty ? -1 : 0} aria-roledescription="slope chart" aria-label={`${label}. Use up and down arrows to move between items in ${endLabel} order.`}
       onPointerMove={onPointerMove} onPointerDown={event => { if (event.pointerType !== "mouse") { event.currentTarget.setPointerCapture?.(event.pointerId); setActive(nearest(event.clientX, event.clientY)); } }}
       onPointerUp={event => { if (event.pointerType !== "mouse") setActive(null); }} onPointerCancel={() => setActive(null)} onPointerLeave={event => { if (event.pointerType === "mouse") setActive(null); }}
       onKeyDown={onKeyDown} onBlur={() => setActive(null)} onFocus={event => { if (event.currentTarget.matches(":focus-visible") && !empty && !active) setActive(byEnd[0].item.key); }}>
       {width > 0 && <>
-        <div className={styles.columns} aria-hidden="true">
-          <span className={styles.column} style={{ left: x0, translate: "-50% 0" }}>{startLabel}</span>
-          <span className={styles.column} style={{ left: x1, translate: "-50% 0" }}>{endLabel}</span>
+        <div className={cn(styles.columns, classNames?.columns)} aria-hidden="true">
+          <span className={cn(styles.column, classNames?.column)} style={{ left: x0, translate: "-50% 0" }}>{startLabel}</span>
+          <span className={cn(styles.column, classNames?.column)} style={{ left: x1, translate: "-50% 0" }}>{endLabel}</span>
         </div>
-        <div className={styles.plot} style={{ height: plotHeight }}>
-          <svg className={styles.svg} width={width} height={plotHeight} aria-hidden="true" focusable="false">
-            <line className={styles.axis} x1={x0} x2={x0} y1={0} y2={plotHeight} />
-            <line className={styles.axis} x1={x1} x2={x1} y1={0} y2={plotHeight} />
+        <div className={cn(styles.plot, classNames?.plot)} style={{ height: plotHeight }}>
+          <svg className={cn(styles.svg, classNames?.svg)} width={width} height={plotHeight} aria-hidden="true" focusable="false">
+            <line className={cn(styles.axis, classNames?.axis)} x1={x0} x2={x0} y1={0} y2={plotHeight} />
+            <line className={cn(styles.axis, classNames?.axis)} x1={x1} x2={x1} y1={0} y2={plotHeight} />
             {rows.map((row, i) => {
               const key = row.item.key, on = active === key, accent = highlightKey === key;
               const delay = reduced ? 0 : i * .05;
-              return <g key={key} className={styles.item} data-on={on || undefined} data-accent={accent || undefined} data-dim={(active !== null && !on) || undefined}>
-                <motion.path className={styles.leader} initial={false} animate={{ d: `M${x0 - 6},${row.l0}L${x0 - 1},${row.y0}` }} transition={settle} />
-                <motion.path className={styles.leader} initial={false} animate={{ d: `M${x1 + 6},${row.l1}L${x1 + 1},${row.y1}` }} transition={settle} />
-                <motion.line className={styles.line} x1={x0} x2={x1} initial={reduced ? false : { y1: row.y0, y2: row.y1, pathLength: 0 }} animate={{ y1: row.y0, y2: row.y1, pathLength: drawn ? 1 : 0 }}
+              return <g key={key} className={cn(styles.item, classNames?.item)} data-on={on || undefined} data-accent={accent || undefined} data-dim={(active !== null && !on) || undefined}>
+                <motion.path className={cn(styles.leader, classNames?.leader)} initial={false} animate={{ d: `M${x0 - 6},${row.l0}L${x0 - 1},${row.y0}` }} transition={settle} />
+                <motion.path className={cn(styles.leader, classNames?.leader)} initial={false} animate={{ d: `M${x1 + 6},${row.l1}L${x1 + 1},${row.y1}` }} transition={settle} />
+                <motion.line className={cn(styles.line, classNames?.line)} x1={x0} x2={x1} initial={reduced ? false : { y1: row.y0, y2: row.y1, pathLength: 0 }} animate={{ y1: row.y0, y2: row.y1, pathLength: drawn ? 1 : 0 }}
                   transition={{ y1: settle, y2: settle, pathLength: reduced ? { duration: 0 } : { duration: .7, ease: motionTokens.ease.inOut, delay: .1 + delay } }} />
-                <motion.circle className={styles.dot} cx={x0} r={4} initial={reduced ? false : { cy: row.y0, scale: 0 }} animate={{ cy: row.y0, scale: drawn ? 1 : 0 }} transition={{ cy: settle, scale: reduced ? { duration: 0 } : { ...spring.snappy, delay } }} />
-                <motion.circle className={styles.dot} cx={x1} r={4} initial={reduced ? false : { cy: row.y1, scale: 0 }} animate={{ cy: row.y1, scale: drawn ? 1 : 0 }} transition={{ cy: settle, scale: reduced ? { duration: 0 } : { ...spring.snappy, delay: .7 + delay } }} />
+                <motion.circle className={cn(styles.dot, classNames?.dot)} cx={x0} r={4} initial={reduced ? false : { cy: row.y0, scale: 0 }} animate={{ cy: row.y0, scale: drawn ? 1 : 0 }} transition={{ cy: settle, scale: reduced ? { duration: 0 } : { ...spring.snappy, delay } }} />
+                <motion.circle className={cn(styles.dot, classNames?.dot)} cx={x1} r={4} initial={reduced ? false : { cy: row.y1, scale: 0 }} animate={{ cy: row.y1, scale: drawn ? 1 : 0 }} transition={{ cy: settle, scale: reduced ? { duration: 0 } : { ...spring.snappy, delay: .7 + delay } }} />
               </g>;
             })}
           </svg>
           {rows.map((row, i) => {
             const key = row.item.key, on = active === key, accent = highlightKey === key;
             const delay = reduced ? 0 : i * .05;
-            return <div key={key} className={styles.labels} data-on={on || undefined} data-accent={accent || undefined} data-dim={(active !== null && !on) || undefined} aria-hidden="true">
-              <motion.span className={styles.start} style={{ right: width - x0 + 10, maxWidth: x0 - 10 }} initial={reduced ? false : { y: row.l0, opacity: 0 }} animate={{ y: row.l0, opacity: drawn ? 1 : 0 }} transition={{ y: settle, opacity: { duration: .3, delay } }}>
-                <span className={styles.name}>{row.item.label}</span>
-                <span className={styles.value}>{format(row.item.start)}</span>
+            return <div key={key} className={cn(styles.labels, classNames?.labels)} data-on={on || undefined} data-accent={accent || undefined} data-dim={(active !== null && !on) || undefined} aria-hidden="true">
+              <motion.span className={cn(styles.start, classNames?.start)} style={{ right: width - x0 + 10, maxWidth: x0 - 10 }} initial={reduced ? false : { y: row.l0, opacity: 0 }} animate={{ y: row.l0, opacity: drawn ? 1 : 0 }} transition={{ y: settle, opacity: { duration: .3, delay } }}>
+                <span className={cn(styles.name, classNames?.name)}>{row.item.label}</span>
+                <span className={cn(styles.value, classNames?.value)}>{format(row.item.start)}</span>
               </motion.span>
-              <motion.span className={styles.end} style={{ left: x1 + 10 }} initial={reduced ? false : { y: row.l1, opacity: 0 }} animate={{ y: row.l1, opacity: drawn ? 1 : 0 }} transition={{ y: settle, opacity: { duration: .3, delay: .7 + delay } }}>
-                <span className={styles.value}>{format(row.item.end)}</span>
-                {ranks && <Rank move={row.rank0 - row.rank1} reduced={reduced} />}
+              <motion.span className={cn(styles.end, classNames?.end)} style={{ left: x1 + 10 }} initial={reduced ? false : { y: row.l1, opacity: 0 }} animate={{ y: row.l1, opacity: drawn ? 1 : 0 }} transition={{ y: settle, opacity: { duration: .3, delay: .7 + delay } }}>
+                <span className={cn(styles.value, classNames?.value)}>{format(row.item.end)}</span>
+                {ranks && <Rank move={row.rank0 - row.rank1} reduced={reduced} classNames={classNames} />}
               </motion.span>
             </div>;
           })}
         </div>
       </>}
-      <motion.div ref={tip} className={styles.tooltip} style={{ x: reduced ? tipX : tipSpringX, y: reduced ? tipY : tipSpringY }} aria-hidden="true">
-        <p className={styles.tipTitle}>{tipRow?.item.label ?? ""}</p>
-        <p className={styles.tipRow}><span className={styles.tipName}>{startLabel}</span><span className={styles.tipValue}>{tipRow ? format(tipRow.item.start) : ""}</span></p>
-        <p className={styles.tipRow}><span className={styles.tipName}>{endLabel}</span><span className={styles.tipValue}>{tipRow ? format(tipRow.item.end) : ""}</span></p>
-        <p className={styles.tipMeta}>{tipRow ? `${change(tipRow.item)}, ${rankText(tipRow)}` : ""}</p>
+      <motion.div ref={tip} className={cn(styles.tooltip, classNames?.tooltip)} style={{ x: reduced ? tipX : tipSpringX, y: reduced ? tipY : tipSpringY }} aria-hidden="true">
+        <p className={cn(styles.tipTitle, classNames?.tipTitle)}>{tipRow?.item.label ?? ""}</p>
+        <p className={cn(styles.tipRow, classNames?.tipRow)}><span className={cn(styles.tipName, classNames?.tipName)}>{startLabel}</span><span className={cn(styles.tipValue, classNames?.tipValue)}>{tipRow ? format(tipRow.item.start) : ""}</span></p>
+        <p className={cn(styles.tipRow, classNames?.tipRow)}><span className={cn(styles.tipName, classNames?.tipName)}>{endLabel}</span><span className={cn(styles.tipValue, classNames?.tipValue)}>{tipRow ? format(tipRow.item.end) : ""}</span></p>
+        <p className={cn(styles.tipMeta, classNames?.tipMeta)}>{tipRow ? `${change(tipRow.item)}, ${rankText(tipRow)}` : ""}</p>
       </motion.div>
-      {empty && <p className={styles.message}>{emptyLabel}</p>}
+      {empty && <p className={cn(styles.message, classNames?.message)}>{emptyLabel}</p>}
     </div>
     <p className={styles.srOnly} aria-live="polite" aria-atomic="true">{announce}</p>
     <p className={styles.srOnly}>{summary}</p>

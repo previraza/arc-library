@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import type { Transition, Variants } from "motion/react";
 import { Check, ChevronDown, Search, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./phone-input.module.css";
 
 /* ------------------------------------------------------------------------------------------------
@@ -199,6 +200,18 @@ export interface PhoneInputProps {
   name?: string;
   id?: string;
   className?: string;
+  classNames?: {
+    /** Slot for the main input area */
+    input?: string;
+    /** Slot for the description line */
+    description?: string;
+    /** Slot for the error message */
+    error?: string;
+    /** Slot for the country trigger content */
+    slot?: string;
+    /** Slot for the hint and error message rows */
+    messageSlot?: string;
+  };
   onBlur?: (event: ReactFocusEvent<HTMLInputElement>) => void;
 }
 
@@ -244,9 +257,9 @@ function caretAfterDigits(text: string, count: number) {
   return text.length;
 }
 
-function MessageRow({ id, text, tone }: { id: string; text: string; tone: "hint" | "error" }) {
+function MessageRow({ id, text, tone, classNames }: { id: string; text: string; tone: "hint" | "error"; classNames?: PhoneInputProps["classNames"] }) {
   const reduced = useReducedFlag();
-  return <motion.span className={styles.messageSlot} initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+  return <motion.span className={cn(styles.messageSlot, classNames?.messageSlot)} initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
     exit={{ height: 0, opacity: 0, transition: reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.instant } } }}
     transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast } }}>
     <AnimatePresence initial={false} mode="popLayout">
@@ -267,7 +280,7 @@ type Section = { key: string; label?: string; rows: Row[] };
  */
 export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(function PhoneInput({
   label, hideLabel = false, value, defaultValue, onValueChange, country: countryProp, defaultCountry = "US", onCountryChange, countries,
-  preferredCountries = ["US", "CA", "GB"], description, error, validate = true, disabled = false, required, name, id, className, onBlur,
+  preferredCountries = ["US", "CA", "GB"], description, error, validate = true, disabled = false, required, name, id, className, classNames, onBlur,
 }, forwardedRef) {
   const reduced = useReducedFlag();
   const uid = useId();
@@ -598,14 +611,14 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(function
     <div ref={controlRef} className={styles.control} data-invalid={invalid || undefined}>
       <motion.div className={styles.anchor} style={{ width: anchorW }}>
         {/* Sizes the closed button: same padding and content, so the width spring has a target before anything moves. */}
-        <span ref={measureRef} className={`${styles.trigger} ${styles.measure}`} aria-hidden="true">{face(current)}</span>
+        <span ref={measureRef} className={cn(styles.trigger, styles.measure)} aria-hidden="true">{face(current)}</span>
 
         <motion.div className={styles.shape} style={{ width: shapeW, height: shapeH, borderRadius: radius }}>
           <div className={styles.lid}>
-            <button ref={triggerRef} type="button" className={styles.trigger} disabled={disabled} inert={open || undefined} tabIndex={open ? -1 : 0}
+            <button ref={triggerRef} type="button" className={cn(styles.trigger, styles.measure)} disabled={disabled} inert={open || undefined} tabIndex={open ? -1 : 0}
               aria-haspopup="listbox" aria-expanded={open} aria-controls={listId} aria-label={`Country, ${current.name} +${current.dial}`}
               onClick={() => (open ? close("trigger") : openList())} onKeyDown={onTriggerKeyDown}>
-              <span className={styles.slot} data-hidden={open || undefined}>
+              <span className={cn(styles.slot, classNames?.slot)} data-hidden={open || undefined}>
                 <AnimatePresence initial={false} custom={roll}>
                   <motion.span key={current.iso} className={styles.layer} custom={roll} variants={reduced ? layerFade : layerVariants} initial="enter" animate="rest" exit="exit"
                     transition={reduced ? { duration: .12 } : { y: GLIDE, opacity: { duration: .2, ease: enterEase }, filter: { duration: .22, ease: enterEase } }}>
@@ -685,8 +698,8 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(function
       </div>
     </div>
 
-    <AnimatePresence initial={false}>{description && !message && <MessageRow key="hint" id={hintId} text={description} tone="hint" />}</AnimatePresence>
-    <AnimatePresence initial={false}>{message && <MessageRow key="error" id={errorId} text={message} tone="error" />}</AnimatePresence>
+    <AnimatePresence initial={false}>{description && !message && <MessageRow key="hint" id={hintId} text={description} tone="hint" classNames={classNames} />}</AnimatePresence>
+    <AnimatePresence initial={false}>{message && <MessageRow key="error" id={errorId} text={message} tone="error" classNames={classNames} />}</AnimatePresence>
     {name && <input type="hidden" name={name} value={e164} />}
     <span className={styles.srOnly} role="status" aria-live="polite">{announcement || (showCheck ? `Valid ${current.name} number` : "")}</span>
   </div>;

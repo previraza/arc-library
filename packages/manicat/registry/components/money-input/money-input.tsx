@@ -5,6 +5,7 @@ import type { ClipboardEvent as ReactClipboardEvent, FocusEvent as ReactFocusEve
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import type { Transition, Variants } from "motion/react";
 import { Check, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/cn";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./money-input.module.css";
 
@@ -47,7 +48,25 @@ export interface MoneyInputProps {
   name?: string;
   id?: string;
   className?: string;
+  /** Called when the field loses focus, after the draft has settled. */
   onBlur?: (event: ReactFocusEvent<HTMLInputElement>) => void;
+  /** Extend the inner, named parts of the money-input: field, label, shell, amountWrap, group, number, mirror, input, code, currencyButton, menuAnchor, range, messageSlot or chips. */
+  classNames?: {
+    field?: string;
+    label?: string;
+    shell?: string;
+    amountWrap?: string;
+    group?: string;
+    number?: string;
+    mirror?: string;
+    input?: string;
+    code?: string;
+    currencyButton?: string;
+    menuAnchor?: string;
+    range?: string;
+    messageSlot?: string;
+    chips?: string;
+  };
 }
 
 type Source = "type" | "chip" | "key" | "external";
@@ -213,7 +232,7 @@ function positionAfter(text: string, count: number, decimal: string) {
 export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function MoneyInput({
   label, hideLabel = false, value, defaultValue = null, onValueChange, currency: currencyProp, defaultCurrency = "USD", onCurrencyChange,
   currencies = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "INR"], min, max, quickAdd = [10, 50, 100], step: stepProp, locale = "en-US",
-  description, error, disabled = false, name, id, className, onBlur,
+  description, error, disabled = false, name, id, className, classNames, onBlur,
 }, forwardedRef) {
   const reduced = useReducedFlag();
   const uid = useId();
@@ -478,17 +497,17 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function
   const instant = source === "type";
   const chips = quickAdd.filter(amount => amount > 0);
 
-  return <div className={[styles.field, className].filter(Boolean).join(" ")} data-disabled={disabled || undefined}>
-    <label htmlFor={inputId} className={hideLabel ? styles.srOnly : styles.label}>{label}</label>
+  return <div className={cn(styles.field, className, classNames?.field)} data-disabled={disabled || undefined}>
+    <label htmlFor={inputId} className={cn(hideLabel ? styles.srOnly : styles.label, classNames?.label)}>{label}</label>
 
-    <div className={styles.control} data-invalid={invalid || undefined} data-focused={focused || undefined}>
-      <div ref={wrapRef} className={styles.amountWrap} onMouseDown={event => { if (event.target !== inputRef.current) event.preventDefault(); }}
+    <div className={cn(styles.control, classNames?.shell)} data-invalid={invalid || undefined} data-focused={focused || undefined}>
+      <div ref={wrapRef} className={cn(styles.amountWrap, classNames?.amountWrap)} onMouseDown={event => { if (event.target !== inputRef.current) event.preventDefault(); }}
         onClick={event => { if (!disabled && event.target !== inputRef.current) { const input = inputRef.current; input?.focus(); input?.setSelectionRange(input.value.length, input.value.length); } }}>
-        <motion.div ref={groupRef} className={styles.group} style={{ scale, x: bumpX }}>
+        <motion.div ref={groupRef} className={cn(styles.group, classNames?.group)} style={{ scale, x: bumpX }}>
           {info.position === "prefix" && <SymbolSlot symbol={info.symbol} reduced={reduced} />}
-          <span className={styles.number}>
-            <span className={styles.mirror} aria-hidden="true" data-empty={!draft || undefined}><Glyphs parts={parts} direction={direction} instant={instant} reduced={reduced} /></span>
-            <input ref={inputRef} id={inputId} className={styles.input} type="text" role="spinbutton" inputMode={info.digits ? "decimal" : "numeric"} autoComplete="off" spellCheck={false}
+          <span className={cn(styles.number, classNames?.number)}>
+            <span className={cn(styles.mirror, classNames?.mirror)} aria-hidden="true" data-empty={!draft || undefined}><Glyphs parts={parts} direction={direction} instant={instant} reduced={reduced} /></span>
+            <input ref={inputRef} id={inputId} className={cn(styles.input, classNames?.input)} type="text" role="spinbutton" inputMode={info.digits ? "decimal" : "numeric"} autoComplete="off" spellCheck={false}
               value={display} disabled={disabled} aria-invalid={invalid || undefined} aria-describedby={describedBy} aria-label={hideLabel ? label : undefined}
               aria-valuenow={minor === null ? undefined : minor / pow10(info.digits)} aria-valuetext={minor === null ? "Empty" : money(minor)}
               aria-valuemin={min === undefined ? undefined : min / pow10(info.digits)} aria-valuemax={max === undefined ? undefined : max / pow10(info.digits)}
@@ -500,11 +519,11 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function
         </motion.div>
       </div>
 
-      {canSwitch ? <div ref={menuRef} className={styles.menuAnchor}>
-        <button ref={menuButtonRef} type="button" className={styles.currencyButton} disabled={disabled} aria-haspopup="listbox" aria-expanded={menuOpen} aria-controls={`${uid}-currencies`}
+      {canSwitch ? <div ref={menuRef} className={cn(styles.menuAnchor, classNames?.menuAnchor)}>
+        <button ref={menuButtonRef} type="button" className={cn(styles.currencyButton, classNames?.currencyButton)} disabled={disabled} aria-haspopup="listbox" aria-expanded={menuOpen} aria-controls={`${uid}-currencies`}
           aria-label={`Currency, ${info.name}`} data-open={menuOpen || undefined} onClick={() => (menuOpen ? closeMenu(true) : openMenu())}
           onKeyDown={event => { if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); openMenu(); } }}>
-          <span className={styles.code}>{code}</span>
+          <span className={cn(styles.code, classNames?.code)}>{code}</span>
           <motion.span className={styles.chevron} aria-hidden="true" initial={false} animate={{ rotate: menuOpen ? 180 : 0 }} transition={reduced ? { duration: 0 } : GLIDE}><ChevronDown size={16} strokeWidth={1.75} /></motion.span>
         </button>
         <AnimatePresence>
@@ -530,7 +549,7 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function
     </div>
 
     {(chips.length > 0 || range) && <div className={styles.toolbar}>
-      {chips.length > 0 && <div className={styles.chips} role="group" aria-label="Quick add">
+      {chips.length > 0 && <div className={cn(styles.chips, classNames?.chips)} role="group" aria-label="Quick add">
         {chips.map(amount => {
           const add = amount * pow10(info.digits);
           const atMax = max !== undefined && (minor ?? 0) >= max;
@@ -538,11 +557,11 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function
             aria-label={`Add ${info.whole.format(amount)}`} onClick={() => nudge(add, "chip")}>+{info.whole.format(amount)}</button>;
         })}
       </div>}
-      {range && <span id={rangeId} className={styles.range} data-flash={limitFlash > 0 || undefined}>{range}</span>}
+      {range && <span id={rangeId} className={cn(styles.range, classNames?.range)} data-flash={limitFlash > 0 || undefined}>{range}</span>}
     </div>}
 
     <AnimatePresence initial={false}>
-      {(message || description) && <motion.span key="message" className={styles.messageSlot} initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+      {(message || description) && <motion.span key="message" className={cn(styles.messageSlot, classNames?.messageSlot)} initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
         exit={{ height: 0, opacity: 0, transition: reduced ? { duration: 0 } : { height: spring.smooth, opacity: { duration: duration.instant } } }}
         transition={reduced ? { duration: 0 } : { height: spring.smooth, opacity: { duration: duration.fast } }}>
         <AnimatePresence initial={false} mode="popLayout">

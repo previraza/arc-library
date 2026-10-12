@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/cn";
 import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { ChevronDown, FileCode2 } from "lucide-react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
@@ -16,6 +17,21 @@ export interface CodeBlockProps {
   language?: string;
   /** Collapse longer sources to this many lines, with a toggle that expands the rest in place. */
   maxLines?: number;
+  className?: string;
+  classNames?: {
+    block?: string;
+    header?: string;
+    file?: string;
+    language?: string;
+    viewport?: string;
+    pre?: string;
+    code?: string;
+    expand?: string;
+    swap?: string;
+    swapStack?: string;
+    srOnly?: string;
+    filename?: string;
+  };
 }
 
 type TokenKind = "comment" | "string" | "number" | "keyword" | "type" | "function" | "property" | "tag" | "punctuation";
@@ -103,7 +119,7 @@ function FileName({ name, reduced }: { name: string; reduced: boolean }) {
   </motion.span>;
 }
 
-export function CodeBlock({ code, filename, language = "tsx", maxLines }: CodeBlockProps) {
+export function CodeBlock({ code, filename, language = "tsx", maxLines, className, classNames }: CodeBlockProps) {
   const displayLanguage = normaliseLanguage(language);
   const reduced = useReducedMotion() ?? false;
   const preId = useId();
@@ -145,26 +161,26 @@ export function CodeBlock({ code, filename, language = "tsx", maxLines }: CodeBl
   const expandLabels = [`Show all ${lineCount} lines`, "Show fewer lines"];
 
   return (
-    <section className={styles.block} aria-label={filename ? `${filename} source code` : `${displayLanguage} source code`} style={maxLines ? { "--code-lines": maxLines } as CSSProperties : undefined}>
-      <header className={styles.header}>
-        <div className={styles.file}>
+    <section className={cn(styles.block, className, classNames?.block)} aria-label={filename ? `${filename} source code` : `${displayLanguage} source code`} style={maxLines ? { "--code-lines": maxLines } as CSSProperties : undefined}>
+      <header className={cn(styles.header, classNames?.header)}>
+        <div className={cn(styles.file, classNames?.file)}>
           <FileCode2 size={16} strokeWidth={1.75} aria-hidden="true" />
           <FileName name={filename ?? "Source code"} reduced={reduced} />
-          <span className={styles.language}>{displayLanguage}</span>
+          <span className={cn(styles.language, classNames?.language)}>{displayLanguage}</span>
         </div>
         <CopyButton value={code} label="Copy code" />
       </header>
-      <motion.div className={styles.viewport} style={{ height }}>
-        <pre ref={preRef} id={preId} className={styles.pre} tabIndex={0} aria-label="Selectable source code">
+      <motion.div className={cn(styles.viewport, classNames?.viewport)} style={{ height }}>
+        <pre ref={preRef} id={preId} className={cn(styles.pre, classNames?.pre)} tabIndex={0} aria-label="Selectable source code">
           <AnimatePresence initial={false} mode="popLayout">
-            <motion.code key={code} className={styles.code} initial={reduced ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, transition: textExit }} transition={reduced ? { duration: 0 } : textEnter}>{highlight(code, displayLanguage)}</motion.code>
+            <motion.code key={code} className={cn(styles.code, classNames?.code)} initial={reduced ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, transition: textExit }} transition={reduced ? { duration: 0 } : textEnter}>{highlight(code, displayLanguage)}</motion.code>
           </AnimatePresence>
         </pre>
       </motion.div>
-      {collapsible && <button type="button" className={styles.expand} aria-expanded={expanded} aria-controls={preId} onClick={() => setExpanded(value => !value)}>
+      {collapsible && <button type="button" className={cn(styles.expand, classNames?.expand)} aria-expanded={expanded} aria-controls={preId} onClick={() => setExpanded(value => !value)}>
         {/* Both labels reserve the cell, so the chevron never moves when the words change. */}
-        <span className={styles.swap} aria-hidden="true">{expandLabels.map(text => <span key={text} className={styles.reserve}>{text}</span>)}<span className={styles.swapStack}><SwapText value={expandLabels[expanded ? 1 : 0]} reduced={reduced} /></span></span>
-        <span className={styles.srOnly}>{expandLabels[expanded ? 1 : 0]}</span>
+        <span className={cn(styles.swap, classNames?.swap)} aria-hidden="true">{expandLabels.map(text => <span key={text} className={styles.reserve}>{text}</span>)}<span className={cn(styles.swapStack, classNames?.swapStack)}><SwapText value={expandLabels[expanded ? 1 : 0]} reduced={reduced} /></span></span>
+        <span className={cn(styles.srOnly, classNames?.srOnly)}>{expandLabels[expanded ? 1 : 0]}</span>
         <motion.span className={styles.chevron} aria-hidden="true" initial={false} animate={{ rotate: expanded ? 180 : 0 }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy}><ChevronDown size={16} strokeWidth={1.75} /></motion.span>
       </button>}
     </section>

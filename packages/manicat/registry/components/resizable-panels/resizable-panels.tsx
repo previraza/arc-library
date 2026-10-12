@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, motionValue, useReducedMotion, useTra
 import type { AnimationPlaybackControls, MotionValue, TargetAndTransition, Transition } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./resizable-panels.module.css";
 
 /** One pane of a `ResizablePanels` group. It only carries configuration; the group renders it. */
@@ -40,6 +41,14 @@ export interface ResizablePanelsProps {
   /** Called with each pane's share in percent after a resize settles. */
   onLayoutChange?: (sizes: number[]) => void;
   className?: string;
+  /** Extend the inner, named parts of the resizable panels: panel, content, handle, grip or restore. */
+  classNames?: {
+    panel?: string;
+    content?: string;
+    handle?: string;
+    grip?: string;
+    restore?: string;
+  };
 }
 
 type Mode = "open" | "before" | "after";
@@ -77,7 +86,7 @@ export function ResizablePanel({ children }: ResizablePanelProps) {
   return <>{children}</>;
 }
 
-export function ResizablePanels({ label, children, onLayoutChange, className }: ResizablePanelsProps) {
+export function ResizablePanels({ label, children, onLayoutChange, className, classNames }: ResizablePanelsProps) {
   const configs = Children.toArray(children).filter((child): child is ReactElement<ResizablePanelProps> => isValidElement(child)).map(child => child.props);
   const count = configs.length;
   const reduced = useReducedMotion() ?? false;
@@ -328,44 +337,45 @@ export function ResizablePanels({ label, children, onLayoutChange, className }: 
 
   return <div ref={groupRef} className={[styles.group, className].filter(Boolean).join(" ")} role="group" aria-label={label} data-resizing={resizing !== null || undefined}>
     {configs.map((config, index) => <Fragment key={config.id}>
-      {index > 0 && <Handle before={configs[index - 1]} after={config} share={shares[index - 1]} available={available} limits={available ? limits(index - 1, shares[index - 1] / 100 * available, shares[index] / 100 * available) : null}
-        mode={collapsed[index - 1] ? "before" : collapsed[index] ? "after" : "open"} active={resizing === index - 1} reduced={reduced}
+       {index > 0 && <Handle before={configs[index - 1]} after={config} share={shares[index - 1]} available={available} limits={available ? limits(index - 1, shares[index - 1] / 100 * available, shares[index] / 100 * available) : null}
+        mode={collapsed[index - 1] ? "before" : collapsed[index] ? "after" : "open"} active={resizing === index - 1} reduced={reduced} classNames={classNames}
         onPointerDown={event => onPointerDown(index - 1, event)} onPointerMove={onPointerMove} onPointerUp={event => finish(event, false)} onPointerCancel={event => finish(event, true)}
         onKeyDown={event => onKeyDown(index - 1, event)} onDoubleClick={reset} />}
-      <Pane config={config} size={sizes[index]} fade={fades[index]} collapsed={collapsed[index]} free={free[index]} anchor={index === 0 && count > 1 ? "end" : "start"} minTotal={minTotal} gaps={count - 1} paneRef={node => { panelRefs.current[index] = node; }} />
+      <Pane config={config} size={sizes[index]} fade={fades[index]} collapsed={collapsed[index]} free={free[index]} anchor={index === 0 && count > 1 ? "end" : "start"} minTotal={minTotal} gaps={count - 1} classNames={classNames} paneRef={node => { panelRefs.current[index] = node; }} />
     </Fragment>)}
   </div>;
 }
 
-function Pane({ config, size, fade, collapsed, free, anchor, minTotal, gaps, paneRef }: { config: ResizablePanelProps; size: MotionValue<number>; fade: MotionValue<number>; collapsed: boolean; free: boolean; anchor: "start" | "end"; minTotal: number; gaps: number; paneRef: (node: HTMLDivElement | null) => void }) {
+function Pane({ config, size, fade, collapsed, free, anchor, minTotal, gaps, classNames, paneRef }: { config: ResizablePanelProps; size: MotionValue<number>; fade: MotionValue<number>; collapsed: boolean; free: boolean; anchor: "start" | "end"; minTotal: number; gaps: number; classNames: ResizablePanelsProps["classNames"]; paneRef: (node: HTMLDivElement | null) => void }) {
   const grow = useTransform(size, value => Math.max(0, value));
   const min = config.minSize ?? DEFAULT_MIN;
   // The group is a size container: below the sum of the minimums, each floor becomes its share of the room between the dividers.
-  const style = { flexGrow: grow, "--panel-min": `min(${min}px, (100cqw - ${gaps}px) * ${+(min / Math.max(1, minTotal)).toFixed(5)})`, "--panel-max": config.maxSize ? `${config.maxSize}px` : "none" } as unknown as CSSProperties;
+  const style = { flexGrow: grow, "--panel-min": `min(${min}px, (100cqw - ${gaps}px) * ${+(min / Math.max(1, minTotal)).toFixed(5)}`, "--panel-max": config.maxSize ? `${config.maxSize}px` : "none" } as unknown as CSSProperties;
   // The content stays anchored to the moving edge, so a closing pane slides away like a drawer instead of being crushed.
-  return <motion.div ref={paneRef} id={config.id} className={[styles.panel, config.className].filter(Boolean).join(" ")} style={style} data-collapsed={collapsed || undefined} data-free={free || undefined} data-anchor={anchor}>
-    <motion.div className={styles.content} style={{ opacity: fade }} inert={collapsed}>{config.children}</motion.div>
+  return <motion.div ref={paneRef} id={config.id} className={cn(styles.panel, config.className, classNames?.panel)} style={style} data-collapsed={collapsed || undefined} data-free={free || undefined} data-anchor={anchor}>
+    <motion.div className={cn(styles.content, classNames?.content)} style={{ opacity: fade }} inert={collapsed}>{config.children}</motion.div>
   </motion.div>;
 }
 
 type HandleProps = {
   before: ResizablePanelProps; after: ResizablePanelProps; share: number; available: number; limits: { lo: number; hi: number } | null; mode: Mode; active: boolean; reduced: boolean;
+  classNames: ResizablePanelsProps["classNames"];
   onPointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void; onPointerMove: (event: ReactPointerEvent<HTMLDivElement>) => void; onPointerUp: (event: ReactPointerEvent<HTMLDivElement>) => void;
   onPointerCancel: (event: ReactPointerEvent<HTMLDivElement>) => void; onKeyDown: (event: ReactKeyboardEvent<HTMLDivElement>) => void; onDoubleClick: () => void;
 };
 
 /** A one pixel divider with a wider grab area. It shows a grip while hovered or dragged, and a restore tab once a neighbouring pane is hidden. */
-function Handle({ before, after, share, available, limits, mode, active, reduced, onPointerDown, onPointerMove, onPointerUp, onPointerCancel, onKeyDown, onDoubleClick }: HandleProps) {
+function Handle({ before, after, share, available, limits, mode, active, reduced, classNames, onPointerDown, onPointerMove, onPointerUp, onPointerCancel, onKeyDown, onDoubleClick }: HandleProps) {
   const now = Math.round(share);
   const min = limits && available ? Math.round(limits.lo / available * 100) : 0;
   const max = limits && available ? Math.round(limits.hi / available * 100) : 100;
   const hidden = mode === "before" ? before.label : mode === "after" ? after.label : null;
   return <div role="separator" tabIndex={0} aria-orientation="vertical" aria-controls={before.id} aria-label={before.label} aria-valuenow={now} aria-valuemin={Math.min(min, now)} aria-valuemax={Math.max(max, now)}
-    aria-valuetext={hidden ? `${hidden} hidden, press Enter to show` : `${now}%`} className={styles.handle} data-collapsed={mode === "open" ? undefined : mode} data-active={active || undefined}
+    aria-valuetext={hidden ? `${hidden} hidden, press Enter to show` : `${now}%`} className={cn(styles.handle, classNames?.handle)} data-collapsed={mode === "open" ? undefined : mode} data-active={active || undefined}
     onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerCancel} onKeyDown={onKeyDown} onDoubleClick={onDoubleClick}>
-    <span className={styles.grip} aria-hidden="true" />
+    <span className={cn(styles.grip, classNames?.grip)} aria-hidden="true" />
     <AnimatePresence initial={false}>
-      {mode !== "open" && <motion.span key={mode} className={styles.restore} data-side={mode} aria-hidden="true" initial={reduced ? { opacity: 0 } : tabIn} animate={tabRest} exit={reduced ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : tabOut} transition={reduced ? { duration: motionTokens.duration.instant } : tabEnter}>
+      {mode !== "open" && <motion.span key={mode} className={cn(styles.restore, classNames?.restore)} data-side={mode} aria-hidden="true" initial={reduced ? { opacity: 0 } : tabIn} animate={tabRest} exit={reduced ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : tabOut} transition={reduced ? { duration: motionTokens.duration.instant } : tabEnter}>
         {mode === "before" ? <ChevronRight size={14} strokeWidth={1.75} /> : <ChevronLeft size={14} strokeWidth={1.75} />}
       </motion.span>}
     </AnimatePresence>

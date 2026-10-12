@@ -5,6 +5,7 @@ import type { InputHTMLAttributes } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import type { AnimationPlaybackControls, Transition, Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./password-strength.module.css";
 
 export interface PasswordRule {
@@ -33,6 +34,10 @@ export interface PasswordStrengthProps extends Omit<InputHTMLAttributes<HTMLInpu
   error?: string;
   revealed?: boolean;
   onRevealedChange?: (revealed: boolean) => void;
+  classNames?: {
+    /** Slot for the password input */
+    input?: string;
+  };
 }
 
 const count = (password: string) => Array.from(password).length;
@@ -134,7 +139,7 @@ function ErrorRow({ id, text, reduced }: { id: string; text: string; reduced: bo
   </motion.span>;
 }
 
-export const PasswordStrength = forwardRef<HTMLInputElement, PasswordStrengthProps>(function PasswordStrength({ label, value: valueProp, defaultValue = "", onValueChange, onChange, rules = defaultPasswordRules, error, revealed: revealedProp, onRevealedChange, id, className, ...props }, ref) {
+export const PasswordStrength = forwardRef<HTMLInputElement, PasswordStrengthProps>(function PasswordStrength({ label, value: valueProp, defaultValue = "", onValueChange, onChange, rules = defaultPasswordRules, error, revealed: revealedProp, onRevealedChange, id, className, classNames, ...props }, ref) {
   const generated = useId();
   const controlId = id ?? generated;
   const rulesId = `${controlId}-rules`, errorId = `${controlId}-error`;
@@ -185,7 +190,7 @@ export const PasswordStrength = forwardRef<HTMLInputElement, PasswordStrengthPro
     <motion.div className={styles.shell} style={{ x: shake }}>
       <input autoComplete="new-password" autoCapitalize="off" autoCorrect="off" spellCheck={false} {...props} ref={ref} id={controlId} type={revealed ? "text" : "password"} value={value}
         onChange={event => { const next = event.target.value; if (valueProp === undefined) setInternal(next); onChange?.(event); onValueChange?.(next, estimateStrength(next, rules)); }}
-        aria-invalid={error ? true : props["aria-invalid"]} aria-describedby={describedBy} data-reveal={reveal.changed ? (revealed ? "shown" : "hidden") : undefined} className={[styles.input, className].filter(Boolean).join(" ")} />
+        aria-invalid={error ? true : props["aria-invalid"]} aria-describedby={describedBy} data-reveal={reveal.changed ? (revealed ? "shown" : "hidden") : undefined} className={cn(styles.input, className, classNames?.input)} />
       <button type="button" className={styles.reveal} onClick={toggleReveal} aria-label="Show password" aria-pressed={revealed} aria-controls={controlId}><EyeMorph slashed={revealed} reduced={reduced} /></button>
     </motion.div>
     <AnimatePresence initial={false}>{error ? <ErrorRow key="error" id={errorId} text={error} reduced={reduced} /> : null}</AnimatePresence>

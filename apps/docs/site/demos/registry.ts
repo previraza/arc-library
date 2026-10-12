@@ -1,13 +1,20 @@
 import type { ComponentType } from "react";
 
 import * as actions from "./actions";
+import * as blocks from "./blocks";
+import * as charts from "./charts";
+import * as collab from "./collab";
+import * as data from "./data";
 import * as disclosure from "./disclosure";
 import * as feedback from "./feedback";
 import * as inputs from "./inputs";
+import * as media from "./media";
+import * as navigation from "./navigation";
+import * as text from "./text";
 
 export type DemoComponent = ComponentType;
 
-const modules = [actions, disclosure, feedback, inputs];
+const modules = [actions, blocks, charts, collab, data, disclosure, feedback, inputs, media, navigation, text];
 
 /**
  * Demos keyed by registry name, built from the exports themselves: `ButtonDemo` becomes `button`,

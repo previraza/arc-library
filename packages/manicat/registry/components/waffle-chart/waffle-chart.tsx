@@ -3,6 +3,7 @@
 import { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type KeyboardEvent, type PointerEvent, type Ref } from "react";
 import { animate, motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./waffle-chart.module.css";
 
 export interface WaffleCategory {
@@ -41,6 +42,25 @@ export interface WaffleChartProps {
   emptyLabel?: string;
   ref?: Ref<HTMLElement>;
   className?: string;
+  /** Extend the inner, named parts of the waffle chart: body, board, grid, cell, tooltip, tipRow, tipSwatch, tipName, tipValue, tipMeta, message, legend, item, swatch, itemLabel or itemShare. */
+  classNames?: {
+    body?: string;
+    board?: string;
+    grid?: string;
+    cell?: string;
+    tooltip?: string;
+    tipRow?: string;
+    tipSwatch?: string;
+    tipName?: string;
+    tipValue?: string;
+    tipMeta?: string;
+    message?: string;
+    legend?: string;
+    item?: string;
+    swatch?: string;
+    itemLabel?: string;
+    itemShare?: string;
+  };
 }
 
 type Cell = { id: number; key: string | null; slot: number };
@@ -108,7 +128,7 @@ function Rolling({ value, decimals, reduced }: { value: number; decimals: number
   return <motion.span>{text}</motion.span>;
 }
 
-export function WaffleChart({ data, label, unit = "", formatValue, rows = 10, columns = 10, accentKey, activeKey, defaultActiveKey = null, onActiveChange, legend = true, decimals = 0, emptyLabel = "No data", ref, className }: WaffleChartProps) {
+export function WaffleChart({ data, label, unit = "", formatValue, rows = 10, columns = 10, accentKey, activeKey, defaultActiveKey = null, onActiveChange, legend = true, decimals = 0, emptyLabel = "No data", ref, className, classNames }: WaffleChartProps) {
   const reduced = useReducedMotionSafe();
   const figure = useRef<HTMLElement>(null);
   const grid = useRef<HTMLDivElement>(null);
@@ -242,9 +262,9 @@ export function WaffleChart({ data, label, unit = "", formatValue, rows = 10, co
   const settle = reduced ? { duration: 0 } : spring.morph;
 
   return <figure ref={figure} className={[styles.figure, className].filter(Boolean).join(" ")} aria-label={label} data-legend={legend || undefined}>
-    <div className={styles.body}>
-    <div className={styles.board}>
-      <div ref={grid} className={styles.grid} style={{ height: height || undefined, aspectRatio: height ? undefined : `${columns} / ${rows}` }} data-active={active ? true : undefined}
+    <div className={cn(styles.body, classNames?.body)}>
+    <div className={cn(styles.board, classNames?.board)}>
+      <div ref={grid} className={cn(styles.grid, classNames?.grid)} style={{ height: height || undefined, aspectRatio: height ? undefined : `${columns} / ${rows}` }} data-active={active ? true : undefined}
         role="group" tabIndex={empty ? -1 : 0} aria-roledescription="waffle chart" aria-label={`${label}. ${count} cells. Use arrow keys to move between cells, Page Up and Page Down to jump between categories.`}
         onPointerMove={onPointerMove} onPointerDown={onPointerDown} onPointerUp={event => { if (event.pointerType !== "mouse") setPointer(null); }} onPointerCancel={() => setPointer(null)} onPointerLeave={event => { if (event.pointerType === "mouse") setPointer(null); }}
         onKeyDown={onKeyDown} onBlur={() => setPointer(null)} onFocus={event => { if (event.currentTarget.matches(":focus-visible") && !empty) setPointer(current => current ?? pointAt(0)); }}>
@@ -256,7 +276,7 @@ export function WaffleChart({ data, label, unit = "", formatValue, rows = 10, co
           const shown = inView || reduced;
           // A travelling cell dips while it flies, so the flow reads as cells lifting out of one block and landing in another.
           const dip = travel ? [1, .62 + (version % 2) * .001, 1] : 1;
-          return <motion.span key={cell.id} className={styles.cell} aria-hidden="true"
+          return <motion.span key={cell.id} className={cn(styles.cell, classNames?.cell)} aria-hidden="true"
             data-on={on || undefined} data-cursor={pointer?.slot === cell.slot || undefined} data-empty={cell.key === null || undefined} data-shape={shapeOf(cell.key)}
             style={{ width: size, height: size, "--cell": colorOf(cell.key), "--delay": `${delay}s` } as CSSProperties}
             initial={reduced ? false : { x, y, scale: .4, opacity: 0 }}
@@ -268,24 +288,24 @@ export function WaffleChart({ data, label, unit = "", formatValue, rows = 10, co
             }} />;
         })}
       </div>
-      {!empty && <motion.div ref={tip} className={styles.tooltip} data-shown={pointer ? true : undefined} style={{ x: shownX, y: shownY }} aria-hidden="true">
-        <p className={styles.tipRow}>
-          <span className={styles.tipSwatch} data-shape={shapeOf(reading?.key ?? null)} style={{ "--cell": colorOf(reading?.key ?? null) } as CSSProperties} />
-          <span className={styles.tipName}>{reading?.label ?? ""}</span>
-          <span className={styles.tipValue}>{reading ? `${share(reading).toFixed(decimals)}%` : ""}</span>
+      {!empty && <motion.div ref={tip} className={cn(styles.tooltip, classNames?.tooltip)} data-shown={pointer ? true : undefined} style={{ x: shownX, y: shownY }} aria-hidden="true">
+        <p className={cn(styles.tipRow, classNames?.tipRow)}>
+          <span className={cn(styles.tipSwatch, classNames?.tipSwatch)} data-shape={shapeOf(reading?.key ?? null)} style={{ "--cell": colorOf(reading?.key ?? null) } as CSSProperties} />
+          <span className={cn(styles.tipName, classNames?.tipName)}>{reading?.label ?? ""}</span>
+          <span className={cn(styles.tipValue, classNames?.tipValue)}>{reading ? `${share(reading).toFixed(decimals)}%` : ""}</span>
         </p>
-        <p className={styles.tipMeta}>{reading ? format(reading.value, reading) : ""}</p>
+        <p className={cn(styles.tipMeta, classNames?.tipMeta)}>{reading ? format(reading.value, reading) : ""}</p>
       </motion.div>}
-      {empty && <p className={styles.message}>{emptyLabel}</p>}
+      {empty && <p className={cn(styles.message, classNames?.message)}>{emptyLabel}</p>}
     </div>
-    {legend && !empty && <ul className={styles.legend} aria-label={`${label} categories`} onPointerLeave={() => setPreview(null)}>
+    {legend && !empty && <ul className={cn(styles.legend, classNames?.legend)} aria-label={`${label} categories`} onPointerLeave={() => setPreview(null)}>
       {data.map(item => <li key={item.key}>
-        <button type="button" className={styles.item} aria-pressed={pinned === item.key} data-on={active === item.key || undefined} data-dim={(active !== null && active !== item.key) || undefined}
+        <button type="button" className={cn(styles.item, classNames?.item)} aria-pressed={pinned === item.key} data-on={active === item.key || undefined} data-dim={(active !== null && active !== item.key) || undefined}
           onClick={() => setPinned(pinned === item.key ? null : item.key)}
           onPointerEnter={event => { if (event.pointerType === "mouse") setPreview(item.key); }} onFocus={event => { if (event.currentTarget.matches(":focus-visible")) setPreview(item.key); }} onBlur={() => setPreview(null)}>
-          <span className={styles.swatch} data-shape={shapeOf(item.key)} style={{ "--cell": colorOf(item.key) } as CSSProperties} aria-hidden="true" />
-          <span className={styles.itemLabel}>{item.label}</span>
-          <span className={styles.itemShare}><Rolling value={share(item)} decimals={decimals} reduced={reduced} /></span>
+          <span className={cn(styles.swatch, classNames?.swatch)} data-shape={shapeOf(item.key)} style={{ "--cell": colorOf(item.key) } as CSSProperties} aria-hidden="true" />
+          <span className={cn(styles.itemLabel, classNames?.itemLabel)}>{item.label}</span>
+          <span className={cn(styles.itemShare, classNames?.itemShare)}><Rolling value={share(item)} decimals={decimals} reduced={reduced} /></span>
         </button>
       </li>)}
     </ul>}

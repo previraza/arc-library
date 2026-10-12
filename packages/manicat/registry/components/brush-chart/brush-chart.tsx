@@ -3,6 +3,7 @@
 import { useEffect, useId, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent, type PointerEvent, type Ref } from "react";
 import { animate, motion, useInView, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./brush-chart.module.css";
 
 export interface BrushChartDatum {
@@ -48,6 +49,10 @@ export interface BrushChartProps {
   emptyLabel?: string;
   ref?: Ref<HTMLElement>;
   className?: string;
+  classNames?: {
+    /** Slot for the chart figure */
+    figure?: string;
+  };
 }
 
 type Point = { t: number; value: number };
@@ -158,7 +163,7 @@ function useWidth<T extends HTMLElement>() {
   return [node, width] as const;
 }
 
-export function BrushChart({ data, label, unit = "", formatValue = value => grouped.format(value), formatTick = value => compact.format(value), formatDate = date => fullDate.format(date), annotations = [], range, defaultRange, onRangeChange, minSpan = 7 * DAY, height = 240, overviewHeight = 52, emptyLabel = "No data yet", ref, className }: BrushChartProps) {
+export function BrushChart({ data, label, unit = "", formatValue = value => grouped.format(value), formatTick = value => compact.format(value), formatDate = date => fullDate.format(date), annotations = [], range, defaultRange, onRangeChange, minSpan = 7 * DAY, height = 240, overviewHeight = 52, emptyLabel = "No data yet", ref, className, classNames }: BrushChartProps) {
   const reduced = useReducedMotionSafe();
   const uid = `brush${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const figure = useRef<HTMLElement>(null);
@@ -383,7 +388,7 @@ export function BrushChart({ data, label, unit = "", formatValue = value => grou
   const announce = reading ? `${formatDate(new Date(reading.t))}, ${format(reading.value)}${eventAt ? `. ${eventAt.label}` : ""}` : "";
   const summary = empty ? `${label}. ${emptyLabel}.` : `${label}, ${shortDate.format(first)} to ${shortDate.format(lastT)}. Showing ${windowText}.`;
 
-  return <figure ref={figure} className={[styles.figure, className].filter(Boolean).join(" ")} aria-label={label}>
+  return <figure ref={figure} className={cn(styles.figure, className, classNames?.figure)} aria-label={label}>
     <div className={styles.chart} data-active={tipOn || undefined}>
       <div ref={plot} className={styles.plot} style={{ height: plotH }} role="group" tabIndex={empty ? -1 : 0} aria-roledescription="chart" aria-label={`${label}, ${windowText}. Use left and right arrows to read values.`}
         onPointerMove={onPlotMove} onPointerDown={event => { if (event.pointerType !== "mouse") { event.currentTarget.setPointerCapture?.(event.pointerId); setActive(nearest(event.clientX)); } }}

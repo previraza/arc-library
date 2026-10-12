@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/cn";
 import { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { ClipboardEvent as ReactClipboardEvent, DragEvent as ReactDragEvent, KeyboardEvent as ReactKeyboardEvent, ReactNode, RefObject } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
@@ -166,6 +167,39 @@ export interface ChatThreadProps {
   /** Words for localization. Leave out any key to keep its English default. */
   labels?: ChatThreadLabels;
   className?: string;
+  classNames?: {
+    root?: string;
+    viewport?: string;
+    scroller?: string;
+    track?: string;
+    list?: string;
+    content?: string;
+    day?: string;
+    row?: string;
+    bubble?: string;
+    meta?: string;
+    author?: string;
+    line?: string;
+    face?: string;
+    gutter?: string;
+    stack?: string;
+    parts?: string;
+    gallery?: string;
+    image?: string;
+    file?: string;
+    fileText?: string;
+    fileName?: string;
+    fileSize?: string;
+    reaction?: string;
+    reactionClip?: string;
+    reactions?: string;
+    receipts?: string;
+    status?: string;
+    readers?: string;
+    pill?: string;
+    pillIcon?: string;
+    srOnly?: string;
+  };
 }
 
 type Row =
@@ -395,7 +429,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, ChatComposerProps>(fu
 export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function ChatThread({
   participants, currentUserId, messages: messagesProp, defaultMessages, typing = [], readBy, onSend, onReact, onRetry,
   reactions = DEFAULT_REACTIONS, placeholder = "Message", composer = true, allowAttachments = true, accept,
-  groupWindow = 5 * 60_000, locale = "en-US", label = "Conversation", labels, className,
+  groupWindow = 5 * 60_000, locale = "en-US", label = "Conversation", labels, className, classNames,
 }, ref) {
   const t = useMemo(() => withDefaults({ ...THREAD_LABELS, today: relativeDay(locale, 0), yesterday: relativeDay(locale, -1) }, labels), [labels, locale]);
   const reduced = !!useReducedMotion();
@@ -543,15 +577,15 @@ export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function
 
   const arrive = (mine: boolean) => reduced ? { opacity: 0 } : { opacity: 0, scale: .92, y: 14, x: mine ? 8 : -8, filter: `blur(${blur.subtle}px)` };
 
-  return <div className={[styles.root, className].filter(Boolean).join(" ")}>
-    <div className={styles.viewport}>
-      <div ref={scrollRef} className={styles.scroller} onScroll={onScroll} data-chat-scroller="">
-        <div className={styles.track}>
-          <motion.div ref={contentRef} className={styles.content} style={{ y }}>
-            <ol className={styles.list} role="log" aria-label={label} aria-live="polite" aria-relevant="additions">
+  return <div className={cn(styles.root, className, classNames?.root)}>
+    <div className={cn(styles.viewport, classNames?.viewport)}>
+      <div ref={scrollRef} className={cn(styles.scroller, classNames?.scroller)} onScroll={onScroll} data-chat-scroller="">
+        <div className={cn(styles.track, classNames?.track)}>
+          <motion.div ref={contentRef} className={cn(styles.content, classNames?.content)} style={{ y }}>
+            <ol className={cn(styles.list, classNames?.list)} role="log" aria-label={label} aria-live="polite" aria-relevant="additions">
               <AnimatePresence initial={false}>
                 {rows.map(row => {
-                  if (row.type === "day") return <li key={row.key} className={styles.day}><span suppressHydrationWarning>{row.label}</span></li>;
+                  if (row.type === "day") return <li key={row.key} className={cn(styles.day, classNames?.day)}><span suppressHydrationWarning>{row.label}</span></li>;
                   const { message, author, mine, first, last, index } = row;
                   const date = toDate(message.createdAt);
                   const seenBy = receipts.get(message.id) ?? [];
@@ -559,44 +593,44 @@ export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function
                   const status = message.status === "failed" ? "failed" : message.status === "sending" ? "sending" : readIndex >= index ? "read" : message.status ?? "sent";
                   const images = message.attachments?.filter(entry => entry.kind === "image" && entry.url) ?? [];
                   const files = message.attachments?.filter(entry => entry.kind !== "image" || !entry.url) ?? [];
-                  return <motion.li key={row.key} className={styles.row} data-mine={mine || undefined} data-first={first || undefined} data-last={last || undefined} data-failed={message.status === "failed" || undefined}
+                  return <motion.li key={row.key} className={cn(styles.row, classNames?.row)} data-mine={mine || undefined} data-first={first || undefined} data-last={last || undefined} data-failed={message.status === "failed" || undefined}
                     initial={arrive(mine)} animate={{ opacity: 1, scale: 1, y: 0, x: 0, filter: "blur(0px)" }} exit={{ opacity: 0, transition: { duration: duration.exit } }}
                     transition={reduced ? { duration: duration.fast } : { ...ARRIVE, opacity: { duration: duration.standard, ease: enter }, filter: { duration: duration.standard, ease: enter } }}
                     style={{ transformOrigin: mine ? "100% 100%" : "0 100%" }}>
-                    {!mine && <div className={styles.gutter} />}
-                    <div className={styles.stack}>
-                      {first && <p className={styles.meta}>
-                        {!mine && <span className={styles.author}>{author.name}</span>}
+                    {!mine && <div className={cn(styles.gutter, classNames?.gutter)} />}
+<div className={cn(styles.stack, classNames?.stack)}>
+                      {first && <p className={cn(styles.meta, classNames?.meta)}>
+                        {!mine && <span className={cn(styles.author, classNames?.author)}>{author.name}</span>}
                         <time dateTime={date.toISOString()} suppressHydrationWarning>{hydrated ? time.format(date) : ""}</time>
                       </p>}
-                      <div className={styles.line}>
-                        {!mine && last && <span className={styles.face}><Avatar person={author} size={28} /></span>}
-                        <div className={styles.parts}>
-                          {images.length > 0 && <div className={styles.gallery} data-count={Math.min(images.length, 4)}>
-                            {images.slice(0, 4).map((image, at) => <a key={image.id} className={styles.image} href={image.url} target="_blank" rel="noreferrer"
+<div className={cn(styles.line, classNames?.line)}>
+                        {!mine && last && <span className={cn(styles.face, classNames?.face)}><Avatar person={author} size={28} /></span>}
+                        <div className={cn(styles.parts, classNames?.parts)}>
+                          {images.length > 0 && <div className={cn(styles.gallery, classNames?.gallery)} data-count={Math.min(images.length, 4)}>
+                            {images.slice(0, 4).map((image, at) => <a key={image.id} className={cn(styles.image, classNames?.image)} href={image.url} target="_blank" rel="noreferrer"
                               style={images.length === 1 && image.width && image.height ? { aspectRatio: `${image.width} / ${image.height}` } : undefined}>
                               {/* eslint-disable-next-line @next/next/no-img-element -- registry components stay framework agnostic */}
                               <img src={image.url} alt={image.alt ?? image.name} loading="lazy" />
                               {at === 3 && images.length > 4 && <span className={styles.more}>+{images.length - 4}</span>}
                             </a>)}
                           </div>}
-                          {files.map(file => <a key={file.id} className={styles.file} href={file.url} download={file.name} target="_blank" rel="noreferrer">
+                          {files.map(file => <a key={file.id} className={cn(styles.file, classNames?.file)} href={file.url} download={file.name} target="_blank" rel="noreferrer">
                             <FileText size={18} strokeWidth={1.75} aria-hidden="true" />
-                            <span className={styles.fileText}><span className={styles.fileName}>{file.name}</span>{file.size !== undefined && <span className={styles.fileSize}>{formatBytes(file.size)}</span>}</span>
+                            <span className={cn(styles.fileText, classNames?.fileText)}><span className={cn(styles.fileName, classNames?.fileName)}>{file.name}</span>{file.size !== undefined && <span className={cn(styles.fileSize, classNames?.fileSize)}>{formatBytes(file.size)}</span>}</span>
                           </a>)}
-                          {message.text && <div className={styles.bubble} title={hydrated ? date.toLocaleString(locale, { dateStyle: "medium", timeStyle: "short" }) : undefined}>{message.text}</div>}
+                          {message.text && <div className={cn(styles.bubble, classNames?.bubble)} title={hydrated ? date.toLocaleString(locale, { dateStyle: "medium", timeStyle: "short" }) : undefined}>{message.text}</div>}
                         </div>
                         <ReactionPicker open={picker === message.id} mine={mine} reactions={reactions} reduced={reduced} labels={t} id={`${uid}-picker-${message.id}`}
                           onToggle={() => setPicker(current => current === message.id ? null : message.id)} onClose={() => setPicker(null)} onPick={emoji => react(message.id, emoji)} />
                       </div>
                       <AnimatePresence initial={false}>
-                        {!!message.reactions?.length && <motion.div key="reactions" className={styles.reactionClip}
+                        {!!message.reactions?.length && <motion.div key="reactions" className={cn(styles.reactionClip, classNames?.reactionClip)}
                           initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={reduced ? { duration: 0 } : { height: GROW, opacity: { duration: duration.fast } }}>
-                          <ul className={styles.reactions} aria-label={t.reactions}>
+                          <ul className={cn(styles.reactions, classNames?.reactions)} aria-label={t.reactions}>
                             <AnimatePresence initial={false} mode="popLayout">
                               {message.reactions.map(reaction => <motion.li key={reaction.emoji} layout={!reduced}
                                 initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={reduced ? { opacity: 0 } : { opacity: 0, scale: .6 }} transition={POP}>
-                                <button type="button" className={styles.reaction} aria-pressed={!!reaction.mine} aria-label={t.reactionCount(reaction.emoji, reaction.count, !!reaction.mine)} onClick={() => react(message.id, reaction.emoji)}>
+                                <button type="button" className={cn(styles.reaction, classNames?.reaction)} aria-pressed={!!reaction.mine} aria-label={t.reactionCount(reaction.emoji, reaction.count, !!reaction.mine)} onClick={() => react(message.id, reaction.emoji)}>
                                   <span aria-hidden="true">{reaction.emoji}</span><Count value={reaction.count} reduced={reduced} />
                                 </button>
                               </motion.li>)}
@@ -604,12 +638,12 @@ export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function
                           </ul>
                         </motion.div>}
                       </AnimatePresence>
-                      {(showStatus || seenBy.length > 0) && <div className={styles.receipts}>
-                        {showStatus && <span className={styles.status} data-status={status}>
+                      {(showStatus || seenBy.length > 0) && <div className={cn(styles.receipts, classNames?.receipts)}>
+                        {showStatus && <span className={cn(styles.status, classNames?.status)} data-status={status}>
                           {status === "failed" ? <>{t.failed}{onRetry && <button type="button" className={styles.retry} onClick={() => onRetry(message.id)}><RotateCw size={12} strokeWidth={2} aria-hidden="true" />{t.retry}</button>}</>
                             : t[status]}
                         </span>}
-                        {seenBy.length > 0 && <span className={styles.readers} aria-label={t.readBy(seenBy.map(entry => entry.name))}>
+                        {seenBy.length > 0 && <span className={cn(styles.readers, classNames?.readers)} aria-label={t.readBy(seenBy.map(entry => entry.name))}>
                           {seenBy.map(entry => <motion.span key={entry.id} layoutId={reduced ? undefined : `${uid}-receipt-${entry.id}`} className={styles.reader} transition={SETTLE}>
                             <Avatar person={entry} size={16} />
                           </motion.span>)}
@@ -621,7 +655,7 @@ export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function
                 {typers.length > 0 && <motion.li key="typing" className={styles.row} data-first data-last aria-hidden="true"
                   initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .9, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={reduced ? { opacity: 0 } : { opacity: 0, scale: .9, transition: { duration: duration.exit, ease: standard } }}
                   transition={reduced ? { duration: duration.fast } : spring.snappy} style={{ transformOrigin: "0 100%" }}>
-                  <div className={styles.gutter} />
+                  <div className={cn(styles.gutter, classNames?.gutter)} />
                   <div className={styles.stack}><div className={styles.line}><span className={styles.face}><Avatar person={typers[0]} size={28} /></span><div className={`${styles.bubble} ${styles.typing}`}><TypingDots /></div></div></div>
                 </motion.li>}
               </AnimatePresence>
@@ -629,13 +663,13 @@ export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function
           </motion.div>
         </div>
       </div>
-      <span className={styles.srOnly} role="status">{typingLabel}</span>
+      <span className={cn(styles.srOnly, classNames?.srOnly)} role="status">{typingLabel}</span>
       <AnimatePresence>
-        {pill && <motion.button key="pill" type="button" className={styles.pill} onClick={() => scrollToBottom()} layout={!reduced} style={{ borderRadius: 16 }}
+        {pill && <motion.button key="pill" type="button" className={cn(styles.pill, classNames?.pill)} onClick={() => scrollToBottom()} layout={!reduced} style={{ borderRadius: 16 }}
           initial={reduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: .94 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={reduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: .94, transition: { duration: duration.exit, ease: standard } }}
           transition={reduced ? { duration: duration.fast } : { ...spring.morph, opacity: { duration: duration.fast } }}>
           {/* Icon and label hold their own size while the pill's width morphs, so the text never stretches. */}
-          <motion.span className={styles.pillIcon} layout={reduced ? false : "position"} transition={spring.morph}><ArrowDown size={14} strokeWidth={2} aria-hidden="true" /></motion.span>
+          <motion.span className={cn(styles.pillIcon, classNames?.pillIcon)} layout={reduced ? false : "position"} transition={spring.morph}><ArrowDown size={14} strokeWidth={2} aria-hidden="true" /></motion.span>
           <AnimatePresence initial={false} mode="popLayout">
             <motion.span key={unread > 0 ? "new" : "latest"} layout={reduced ? false : "position"} initial={{ opacity: 0, filter: `blur(${blur.subtle}px)` }} animate={{ opacity: 1, filter: "blur(0px)" }} exit={{ opacity: 0, filter: `blur(${blur.subtle}px)` }} transition={{ duration: duration.fast }}>
               {unread > 0 ? withCount(t.newMessages(unread), unread, <Count value={unread} reduced={reduced} />) : t.jumpToLatest}

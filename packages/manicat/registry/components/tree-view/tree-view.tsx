@@ -5,6 +5,7 @@ import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 import { ChevronRight, File, Folder, FolderOpen } from "lucide-react";
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./tree-view.module.css";
 
 export interface TreeNode {
@@ -21,6 +22,17 @@ export interface TreeViewProps {
   onExpandedChange?: (expandedIds: string[]) => void;
   onSelect?: (node: TreeNode) => void;
   "aria-label"?: string;
+  className?: string;
+  /** Extend the inner, named parts of the tree view: row, item, selection, branch, disclosure, folderGlyph or label. */
+  classNames?: {
+    row?: string;
+    item?: string;
+    selection?: string;
+    branch?: string;
+    disclosure?: string;
+    folderGlyph?: string;
+    label?: string;
+  };
 }
 
 type VisibleNode = {
@@ -55,11 +67,11 @@ function fileTone(label: string, classNames: Record<string, string>) {
 }
 
 /** Same markup with or without reduced motion, so the server render always hydrates cleanly; only the transition changes. */
-function FolderIcon({ open, reduced }: { open: boolean; reduced: boolean }) {
+function FolderIcon({ open, reduced, classNames }: { open: boolean; reduced: boolean; classNames?: TreeViewProps["classNames"] }) {
   return <AnimatePresence initial={false} mode="popLayout">
     <motion.span
       key={open ? "open" : "closed"}
-      className={styles.folderGlyph}
+      className={cn(styles.folderGlyph, classNames?.folderGlyph)}
       initial={reduced ? false : { opacity: 0, scale: .6, filter: blur(motionTokens.blur.subtle) }}
       animate={{ opacity: 1, scale: 1, filter: blur(0) }}
       exit={reduced ? { opacity: 0, transition: still } : { opacity: 0, scale: .6, filter: blur(motionTokens.blur.subtle), transition: fadeOut }}
@@ -73,13 +85,13 @@ function FolderIcon({ open, reduced }: { open: boolean; reduced: boolean }) {
  * in place, it held the row's exit open, so the row stayed in the tree with pointer events off and the next click on it
  * after reopening its folder did nothing.
  */
-function Selection({ layoutId, reduced }: { layoutId: string; reduced: boolean }) {
+function Selection({ layoutId, reduced, classNames }: { layoutId: string; reduced: boolean; classNames?: TreeViewProps["classNames"] }) {
   const present = useIsPresent();
   if (!present) return null;
-  return <motion.span aria-hidden="true" layoutId={layoutId} className={styles.selection} transition={reduced ? still : motionTokens.spring.morph} />;
+  return <motion.span aria-hidden="true" layoutId={layoutId} className={cn(styles.selection, classNames?.selection)} transition={reduced ? still : motionTokens.spring.morph} />;
 }
 
-export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpandedChange, onSelect, "aria-label": ariaLabel = "File tree" }: TreeViewProps) {
+export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpandedChange, onSelect, "aria-label": ariaLabel = "File tree", className, classNames }: TreeViewProps) {
   const reduced = useReducedMotion() ?? false;
   const selectionLayoutId = `tree-selection-${useId()}`;
   const [internalExpanded, setInternalExpanded] = useState(() => new Set(defaultExpandedIds));
@@ -142,7 +154,7 @@ export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpand
     }
   }
 
-  return <div className={styles.tree} role="tree" aria-label={ariaLabel} aria-multiselectable="false">
+  return <div className={cn(styles.tree, className)} role="tree" aria-label={ariaLabel} aria-multiselectable="false">
     <AnimatePresence initial={false} mode="sync">
       {visible.map((item, index) => {
         const hasChildren = Boolean(item.node.children?.length);
@@ -152,7 +164,7 @@ export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpand
         const delay = openedIndex >= 0 && index > openedIndex ? Math.min(index - openedIndex - 1, 7) * motionTokens.stagger.item : 0;
         return <motion.div
           key={item.node.id}
-          className={styles.row}
+          className={cn(styles.row, classNames?.row)}
           layout={reduced ? false : "position"}
           initial={reduced ? false : { height: 0, opacity: 0, x: -6, overflow: "hidden" }}
           animate={{ height: rowHeight, opacity: 1, x: 0, pointerEvents: "auto", transitionEnd: { overflow: "visible" }, transition: reduced ? still : { height: motionTokens.spring.smooth, opacity: { ...fadeIn, delay }, x: { ...motionTokens.spring.smooth, delay } } }}
@@ -162,7 +174,7 @@ export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpand
           <button
             ref={element => { if (element) refs.current.set(item.node.id, element); else refs.current.delete(item.node.id); }}
             type="button"
-            className={styles.item}
+            className={cn(styles.item, classNames?.item)}
             role="treeitem"
             aria-level={item.depth}
             aria-posinset={item.position}
@@ -175,25 +187,25 @@ export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpand
             onKeyDown={event => onKeyDown(event, item, index)}
             onClick={() => { setFocusedId(item.node.id); select(item.node); if (hasChildren) toggle(item.node); }}
           >
-            {isSelected && <Selection layoutId={selectionLayoutId} reduced={reduced} />}
+            {isSelected && <Selection layoutId={selectionLayoutId} reduced={reduced} classNames={classNames} />}
             {item.depth > 1 && <motion.span
               aria-hidden="true"
-              className={styles.branch}
+              className={cn(styles.branch, classNames?.branch)}
               initial={reduced ? false : { opacity: 0, scaleY: 0 }}
               animate={{ opacity: 1, scaleY: 1 }}
               transition={reduced ? still : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter], delay }}
             />}
             <motion.span
-              className={styles.disclosure}
+              className={cn(styles.disclosure, classNames?.disclosure)}
               aria-hidden="true"
               initial={false}
               animate={{ rotate: isExpanded ? 90 : 0 }}
               transition={reduced ? still : motionTokens.spring.snappy}
             >{hasChildren ? <ChevronRight size={14} strokeWidth={1.9} /> : null}</motion.span>
             <span className={[styles.icon, hasChildren ? styles.folder : fileTone(item.node.label, styles)].join(" ")} aria-hidden="true">
-              {item.node.icon ?? (hasChildren ? <FolderIcon open={isExpanded} reduced={reduced} /> : <File size={16} strokeWidth={1.7} />)}
+              {item.node.icon ?? (hasChildren ? <FolderIcon open={isExpanded} reduced={reduced} classNames={classNames} /> : <File size={16} strokeWidth={1.7} />)}
             </span>
-            <span className={styles.label}>{item.node.label}</span>
+            <span className={cn(styles.label, classNames?.label)}>{item.node.label}</span>
           </button>
         </motion.div>;
       })}

@@ -6,6 +6,7 @@ import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "motion/react";
 import type { HTMLMotionProps, MotionProps, Transition, Variants } from "motion/react";
 import { X } from "lucide-react";
+import { cn } from "@/lib/cn";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./card.module.css";
 
@@ -25,6 +26,24 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Extend the inner, named parts of the card: card, footer, byline, avatar, meta, action, media, zoom, content, title, description, panel, closeSlot, close or details. */
+  classNames?: {
+    card?: string;
+    footer?: string;
+    byline?: string;
+    avatar?: string;
+    meta?: string;
+    action?: string;
+    media?: string;
+    zoom?: string;
+    content?: string;
+    title?: string;
+    description?: string;
+    panel?: string;
+    close?: string;
+    closeSlot?: string;
+    details?: string;
+  };
 }
 
 type Side = "card" | "panel";
@@ -74,7 +93,7 @@ function px(node: Element, value: string) {
   return value.trim().endsWith("rem") ? amount * parseFloat(getComputedStyle(node.ownerDocument.documentElement).fontSize) : amount;
 }
 
-export function Card({ title, description, media, action, avatar, meta, status, details, open: openProp, defaultOpen = false, onOpenChange, children, className, style, ...props }: CardProps) {
+export function Card({ title, description, media, action, avatar, meta, status, details, open: openProp, defaultOpen = false, onOpenChange, children, className, style, classNames, ...props }: CardProps) {
   const reduced = useReducedMotion() ?? false;
   const group = useId();
   const cardRef = useRef<HTMLElement>(null);
@@ -127,18 +146,18 @@ export function Card({ title, description, media, action, avatar, meta, status, 
       Crossfade is off: the arriving piece takes over at full opacity and the other hides, so one solid surface moves instead of two translucent copies. */
   const shared = (id: string, side: Side, layout: true | "position" = true): MotionProps => morph ? { layoutId: id, layout, layoutCrossfade: false, layoutDependency: side === "card" ? open : returning ? "return" : "panel", transition: { layout: side === "card" ? settle : grow } } : {};
 
-  const footer = (side: Side) => avatar || meta || status || action ? <div className={styles.footer}>
-    {avatar || meta || status ? <motion.div className={styles.byline} {...shared("byline", side, "position")}>
-      {avatar ? <span className={styles.avatar}>{avatar}</span> : null}
-      <span className={styles.bylineText}>{meta ? <span className={styles.meta}>{meta}</span> : null}{status ? <Status text={status} reduced={reduced} /> : null}</span>
+  const footer = (side: Side) => avatar || meta || status || action ? <div className={cn(styles.footer, classNames?.footer)}>
+    {avatar || meta || status ? <motion.div className={cn(styles.byline, classNames?.byline)} {...shared("byline", side, "position")}>
+      {avatar ? <span className={cn(styles.avatar, classNames?.avatar)}>{avatar}</span> : null}
+      <span className={styles.bylineText}>{meta ? <span className={cn(styles.meta, classNames?.meta)}>{meta}</span> : null}{status ? <Status text={status} reduced={reduced} /> : null}</span>
     </motion.div> : null}
-    {action ? <motion.div className={styles.action} {...shared("action", side, "position")}>{action}</motion.div> : null}
+    {action ? <motion.div className={cn(styles.action, classNames?.action)} {...shared("action", side, "position")}>{action}</motion.div> : null}
   </div> : null;
 
   const card = <motion.article
     {...(props as HTMLMotionProps<"article">)}
     ref={cardRef}
-    className={[styles.card, className].filter(Boolean).join(" ")}
+    className={cn(styles.card, className, classNames?.card)}
     style={{ ...style, borderRadius: geometry.card ?? style?.borderRadius }}
     data-hover={hovered || undefined}
     whileHover={reduced ? undefined : { y: -2 }}
@@ -147,10 +166,10 @@ export function Card({ title, description, media, action, avatar, meta, status, 
     {...shared("card", "card")}
     transition={{ default: spring.snappy, layout: settle }}
   >
-    {media ? <motion.div className={styles.media} {...shared("media", "card")}><motion.div className={styles.zoom} initial={false} animate={{ scale: hovered && !reduced ? ZOOM : 1 }} transition={hovered ? zoomIn : zoomOut}>{media}</motion.div></motion.div> : null}
-    <div className={styles.content}>
-      <motion.h3 className={styles.title} {...shared("title", "card")}>{details ? <Dialog.Trigger asChild><button type="button" className={styles.trigger}>{title}</button></Dialog.Trigger> : title}</motion.h3>
-      {description ? <motion.p ref={descriptionRef} className={styles.description} {...shared("description", "card", "position")}>{description}</motion.p> : null}
+    {media ? <motion.div className={cn(styles.media, classNames?.media)} {...shared("media", "card")}><motion.div className={cn(styles.zoom, classNames?.zoom)} initial={false} animate={{ scale: hovered && !reduced ? ZOOM : 1 }} transition={hovered ? zoomIn : zoomOut}>{media}</motion.div></motion.div> : null}
+    <div className={cn(styles.content, classNames?.content)}>
+      <motion.h3 className={cn(styles.title, classNames?.title)} {...shared("title", "card")}>{details ? <Dialog.Trigger asChild><button type="button" className={styles.trigger}>{title}</button></Dialog.Trigger> : title}</motion.h3>
+      {description ? <motion.p ref={descriptionRef} className={cn(styles.description, classNames?.description)} {...shared("description", "card", "position")}>{description}</motion.p> : null}
       {children}
       {footer("card")}
     </div>
@@ -167,7 +186,7 @@ export function Card({ title, description, media, action, avatar, meta, status, 
           <AnimatePresence>{open && <Dialog.Overlay key="overlay" asChild forceMount><motion.div className={styles.overlay} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: reduced ? fade : { duration: duration.exit, ease: [...ease.standard] } }} transition={reduced ? fade : { duration: duration.standard, ease: [...ease.enter] }} /></Dialog.Overlay>}</AnimatePresence>
           <Dialog.Content asChild forceMount {...(description ? {} : { "aria-describedby": undefined })}>
             <motion.div
-              className={styles.panel}
+              className={cn(styles.panel, classNames?.panel)}
               data-framer-portal-id={group}
               data-returning={returning || undefined}
               layoutScroll
@@ -180,14 +199,14 @@ export function Card({ title, description, media, action, avatar, meta, status, 
                 exit: { opacity: 0, transition: { duration: 0 } },
               } : { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0, transition: fade }, transition: fade })}
             >
-              {media ? <motion.div className={styles.media} {...shared("media", "panel")}><motion.div className={styles.zoom} initial={{ scale: hovered && !reduced ? ZOOM : 1 }} animate={{ scale: 1 }} transition={grow}>{media}</motion.div></motion.div> : null}
-              <motion.span className={styles.closeSlot} initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .9 }} animate={returning ? { opacity: 0, scale: .9 } : { opacity: 1, scale: 1 }} transition={returning ? fade : reduced ? fade : closeIn}><Dialog.Close asChild><motion.button type="button" className={styles.close} aria-label="Close quick look" whileTap={reduced ? undefined : { scale: .94 }} transition={spring.snappy}><X width={16} height={16} strokeWidth={1.75} aria-hidden="true" /></motion.button></Dialog.Close></motion.span>
-              <div className={styles.content}>
+              {media ? <motion.div className={cn(styles.media, classNames?.media)} {...shared("media", "panel")}><motion.div className={cn(styles.zoom, classNames?.zoom)} initial={{ scale: hovered && !reduced ? ZOOM : 1 }} animate={{ scale: 1 }} transition={grow}>{media}</motion.div></motion.div> : null}
+              <motion.span className={cn(styles.closeSlot, classNames?.closeSlot)} initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .9 }} animate={returning ? { opacity: 0, scale: .9 } : { opacity: 1, scale: 1 }} transition={returning ? fade : reduced ? fade : closeIn}><Dialog.Close asChild><motion.button type="button" className={cn(styles.close, classNames?.close)} aria-label="Close quick look" whileTap={reduced ? undefined : { scale: .94 }} transition={spring.snappy}><X width={16} height={16} strokeWidth={1.75} aria-hidden="true" /></motion.button></Dialog.Close></motion.span>
+<div className={cn(styles.content, classNames?.content)}>
                 <Dialog.Title asChild><motion.h2 className={styles.title} {...shared("title", "panel")}>{title}</motion.h2></Dialog.Title>
                 {description ? <Dialog.Description asChild><motion.p className={styles.description} {...shared("description", "panel", "position")}>{description}</motion.p></Dialog.Description> : null}
                 {children}
                 {footer("panel")}
-                <motion.div className={styles.details} initial={reduced ? false : { opacity: 0, y: 6 }} animate={returning ? { opacity: 0, y: 0 } : { opacity: 1, y: 0 }} exit={{ opacity: 0, transition: fade }} transition={returning || reduced ? fade : reveal}>{details}</motion.div>
+                <motion.div className={cn(styles.details, classNames?.details)} initial={reduced ? false : { opacity: 0, y: 6 }} animate={returning ? { opacity: 0, y: 0 } : { opacity: 1, y: 0 }} exit={{ opacity: 0, transition: fade }} transition={returning || reduced ? fade : reveal}>{details}</motion.div>
               </div>
             </motion.div>
           </Dialog.Content>

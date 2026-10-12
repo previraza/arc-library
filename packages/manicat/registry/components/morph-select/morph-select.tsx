@@ -5,6 +5,7 @@ import type { CSSProperties, FocusEvent as ReactFocusEvent, KeyboardEvent as Rea
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import type { Transition, Variants } from "motion/react";
 import { Check, ChevronDown, Search, X } from "lucide-react";
+import { cn } from "@/lib/cn";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./morph-select.module.css";
 
@@ -57,6 +58,17 @@ export interface MorphSelectProps {
   name?: string;
   disabled?: boolean;
   className?: string;
+  /** Extend the inner, named parts of the morph-select: root, anchor, trigger, slot, layer, option, check or meta. */
+  classNames?: {
+    root?: string;
+    anchor?: string;
+    trigger?: string;
+    slot?: string;
+    layer?: string;
+    option?: string;
+    check?: string;
+    meta?: string;
+  };
 }
 
 type Section = { key: string; label?: string; options: MorphSelectOption[] };
@@ -119,7 +131,7 @@ const triggerWidth = (node: HTMLElement) => {
 };
 
 export function MorphSelect({ label, hideLabel = false, items, value, defaultValue = null, onValueChange, placeholder = "Select", searchable = "auto", searchPlaceholder,
-  panelWidth = 272, maxListHeight = 296, align = "start", name, disabled = false, className }: MorphSelectProps) {
+  panelWidth = 272, maxListHeight = 296, align = "start", name, disabled = false, className, classNames }: MorphSelectProps) {
   const reduced = useReducedFlag();
   const uid = useId();
   const labelId = `${uid}-label`, listId = `${uid}-list`, optionId = (index: number) => `${uid}-option-${index}`;
@@ -372,23 +384,23 @@ export function MorphSelect({ label, hideLabel = false, items, value, defaultVal
   const changeForLayer: Change = change.value === selected ? change : { ...change, fly: null };
   const rootStyle = { "--ms-panel-w": `${panelWidth}px`, "--ms-list-max": `${maxListHeight}px` } as CSSProperties;
 
-  return <div ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")} style={rootStyle} data-open={open || undefined} data-align={align} data-disabled={disabled || undefined} onBlur={onBlur}>
+  return <div ref={rootRef} className={cn(styles.root, className, classNames?.root)} style={rootStyle} data-open={open || undefined} data-align={align} data-disabled={disabled || undefined} onBlur={onBlur}>
     <span id={labelId} className={hideLabel ? styles.srOnly : styles.label}>{label}</span>
 
-    <motion.div className={styles.anchor} style={{ width: anchorW }}>
+    <motion.div className={cn(styles.anchor, classNames?.anchor)} style={{ width: anchorW }}>
       {/* Sizes the closed trigger. It holds the chosen label with the trigger's own padding, so the width spring has a target before anything moves. */}
       <span ref={measureRef} className={`${styles.trigger} ${styles.measure}`} aria-hidden="true">{renderValue(selectedOption)}</span>
 
       <motion.div className={styles.shape} style={{ width: shapeW, height: shapeH, borderRadius: radius }}>
         <div className={styles.lid}>
-          <button ref={triggerRef} type="button" className={styles.trigger} role="combobox" aria-labelledby={labelId} aria-haspopup="listbox" aria-expanded={open} aria-controls={listId}
+          <button ref={triggerRef} type="button" className={cn(styles.trigger, classNames?.trigger)} role="combobox" aria-labelledby={labelId} aria-haspopup="listbox" aria-expanded={open} aria-controls={listId}
             aria-activedescendant={open && !canSearch && current !== null ? optionId(indexOf.get(current) ?? 0) : undefined}
             disabled={disabled} inert={showSearch || undefined} tabIndex={showSearch ? -1 : 0}
             onClick={() => { if (suppressClick.current) { suppressClick.current = false; return; } if (open) close(true); else openList(); }}
             onKeyDown={event => onKey(event, false)} onKeyUp={event => { if (event.key === " ") window.setTimeout(() => { suppressClick.current = false; }); }}>
-            <span ref={slotRef} className={styles.slot} data-hidden={showSearch || undefined}>
+            <span ref={slotRef} className={cn(styles.slot, classNames?.slot)} data-hidden={showSearch || undefined}>
               <AnimatePresence initial={false} custom={changeForLayer}>
-                <motion.span key={layerKey} className={styles.layer} custom={changeForLayer} variants={reduced ? valueFade : valueVariants} initial="enter" animate="rest" exit="exit"
+                <motion.span key={layerKey} className={cn(styles.layer, classNames?.layer)} custom={changeForLayer} variants={reduced ? valueFade : valueVariants} initial="enter" animate="rest" exit="exit"
                   transition={reduced ? { duration: .12 } : changeForLayer.fly ? { x: FLY, y: FLY, opacity: { duration: 0 } } : { y: GLIDE, opacity: { duration: .2, ease: enter }, filter: { duration: .22, ease: enter } }}>
                   {renderValue(selectedOption)}
                 </motion.span>
@@ -431,14 +443,14 @@ export function MorphSelect({ label, hideLabel = false, items, value, defaultVal
                   const index = indexOf.get(option.value) ?? 0;
                   const isSelected = option.value === selected, isActive = option.value === current;
                   return <div key={option.value} id={optionId(index)} role="option" aria-selected={isSelected} aria-disabled={option.disabled || undefined}
-                    className={styles.option} data-active={isActive || undefined}
+                    className={cn(styles.option, classNames?.option)} data-active={isActive || undefined}
                     ref={node => { if (node) optionRefs.current.set(option.value, node); else optionRefs.current.delete(option.value); }}
                     onPointerMove={event => { if (event.pointerType === "mouse" && !option.disabled && option.value !== current) setActive(option.value); }}
                     onPointerDown={event => event.preventDefault()}
                     onClick={event => commit(option, event.currentTarget)}>
                     <span className={styles.optionValue} data-part="value">{option.icon && <span className={styles.icon} aria-hidden="true">{option.icon}</span>}<span className={styles.valueText}>{option.label}</span></span>
-                    {option.meta && <span className={styles.meta}>{option.meta}</span>}
-                    <span className={styles.check} data-on={isSelected || undefined} aria-hidden="true"><Check size={16} strokeWidth={1.75} /></span>
+                    {option.meta && <span className={cn(styles.meta, classNames?.meta)}>{option.meta}</span>}
+                    <span className={cn(styles.check, classNames?.check)} data-on={isSelected || undefined} aria-hidden="true"><Check size={16} strokeWidth={1.75} /></span>
                   </div>;
                 });
                 return section.label

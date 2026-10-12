@@ -5,6 +5,7 @@ import type { ChangeEvent, FocusEvent as ReactFocusEvent, KeyboardEvent as React
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import type { TargetAndTransition, Variants } from "motion/react";
 import { Check, CircleAlert, Pencil, X } from "lucide-react";
+import { cn } from "@/lib/cn";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./inline-edit.module.css";
 
@@ -32,6 +33,26 @@ export interface InlineEditProps {
   /** The element that holds the text, so a title can stay a heading. */
   as?: "span" | "p" | "h1" | "h2" | "h3";
   className?: string;
+  /** Extend the inner, named parts of the inline-edit: field, line, box, display, layer, text, slot, slotItem, actions, save, cancel, spinner, saved, failedIcon, pencil, frame or hint. */
+  classNames?: {
+    field?: string;
+    line?: string;
+    box?: string;
+    display?: string;
+    layer?: string;
+    text?: string;
+    slot?: string;
+    slotItem?: string;
+    actions?: string;
+    save?: string;
+    cancel?: string;
+    spinner?: string;
+    saved?: string;
+    failedIcon?: string;
+    pencil?: string;
+    frame?: string;
+    hint?: string;
+  };
 }
 
 type Phase = "idle" | "saving" | "saved" | "failed";
@@ -102,7 +123,7 @@ type CaretDocument = Document & {
   caretRangeFromPoint?: (x: number, y: number) => Range | null;
 };
 
-export function InlineEdit({ value, onSave, label, validate, placeholder = "", multiline = false, variant = "title", as: Tag = "span", className }: InlineEditProps) {
+export function InlineEdit({ value, onSave, label, validate, placeholder = "", multiline = false, variant = "title", as: Tag = "span", className, classNames }: InlineEditProps) {
   const reduced = useReduced();
   const ids = useId();
   const displayHintId = `${ids}-display`, editHintId = `${ids}-edit`, messageId = `${ids}-message`;
@@ -314,14 +335,14 @@ export function InlineEdit({ value, onSave, label, validate, placeholder = "", m
 
   return <div ref={root} className={[styles.root, className].filter(Boolean).join(" ")} data-variant={variant} data-multiline={multiline || undefined} data-editing={editing || undefined}
     data-phase={phase} data-invalid={error ? "" : undefined} data-flash={flash ?? undefined} onBlur={onBlur}>
-    <Tag className={styles.line}>
-      <motion.span ref={box} className={styles.box} style={multiline ? { height: boxHeight } : undefined}>
+    <Tag className={cn(styles.line, classNames?.line)}>
+      <motion.span ref={box} className={cn(styles.box, classNames?.box)} style={multiline ? { height: boxHeight } : undefined}>
         {/* The text stays in flow while editing, hidden and mirroring the draft, so it sizes the box and can roll back with motion on Escape. */}
-        <button ref={display} type="button" className={styles.display} onClick={onDisplayClick} tabIndex={editing ? -1 : undefined}
+        <button ref={display} type="button" className={cn(styles.display, classNames?.display)} onClick={onDisplayClick} tabIndex={editing ? -1 : undefined}
           aria-label={`${label}: ${shown || placeholder}`} aria-describedby={describedBy(displayHintId)} aria-disabled={saving || undefined}>
-          <span className={styles.layer} data-empty={layerText ? undefined : ""}>
+          <span className={cn(styles.layer, classNames?.layer)} data-empty={layerText ? undefined : ""}>
             <AnimatePresence mode="popLayout" initial={false} custom={layer.direction}>
-              <motion.span key={layer.key} data-layer={layer.key} className={styles.text} custom={layer.direction} variants={reduced ? textFade : textMotion} initial="enter" animate="rest" exit="exit">
+              <motion.span key={layer.key} data-layer={layer.key} className={cn(styles.text, classNames?.text)} custom={layer.direction} variants={reduced ? textFade : textMotion} initial="enter" animate="rest" exit="exit">
                 {/* A zero-width space keeps the line box, so an empty field never collapses. */}
                 {(layerText || placeholder || "\u200b") + (multiline && editing ? "\u200b" : "")}
               </motion.span>
@@ -331,18 +352,18 @@ export function InlineEdit({ value, onSave, label, validate, placeholder = "", m
         {editing && (multiline
           ? <textarea ref={node => { control.current = node; }} {...fieldProps} rows={1} enterKeyHint="done" />
           : <input ref={node => { control.current = node; }} {...fieldProps} type="text" enterKeyHint="done" />)}
-        <motion.span ref={frame} className={styles.frame} style={multiline ? undefined : { width: frameWidth }}>
-          <span className={styles.slot}>
+        <motion.span ref={frame} className={cn(styles.frame, classNames?.frame)} style={multiline ? undefined : { width: frameWidth }}>
+          <span className={cn(styles.slot, classNames?.slot)}>
             <AnimatePresence initial={false}>
-              <motion.span key={slot} className={styles.slotItem} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: motionTokens.duration.fast } : iconEnter}>
-                {slot === "edit" ? <span className={styles.actions}>
-                  <button type="button" className={styles.save} aria-label={`Save ${noun}`} onPointerDown={event => event.preventDefault()} onClick={() => submit("button")}><Check size={15} strokeWidth={2} aria-hidden="true" /></button>
-                  <button type="button" className={styles.cancel} aria-label="Cancel editing" onPointerDown={event => event.preventDefault()} onClick={cancel}><X size={15} strokeWidth={2} aria-hidden="true" /></button>
+              <motion.span key={slot} className={cn(styles.slotItem, classNames?.slotItem)} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: motionTokens.duration.fast } : iconEnter}>
+                {slot === "edit" ? <span className={cn(styles.actions, classNames?.actions)}>
+                  <button type="button" className={cn(styles.save, classNames?.save)} aria-label={`Save ${noun}`} onPointerDown={event => event.preventDefault()} onClick={() => submit("button")}><Check size={15} strokeWidth={2} aria-hidden="true" /></button>
+                  <button type="button" className={cn(styles.cancel, classNames?.cancel)} aria-label="Cancel editing" onPointerDown={event => event.preventDefault()} onClick={cancel}><X size={15} strokeWidth={2} aria-hidden="true" /></button>
                 </span>
-                  : slot === "saving" ? <span className={styles.spinner} aria-hidden="true" />
-                  : slot === "saved" ? <span className={styles.saved} aria-hidden="true"><DrawnCheck reduced={reduced} /></span>
-                  : slot === "failed" ? <CircleAlert className={styles.failedIcon} size={16} strokeWidth={1.75} aria-hidden="true" />
-                  : <Pencil className={styles.pencil} size={14} strokeWidth={1.75} aria-hidden="true" onClick={() => startEdit(shown.length)} />}
+                  : slot === "saving" ? <span className={cn(styles.spinner, classNames?.spinner)} aria-hidden="true" />
+                  : slot === "saved" ? <span className={cn(styles.saved, classNames?.saved)} aria-hidden="true"><DrawnCheck reduced={reduced} /></span>
+                  : slot === "failed" ? <CircleAlert className={cn(styles.failedIcon, classNames?.failedIcon)} size={16} strokeWidth={1.75} aria-hidden="true" />
+                  : <Pencil className={cn(styles.pencil, classNames?.pencil)} size={14} strokeWidth={1.75} aria-hidden="true" onClick={() => startEdit(shown.length)} />}
               </motion.span>
             </AnimatePresence>
           </span>

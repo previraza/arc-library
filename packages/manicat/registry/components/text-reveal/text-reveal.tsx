@@ -1,6 +1,7 @@
 "use client";
 import { Fragment, type CSSProperties } from "react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./text-reveal.module.css";
 
 /**
@@ -8,11 +9,24 @@ import styles from "./text-reveal.module.css";
  * The entrance runs in CSS, so it starts on first paint, never waits for hydration, and never leaves text hidden when scripts are slow.
  * Use `\n` in `text` for a deliberate line break and change the element's `key` to replay it.
  */
-export interface TextRevealProps { text: string; as?: "h1" | "h2" | "h3" | "p"; className?: string; id?: string; /** Seconds to wait before the first word rises. Defaults to 0. */ delay?: number }
+export interface TextRevealProps {
+  text: string;
+  as?: "h1" | "h2" | "h3" | "p";
+  className?: string;
+  id?: string;
+  /** Seconds to wait before the first word rises. Defaults to 0. */
+  delay?: number;
+  /** Extend the inner, named parts of the text reveal: line, clip or word. */
+  classNames?: {
+    line?: string;
+    clip?: string;
+    word?: string;
+  };
+}
 /** Total stagger stays under this many seconds, however long the text is. */
 const MAX_STAGGER = motionTokens.duration.considered;
 
-export function TextReveal({ text, as = "h2", className, id, delay = 0 }: TextRevealProps) {
+export function TextReveal({ text, as = "h2", className, id, delay = 0, classNames }: TextRevealProps) {
   const Tag = as;
   const lines = text.split("\n").map(line => line.split(" ").filter(Boolean));
   const count = lines.reduce((total, words) => total + words.length, 0);
@@ -21,9 +35,9 @@ export function TextReveal({ text, as = "h2", className, id, delay = 0 }: TextRe
   let index = 0;
   return <Tag id={id} className={[styles.reveal, className].filter(Boolean).join(" ")} style={{ "--reveal-blur": `${blur}px` } as CSSProperties}>
     <span className={styles.srOnly}>{text.replace(/\n/g, " ")}</span>
-    {lines.map((words, lineIndex) => <Fragment key={lineIndex}><span className={styles.line} aria-hidden="true">{words.map((word, wordIndex) => {
+    {lines.map((words, lineIndex) => <Fragment key={lineIndex}><span className={cn(styles.line, classNames?.line)} aria-hidden="true">{words.map((word, wordIndex) => {
       const position = index++;
-      return <Fragment key={`${word}-${position}`}><span className={styles.clip}><span className={styles.word} style={{ "--reveal-delay": `${delay + position * step + lineIndex * step}s` } as CSSProperties}>{word}</span></span>{wordIndex < words.length - 1 ? " " : null}</Fragment>;
+      return <Fragment key={`${word}-${position}`}><span className={cn(styles.clip, classNames?.clip)}><span className={cn(styles.word, classNames?.word)} style={{ "--reveal-delay": `${delay + position * step + lineIndex * step}s` } as CSSProperties}>{word}</span></span>{wordIndex < words.length - 1 ? " " : null}</Fragment>;
     })}</span>{lineIndex < lines.length - 1 ? " " : null}</Fragment>)}
   </Tag>;
 }

@@ -27,6 +27,11 @@
           "path": "lib/motion-tokens.ts",
           "type": "registry:lib",
           "target": "@components/manicat/lib/motion-tokens.ts"
+        },
+        {
+          "path": "lib/cn.ts",
+          "type": "registry:lib",
+          "target": "@components/manicat/lib/cn.ts"
         }
       ]
     },

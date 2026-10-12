@@ -7,10 +7,14 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import type { TargetAndTransition } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./split-button.module.css";
 
 export interface SplitButtonAction { label: string; onSelect?: () => void; disabled?: boolean; destructive?: boolean; icon?: ReactNode; }
 export interface SplitButtonProps { label: string; actions: SplitButtonAction[]; onClick?: () => void; disabled?: boolean; icon?: ReactNode; variant?: "primary" | "secondary"; }
+
+/** Extend the inner, named parts of the split button: primary, primarySlot, primaryContent, mainIcon, trigger, menu, item, icon, itemIcon. */
+export interface SplitButtonProps { label: string; actions: SplitButtonAction[]; onClick?: () => void; disabled?: boolean; icon?: ReactNode; variant?: "primary" | "secondary"; /** Extend the inner, named parts of the <SplitButton>. */ classNames?: { primary?: string; primarySlot?: string; primaryContent?: string; mainIcon?: string; trigger?: string; chevron?: string; menu?: string; item?: string; icon?: string; itemIcon?: string; }; /** Extend the inner, named parts of the <SplitButton>. */ className?: string; }
 
 const rest: TargetAndTransition = { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" };
 const fadeIn: TargetAndTransition = { ...rest, opacity: 0 };
@@ -83,26 +87,26 @@ function MorphText({ text, reduced }: { text: string; reduced: boolean }) {
 }
 
 /** The main action morphs its icon and label in place while its width follows on a spring; the menu half never scales, so the menu opens from a still anchor. */
-export function SplitButton({ label, actions, onClick, disabled, icon, variant = "primary" }: SplitButtonProps) {
+export function SplitButton({ label, actions, onClick, disabled, icon, variant = "primary", className, classNames }: SplitButtonProps) {
   const reduced = useReducedMotion() ?? false;
   const contentRef = useRef<HTMLSpanElement>(null);
   const glyph = iconKey(icon);
   const width = useMorphWidth(contentRef, `${glyph}|${label}`, reduced);
   return <DropdownPrimitive.Root>
-    <div className={[styles.group, variant === "secondary" ? styles.secondary : ""].filter(Boolean).join(" ")}>
-      <button className={styles.primary} type="button" onClick={onClick} disabled={disabled}>
-        <motion.span className={styles.primarySlot} style={{ width }} aria-hidden="true">
-          <span ref={contentRef} className={styles.primaryContent}>
-            {icon ? <span className={styles.mainIcon}><AnimatePresence initial={false}><motion.span key={glyph} className={styles.iconPhase} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: motionTokens.duration.instant } : iconEnter}>{icon}</motion.span></AnimatePresence></span> : null}
+    <div className={cn(styles.group, variant === "secondary" ? styles.secondary : "", className)}>
+      <button className={cn(styles.primary, classNames?.primary)} type="button" onClick={onClick} disabled={disabled}>
+        <motion.span className={cn(styles.primarySlot, classNames?.primarySlot)} style={{ width }} aria-hidden="true">
+          <span ref={contentRef} className={cn(styles.primaryContent, classNames?.primaryContent)}>
+            {icon ? <span className={cn(styles.mainIcon, classNames?.mainIcon)}><AnimatePresence initial={false}><motion.span key={glyph} className={styles.iconPhase} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: motionTokens.duration.instant } : iconEnter}>{icon}</motion.span></AnimatePresence></span> : null}
             <MorphText text={label} reduced={reduced} />
           </span>
         </motion.span>
         <span className={styles.srOnly} aria-live="polite">{label}</span>
       </button>
-      <DropdownPrimitive.Trigger className={styles.trigger} type="button" aria-label={`${label} more actions`} disabled={disabled}><ChevronDown className={styles.chevron} size={16} strokeWidth={1.75} aria-hidden="true" /></DropdownPrimitive.Trigger>
+      <DropdownPrimitive.Trigger className={cn(styles.trigger, classNames?.trigger)} type="button" aria-label={`${label} more actions`} disabled={disabled}><ChevronDown className={cn(styles.chevron, classNames?.chevron)} size={16} strokeWidth={1.75} aria-hidden="true" /></DropdownPrimitive.Trigger>
     </div>
-    <DropdownPrimitive.Portal><DropdownPrimitive.Content className={styles.menu} sideOffset={4} align="end" collisionPadding={12} loop>
-      {actions.map((action, index) => <DropdownPrimitive.Item key={action.label} className={[styles.item, action.destructive ? styles.destructive : ""].filter(Boolean).join(" ")} style={{ "--i": index } as CSSProperties} disabled={action.disabled} onSelect={action.onSelect}>{action.icon ? <span className={styles.icon} aria-hidden="true">{action.icon}</span> : null}{action.label}</DropdownPrimitive.Item>)}
+    <DropdownPrimitive.Portal><DropdownPrimitive.Content className={cn(styles.menu, classNames?.menu)} sideOffset={4} align="end" collisionPadding={12} loop>
+      {actions.map((action, index) => <DropdownPrimitive.Item key={action.label} className={cn(styles.item, classNames?.item, action.destructive ? styles.destructive : "")} style={{ "--i": index } as CSSProperties} disabled={action.disabled} onSelect={action.onSelect}>{action.icon ? <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true">{action.icon}</span> : null}{action.label}</DropdownPrimitive.Item>)}
     </DropdownPrimitive.Content></DropdownPrimitive.Portal>
   </DropdownPrimitive.Root>;
 }

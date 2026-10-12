@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type KeyboardEvent, type PointerEvent, type Ref } from "react";
 import { animate, motion, useInView, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./streamgraph.module.css";
 
 export interface StreamgraphSeries {
@@ -53,6 +54,33 @@ export interface StreamgraphProps {
   categoryLabel?: string;
   emptyLabel?: string;
   ref?: Ref<HTMLElement>;
+  /** Extend the inner, named parts of the streamgraph: figure, caption, label, plot, chart, baseline, trail, cursor, end. */
+  classNames?: {
+    figure?: string;
+    caption?: string;
+    label?: string;
+    plot?: string;
+    chart?: string;
+    baseline?: string;
+    trail?: string;
+    cursor?: string;
+    end?: string;
+    toggle?: string;
+    swatch?: string;
+    toggleLabel?: string;
+    svg?: string;
+    layer?: string;
+    crosshair?: string;
+    tooltip?: string;
+    tipTitle?: string;
+    tipRow?: string;
+    tipSwatch?: string;
+    tipName?: string;
+    tipValue?: string;
+    message?: string;
+    axisLabel?: string;
+  };
+  /** Extend the inner, named parts of the streamgraph. */
   className?: string;
 }
 
@@ -140,7 +168,7 @@ function axisPicks(data: StreamgraphDatum[], width: number) {
   return labeled.reverse().filter((_, rank) => rank % stride === 0).reverse();
 }
 
-export function Streamgraph({ data, series, label, unit = "", height = 260, offset = "wiggle", formatValue, hiddenSeries, defaultHiddenSeries, onHiddenSeriesChange, onActiveChange, legend = true, directLabels = true, categoryLabel = "Date", emptyLabel = "No data for this range", ref, className }: StreamgraphProps) {
+export function Streamgraph({ data, series, label, unit = "", height = 260, offset = "wiggle", formatValue, hiddenSeries, defaultHiddenSeries, onHiddenSeriesChange, onActiveChange, legend = true, directLabels = true, categoryLabel = "Date", emptyLabel = "No data for this range", ref, className, classNames }: StreamgraphProps) {
   const reduced = useReducedMotionSafe();
   const figure = useRef<HTMLElement>(null);
   const plot = useRef<HTMLDivElement>(null);
@@ -352,36 +380,36 @@ export function Streamgraph({ data, series, label, unit = "", height = 260, offs
   const picks = axisPicks(data, plotWidth);
   const tipLeft = reduced ? tipX : tipSpringX, tipTop = reduced ? tipY : tipSpringY;
 
-  return <figure ref={figure} className={[styles.figure, className].filter(Boolean).join(" ")} aria-label={label}>
-    {legend && series.length > 1 && <div className={styles.legend} role="group" aria-label={`${label} layers`} onPointerLeave={() => setLegendKey(null)}>
-      {series.map((line, at) => <button key={line.key} type="button" className={styles.toggle} aria-pressed={!hidden.includes(line.key)} data-active={activeKey === line.key || undefined} data-dim={(activeKey !== null && activeKey !== line.key) || undefined} onClick={() => toggle(line.key)}
+  return <figure ref={figure} className={cn(styles.figure, className)} aria-label={label}>
+    {legend && series.length > 1 && <div className={cn(styles.legend, classNames?.caption)} role="group" aria-label={`${label} layers`} onPointerLeave={() => setLegendKey(null)}>
+{series.map((line, at) => <button key={line.key} type="button" className={cn(styles.toggle, classNames?.toggle)} aria-pressed={!hidden.includes(line.key)} data-active={activeKey === line.key || undefined} data-dim={(activeKey !== null && activeKey !== line.key) || undefined} onClick={() => toggle(line.key)}
         onPointerEnter={event => { if (event.pointerType === "mouse") setLegendKey(line.key); }} onFocus={event => { if (event.currentTarget.matches(":focus-visible")) setLegendKey(line.key); }} onBlur={() => setLegendKey(null)}
         style={{ "--series": colorOf(line, at) } as CSSProperties}>
-        <span className={styles.swatch} aria-hidden="true" />
-        <span className={styles.toggleLabel}>{line.label}</span>
-      </button>)}
+        <span className={cn(styles.swatch, classNames?.swatch)} aria-hidden="true" />
+        <span className={cn(styles.toggleLabel, classNames?.toggleLabel)}>{line.label}</span>
+</button>)}
     </div>}
-    <div className={styles.chart} data-active={index !== null || undefined} data-layer={activeKey ? true : undefined}>
-      <div ref={plot} className={styles.plot} style={{ height }} role="group" tabIndex={empty ? -1 : 0} aria-roledescription="stream graph" aria-label={`${label}. Use left and right arrows to move through time, up and down to change layer.`}
+    <div className={cn(styles.chart, classNames?.chart)} data-active={index !== null || undefined} data-layer={activeKey ? true : undefined}>
+      <div ref={plot} className={cn(styles.plot, classNames?.plot)} style={{ height }} role="group" tabIndex={empty ? -1 : 0} aria-roledescription="stream graph" aria-label={`${label}. Use left and right arrows to move through time, up and down to change layer.`}
         onPointerMove={onPointerMove} onPointerDown={onPointerDown} onPointerUp={event => { if (event.pointerType !== "mouse") setHover(null); }} onPointerCancel={() => setHover(null)} onPointerLeave={event => { if (event.pointerType === "mouse") setHover(null); }}
         onKeyDown={onKeyDown} onBlur={() => setHover(null)} onFocus={event => { if (event.currentTarget.matches(":focus-visible") && !empty) setHover(current => current ?? { index: last, key: null, y: null }); }}>
-        <svg className={styles.svg} width="100%" height={height} aria-hidden="true" focusable="false">
-          {series.map((line, at) => <path key={line.key} ref={node => { if (node) paths.current.set(line.key, node); else paths.current.delete(line.key); }} className={styles.layer} data-active={activeKey === line.key || undefined} data-custom={line.color ? true : undefined} style={{ "--series": colorOf(line, at) } as CSSProperties} />)}
-          <motion.line className={styles.crosshair} x1={0} x2={0} y1={0} y2={height} style={{ x: reduced ? cursor : cursorSpring }} />
-          {directLabels && series.map(line => <text key={line.key} ref={node => { if (node) labels.current.set(line.key, node); else labels.current.delete(line.key); }} className={styles.label} data-active={activeKey === line.key || undefined} data-custom={line.color ? true : undefined} data-hidden={hidden.includes(line.key) || undefined} data-dim={(activeKey !== null && activeKey !== line.key) || undefined} textAnchor="middle" dominantBaseline="central">{line.label}</text>)}
+        <svg className={cn(styles.svg, classNames?.svg)} width="100%" height={height} aria-hidden="true" focusable="false">
+          {series.map((line, at) => <path key={line.key} ref={node => { if (node) paths.current.set(line.key, node); else paths.current.delete(line.key); }} className={cn(styles.layer, classNames?.layer)} data-active={activeKey === line.key || undefined} data-custom={line.color ? true : undefined} style={{ "--series": colorOf(line, at) } as CSSProperties} />)}
+          <motion.line className={cn(styles.crosshair, classNames?.crosshair)} x1={0} x2={0} y1={0} y2={height} style={{ x: reduced ? cursor : cursorSpring }} />
+          {directLabels && series.map(line => <text key={line.key} ref={node => { if (node) labels.current.set(line.key, node); else labels.current.delete(line.key); }} className={cn(styles.label, classNames?.label)} data-active={activeKey === line.key || undefined} data-custom={line.color ? true : undefined} data-hidden={hidden.includes(line.key) || undefined} data-dim={(activeKey !== null && activeKey !== line.key) || undefined} textAnchor="middle" dominantBaseline="central">{line.label}</text>)}
         </svg>
-        <motion.div ref={tip} className={styles.tooltip} style={{ x: tipLeft, y: tipTop }} aria-hidden="true">
-          <p className={styles.tipTitle}>{reading?.label ?? ""}</p>
-          {stackOrder(series.length, offset).reverse().map(at => series[at]).filter(line => !hidden.includes(line.key)).map(line => <p key={line.key} className={styles.tipRow} data-active={activeKey === line.key || undefined} data-dim={(activeKey !== null && activeKey !== line.key) || undefined} style={{ "--series": colorOf(line, series.indexOf(line)) } as CSSProperties}>
-            <span className={styles.tipSwatch} />
-            <span className={styles.tipName}>{line.label}</span>
-            <span className={styles.tipValue}>{reading ? format(reading.values[line.key] ?? 0, line) : ""}</span>
+        <motion.div ref={tip} className={cn(styles.tooltip, classNames?.tooltip)} style={{ x: tipLeft, y: tipTop }} aria-hidden="true">
+          <p className={cn(styles.tipTitle, classNames?.tipTitle)}>{reading?.label ?? ""}</p>
+          {stackOrder(series.length, offset).reverse().map(at => series[at]).filter(line => !hidden.includes(line.key)).map(line => <p key={line.key} className={cn(styles.tipRow, classNames?.tipRow)} data-active={activeKey === line.key || undefined} data-dim={(activeKey !== null && activeKey !== line.key) || undefined} style={{ "--series": colorOf(line, series.indexOf(line)) } as CSSProperties}>
+            <span className={cn(styles.tipSwatch, classNames?.tipSwatch)} />
+            <span className={cn(styles.tipName, classNames?.tipName)}>{line.label}</span>
+            <span className={cn(styles.tipValue, classNames?.tipValue)}>{reading ? format(reading.values[line.key] ?? 0, line) : ""}</span>
           </p>)}
         </motion.div>
-        {(empty || visible.length === 0) && <p className={styles.message}>{empty ? emptyLabel : "Choose a layer to show"}</p>}
+        {(empty || visible.length === 0) && <p className={cn(styles.message, classNames?.message)}>{empty ? emptyLabel : "Choose a layer to show"}</p>}
       </div>
       <div className={styles.axis} aria-hidden="true">
-        {picks.map(at => { const share = last > 0 ? at / last : .5; return <span key={`${data[at].key}`} className={styles.axisLabel} style={{ left: `${share * 100}%`, translate: `${-share * 100}% 0` }}>{data[at].axisLabel}</span>; })}
+        {picks.map(at => { const share = last > 0 ? at / last : .5; return <span key={`${data[at].key}`} className={cn(styles.axisLabel, classNames?.axisLabel)} style={{ left: `${share * 100}%`, translate: `${-share * 100}% 0` }}>{data[at].axisLabel}</span>; })}
       </div>
     </div>
     <p className={styles.srOnly} aria-live="polite" aria-atomic="true">{announce}</p>

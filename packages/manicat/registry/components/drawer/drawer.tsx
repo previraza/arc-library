@@ -7,6 +7,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import type { PanInfo, Transition } from "motion/react";
 import { X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./drawer.module.css";
 
 /** Mirrors the open state so the panel can stay mounted while it slides out, retarget mid-flight, and close itself after a drag. */
@@ -41,6 +42,15 @@ export interface DrawerContentProps
   side?: "left" | "right" | "top" | "bottom";
   /** Renders the drawer inside this element instead of the page body, anchored to its edges. The element needs position: relative and overflow: hidden. */
   container?: HTMLElement | null;
+  /** Extend the inner, named parts of the drawer content: header, title, description, close, body or overlay. */
+  classNames?: {
+    header?: string;
+    title?: string;
+    description?: string;
+    close?: string;
+    body?: string;
+    overlay?: string;
+  };
 }
 
 const fade: Transition = { duration: motionTokens.duration.instant };
@@ -75,6 +85,7 @@ export function DrawerContent({
   side = "right",
   container,
   className,
+  classNames,
   onInteractOutside,
   ...props
 }: DrawerContentProps) {
@@ -115,27 +126,27 @@ export function DrawerContent({
   }
 
   const inner = <>
-    <motion.div className={[styles.header, draggable ? styles.handle : ""].filter(Boolean).join(" ")} onPanStart={panStart} onPan={panMove} onPanEnd={panEnd}>
+    <motion.div className={cn(styles.header, draggable && styles.handle, classNames?.header)} onPanStart={panStart} onPan={panMove} onPanEnd={panEnd}>
       <div>
-        <DialogPrimitive.Title className={styles.title}><SwapText text={title} /></DialogPrimitive.Title>
+        <DialogPrimitive.Title className={cn(styles.title, classNames?.title)}><SwapText text={title} /></DialogPrimitive.Title>
         {description ? (
-          <DialogPrimitive.Description className={styles.description}>
+          <DialogPrimitive.Description className={cn(styles.description, classNames?.description)}>
             <SwapText text={description} />
           </DialogPrimitive.Description>
         ) : null}
       </div>
-      <DialogPrimitive.Close className={styles.close} aria-label="Close drawer">
+      <DialogPrimitive.Close className={cn(styles.close, classNames?.close)} aria-label="Close drawer">
         <X size={16} strokeWidth={1.75} aria-hidden="true" />
       </DialogPrimitive.Close>
     </motion.div>
-    <div className={styles.body}>{children}</div>
+    <div className={cn(styles.body, classNames?.body)}>{children}</div>
   </>;
 
   // Under a bare Radix root the open state is unknown here, so CSS keyframes keyed off data-state animate the layers instead.
   if (drawer === null) {
     return (
       <DialogPrimitive.Portal container={container}>
-        <DialogPrimitive.Overlay className={`${styles.overlay} ${styles.keyframes}`} data-contained={container ? "" : undefined} />
+        <DialogPrimitive.Overlay className={cn(styles.overlay, styles.keyframes, classNames?.overlay)} data-contained={container ? "" : undefined} />
         <DialogPrimitive.Content {...props} onInteractOutside={onInteractOutside} data-side={side} data-contained={container ? "" : undefined} className={`${classes} ${styles.keyframes}`}>{inner}</DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     );
@@ -148,7 +159,7 @@ export function DrawerContent({
         <DialogPrimitive.Portal key="drawer" forceMount container={container}>
           <DialogPrimitive.Overlay asChild forceMount>
             <motion.div
-              className={styles.overlay}
+              className={cn(styles.overlay, classNames?.overlay)}
               data-contained={container ? "" : undefined}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

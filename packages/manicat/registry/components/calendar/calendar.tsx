@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/cn";
 import { useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -22,6 +23,20 @@ export interface CalendarProps {
   className?: string;
   /** Adds a Today button that slides back to the current month and selects today when it is available. */
   showToday?: boolean;
+  /** Extend the inner, named parts of the calendar: calendar, grid, week, day, highlight, heading, todayButton, navButton, weekdays, monthViewport or monthBody. */
+  classNames?: {
+    calendar?: string;
+    grid?: string;
+    week?: string;
+    day?: string;
+    highlight?: string;
+    heading?: string;
+    todayButton?: string;
+    navButton?: string;
+    weekdays?: string;
+    monthViewport?: string;
+    monthBody?: string;
+  };
 }
 
 const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -83,7 +98,7 @@ const titleFade: Variants = { enter: { opacity: 1, x: 0 }, center: { opacity: 1,
  * line between any two days, keeps gliding while the strip slides, and retargets mid-flight on a new pick.
  * It only grows in or fades out when the selection enters or leaves this month.
  */
-function SelectionDisc({ cell, reduced }: { cell: number; reduced: boolean }) {
+function SelectionDisc({ cell, reduced, classNames }: { cell: number; reduced: boolean; classNames?: CalendarProps["classNames"] }) {
   const visible = cell >= 0;
   const col = useMotionValue(visible ? cell % 7 : 0);
   const row = useMotionValue(visible ? Math.floor(cell / 7) : 0);
@@ -107,7 +122,7 @@ function SelectionDisc({ cell, reduced }: { cell: number; reduced: boolean }) {
     controls.push(animate(opacity, 1, reduced ? { duration: 0 } : { duration: duration.fast, ease: ease.enter }), animate(scale, 1, reduced ? { duration: 0 } : spring.snappy));
     return () => controls.forEach((control) => control.stop());
   }, [cell, visible, reduced, col, row, opacity, scale]);
-  return <motion.span className={styles.highlight} style={{ transform, opacity }} aria-hidden="true"><span className={styles.highlightFill} /></motion.span>;
+  return <motion.span className={cn(styles.highlight, classNames?.highlight)} style={{ transform, opacity }} aria-hidden="true"><span className={styles.highlightFill} /></motion.span>;
 }
 
 /** One month on the strip. Only the month being navigated to is focusable and exposed; the one sliding past is inert. */
@@ -128,6 +143,7 @@ export function Calendar({
   locale = "en-US",
   className,
   showToday = false,
+  classNames,
 }: CalendarProps) {
   const titleId = useId();
   const today = useToday();
@@ -272,9 +288,9 @@ export function Calendar({
   };
 
   const renderMonth = (paneMonth: Date, present: boolean) => <>
-    <SelectionDisc cell={cellOf(paneMonth)} reduced={reducedMotion} />
-    <div className={styles.grid} role="grid" aria-label={formatter.format(paneMonth)}>
-    {makeWeeks(paneMonth).map((week) => <div key={dateKey(week[0])} className={styles.week} role="row">
+    <SelectionDisc cell={cellOf(paneMonth)} reduced={reducedMotion} classNames={classNames} />
+    <div className={cn(styles.grid, classNames?.grid)} role="grid" aria-label={formatter.format(paneMonth)}>
+    {makeWeeks(paneMonth).map((week) => <div key={dateKey(week[0])} className={cn(styles.week, classNames?.week)} role="row">
       {week.map((date) => {
         const key = dateKey(date);
         const selected = sameDay(date, value);
@@ -290,7 +306,7 @@ export function Calendar({
           tabIndex={present && key === tabbableKey ? 0 : -1}
           disabled={isDisabled(date)}
           style={present ? numberDelay(key) : undefined}
-          className={cx(styles.day, !sameMonth(date, paneMonth) && styles.outside, selected && styles.selected, isToday && styles.today)}
+          className={cx(styles.day, !sameMonth(date, paneMonth) && styles.outside, selected && styles.selected, isToday && styles.today, classNames?.day)}
           onFocus={() => setFocusedDate(date)}
           onKeyDown={(event) => onDayKeyDown(event, date)}
           onClick={() => onChange?.(date)}
@@ -300,9 +316,9 @@ export function Calendar({
     </div>
   </>;
 
-  return <section className={cx(styles.calendar, className)} aria-labelledby={titleId}>
+  return <section className={cx(styles.calendar, className, classNames?.calendar)} aria-labelledby={titleId}>
       <div className={styles.header}>
-        <h2 id={titleId} className={styles.heading}>
+        <h2 id={titleId} className={cn(styles.heading, classNames?.heading)}>
           <span className={styles.srOnly}>{monthLabel}</span>
           <span className={styles.title} aria-hidden="true">
             <AnimatePresence initial={false} custom={direction}>
@@ -312,15 +328,15 @@ export function Calendar({
         </h2>
         <span className={styles.srOnly} aria-live="polite">{direction ? monthLabel : ""}</span>
         <div className={styles.navigation}>
-          {showToday && <button type="button" className={styles.todayButton} aria-disabled={todayIdle || undefined} aria-label={today ? `Today, ${today.toLocaleDateString(locale, { dateStyle: "full" })}` : "Today"} onClick={goToToday}>Today</button>}
-          <button type="button" className={styles.navButton} aria-label="Previous month" aria-disabled={previousDisabled || undefined} onClick={() => { if (!previousDisabled && previousMonth) changeMonth(previousMonth); }}><ChevronLeft size={16} strokeWidth={1.75} aria-hidden="true" /></button>
-          <button type="button" className={styles.navButton} aria-label="Next month" aria-disabled={nextDisabled || undefined} onClick={() => { if (!nextDisabled && nextMonth) changeMonth(nextMonth); }}><ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" /></button>
+          {showToday && <button type="button" className={cn(styles.todayButton, classNames?.todayButton)} aria-disabled={todayIdle || undefined} aria-label={today ? `Today, ${today.toLocaleDateString(locale, { dateStyle: "full" })}` : "Today"} onClick={goToToday}>Today</button>}
+          <button type="button" className={cn(styles.navButton, classNames?.navButton)} aria-label="Previous month" aria-disabled={previousDisabled || undefined} onClick={() => { if (!previousDisabled && previousMonth) changeMonth(previousMonth); }}><ChevronLeft size={16} strokeWidth={1.75} aria-hidden="true" /></button>
+          <button type="button" className={cn(styles.navButton, classNames?.navButton)} aria-label="Next month" aria-disabled={nextDisabled || undefined} onClick={() => { if (!nextDisabled && nextMonth) changeMonth(nextMonth); }}><ChevronRight size={16} strokeWidth={1.75} aria-hidden="true" /></button>
         </div>
       </div>
-      <div className={styles.weekdays} aria-hidden="true">{weekdays.map((day, index) => <span key={`${day}-${index}`}>{day.slice(0, 2)}</span>)}</div>
-      <div className={styles.monthViewport} ref={viewportRef}>
+      <div className={cn(styles.weekdays, classNames?.weekdays)} aria-hidden="true">{weekdays.map((day, index) => <span key={`${day}-${index}`}>{day.slice(0, 2)}</span>)}</div>
+      <div className={cn(styles.monthViewport, classNames?.monthViewport)} ref={viewportRef}>
         {month ? paneIndexes.map((index) => <MonthPane key={index} index={index} position={position} present={index === target}>{renderMonth(fromIndex(index), index === target)}</MonthPane>)
-          : <div className={styles.monthBody} aria-hidden="true"><div className={styles.grid}>{Array.from({ length: 6 }, (_, week) => <div key={week} className={styles.week}>{Array.from({ length: 7 }, (_, day) => <span key={day} className={styles.placeholderDay} />)}</div>)}</div></div>}
+          : <div className={cn(styles.monthBody, classNames?.monthBody)} aria-hidden="true"><div className={cn(styles.grid, classNames?.grid)}>{Array.from({ length: 6 }, (_, week) => <div key={week} className={styles.week}>{Array.from({ length: 7 }, (_, day) => <span key={day} className={styles.placeholderDay} />)}</div>)}</div></div>}
       </div>
     </section>;
 }

@@ -7,7 +7,29 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import type { TargetAndTransition } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./button-group.module.css";
+export interface ButtonGroupProps {
+  items: ButtonGroupItem[];
+  /** Adds a trailing chevron segment that opens these actions in a menu aligned to the group's edge. */
+  menu?: ButtonGroupMenu;
+  /** Accessible name of the group, such as "Document actions". */
+  label: string;
+  variant?: ButtonGroupVariant;
+  size?: ButtonGroupSize;
+  orientation?: ButtonGroupOrientation;
+  /** When the row does not fit its container, segments with an icon drop their label and keep the icon. Horizontal only. */
+  collapseLabels?: boolean;
+  /** Disables every segment and the menu. */
+  disabled?: boolean;
+  className?: string;
+  style?: CSSProperties;
+  /** Extend the inner, named parts of the button group: segment or highlight. */
+  classNames?: {
+    segment?: string;
+    highlight?: string;
+  };
+}
 
 export type ButtonGroupVariant = "outline" | "solid";
 export type ButtonGroupSize = "sm" | "md";
@@ -63,11 +85,14 @@ export interface ButtonGroupProps {
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
+  /** Extend the inner, named parts of the button group: segment or highlight. */
+  classNames?: {
+    segment?: string;
+    highlight?: string;
+  };
 }
 
-/** Key of the chevron segment. Plain text, because the HTML parser rewrites control characters in server-rendered attributes. */
-const MENU = "button-group-menu";
-
+const MENU = "button-group-slot";
 const rest: TargetAndTransition = { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" };
 const textIn: TargetAndTransition = { opacity: 0, y: 4, filter: `blur(${motionTokens.blur.soft}px)` };
 const textOut: TargetAndTransition = { opacity: 0, y: -3, filter: `blur(${motionTokens.blur.soft}px)`, transition: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] } };
@@ -111,16 +136,16 @@ function useMorphWidth(content: RefObject<HTMLElement | null>, key: string, redu
  * state and a new label crossfades inside a fixed box: it rises in from a soft blur while the old one lifts away. A label nobody
  * reserved still never snaps: the slot springs to its width.
  */
-function SegmentContent({ item, reduced }: { item: ButtonGroupItem; reduced: boolean }) {
+function SegmentContent({ item, reduced, classNames }: { item: ButtonGroupItem; reduced: boolean; classNames?: ButtonGroupProps["classNames"] }) {
   const contentRef = useRef<HTMLSpanElement>(null);
   const key = `${iconKey(item.icon)}|${item.content !== undefined ? "\u0000content" : item.iconOnly ? "" : item.label}`;
   const width = useMorphWidth(contentRef, key, reduced);
   const sizers = item.iconOnly || item.content !== undefined ? [] : [...new Set([item.label, ...(item.reserve ?? [])])];
-  return <motion.span className={styles.slot} style={{ width }} aria-hidden="true">
+  return <motion.span className={cn(styles.slot, classNames?.segment)} style={{ width }} aria-hidden="true">
     <span ref={contentRef} className={styles.slotContent}>
       {sizers.map(text => <span key={text} className={`${styles.phase} ${styles.sizer}`}>{item.icon ? <span className={styles.iconBox} /> : null}<span className={styles.label} data-collapsible={item.icon ? "" : undefined}>{text}</span></span>)}
       <AnimatePresence initial={false}>
-        <motion.span key={key} className={styles.phase} initial={reduced ? fadeIn : textIn} animate={rest} exit={reduced ? fadeOut : textOut} transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>
+        <motion.span key={key} className={cn(styles.phase, classNames?.highlight)} initial={reduced ? fadeIn : textIn} animate={rest} exit={reduced ? fadeOut : textOut} transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>
           {item.icon ? <span className={styles.icon}>{item.icon}</span> : null}
           {item.content !== undefined ? <span className={styles.value}>{item.content}</span> : item.iconOnly ? null : <span className={styles.label} data-collapsible={item.icon ? "" : undefined}>{item.label}</span>}
         </motion.span>
@@ -150,7 +175,7 @@ const inert = (node: HTMLElement) => (node as HTMLButtonElement).disabled || nod
  * between segments under the pointer or keyboard focus, the pressed segment answers in place, and an optional chevron
  * segment opens more actions in a menu aligned to the group's edge.
  */
-export function ButtonGroup({ items, menu, label, variant = "outline", size = "md", orientation = "horizontal", collapseLabels = true, disabled = false, className, style }: ButtonGroupProps) {
+export function ButtonGroup({ items, menu, label, variant = "outline", size = "md", orientation = "horizontal", collapseLabels = true, disabled = false, className, style, classNames }: ButtonGroupProps) {
   const reduced = useReducedMotion() ?? false;
   const root = useRef<HTMLDivElement>(null);
   const vertical = orientation === "vertical";
@@ -189,7 +214,7 @@ export function ButtonGroup({ items, menu, label, variant = "outline", size = "m
     shown.current = active;
     // inertKey re-checks a segment that turns disabled under a still pointer.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, inertKey, reduced, x, y, width, height, opacity]);
+  }, [active, inertKey, reduced, x, y, width, height, classNames]);
 
   // Segments resize when a label morphs or labels collapse; the highlight stays locked to its segment.
   const keyList = keys.join("\u0000");
@@ -299,21 +324,23 @@ export function ButtonGroup({ items, menu, label, variant = "outline", size = "m
     const off = item.disabled && !disabled;
     const named = item.iconOnly || item.content !== undefined || (compact && !!item.icon);
     const common = {
-      className: [styles.segment, item.iconOnly ? styles.iconOnly : ""].filter(Boolean).join(" "),
+      className: cn(styles.segment, item.iconOnly ? styles.iconOnly : "", classNames?.segment),
       "data-key": item.id,
       "data-quiet": quiet(index),
       "data-collapsible": item.icon && !item.iconOnly && item.content === undefined ? "" : undefined,
       "aria-label": named ? item.label : undefined,
       title: item.iconOnly || (compact && item.icon) ? item.label : undefined,
     };
-    const body = <span className={styles.content}><SegmentContent item={item} reduced={reduced} /></span>;
+    const body = <span className={styles.content}><SegmentContent item={item} reduced={reduced} classNames={classNames} /></span>;
     if (item.href && !off && !disabled) return <a key={item.id} {...common} href={item.href} onClick={() => select(item)}>{body}{named ? null : <span className={styles.srOnly}>{item.label}</span>}</a>;
     return <button key={item.id} {...common} type="button" disabled={disabled} aria-disabled={off || undefined} onClick={off ? undefined : () => select(item)}>{body}{named ? null : <span className={styles.srOnly}>{item.label}</span>}</button>;
   });
 
+  const highlightClassName = cn(styles.highlight, classNames?.highlight);
+
   const classes = [styles.group, styles[variant], styles[size], vertical ? styles.vertical : "", compact ? styles.compact : "", className].filter(Boolean).join(" ");
   const group = <div ref={root} className={classes} style={style} role="group" aria-label={label} aria-disabled={disabled || undefined} data-orientation={orientation} data-compact={compact ? "" : undefined} onPointerMove={onPointerMove} onPointerLeave={onPointerLeave} onPointerDown={onPointerDown} onFocus={onFocus} onBlur={onBlur} onKeyDown={onKeyDown}>
-    <motion.span className={styles.highlight} style={{ x, y, width, height, opacity }} data-pressed={pressed && pressed === active ? "" : undefined} aria-hidden="true" />
+    <motion.span className={highlightClassName} style={{ x, y, width, height, opacity }} data-pressed={pressed && pressed === active ? "" : undefined} aria-hidden="true" />
     {segments}
     {menu ? <DropdownPrimitive.Trigger className={[styles.segment, styles.trigger].join(" ")} data-key={MENU} data-quiet={quiet(items.length)} aria-label={menu.label} title={menu.label} disabled={disabled}>
       <span className={styles.content}><ChevronDown className={styles.chevron} aria-hidden="true" /></span>

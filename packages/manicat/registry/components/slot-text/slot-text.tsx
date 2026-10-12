@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, usePresence, useReducedMotion, useTransform, useVelocity } from "motion/react";
+import { cn } from "@/lib/cn";
 import styles from "./slot-text.module.css";
 
 /**
@@ -27,6 +28,15 @@ export interface SlotTextProps {
   announce?: boolean;
   className?: string;
   style?: CSSProperties;
+  /** Extend the inner, named parts of the slot text: reels, slot, sizer, window, strip or cell. */
+  classNames?: {
+    reels?: string;
+    slot?: string;
+    sizer?: string;
+    window?: string;
+    strip?: string;
+    cell?: string;
+  };
 }
 
 const DIGITS = "0123456789";
@@ -75,9 +85,10 @@ interface ReelProps {
   stagger: number;
   spins: number;
   reduced: boolean;
+  classNames: SlotTextProps["classNames"];
 }
 
-function Reel({ char, order, entering, rising, duration, stagger, spins, reduced }: ReelProps) {
+function Reel({ char, order, entering, rising, duration, stagger, spins, reduced, classNames }: ReelProps) {
   const pos = useMotionValue(0);
   const width = useMotionValue<number | "auto">("auto");
   const sizer = useRef<HTMLSpanElement>(null);
@@ -134,17 +145,17 @@ function Reel({ char, order, entering, rising, duration, stagger, spins, reduced
     return () => exit.stop();
   }, [isPresent, safeToRemove, width, reduced]);
 
-  return <motion.span className={styles.slot} style={{ width }} data-exiting={isPresent ? undefined : ""}>
-    <span ref={sizer} className={styles.sizer}>{char === " " ? "\u00a0" : char}</span>
-    <span className={styles.window}>
-      <motion.span className={styles.strip} style={{ transform: y, filter: blur }}>
-        {reel.strip.map((cell, i) => <span key={i} className={styles.cell}>{cell === " " ? "\u00a0" : cell}</span>)}
+  return <motion.span className={cn(styles.slot, classNames?.slot)} style={{ width }} data-exiting={isPresent ? undefined : ""}>
+    <span ref={sizer} className={cn(styles.sizer, classNames?.sizer)}>{char === " " ? " " : char}</span>
+    <span className={cn(styles.window, classNames?.window)}>
+      <motion.span className={cn(styles.strip, classNames?.strip)} style={{ transform: y, filter: blur }}>
+        {reel.strip.map((cell, i) => <span key={i} className={cn(styles.cell, classNames?.cell)}>{cell === " " ? " " : cell}</span>)}
       </motion.span>
     </span>
   </motion.span>;
 }
 
-export function SlotText({ value, format, duration = .9, stagger = .07, spins = 1, align, announce = false, className, style }: SlotTextProps) {
+export function SlotText({ value, format, duration = .9, stagger = .07, spins = 1, align, announce = false, className, style, classNames }: SlotTextProps) {
   const reduced = useReducedFlag();
   const text = typeof value === "number" ? (format ? format(value) : value.toLocaleString("en-US")) : value;
   const fromEnd = (align ?? (typeof value === "number" ? "end" : "start")) === "end";
@@ -162,7 +173,7 @@ export function SlotText({ value, format, duration = .9, stagger = .07, spins = 
 
   return <span className={[styles.root, className].filter(Boolean).join(" ")} style={style}>
     <span className={styles.srOnly} aria-live={announce ? "polite" : undefined}>{text}</span>
-    <span className={styles.reels} aria-hidden="true">
+    <span className={cn(styles.reels, classNames?.reels)} aria-hidden="true">
       <AnimatePresence initial={false}>
         {chars.map((char, i) => <Reel
           key={keyOf(i)}
@@ -174,6 +185,7 @@ export function SlotText({ value, format, duration = .9, stagger = .07, spins = 
           stagger={stagger}
           spins={spins}
           reduced={reduced}
+          classNames={classNames}
         />)}
       </AnimatePresence>
     </span>

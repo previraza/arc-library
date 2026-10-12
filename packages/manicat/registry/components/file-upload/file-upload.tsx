@@ -5,6 +5,7 @@ import type { ChangeEvent, DragEvent, KeyboardEvent } from "react";
 import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform, type HTMLMotionProps, type MotionProps, type TargetAndTransition, type Transition } from "motion/react";
 import { File, FileArchive, FileImage, FileText, RotateCw, UploadCloud, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./file-upload.module.css";
 
 export type FileUploadItem = { id: string; file: File; error?: string };
@@ -18,6 +19,24 @@ export interface FileUploadProps {
   maxSize?: number;
   value?: FileUploadItem[];
   onChange?: (files: FileUploadItem[]) => void;
+  /** Extend the inner, named parts of the file upload: root, dropzone, statusFrame, fileItem, fileIcon, copy, meta, labelText, status, input, browse, uploadIcon, fileList. */
+  classNames?: {
+    root?: string;
+    dropzone?: string;
+    statusFrame?: string;
+    fileItem?: string;
+    fileIcon?: string;
+    copy?: string;
+    meta?: string;
+    labelText?: string;
+    status?: string;
+    input?: string;
+    browse?: string;
+    uploadIcon?: string;
+    fileList?: string;
+  };
+  /** Extend the inner, named parts of the <FileUpload>. */
+  className?: string;
   /** Uploads each accepted file. Report progress from 0 to 100, resolve when done, or reject to mark the file as failed. Removing a file aborts its signal. */
   onUpload?: (file: File, options: { onProgress: (percent: number) => void; signal: AbortSignal }) => Promise<void>;
 }
@@ -116,6 +135,8 @@ export function FileUpload({
   value,
   onChange,
   onUpload,
+  className,
+  classNames,
 }: FileUploadProps) {
   const inputId = useId();
   const reduce = useReducedMotion();
@@ -150,7 +171,7 @@ export function FileUpload({
     set(() => ({ status: "uploading", progress: 0 }));
     onUpload(item.file, {
       signal: controller.signal,
-      onProgress: percent => { if (!controller.signal.aborted) set(current => ({ status: "uploading", progress: Math.min(Math.max(percent, current?.progress ?? 0), 100) })); },
+      onProgress: (percent: number) => { if (!controller.signal.aborted) set(current => ({ status: "uploading", progress: Math.min(Math.max(percent, current?.progress ?? 0), 100) })); },
     }).then(() => {
       if (controller.signal.aborted) return;
       set(() => ({ status: "done", progress: 100 }));
@@ -231,11 +252,11 @@ export function FileUpload({
   }
 
   const height: Transition = reduce ? instant : { height: motionTokens.spring.smooth, opacity: enter };
-  return <div className={styles.root}>
-    <input ref={inputRef} id={inputId} className={styles.input} type="file" accept={accept} multiple={multiple} disabled={disabled} onChange={handleInput} />
+  return <div className={cn(styles.root, className)}>
+    <input ref={inputRef} id={inputId} className={cn(styles.input, classNames?.input)} type="file" accept={accept} multiple={multiple} disabled={disabled} onChange={handleInput} />
     <div
       ref={dropzoneRef}
-      className={[styles.dropzone, dragging ? styles.dragging : "", disabled ? styles.disabled : ""].filter(Boolean).join(" ")}
+      className={[styles.dropzone, dragging ? styles.dragging : "", disabled ? styles.disabled : "", classNames?.dropzone].filter(Boolean).join(" ")}
       role="button"
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
@@ -247,17 +268,17 @@ export function FileUpload({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <span className={styles.uploadIcon}><UploadCloud size={20} strokeWidth={1.8} aria-hidden="true" /></span>
+      <span className={cn(styles.uploadIcon, classNames?.uploadIcon)}><UploadCloud size={20} strokeWidth={1.8} aria-hidden="true" /></span>
       {/* While a file hovers over the target the label says what releasing it will do. */}
-      <span className={styles.copy}><strong className={styles.label}><AnimatePresence mode="popLayout" initial={false}><Swap key={dragging ? "drop" : "idle"} className={styles.labelText} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? fadeOut : textOut} transition={reduce ? instant : enter}>{dragging ? `Drop to add ${multiple ? "files" : "a file"}` : label}</Swap></AnimatePresence></strong><span id={`${inputId}-description`}>{description}</span></span>
-      <span className={styles.browse}>Browse</span>
+      <span className={cn(styles.copy, classNames?.copy)}><strong className={styles.label}><AnimatePresence mode="popLayout" initial={false}><Swap key={dragging ? "drop" : "idle"} className={styles.labelText} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? fadeOut : textOut} transition={reduce ? instant : enter}>{dragging ? `Drop to add ${multiple ? "files" : "a file"}` : label}</Swap></AnimatePresence></strong><span id={`${inputId}-description`}>{description}</span></span>
+      <span className={cn(styles.browse, classNames?.browse)}>Browse</span>
     </div>
     {/* The live region stays mounted; its frame opens on the first message and each new message rises in. */}
-    <motion.div className={styles.statusFrame} initial={false} animate={{ height: status ? "auto" : 0 }} transition={height}>
+    <motion.div className={cn(styles.statusFrame, classNames?.statusFrame)} initial={false} animate={{ height: status ? "auto" : 0 }} transition={height}>
       <p className={styles.status} aria-live="polite" aria-atomic="true"><AnimatePresence mode="popLayout" initial={false}>{status ? <Swap key={status} className={styles.statusText} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? fadeOut : textOut} transition={reduce ? instant : enter}>{status}</Swap> : null}</AnimatePresence></p>
     </motion.div>
     {/* Rows open and close their own height, so the list closes the gap when a file is removed. */}
-    <motion.ul className={styles.fileList} aria-label="Selected files" aria-hidden={files.length === 0 ? true : undefined} initial={false} animate={{ paddingTop: files.length ? 6 : 0 }} transition={reduce ? instant : motionTokens.spring.smooth}>
+    <motion.ul className={cn(styles.fileList, classNames?.fileList)} aria-label="Selected files" aria-hidden={files.length === 0 ? true : undefined} initial={false} animate={{ paddingTop: files.length ? 6 : 0 }} transition={reduce ? instant : motionTokens.spring.smooth}>
       <AnimatePresence initial={false}>
         {files.map(item => <motion.li key={item.id} className={styles.fileRow} initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={reduce ? fadeOut : { height: 0, opacity: 0, transition: { height: motionTokens.spring.smooth, opacity: exitFast } }} transition={height}>
           <FileRow item={item} upload={uploads[item.id]} reduce={reduce} onRemove={() => removeFile(item)} onRetry={() => startUpload(item)} removeRef={node => { if (node) removeRefs.current.set(item.id, node); else removeRefs.current.delete(item.id); }} />

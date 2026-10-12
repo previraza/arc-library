@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type FocusEvent, type KeyboardEvent, type MouseEvent, type PointerEvent, type Ref } from "react";
 import { AnimatePresence, animate, frame, cancelFrame, motion, motionValue, useInView, useReducedMotion, type MotionValue, type Transition } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./donut-chart.module.css";
 
 export interface DonutChartDatum {
@@ -48,6 +49,29 @@ export interface DonutChartProps {
   emptyLabel?: string;
   ref?: Ref<HTMLElement>;
   className?: string;
+  /** Extend the inner, named parts of the donut chart: ring, svg, track, segment, center, readout, centerLabel, centerValue, centerMeta, legend, item, row, dot, rowText, rowLabel, rowMembers, rowValue, rowShare, srOnly. */
+  classNames?: {
+    figure?: string;
+    ring?: string;
+    svg?: string;
+    track?: string;
+    segment?: string;
+    center?: string;
+    readout?: string;
+    centerLabel?: string;
+    centerValue?: string;
+    centerMeta?: string;
+    legend?: string;
+    item?: string;
+    row?: string;
+    dot?: string;
+    rowText?: string;
+    rowLabel?: string;
+    rowMembers?: string;
+    rowValue?: string;
+    rowShare?: string;
+    srOnly?: string;
+  };
 }
 
 type Slice = { key: string; label: string; value: number; color?: string; members?: DonutChartDatum[] };
@@ -170,7 +194,7 @@ function useReducedMotionSafe() {
   return !!useReducedMotion() && hydrated;
 }
 
-export function DonutChart({ data, label, unit = "", formatValue = value => grouped.format(value), totalLabel = "Total", size = 208, thickness = 24, groupBelow = .04, maxSegments = 6, otherLabel = "Other", activeKey, defaultActiveKey = null, onActiveChange, hiddenKeys, defaultHiddenKeys, onHiddenKeysChange, legendAction = "toggle", legend = true, emptyLabel = "No data yet", ref, className }: DonutChartProps) {
+export function DonutChart({ data, label, unit = "", formatValue = value => grouped.format(value), totalLabel = "Total", size = 208, thickness = 24, groupBelow = .04, maxSegments = 6, otherLabel = "Other", activeKey, defaultActiveKey = null, onActiveChange, hiddenKeys, defaultHiddenKeys, onHiddenKeysChange, legendAction = "toggle", legend = true, emptyLabel = "No data yet", ref, className, classNames }: DonutChartProps) {
   const reduced = useReducedMotionSafe();
   const figure = useRef<HTMLElement>(null);
   useImperativeHandle(ref, () => figure.current as HTMLElement);
@@ -378,44 +402,44 @@ export function DonutChart({ data, label, unit = "", formatValue = value => grou
   const members = (item: Slice) => item.members ? item.members.length > 2 ? `${item.members.slice(0, 2).map(member => member.label).join(", ")} and ${item.members.length - 2} more` : item.members.map(member => member.label).join(" and ") : null;
   const ringLabel = `${label}. Use the arrow keys to read each segment.`;
 
-  return <figure ref={figure} className={[styles.figure, className].filter(Boolean).join(" ")} aria-label={label} data-legend={legend || undefined}>
-    <div className={styles.ring} style={{ width: size, "--inner": `${(inner * 2) / size * 100}%` } as CSSProperties}
+  return <figure ref={figure} className={cn(styles.figure, className, classNames?.figure)} aria-label={label} data-legend={legend || undefined}>
+    <div className={cn(styles.ring, classNames?.ring)} style={{ width: size, "--inner": `${(inner * 2) / size * 100}%` } as CSSProperties}
       tabIndex={legend ? undefined : 0} role={legend ? undefined : "group"} aria-label={legend ? undefined : ringLabel} onKeyDown={legend ? undefined : onRingKey} onBlur={legend ? undefined : () => setPreview(null)}>
-      <svg ref={svg} className={styles.svg} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" focusable="false" onPointerMove={onRingMove} onPointerLeave={() => setPreview(null)} onClick={onRingClick} data-hovering={current !== null || undefined}>
-        <circle className={styles.track} cx={c} cy={c} r={(outer + inner) / 2} strokeWidth={outer - inner} data-idle={(!shown || !total) || undefined} />
-        {drawn.map(item => <path key={item.key} ref={registerPath} data-key={item.key} className={styles.segment} data-active={item.key === current || undefined} data-dim={(current !== null && item.key !== current) || undefined} style={{ "--slice": colorFor(item) } as CSSProperties} />)}
+      <svg ref={svg} className={cn(styles.svg, classNames?.svg)} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" focusable="false" onPointerMove={onRingMove} onPointerLeave={() => setPreview(null)} onClick={onRingClick} data-hovering={current !== null || undefined}>
+        <circle className={cn(styles.track, classNames?.track)} cx={c} cy={c} r={(outer + inner) / 2} strokeWidth={outer - inner} data-idle={(!shown || !total) || undefined} />
+        {drawn.map(item => <path key={item.key} ref={registerPath} data-key={item.key} className={cn(styles.segment, classNames?.segment)} data-active={item.key === current || undefined} data-dim={(current !== null && item.key !== current) || undefined} style={{ "--slice": colorFor(item) } as CSSProperties} />)}
       </svg>
-      <div className={styles.center} aria-hidden="true">
-        {readouts.map((item, index) => <motion.span key={item.key} className={styles.readout} initial={false} {...drum(index - activeIndex, reduced)}>
-          <span className={styles.centerLabel}>{item.label}</span>
-          <span className={styles.centerValue}>{item.value || item.meta ? <Count value={item.value} format={formatValue} reduced={reduced} /> : " "}</span>
-          <span className={styles.centerMeta}>{item.meta ? <><Count value={total && !hidden.has(item.key) ? item.value / total : 0} format={shareText} reduced={reduced} /> of {totalLabel.toLowerCase()}</> : unit || " "}</span>
+      <div className={cn(styles.center, classNames?.center)} aria-hidden="true">
+        {readouts.map((item, index) => <motion.span key={item.key} className={cn(styles.readout, classNames?.readout)} initial={false} {...drum(index - activeIndex, reduced)}>
+          <span className={cn(styles.centerLabel, classNames?.centerLabel)}>{item.label}</span>
+          <span className={cn(styles.centerValue, classNames?.centerValue)}>{item.value || item.meta ? <Count value={item.value} format={formatValue} reduced={reduced} /> : " "}</span>
+          <span className={cn(styles.centerMeta, classNames?.centerMeta)}>{item.meta ? <><Count value={total && !hidden.has(item.key) ? item.value / total : 0} format={shareText} reduced={reduced} /> of {totalLabel.toLowerCase()}</> : unit || " "}</span>
         </motion.span>)}
       </div>
     </div>
-    {legend && slices.length > 0 && <ul className={styles.legend} aria-label={`${label}, segments${legendAction === "toggle" ? ". Press a segment to show or hide it" : ""}`} id={legendId} onPointerLeave={() => setPreview(null)}>
+    {legend && slices.length > 0 && <ul className={cn(styles.legend, classNames?.legend)} aria-label={`${label}, segments${legendAction === "toggle" ? ". Press a segment to show or hide it" : ""}`} id={legendId} onPointerLeave={() => setPreview(null)}>
       <AnimatePresence initial={false}>{slices.map((item, index) => {
         const off = hidden.has(item.key);
         // A row that joins or leaves (a part folding into Other, say) opens or closes its height, so the rows below and the card around them glide instead of jumping.
-        return <motion.li key={item.key} className={styles.item} initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={reduced ? { duration: 0 } : spring.smooth}>
-          <button ref={node => { if (node) rows.current[index] = node; }} type="button" className={styles.row} aria-pressed={legendAction === "toggle" ? !off : selected === item.key} aria-label={off ? `${item.label}, hidden` : describe(item)} data-active={item.key === current || undefined} data-pinned={selected === item.key || undefined} data-hidden={off || undefined} style={{ "--slice": colorFor(item) } as CSSProperties}
+        return <motion.li key={item.key} className={cn(styles.item, classNames?.item)} initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={reduced ? { duration: 0 } : spring.smooth}>
+          <button ref={node => { if (node) rows.current[index] = node; }} type="button" className={cn(styles.row, classNames?.row)} aria-pressed={legendAction === "toggle" ? !off : selected === item.key} aria-label={off ? `${item.label}, hidden` : describe(item)} data-active={item.key === current || undefined} data-pinned={selected === item.key || undefined} data-hidden={off || undefined} style={{ "--slice": colorFor(item) } as CSSProperties}
             onClick={() => legendAction === "toggle" ? setHidden(item.key) : select(selected === item.key ? null : item.key)}
             onPointerEnter={event => { if (event.pointerType === "mouse") setPreview(off ? null : item.key); }}
             onFocus={event => { if (event.currentTarget.matches(":focus-visible")) setPreview(off ? null : item.key); }} onBlur={onLegendBlur} onKeyDown={event => onLegendKey(event, index)}>
-            <span className={styles.dot} aria-hidden="true" />
-            <span className={styles.rowText}>
-              <span className={styles.rowLabel}>{item.label}</span>
-              {item.members && <span className={styles.rowMembers}>{members(item)}</span>}
+            <span className={cn(styles.dot, classNames?.dot)} aria-hidden="true" />
+            <span className={cn(styles.rowText, classNames?.rowText)}>
+              <span className={cn(styles.rowLabel, classNames?.rowLabel)}>{item.label}</span>
+              {item.members && <span className={cn(styles.rowMembers, classNames?.rowMembers)}>{members(item)}</span>}
             </span>
-            <span className={styles.rowValue} aria-hidden="true"><Count value={item.value} format={formatValue} reduced={reduced} /></span>
-            <span className={styles.rowShare} aria-hidden="true"><Count value={off || !total ? 0 : item.value / total} format={shareText} reduced={reduced} /></span>
+            <span className={cn(styles.rowValue, classNames?.rowValue)} aria-hidden="true"><Count value={item.value} format={formatValue} reduced={reduced} /></span>
+            <span className={cn(styles.rowShare, classNames?.rowShare)} aria-hidden="true"><Count value={off || !total ? 0 : item.value / total} format={shareText} reduced={reduced} /></span>
           </button>
         </motion.li>;
       })}</AnimatePresence>
     </ul>}
-    <p className={styles.srOnly}>{summary}</p>
-    <p className={styles.srOnly} aria-live="polite">{announcement}</p>
-    {total > 0 && <table className={styles.srOnly}>
+    <p className={cn(styles.srOnly, classNames?.srOnly)}>{summary}</p>
+    <p className={cn(styles.srOnly, classNames?.srOnly)} aria-live="polite">{announcement}</p>
+    {total > 0 && <table className={cn(styles.srOnly, classNames?.srOnly)}>
       <caption>{label}</caption>
       <thead><tr><th scope="col">Segment</th><th scope="col">Value</th><th scope="col">Share</th></tr></thead>
       <tbody>{visible.flatMap(item => item.members ? item.members.map(member => ({ key: member.key, label: `${member.label} (${otherLabel})`, value: member.value })) : [item]).map(item => <tr key={item.key}><th scope="row">{item.label}</th><td>{format(item.value)}</td><td>{shareText(item.value / total)}</td></tr>)}</tbody>

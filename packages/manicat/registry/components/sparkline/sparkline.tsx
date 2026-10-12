@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform, type Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./sparkline.module.css";
 
 export interface SparklineProps {
@@ -21,6 +22,19 @@ export interface SparklineProps {
   area?: boolean;
   /** Pointer and keyboard scrubbing through the points. */
   interactive?: boolean;
+  className?: string;
+  /** Extend the inner, named parts of the sparkline: figure, caption, label, plot, chart, baseline, trail, cursor, end. */
+  classNames?: {
+    figure?: string;
+    caption?: string;
+    label?: string;
+    plot?: string;
+    chart?: string;
+    baseline?: string;
+    trail?: string;
+    cursor?: string;
+    end?: string;
+  };
 }
 
 /** Copy that holds a number enters from the side it moved toward: a larger value rises from below, a smaller one drops from above. */
@@ -133,7 +147,7 @@ function tipAt(points: Point[], progress: number) {
   return points[points.length - 1][0];
 }
 
-export function Sparkline({ data, label, value, change, tone = "accent", width = 160, height = 52, labels, formatValue, area = true, interactive = true }: SparklineProps) {
+export function Sparkline({ data, label, value, change, tone = "accent", width = 160, height = 52, labels, formatValue, area = true, interactive = true, className, classNames }: SparklineProps) {
   const safeData = data.length > 1 ? data : [data[0] ?? 0, data[0] ?? 0];
   const last = safeData.length - 1;
   const key = safeData.join(",");
@@ -229,27 +243,27 @@ export function Sparkline({ data, label, value, change, tone = "accent", width =
     onPointerUp: (event: PointerEvent<HTMLDivElement>) => { if (event.pointerType !== "mouse") setActive(null); },
     onPointerLeave: () => setActive(null), onPointerCancel: () => setActive(null), onBlur: () => setActive(null), onKeyDown,
   } : {};
-  return <figure ref={ref} className={styles.figure} aria-label={description}>
-    <figcaption className={styles.caption}>
-      <span className={styles.label}><Roll text={label} whole /></span>
+  return <figure ref={ref} className={cn(styles.figure, className)} aria-label={description}>
+<figcaption className={cn(styles.caption, classNames?.caption)}>
+  <span className={cn(styles.label, classNames?.label)}><Roll text={label} whole /></span>
       {headline !== undefined && <strong><Roll text={headline} morph /></strong>}
       <small className={styles[tone]}><Roll text={aside} direction={scrubbing ? moved.direction : undefined} tone={scrubbing ? styles.point : undefined} morph /></small>
     </figcaption>
-    <div ref={plot} className={styles.plot} data-interactive={interactive || undefined} {...scrub}>
-      <svg className={styles.chart} viewBox={`0 0 ${box.w} ${box.h}`} aria-hidden="true" focusable="false">
+    <div ref={plot} className={cn(styles.plot, classNames?.plot)} data-interactive={interactive || undefined} {...scrub}>
+      <svg className={cn(styles.chart, classNames?.chart)} viewBox={`0 0 ${box.w} ${box.h}`} aria-hidden="true" focusable="false">
         <defs>
           <clipPath id={`${uid}-lit`} clipPathUnits="userSpaceOnUse"><motion.rect x={-16} y={-16} width={lit} height={box.h + 32} /></clipPath>
           <clipPath id={`${uid}-dim`} clipPathUnits="userSpaceOnUse"><motion.rect x={dim} y={-16} width={box.w + 32} height={box.h + 32} /></clipPath>
           <clipPath id={`${uid}-fill`} clipPathUnits="userSpaceOnUse"><motion.rect x={-16} y={-16} width={reveal} height={box.h + 32} /></clipPath>
         </defs>
         {area && <motion.path className={`${styles.area} ${styles[tone]}`} d={fill} clipPath={`url(#${uid}-fill)`} />}
-        <line className={styles.baseline} x1="0" y1={box.h - .5} x2={box.w} y2={box.h - .5} />
+        <line className={cn(styles.baseline, classNames?.baseline)} x1="0" y1={box.h - .5} x2={box.w} y2={box.h - .5} />
         {/* While scrubbing, the stretch after the cursor dims, as if the later points have not happened yet. */}
-        <motion.path className={styles.trail} d={trail} clipPath={`url(#${uid}-dim)`} initial={false} animate={{ opacity: scrubbing && landed ? 1 : 0 }} transition={reduceMotion ? { duration: 0 } : quick} />
+        <motion.path className={cn(styles.trail, classNames?.trail)} d={trail} clipPath={`url(#${uid}-dim)`} initial={false} animate={{ opacity: scrubbing && landed ? 1 : 0 }} transition={reduceMotion ? { duration: 0 } : quick} />
         <motion.polyline className={[styles.line, styles[tone]].join(" ")} points={line} clipPath={`url(#${uid}-lit)`} style={{ pathLength: drawn, opacity: lineOpacity }} />
-        <motion.line className={styles.cursor} x1={cursorX} x2={cursorX} y1={0} y2={box.h} initial={false} animate={{ opacity: scrubbing ? 1 : 0 }} transition={reduceMotion ? { duration: 0 } : quick} />
+        <motion.line className={cn(styles.cursor, classNames?.cursor)} x1={cursorX} x2={cursorX} y1={0} y2={box.h} initial={false} animate={{ opacity: scrubbing ? 1 : 0 }} transition={reduceMotion ? { duration: 0 } : quick} />
         {/* A zero-length round-capped stroke is a true circle, and it takes the line's colour. It rests on the latest point and becomes the scrub handle. */}
-        <motion.polyline className={[styles.end, styles[tone]].join(" ")} points={dot} initial={false} animate={{ opacity: landed ? 1 : 0, strokeWidth: landed ? scrubbing ? 10 : 7 : 0 }} transition={reduceMotion ? { duration: 0 } : { opacity: quick, strokeWidth: motionTokens.spring.snappy }} fill="none" strokeLinecap="round" />
+        <motion.polyline className={cn(styles.end, classNames?.end)} points={dot} initial={false} animate={{ opacity: landed ? 1 : 0, strokeWidth: landed ? scrubbing ? 10 : 7 : 0 }} transition={reduceMotion ? { duration: 0 } : { opacity: quick, strokeWidth: motionTokens.spring.snappy }} fill="none" strokeLinecap="round" />
       </svg>
     </div>
   </figure>;

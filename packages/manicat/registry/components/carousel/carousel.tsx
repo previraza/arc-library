@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/cn";
 import { Children, isValidElement, useEffect, useEffectEvent, useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode, Ref } from "react";
 import { AnimatePresence, animate, motion, motionValue, useMotionValue, useReducedMotion, useTransform } from "motion/react";
@@ -32,6 +33,16 @@ export interface CarouselProps {
   /** Starts rotating on mount. Off by default, so motion begins with the viewer. */
   autoplay?: boolean;
   className?: string;
+  classNames?: {
+    root?: string;
+    viewport?: string;
+    track?: string;
+    controls?: string;
+    control?: string;
+    icon?: string;
+    tabs?: string;
+    arrows?: string;
+  };
 }
 
 type Drag = { pointer: number; startX: number; startY: number; origin: number; from: number; locked: "x" | "y" | null; caught: boolean; samples: [number, number][] };
@@ -65,7 +76,7 @@ function velocityOf(samples: [number, number][], now: number) {
   return lastTime > firstTime ? (lastX - firstX) / ((lastTime - firstTime) / 1000) : 0;
 }
 
-export function Carousel({ label, children, index: controlledIndex, defaultIndex = 0, onIndexChange, slideSize = "min(80cqw, 340px)", slideLabel = defaultSlideLabel, interval, autoplay = false, className }: CarouselProps) {
+export function Carousel({ label, children, index: controlledIndex, defaultIndex = 0, onIndexChange, slideSize = "min(80cqw, 340px)", slideLabel = defaultSlideLabel, interval, autoplay = false, className, classNames }: CarouselProps) {
   const slides = Children.toArray(children);
   const count = slides.length;
   const last = Math.max(0, count - 1);
@@ -292,33 +303,33 @@ export function Carousel({ label, children, index: controlledIndex, defaultIndex
 
   const rootStyle = { "--carousel-slide": slideSize, "--carousel-start": startIndex } as CSSProperties;
 
-  return <section ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")} style={rootStyle} aria-roledescription="carousel" aria-label={label} onKeyDown={onKeyDown}
+  return <section ref={rootRef} className={cn(styles.root, className, classNames?.root)} style={rootStyle} aria-roledescription="carousel" aria-label={label} onKeyDown={onKeyDown}
     onFocus={event => setFocusPaused(event.target !== playRef.current && event.target.matches(":focus-visible"))}
     onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocusPaused(false); }}>
-    <div ref={viewportRef} className={styles.viewport} role="group" aria-label="Slides" tabIndex={0} data-dragging={dragging || undefined}
+    <div ref={viewportRef} className={cn(styles.viewport, classNames?.viewport)} role="group" aria-label="Slides" tabIndex={0} data-dragging={dragging || undefined}
       onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={event => finish(event, false)} onPointerCancel={event => finish(event, true)}
       onPointerEnter={event => { if (event.pointerType === "mouse") setHovered(true); }} onPointerLeave={() => setHovered(false)}
       onClickCapture={event => { if (swallowClick.current) { event.preventDefault(); event.stopPropagation(); swallowClick.current = false; } }}
       onDragStart={event => event.preventDefault()}>
-      <motion.div ref={trackRef} className={styles.track} style={{ x }}>
+      <motion.div ref={trackRef} className={cn(styles.track, classNames?.track)} style={{ x }}>
         {slides.map((slide, i) => <Slide key={isValidElement(slide) && slide.key != null ? slide.key : i} id={`${id}-slide-${i}`} index={i} progress={progress} active={i === index} label={slideLabel(i, count)}>{slide}</Slide>)}
       </motion.div>
     </div>
-    {count > 1 && <div className={styles.controls}>
-      {canRotate && <button ref={playRef} type="button" className={styles.control} aria-label={playing ? "Pause slide rotation" : "Start slide rotation"} onClick={toggleRotation}>
+    {count > 1 && <div className={cn(styles.controls, classNames?.controls)}>
+      {canRotate && <button ref={playRef} type="button" className={cn(styles.control, classNames?.control)} aria-label={playing ? "Pause slide rotation" : "Start slide rotation"} onClick={toggleRotation}>
         <span className={styles.iconSlot}><AnimatePresence initial={false}>
-          <motion.span key={playing ? "pause" : "play"} className={styles.icon} initial={reduced ? { opacity: 0 } : iconIn} animate={iconRest} exit={reduced ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : iconOut} transition={reduced ? { duration: motionTokens.duration.instant } : iconEnter}>
+          <motion.span key={playing ? "pause" : "play"} className={cn(styles.icon, classNames?.icon)} initial={reduced ? { opacity: 0 } : iconIn} animate={iconRest} exit={reduced ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : iconOut} transition={reduced ? { duration: motionTokens.duration.instant } : iconEnter}>
             {playing ? <Pause size={15} strokeWidth={1.75} fill="currentColor" aria-hidden="true" /> : <Play size={15} strokeWidth={1.75} fill="currentColor" aria-hidden="true" />}
           </motion.span>
         </AnimatePresence></span>
       </button>}
-      <div className={styles.tabs} role="tablist" aria-label="Choose a slide">
+      <div className={cn(styles.tabs, classNames?.tabs)} role="tablist" aria-label="Choose a slide">
         {slides.map((_, i) => <Dot key={i} index={i} last={last} progress={progress} drain={drains[i]} selected={i === index} label={slideLabel(i, count)} controls={`${id}-slide-${i}`}
           tabRef={node => { tabRefs.current[i] = node; }} onSelect={() => select(i)} />)}
       </div>
-      <div className={styles.arrows}>
-        <button type="button" className={styles.control} aria-label="Previous slide" aria-disabled={index === 0} onClick={() => { if (target.current > 0) select(target.current - 1); }}><ChevronLeft size={18} strokeWidth={1.75} aria-hidden="true" /></button>
-        <button type="button" className={styles.control} aria-label="Next slide" aria-disabled={index === last} onClick={() => { if (target.current < last) select(target.current + 1); }}><ChevronRight size={18} strokeWidth={1.75} aria-hidden="true" /></button>
+      <div className={cn(styles.arrows, classNames?.arrows)}>
+        <button type="button" className={cn(styles.control, classNames?.control)} aria-label="Previous slide" aria-disabled={index === 0} onClick={() => { if (target.current > 0) select(target.current - 1); }}><ChevronLeft size={18} strokeWidth={1.75} aria-hidden="true" /></button>
+        <button type="button" className={cn(styles.control, classNames?.control)} aria-label="Next slide" aria-disabled={index === last} onClick={() => { if (target.current < last) select(target.current + 1); }}><ChevronRight size={18} strokeWidth={1.75} aria-hidden="true" /></button>
       </div>
     </div>}
     <span className={styles.visuallyHidden} aria-live="polite" aria-atomic="true">{announcement}</span>

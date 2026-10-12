@@ -4,6 +4,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, use
 import { Minus, Plus } from "lucide-react";
 import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type Ref } from "react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./number-field.module.css";
 
 /** Text shown beside the number. A function receives the value, so a unit can follow it: `n => n === 1 ? " seat" : " seats"`. */
@@ -34,6 +35,14 @@ export interface NumberFieldProps {
   formatOptions?: { minimumFractionDigits?: number; maximumFractionDigits?: number; useGrouping?: boolean };
   /** Control height, type size, and default width. */
   size?: NumberFieldSize;
+  classNames?: {
+    /** Slot for the input field */
+    input?: string;
+    /** Slot for the number display */
+    number?: string;
+    /** Slot for the display digits */
+    display?: string;
+  };
   /** A short note beside the label when a press meets a limit or a typed value passes one. `false` hides it; a function writes the copy. */
   limitHint?: boolean | ((edge: "min" | "max", limit: number) => string);
 }
@@ -231,7 +240,7 @@ function StepButton({ toward, label, disabled, controls, limit, pressed, iconRef
  * large steps, Home and End jump to the limits, and `scrub` lets the label be dragged. Typing edits a plain draft that
  * applies live while valid; the rolling digits return once it commits on Enter, blur, or the next step.
  */
-export function NumberField({ label, value, defaultValue = 0, onValueChange, min = 0, max = Number.MAX_SAFE_INTEGER, step: stepProp = 1, largeStep, description, disabled, id, prefix, suffix, scrub = false, locale = "en-US", formatOptions, size = "md", limitHint = true }: NumberFieldProps) {
+export function NumberField({ label, value, defaultValue = 0, onValueChange, min = 0, max = Number.MAX_SAFE_INTEGER, step: stepProp = 1, largeStep, description, disabled, id, prefix, suffix, scrub = false, locale = "en-US", formatOptions, size = "md", limitHint = true, classNames }: NumberFieldProps) {
   const reduced = useReducedMotion();
   const generatedId = useId();
   const inputId = id ?? generatedId;
@@ -461,7 +470,7 @@ export function NumberField({ label, value, defaultValue = 0, onValueChange, min
           <span className={styles.number}>
             <span className={styles.display} data-hidden={editing || undefined} aria-hidden="true"><Digits value={shown} format={format} direction={direction} instant={editing} /></span>
             {editing && <span className={styles.mirror} aria-hidden="true">{draft}</span>}
-            <input ref={inputRef} id={inputId} className={styles.input} type="text" role="spinbutton" inputMode={min < 0 ? "text" : decimals || maxFraction ? "decimal" : "numeric"} autoComplete="off" spellCheck={false}
+            <input ref={inputRef} id={inputId} className={cn(styles.input, classNames?.input)} type="text" role="spinbutton" inputMode={min < 0 ? "text" : decimals || maxFraction ? "decimal" : "numeric"} autoComplete="off" spellCheck={false}
               value={editing ? draft : format.format(current)} disabled={disabled} aria-describedby={describedBy} aria-invalid={outside ? true : undefined} aria-valuenow={current} aria-valuetext={spoken(current)}
               aria-valuemin={Number.isFinite(min) ? min : undefined} aria-valuemax={max < Number.MAX_SAFE_INTEGER ? max : undefined}
               onChange={event => onChange(event.currentTarget.value)} onKeyDown={onKeyDown} onKeyUp={event => { if (/^(Arrow(Up|Down)|Page(Up|Down))$/.test(event.key)) stopHold(); }} onBlur={() => { stopHold(); commitDraft(); }} />

@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import type { TargetAndTransition, Variants } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./action-button.module.css";
 
 export interface ActionButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick" | "onDrag" | "onDragEnd" | "onDragStart" | "onAnimationStart"> {
@@ -15,6 +16,18 @@ export interface ActionButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonE
   onAction: () => void | Promise<void>;
   resetAfterMs?: number;
   onActionError?: (error: unknown) => void;
+  /** Extend the inner, named parts of the action button: content, morph, glyphs, glyph, iconSlot, phase, spinner, statusIcon or arrow. */
+  classNames?: {
+    content?: string;
+    morph?: string;
+    glyphs?: string;
+    glyph?: string;
+    iconSlot?: string;
+    phase?: string;
+    spinner?: string;
+    statusIcon?: string;
+    arrow?: string;
+  };
 }
 
 const pressVariants: Variants = {
@@ -61,8 +74,8 @@ function useMorphWidth(content: RefObject<HTMLElement | null>, key: string, redu
 }
 
 /** The success tick draws itself from its short stroke, the way a hand would write it. */
-function DrawnCheck({ reduced }: { reduced: boolean }) {
-  return <svg className={styles.statusIcon} width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+function DrawnCheck({ reduced, classNames }: { reduced: boolean; classNames?: ActionButtonProps["classNames"] }) {
+  return <svg className={cn(styles.statusIcon, classNames?.statusIcon)} width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <motion.path d="M4 12l5 5L20 6" initial={reduced ? false : { pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ pathLength: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter], delay: .05 }, opacity: { duration: .05, delay: .05 } }} />
   </svg>;
 }
@@ -87,20 +100,20 @@ function useGlyphs(text: string) {
 }
 
 /** Morphs one label into the next: kept letters glide into place, new ones rise in from a soft blur, and the width follows on a spring. */
-function MorphText({ text, reduced }: { text: string; reduced: boolean }) {
+function MorphText({ text, reduced, classNames }: { text: string; reduced: boolean; classNames?: ActionButtonProps["classNames"] }) {
   const glyphs = useGlyphs(text);
   const rowRef = useRef<HTMLSpanElement>(null);
   const width = useMorphWidth(rowRef, text, reduced);
-  return <motion.span className={styles.morph} style={{ width }} aria-hidden="true">
-    <span ref={rowRef} className={styles.glyphs}>
+  return <motion.span className={cn(styles.morph, classNames?.morph)} style={{ width }} aria-hidden="true">
+    <span ref={rowRef} className={cn(styles.glyphs, classNames?.glyphs)}>
       <AnimatePresence mode="popLayout" initial={false}>
-        {glyphs.map(glyph => <motion.span key={glyph.id} className={styles.glyph} layout={reduced ? false : "position"} layoutDependency={text} initial={reduced ? fadeIn : glyphIn} animate={rest} exit={reduced ? fadeOut : glyphOut} transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter], delay: Math.min(glyph.order * motionTokens.stagger.char, .1), layout: motionTokens.spring.morph }}>{glyph.char}</motion.span>)}
+        {glyphs.map(glyph => <motion.span key={glyph.id} className={cn(styles.glyph, classNames?.glyph)} layout={reduced ? false : "position"} layoutDependency={text} initial={reduced ? fadeIn : glyphIn} animate={rest} exit={reduced ? fadeOut : glyphOut} transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter], delay: Math.min(glyph.order * motionTokens.stagger.char, .1), layout: motionTokens.spring.morph }}>{glyph.char}</motion.span>)}
       </AnimatePresence>
     </span>
   </motion.span>;
 }
 
-export function ActionButton({ label, successLabel = "Saved", pendingLabel = "Saving", onAction, resetAfterMs = 2400, onActionError, className, disabled, ...props }: ActionButtonProps) {
+export function ActionButton({ label, successLabel = "Saved", pendingLabel = "Saving", onAction, resetAfterMs = 2400, onActionError, className, classNames, disabled, ...props }: ActionButtonProps) {
   const [state, setState] = useState<"idle" | "pending" | "success">("idle");
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -128,9 +141,9 @@ export function ActionButton({ label, successLabel = "Saved", pendingLabel = "Sa
 
   // Pending stays focusable (aria-disabled instead of disabled), so a keyboard user keeps focus through the whole save.
   return <motion.button {...props} ref={buttonRef} tabIndex={props.tabIndex ?? 0} type={props.type ?? "button"} className={[styles.button, className].filter(Boolean).join(" ")} disabled={disabled} aria-disabled={pending ? true : props["aria-disabled"]} aria-busy={pending} data-state={state} onClick={run} custom={buttonRef} variants={pressVariants} whileTap={reduceMotion || disabled || pending ? undefined : "pressed"} transition={motionTokens.spring.snappy}>
-    <span className={styles.content} aria-hidden="true">
-      <MorphText text={text} reduced={reduceMotion} />
-      <span className={styles.iconSlot}><AnimatePresence initial={false}><motion.span key={state} className={styles.phase} initial={reduceMotion ? fadeIn : arrow ? arrowIn : iconIn} animate={iconRest} exit={reduceMotion ? fadeOut : arrow ? arrowOut : iconOut} transition={reduceMotion ? { duration: motionTokens.duration.instant } : iconEnter}>{pending ? <span className={styles.spinner} /> : state === "success" ? <DrawnCheck reduced={reduceMotion} /> : <ArrowRight className={styles.arrow} width={17} height={17} />}</motion.span></AnimatePresence></span>
+    <span className={cn(styles.content, classNames?.content)} aria-hidden="true">
+      <MorphText text={text} reduced={reduceMotion} classNames={classNames} />
+      <span className={cn(styles.iconSlot, classNames?.iconSlot)}><AnimatePresence initial={false}><motion.span key={state} className={cn(styles.phase, classNames?.phase)} initial={reduceMotion ? fadeIn : arrow ? arrowIn : iconIn} animate={iconRest} exit={reduceMotion ? fadeOut : arrow ? arrowOut : iconOut} transition={reduceMotion ? { duration: motionTokens.duration.instant } : iconEnter}>{pending ? <span className={cn(styles.spinner, classNames?.spinner)} /> : state === "success" ? <DrawnCheck reduced={reduceMotion} classNames={classNames} /> : <ArrowRight className={cn(styles.arrow, classNames?.arrow)} width={17} height={17} />}</motion.span></AnimatePresence></span>
     </span>
     <span className={styles.visuallyHidden}>{label}</span>
     <span className={styles.visuallyHidden} role="status">{state === "pending" ? pendingLabel : state === "success" ? successLabel : ""}</span>

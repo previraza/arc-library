@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type KeyboardEvent, type PointerEvent, type Ref } from "react";
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useSpring, useTransform, type MotionValue } from "motion/react";
+import { cn } from "@/lib/cn";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./line-chart.module.css";
 
@@ -61,6 +62,35 @@ export interface LineChartProps {
   curve?: "smooth" | "linear";
   ref?: Ref<HTMLElement>;
   className?: string;
+  /** Extend the inner, named parts of the line-chart: figure, legend, toggle, swatch, toggleLabel, grid, tick, tickText, svg, baseline, crosshair, series, line, dot, tooltip, tipTitle, tipRow, tipSwatch, tipName, tipValue, message, skeleton, gutter, axis or axisLabel. */
+  classNames?: {
+    figure?: string;
+    legend?: string;
+    toggle?: string;
+    swatch?: string;
+    toggleLabel?: string;
+    grid?: string;
+    tick?: string;
+    tickText?: string;
+    svg?: string;
+    baseline?: string;
+    crosshair?: string;
+    series?: string;
+    area?: string;
+    line?: string;
+    dot?: string;
+    tooltip?: string;
+    tipTitle?: string;
+    tipRow?: string;
+    tipSwatch?: string;
+    tipName?: string;
+    tipValue?: string;
+    message?: string;
+    skeleton?: string;
+    gutter?: string;
+    axis?: string;
+    axisLabel?: string;
+  };
 }
 
 type Point = [x: number, value: number];
@@ -152,15 +182,15 @@ function useRowY(value: number, scale: Scale, height: number) {
 }
 
 /** A gridline rides the scale, so a taller range slides it down while new rows fade in above. */
-function Gridline({ value, scale, height }: { value: number; scale: Scale; height: number }) {
+function Gridline({ value, scale, height, classNames }: { value: number; scale: Scale; height: number; classNames?: LineChartProps["classNames"] }) {
   const y = useRowY(value, scale, height);
-  return <motion.line className={styles.grid} x1={0} x2="100%" y1={y} y2={y} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }} />;
+  return <motion.line className={cn(styles.grid, classNames?.grid)} x1={0} x2="100%" y1={y} y2={y} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }} />;
 }
 
-function TickLabel({ value, scale, height, format }: { value: number; scale: Scale; height: number; format: (value: number) => string }) {
+function TickLabel({ value, scale, height, format, classNames }: { value: number; scale: Scale; height: number; format: (value: number) => string; classNames?: LineChartProps["classNames"] }) {
   const y = useRowY(value, scale, height);
-  return <motion.span className={styles.tick} style={{ y }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }}>
-    <span className={styles.tickText}>{format(value)}</span>
+  return <motion.span className={cn(styles.tick, classNames?.tick)} style={{ y }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }}>
+    <span className={cn(styles.tickText, classNames?.tickText)}>{format(value)}</span>
   </motion.span>;
 }
 
@@ -173,7 +203,7 @@ function axisPicks(data: LineChartDatum[], width: number) {
   return labeled.reverse().filter((_, rank) => rank % stride === 0).reverse();
 }
 
-export function LineChart({ data, series, label, unit = "", height = 220, formatValue, formatTick = value => compact.format(value), hiddenSeries, defaultHiddenSeries, onHiddenSeriesChange, onActiveChange, loading = false, emptyLabel = "No data for this range", legend, categoryLabel = "Date", curve = "smooth", ref, className }: LineChartProps) {
+export function LineChart({ data, series, label, unit = "", height = 220, formatValue, formatTick = value => compact.format(value), hiddenSeries, defaultHiddenSeries, onHiddenSeriesChange, onActiveChange, loading = false, emptyLabel = "No data for this range", legend, categoryLabel = "Date", curve = "smooth", ref, className, classNames }: LineChartProps) {
   const reduced = useReducedMotionSafe();
   const figure = useRef<HTMLElement>(null);
   const plot = useRef<HTMLDivElement>(null);
@@ -376,9 +406,9 @@ export function LineChart({ data, series, label, unit = "", height = 220, format
   const tipX = reduced ? tipTargetX : tipSpringX, tipY = reduced ? tipTargetY : tipSpringY;
 
   return <figure ref={figure} className={[styles.figure, className].filter(Boolean).join(" ")} aria-label={label} aria-busy={loading || undefined}>
-    {showLegend && <div className={styles.legend} role="group" aria-label={`${label} series`}>
-      {series.map((line, at) => <button key={line.key} type="button" className={styles.toggle} aria-pressed={!hidden.includes(line.key)} onClick={() => toggle(line.key)} style={{ "--series": colorOf(line, at) } as CSSProperties}>
-        <span className={styles.swatch} data-dashed={line.dashed || undefined} aria-hidden="true" />
+    {showLegend && <div className={cn(styles.legend, classNames?.legend)} role="group" aria-label={`${label} series`}>
+      {series.map((line, at) => <button key={line.key} type="button" className={cn(styles.toggle, classNames?.toggle)} aria-pressed={!hidden.includes(line.key)} onClick={() => toggle(line.key)} style={{ "--series": colorOf(line, at) } as CSSProperties}>
+        <span className={cn(styles.swatch, classNames?.swatch)} data-dashed={line.dashed || undefined} aria-hidden="true" />
         <span className={styles.toggleLabel}>{line.label}</span>
       </button>)}
     </div>}
@@ -386,36 +416,36 @@ export function LineChart({ data, series, label, unit = "", height = 220, format
       <div ref={plot} className={styles.plot} style={{ height }} role="slider" tabIndex={empty ? -1 : 0} aria-label={`${label}, explore by ${categoryLabel.toLowerCase()}`} aria-orientation="horizontal" aria-valuemin={1} aria-valuemax={Math.max(1, data.length)} aria-valuenow={(index ?? last) + 1} aria-valuetext={valueText}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={event => { if (event.pointerType !== "mouse") setActive(null); }} onPointerCancel={() => setActive(null)} onPointerLeave={event => { if (event.pointerType === "mouse") setActive(null); }} onKeyDown={onKeyDown} onBlur={() => setActive(null)}
         onFocus={event => { if (event.currentTarget.matches(":focus-visible") && !empty) setActive(current => current ?? last); }}>
-        <svg className={styles.svg} width="100%" height={height} aria-hidden="true" focusable="false">
+        <svg className={cn(styles.svg, classNames?.svg)} width="100%" height={height} aria-hidden="true" focusable="false">
           <defs><clipPath id={`${uid}-draw`} clipPathUnits="userSpaceOnUse"><rect ref={clip} x={-8} y={-16} width={0} height={height + 32} /></clipPath></defs>
-          <AnimatePresence initial={false}>{steady.ticks.slice(1).map(value => <Gridline key={value} value={value} scale={scale} height={height} />)}</AnimatePresence>
-          <line className={styles.baseline} x1={0} x2="100%" y1={height - .5} y2={height - .5} />
-          <line ref={crosshair} className={styles.crosshair} y1={TOP - 4} y2={height} />
-          <g className={styles.series} clipPath={`url(#${uid}-draw)`}>
+          <AnimatePresence initial={false}>{steady.ticks.slice(1).map(value => <Gridline key={value} value={value} scale={scale} height={height} classNames={classNames} />)}</AnimatePresence>
+          <line className={cn(styles.baseline, classNames?.baseline)} x1={0} x2="100%" y1={height - .5} y2={height - .5} />
+          <line ref={crosshair} className={cn(styles.crosshair, classNames?.crosshair)} y1={TOP - 4} y2={height} />
+          <g className={cn(styles.series, classNames?.series)} clipPath={`url(#${uid}-draw)`}>
             {series.map((line, at) => <g key={line.key} ref={node => { if (node) groups.current.set(line.key, node); else groups.current.delete(line.key); }} style={{ "--series": colorOf(line, at) } as CSSProperties}>
-              {(line.area ?? at === 0) && <path ref={node => { if (node) areas.current.set(line.key, node); else areas.current.delete(line.key); }} className={styles.area} />}
-              <path ref={node => { if (node) lines.current.set(line.key, node); else lines.current.delete(line.key); }} className={styles.line} data-dashed={line.dashed || undefined} />
+              {(line.area ?? at === 0) && <path ref={node => { if (node) areas.current.set(line.key, node); else areas.current.delete(line.key); }} className={cn(styles.area, classNames?.area)} />}
+              <path ref={node => { if (node) lines.current.set(line.key, node); else lines.current.delete(line.key); }} className={cn(styles.line, classNames?.line)} data-dashed={line.dashed || undefined} />
             </g>)}
           </g>
-          {series.map((line, at) => <circle key={line.key} ref={node => { if (node) dots.current.set(line.key, node); else dots.current.delete(line.key); }} className={styles.dot} r={4} data-hidden={hidden.includes(line.key) || undefined} style={{ "--series": colorOf(line, at) } as CSSProperties} />)}
+          {series.map((line, at) => <circle key={line.key} ref={node => { if (node) dots.current.set(line.key, node); else dots.current.delete(line.key); }} className={cn(styles.dot, classNames?.dot)} r={4} data-hidden={hidden.includes(line.key) || undefined} style={{ "--series": colorOf(line, at) } as CSSProperties} />)}
         </svg>
-        <motion.div ref={tip} className={styles.tooltip} style={{ x: tipX, y: tipY }} aria-hidden="true">
-          <p className={styles.tipTitle}>{(reading ?? data[last])?.label ?? ""}</p>
+        <motion.div ref={tip} className={cn(styles.tooltip, classNames?.tooltip)} style={{ x: tipX, y: tipY }} aria-hidden="true">
+          <p className={cn(styles.tipTitle, classNames?.tipTitle)}>{(reading ?? data[last])?.label ?? ""}</p>
           {visible.map(line => <p key={line.key} className={styles.tipRow} style={{ "--series": colorOf(line, series.indexOf(line)) } as CSSProperties}>
-            <span className={styles.tipSwatch} data-dashed={line.dashed || undefined} />
-            <span className={styles.tipName}>{line.label}</span>
-            <span className={styles.tipValue}>{format((reading ?? data[last])?.values[line.key] ?? 0, line)}</span>
+            <span className={cn(styles.tipSwatch, classNames?.tipSwatch)} data-dashed={line.dashed || undefined} />
+            <span className={cn(styles.tipName, classNames?.tipName)}>{line.label}</span>
+            <span className={cn(styles.tipValue, classNames?.tipValue)}>{format((reading ?? data[last])?.values[line.key] ?? 0, line)}</span>
           </p>)}
         </motion.div>
         <AnimatePresence initial={false}>
-          {(empty || allHidden) && !loading && <motion.p key={empty ? "empty" : "hidden"} className={styles.message} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }}>{empty ? emptyLabel : "Choose a series to show"}</motion.p>}
-          {loading && empty && <motion.span key="skeleton" className={styles.skeleton} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} aria-hidden="true" />}
+          {(empty || allHidden) && !loading && <motion.p key={empty ? "empty" : "hidden"} className={cn(styles.message, classNames?.message)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }}>{empty ? emptyLabel : "Choose a series to show"}</motion.p>}
+          {loading && empty && <motion.span key="skeleton" className={cn(styles.skeleton, classNames?.skeleton)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} aria-hidden="true" />}
         </AnimatePresence>
       </div>
-      <div className={styles.gutter} aria-hidden="true">
-        <AnimatePresence initial={false}>{steady.ticks.map(value => <TickLabel key={value} value={value} scale={scale} height={height} format={formatTick} />)}</AnimatePresence>
+      <div className={cn(styles.gutter, classNames?.gutter)} aria-hidden="true">
+        <AnimatePresence initial={false}>{steady.ticks.map(value => <TickLabel key={value} value={value} scale={scale} height={height} format={formatTick} classNames={classNames} />)}</AnimatePresence>
       </div>
-      <div className={styles.axis} aria-hidden="true">
+      <div className={cn(styles.axis, classNames?.axis)} aria-hidden="true">
         <AnimatePresence initial={false}>
           {picks.map(at => { const share = last > 0 ? at / last : .5; return <motion.span key={`${data[at].key}:${data[at].axisLabel}`} className={styles.axisLabel} style={{ left: `${share * 100}%`, translateX: `${-share * 100}%` }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }}>{data[at].axisLabel}</motion.span>; })}
         </AnimatePresence>

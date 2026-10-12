@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useSyncExternalStore } from "react"
 import { AnimatePresence, animate, motion, useInView, useMotionValue, usePageInView, useReducedMotion, useTransform } from "motion/react";
 import type { AnimationPlaybackControls } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./text-shimmer.module.css";
 const subscribeHydration = () => () => {};
 const clientSnapshot = () => true;
@@ -34,8 +35,13 @@ export interface TextShimmerProps {
   as?: "span" | "p" | "div" | "h2" | "h3" | "h4";
   className?: string;
   id?: string;
+  /** Extend the inner, named parts of the text shimmer: stage or label. */
+  classNames?: {
+    stage?: string;
+    label?: string;
+  };
 }
-export function TextShimmer({ children, active = true, duration = 1.8, as = "span", className, id }: TextShimmerProps) {
+export function TextShimmer({ children, active = true, duration = 1.8, as = "span", className, id, classNames }: TextShimmerProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const prefersReduced = useReducedMotion();
   const hydrated = useSyncExternalStore(subscribeHydration, clientSnapshot, serverSnapshot);
@@ -100,9 +106,9 @@ export function TextShimmer({ children, active = true, duration = 1.8, as = "spa
   }, []);
 
   return <Tag id={id} className={[styles.shimmer, className].filter(Boolean).join(" ")} data-state={active ? "active" : "idle"} aria-busy={active || undefined}>
-    <span ref={ref} className={styles.stage}>
+    <span ref={ref} className={cn(styles.stage, classNames?.stage)}>
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={children} className={styles.label} style={{ backgroundImage }}
+        <motion.span key={children} className={cn(styles.label, classNames?.label)} style={{ backgroundImage }}
           initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }}
           animate={reduced ? { opacity: 1 } : { opacity: 1, y: "0em", filter: "blur(0px)" }}
           exit={reduced ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : { opacity: 0, y: "-0.24em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] } }}

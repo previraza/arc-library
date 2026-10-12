@@ -5,6 +5,7 @@ import type { CSSProperties, HTMLAttributes, KeyboardEvent as ReactKeyboardEvent
 import { animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import type { Transition } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./radio-cards.module.css";
 
 export interface RadioCardOption {
@@ -39,6 +40,19 @@ export interface RadioCardsProps extends Omit<HTMLAttributes<HTMLDivElement>, "o
   name?: string;
   required?: boolean;
   disabled?: boolean;
+  /** Extend the inner, named parts of the radio cards: ring, card, indicator, indicatorDot, body, label, icon, labelText, description or meta. */
+  classNames?: {
+    ring?: string;
+    card?: string;
+    indicator?: string;
+    indicatorDot?: string;
+    body?: string;
+    label?: string;
+    icon?: string;
+    labelText?: string;
+    description?: string;
+    meta?: string;
+  };
 }
 
 type Bezier = [number, number, number, number];
@@ -56,7 +70,7 @@ function useReducedFlag() {
 }
 
 export const RadioCards = forwardRef<HTMLDivElement, RadioCardsProps>(function RadioCards({
-  options, value, defaultValue = null, onValueChange, layout = "grid", minColumnWidth = 180, name, required, disabled = false, className, style, ...rest
+  options, value, defaultValue = null, onValueChange, layout = "grid", minColumnWidth = 180, name, required, disabled = false, className, style, classNames, ...rest
 }, forwardedRef) {
   const reduced = useReducedFlag();
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
@@ -125,25 +139,25 @@ export const RadioCards = forwardRef<HTMLDivElement, RadioCardsProps>(function R
   return <div ref={rootRef} role="radiogroup" aria-disabled={disabled || undefined} aria-required={required || undefined}
     className={[styles.root, className].filter(Boolean).join(" ")} data-layout={layout}
     style={{ "--min-column": `${minColumnWidth}px`, ...style } as CSSProperties} {...rest}>
-    <motion.span className={styles.ring} style={{ x, y, width: w, height: h, opacity: o }} aria-hidden="true" />
+    <motion.span className={cn(styles.ring, classNames?.ring)} style={{ x, y, width: w, height: h, opacity: o }} aria-hidden="true" />
     {options.map((option, index) => {
       const checked = index === selectedIndex, off = !usable(option);
       const labelId = `${uid}-${index}-label`, descriptionId = `${uid}-${index}-description`;
       const description = off && option.disabledReason ? option.disabledReason : option.description;
-      return <div key={option.value} role="radio" data-card={index} className={styles.card} aria-checked={checked} aria-disabled={off || undefined}
+      return <div key={option.value} role="radio" data-card={index} className={cn(styles.card, classNames?.card)} aria-checked={checked} aria-disabled={off || undefined}
         aria-labelledby={labelId} aria-describedby={description ? descriptionId : undefined} tabIndex={index === tabStop ? 0 : -1}
         data-checked={checked || undefined} onClick={() => { if (!off) select(option.value); }} onKeyDown={event => onKeyDown(event, index)}>
-        <span className={styles.indicator} aria-hidden="true">
-          <motion.span className={styles.indicatorDot} initial={false} animate={{ scale: checked ? 1 : 0 }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy} />
+        <span className={cn(styles.indicator, classNames?.indicator)} aria-hidden="true">
+          <motion.span className={cn(styles.indicatorDot, classNames?.indicatorDot)} initial={false} animate={{ scale: checked ? 1 : 0 }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy} />
         </span>
-        <span className={styles.body}>
-          <span id={labelId} className={styles.label}>
-            {option.icon && <span className={styles.icon}>{option.icon}</span>}
-            <span className={styles.labelText}>{option.label}</span>
+        <span className={cn(styles.body, classNames?.body)}>
+          <span id={labelId} className={cn(styles.label, classNames?.label)}>
+            {option.icon && <span className={cn(styles.icon, classNames?.icon)}>{option.icon}</span>}
+            <span className={cn(styles.labelText, classNames?.labelText)}>{option.label}</span>
           </span>
-          {description && <span id={descriptionId} className={styles.description}>{description}</span>}
+          {description && <span id={descriptionId} className={cn(styles.description, classNames?.description)}>{description}</span>}
         </span>
-        {option.meta && <span className={styles.meta}>{option.meta}</span>}
+        {option.meta && <span className={cn(styles.meta, classNames?.meta)}>{option.meta}</span>}
       </div>;
     })}
     {name && <input type="hidden" name={name} value={selected ?? ""} required={required} />}

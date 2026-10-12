@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform, type Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./gauge.module.css";
 
 type GaugeTone = "accent" | "success" | "warning" | "danger";
 /** A band that starts at `from`: the highest band the value reaches sets the tone and names the state, so it never rests on color alone. */
 export interface GaugeThreshold { from: number; tone: GaugeTone; label: string; }
-export interface GaugeProps { value: number; min?: number; max?: number; label: string; detail?: string; tone?: GaugeTone; thresholds?: GaugeThreshold[]; }
+export interface GaugeProps { value: number; min?: number; max?: number; label: string; detail?: string; tone?: GaugeTone; thresholds?: GaugeThreshold[]; classNames?: { visual?: string; readout?: string; number?: string; unit?: string; sizer?: string; status?: string; detail?: string; }; }
 
 /** Copy enters from the side the value moved toward: a rise comes up from below, a fall drops from above. */
 const rise: Variants = { hidden: (direction: number) => ({ opacity: 0, y: `${.3 * direction}em`, filter: `blur(${motionTokens.blur.soft}px)` }), shown: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] } }, gone: (direction: number) => ({ opacity: 0, y: `${-.3 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] } }) };
@@ -32,7 +33,7 @@ function arcFor(sweep: number) {
 }
 const track = arcFor(1);
 
-export function Gauge({ value, min = 0, max = 100, label, detail, tone = "accent", thresholds }: GaugeProps) {
+export function Gauge({ value, min = 0, max = 100, label, detail, tone = "accent", thresholds, classNames }: GaugeProps) {
   const safeMax = max > min ? max : min + 1;
   const percentage = Math.min(1, Math.max(0, (value - min) / (safeMax - min)));
   const displayValue = Math.round(percentage * 100);
@@ -91,14 +92,14 @@ export function Gauge({ value, min = 0, max = 100, label, detail, tone = "accent
   }, [digitsWidth, reduceMotion]);
 
   return <figure ref={ref} className={[styles.figure, styles[activeTone]].join(" ")} aria-label={`${label}: ${value} of ${safeMax}${band ? `, ${band.label}` : ""}`}>
-    <div className={styles.visual} role="meter" aria-label={label} aria-valuemin={min} aria-valuemax={safeMax} aria-valuenow={Math.min(safeMax, Math.max(min, value))} aria-valuetext={`${displayValue}%${band ? `, ${band.label}` : ""}`}>
+    <div className={cn(styles.visual, classNames?.visual)} role="meter" aria-label={label} aria-valuemin={min} aria-valuemax={safeMax} aria-valuenow={Math.min(safeMax, Math.max(min, value))} aria-valuetext={`${displayValue}%${band ? `, ${band.label}` : ""}`}>
       <svg viewBox="0 0 100 90" aria-hidden="true" focusable="false"><path className={styles.track} d={track} /><motion.path className={styles.arc} d={path} style={{ opacity: arcOpacity }} /></svg>
-      <div className={styles.readout} aria-hidden="true">
-        <span className={styles.number}><motion.span className={styles.digits} style={{ width: digitsWidth }}>{digits}</motion.span><span className={styles.unit}>%</span><span ref={sizer} className={styles.sizer}>{displayValue}</span></span>
-        {thresholds && <span className={styles.status}><Swap text={filled ? shown?.label ?? "" : ""} direction={moved.direction} /></span>}
+      <div className={cn(styles.readout, classNames?.readout)} aria-hidden="true">
+        <span className={cn(styles.number, classNames?.number)}><motion.span className={styles.digits} style={{ width: digitsWidth }}>{digits}</motion.span><span className={cn(styles.unit, classNames?.unit)}>%</span><span ref={sizer} className={cn(styles.sizer, classNames?.sizer)}>{displayValue}</span></span>
+        {thresholds && <span className={cn(styles.status, classNames?.status)}><Swap text={filled ? shown?.label ?? "" : ""} direction={moved.direction} /></span>}
       </div>
     </div>
-    <figcaption><strong><Swap text={label} /></strong>{detail && <span className={styles.detail}><Swap text={detail} direction={moved.direction} /></span>}</figcaption>
+    <figcaption><strong><Swap text={label} /></strong>{detail && <span className={cn(styles.detail, classNames?.detail)}><Swap text={detail} direction={moved.direction} /></span>}</figcaption>
   </figure>;
 }
 

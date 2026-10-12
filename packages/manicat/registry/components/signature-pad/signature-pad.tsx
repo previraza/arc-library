@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useReducedMotion } from "motion/react
 import type { Transition } from "motion/react";
 import { Check, Download, Eraser, Play, Redo2, Square, Undo2, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./signature-pad.module.css";
 
 /** A sampled point: position in pad units, pen pressure between 0 and 1 (or -1 when the device has none), and ms since the stroke began. */
@@ -242,6 +243,33 @@ export interface SignaturePadProps {
   /** Accessible name of the drawing surface. */
   label?: string;
   className?: string;
+  /** Extend the inner, named parts of the signature pad: pad, guide, mark, baseline, signer, hint, ink, stroke, nib, sweep, toolbar, group, swatch, divider, weight, iconButton, swap, exports, exportLabel, export, exportContent, choice, option or selected. */
+  classNames?: {
+    pad?: string;
+    guide?: string;
+    mark?: string;
+    baseline?: string;
+    signer?: string;
+    hint?: string;
+    ink?: string;
+    stroke?: string;
+    nib?: string;
+    sweep?: string;
+    toolbar?: string;
+    group?: string;
+    swatch?: string;
+    divider?: string;
+    weight?: string;
+    iconButton?: string;
+    swap?: string;
+    exports?: string;
+    exportLabel?: string;
+    export?: string;
+    exportContent?: string;
+    choice?: string;
+    option?: string;
+    selected?: string;
+  };
 }
 
 /** `fresh` is the stroke just drawn: it is already on screen from the live path, so it appears without a fade. */
@@ -255,7 +283,7 @@ function useReducedFlag() {
   return !!useReducedMotion() && hydrated;
 }
 
-export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black", defaultWidth = "medium", onChange, fileName = "signature", label = "Signature pad", className }: SignaturePadProps) {
+export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black", defaultWidth = "medium", onChange, fileName = "signature", label = "Signature pad", className, classNames }: SignaturePadProps) {
   const uid = useId().replace(/[^a-zA-Z0-9-]/g, "");
   const reduced = useReducedFlag();
   const [history, setHistory] = useState<History>({ past: [], present: [], future: [], fresh: null });
@@ -443,64 +471,64 @@ export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black
   const t: Transition = reduced ? { duration: duration.instant } : spring.snappy;
 
   return <div className={[styles.root, className].filter(Boolean).join(" ")} data-ink={color}>
-    <div ref={padRef} className={styles.pad} tabIndex={0} role="img" aria-roledescription="signature pad"
+    <div ref={padRef} className={cn(styles.pad, classNames?.pad)} tabIndex={0} role="img" aria-roledescription="signature pad"
       aria-label={`${label}. ${empty ? "Empty." : `${strokes.length} ${strokes.length === 1 ? "stroke" : "strokes"}.`} Draw with a pointer, pen, or finger.`}
       aria-describedby={`${uid}-keys`} data-drawing={drawing ? "" : undefined}
       onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onKeyDown={onKeyDown}>
-      <div className={styles.guide} aria-hidden="true">
-        <X className={styles.mark} size={14} strokeWidth={1.75} />
-        <span className={styles.baseline} />
-        {signer && <span className={styles.signer}>{signer}</span>}
+      <div className={cn(styles.guide, classNames?.guide)} aria-hidden="true">
+        <X className={cn(styles.mark, classNames?.mark)} size={14} strokeWidth={1.75} />
+        <span className={cn(styles.baseline, classNames?.baseline)} />
+        {signer && <span className={cn(styles.signer, classNames?.signer)}>{signer}</span>}
         <AnimatePresence initial={false}>
-          {showHint && <motion.span key="hint" className={styles.hint} initial={hintHidden} animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          {showHint && <motion.span key="hint" className={cn(styles.hint, classNames?.hint)} initial={hintHidden} animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             exit={{ ...hintHidden, transition: { duration: duration.fast, ease: [...ease.standard] } }}
             transition={reduced ? { duration: duration.instant } : { duration: duration.standard, ease: [...ease.enter] }}>{hint}</motion.span>}
         </AnimatePresence>
       </div>
-      <div ref={inkRef} className={styles.ink}>
+      <div ref={inkRef} className={cn(styles.ink, classNames?.ink)}>
         <svg viewBox={`0 0 ${PAD_WIDTH} ${PAD_HEIGHT}`} preserveAspectRatio="none" aria-hidden="true">
           <AnimatePresence initial={false}>
-            {visible.map(({ stroke, d }) => <motion.path key={stroke.id} className={styles.stroke} data-color={stroke.color}
+            {visible.map(({ stroke, d }) => <motion.path key={stroke.id} className={cn(styles.stroke, classNames?.stroke)} data-color={stroke.color}
               d={d ?? strokePath(stroke)} initial={history.fresh === stroke.id ? false : { opacity: 0 }} animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: wiping ? 0 : duration.standard, ease: [...ease.standard] } }}
               transition={{ duration: duration.standard, ease: [...ease.standard] }} />)}
           </AnimatePresence>
-          <path ref={liveRef} className={styles.stroke} data-color={color} />
-          {nib && <circle className={styles.nib} data-color={nibColor} cx={nib.x} cy={nib.y} r={WIDTHS[width].size * .9} />}
+          <path ref={liveRef} className={cn(styles.stroke, classNames?.stroke)} data-color={color} />
+          {nib && <circle className={cn(styles.nib, classNames?.nib)} data-color={nibColor} cx={nib.x} cy={nib.y} r={WIDTHS[width].size * .9} />}
         </svg>
       </div>
-      {wiping && <motion.span className={styles.sweep} aria-hidden="true" initial={{ x: "0%", opacity: 0 }} animate={{ x: "100%", opacity: [0, 1, 1, 0] }}
+      {wiping && <motion.span className={cn(styles.sweep, classNames?.sweep)} aria-hidden="true" initial={{ x: "0%", opacity: 0 }} animate={{ x: "100%", opacity: [0, 1, 1, 0] }}
         transition={{ duration: .56, ease: [...ease.inOut], opacity: { duration: .56, times: [0, .12, .85, 1] } }} />}
     </div>
 
-    <div className={styles.toolbar}>
-      <div className={styles.group}>
-        <Choice label="Ink color" options={COLORS} value={color} onChange={next => { setColor(next); setStatus(`${INK[next].label} selected`); }} layoutId={`${uid}-color`} reduced={reduced}
-          render={option => <span className={styles.swatch} data-color={option} />} name={option => INK[option].label} />
-        <span className={styles.divider} aria-hidden="true" />
-        <Choice label="Stroke width" options={SIZES} value={width} onChange={next => { setWidth(next); setStatus(`${WIDTHS[next].label} nib selected`); }} layoutId={`${uid}-width`} reduced={reduced}
-          render={option => <span className={styles.weight} style={{ width: WIDTHS[option].size + 2, height: WIDTHS[option].size + 2 }} />} name={option => WIDTHS[option].label} />
+    <div className={cn(styles.toolbar, classNames?.toolbar)}>
+      <div className={cn(styles.group, classNames?.group)}>
+        <Choice label="Ink color" options={COLORS} value={color} onChange={next => { setColor(next); setStatus(`${INK[next].label} selected`); }} layoutId={`${uid}-color`} reduced={reduced} classNames={classNames}
+          render={option => <span className={cn(styles.swatch, classNames?.swatch)} data-color={option} />} name={option => INK[option].label} />
+        <span className={cn(styles.divider, classNames?.divider)} aria-hidden="true" />
+        <Choice label="Stroke width" options={SIZES} value={width} onChange={next => { setWidth(next); setStatus(`${WIDTHS[next].label} nib selected`); }} layoutId={`${uid}-width`} reduced={reduced} classNames={classNames}
+          render={option => <span className={cn(styles.weight, classNames?.weight)} style={{ width: WIDTHS[option].size + 2, height: WIDTHS[option].size + 2 }} />} name={option => WIDTHS[option].label} />
       </div>
-      <div className={styles.group}>
-        <IconButton label="Undo" onClick={undo} disabled={!history.past.length || wiping}><Undo2 size={18} strokeWidth={1.75} aria-hidden="true" /></IconButton>
-        <IconButton label="Redo" onClick={redo} disabled={!history.future.length || wiping}><Redo2 size={18} strokeWidth={1.75} aria-hidden="true" /></IconButton>
-        <IconButton label={replaying ? "Stop replay" : "Replay signature"} onClick={toggleReplay} disabled={empty || wiping} pressed={replaying}>
+      <div className={cn(styles.group, classNames?.group)}>
+        <IconButton label="Undo" onClick={undo} disabled={!history.past.length || wiping} classNames={classNames}><Undo2 size={18} strokeWidth={1.75} aria-hidden="true" /></IconButton>
+        <IconButton label="Redo" onClick={redo} disabled={!history.future.length || wiping} classNames={classNames}><Redo2 size={18} strokeWidth={1.75} aria-hidden="true" /></IconButton>
+        <IconButton label={replaying ? "Stop replay" : "Replay signature"} onClick={toggleReplay} disabled={empty || wiping} pressed={replaying} classNames={classNames}>
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span key={replaying ? "stop" : "play"} className={styles.swap} initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .6 }} transition={t}>
+            <motion.span key={replaying ? "stop" : "play"} className={cn(styles.swap, classNames?.swap)} initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .6 }} transition={t}>
               {replaying ? <Square size={15} strokeWidth={1.75} aria-hidden="true" /> : <Play size={17} strokeWidth={1.75} aria-hidden="true" />}
             </motion.span>
           </AnimatePresence>
         </IconButton>
-        <IconButton label="Clear signature" onClick={clear} disabled={empty || wiping}><Eraser size={18} strokeWidth={1.75} aria-hidden="true" /></IconButton>
+        <IconButton label="Clear signature" onClick={clear} disabled={empty || wiping} classNames={classNames}><Eraser size={18} strokeWidth={1.75} aria-hidden="true" /></IconButton>
       </div>
     </div>
 
-    <div className={styles.exports}>
-      <span className={styles.exportLabel}>Save as</span>
-      {(["png", "svg"] as const).map(kind => <button key={kind} type="button" className={styles.export} onClick={() => save(kind)} disabled={empty}
+    <div className={cn(styles.exports, classNames?.exports)}>
+      <span className={cn(styles.exportLabel, classNames?.exportLabel)}>Save as</span>
+      {(["png", "svg"] as const).map(kind => <button key={kind} type="button" className={cn(styles.export, classNames?.export)} onClick={() => save(kind)} disabled={empty}
         aria-label={`Download ${kind.toUpperCase()}`}>
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span key={saved === kind ? "done" : saved === "failed" ? "failed" : "idle"} className={styles.exportContent}
+          <motion.span key={saved === kind ? "done" : saved === "failed" ? "failed" : "idle"} className={cn(styles.exportContent, classNames?.exportContent)}
             initial={{ opacity: 0, y: reduced ? 0 : 4, filter: reduced ? "blur(0px)" : `blur(${blur.subtle}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: reduced ? 0 : -4, transition: { duration: duration.instant } }} transition={reduced ? { duration: duration.instant } : { duration: duration.fast, ease: [...ease.enter] }}>
             {saved === kind ? <><Check size={15} strokeWidth={1.75} aria-hidden="true" />Saved</> : <><Download size={15} strokeWidth={1.75} aria-hidden="true" />{kind.toUpperCase()}</>}
@@ -513,13 +541,13 @@ export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black
   </div>;
 }
 
-function IconButton({ label, onClick, disabled, pressed, children }: { label: string; onClick: () => void; disabled?: boolean; pressed?: boolean; children: ReactNode }) {
-  return <button type="button" className={styles.iconButton} aria-label={label} title={label} onClick={onClick} disabled={disabled} aria-pressed={pressed}>{children}</button>;
+function IconButton({ label, onClick, disabled, pressed, classNames, children }: { label: string; onClick: () => void; disabled?: boolean; pressed?: boolean; classNames: SignaturePadProps["classNames"]; children: ReactNode }) {
+  return <button type="button" className={cn(styles.iconButton, classNames?.iconButton)} aria-label={label} title={label} onClick={onClick} disabled={disabled} aria-pressed={pressed}>{children}</button>;
 }
 
 /** A compact radio group with a highlight that glides to the chosen option. Arrow keys move the choice. */
-function Choice<T extends string>({ label, options, value, onChange, render, name, layoutId, reduced }: {
-  label: string; options: T[]; value: T; onChange: (value: T) => void; render: (option: T) => ReactNode; name: (option: T) => string; layoutId: string; reduced: boolean;
+function Choice<T extends string>({ label, options, value, onChange, render, name, layoutId, reduced, classNames }: {
+  label: string; options: T[]; value: T; onChange: (value: T) => void; render: (option: T) => ReactNode; name: (option: T) => string; layoutId: string; reduced: boolean; classNames: SignaturePadProps["classNames"];
 }) {
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   function onKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
@@ -530,10 +558,10 @@ function Choice<T extends string>({ label, options, value, onChange, render, nam
     onChange(options[index]);
     refs.current[index]?.focus();
   }
-  return <div className={styles.choice} role="radiogroup" aria-label={label} onKeyDown={onKeyDown}>
+  return <div className={cn(styles.choice, classNames?.choice)} role="radiogroup" aria-label={label} onKeyDown={onKeyDown}>
     {options.map((option, index) => <button key={option} ref={node => { refs.current[index] = node; }} type="button" role="radio" aria-checked={option === value}
-      aria-label={name(option)} title={name(option)} tabIndex={option === value ? 0 : -1} className={styles.option} onClick={() => onChange(option)}>
-      {option === value && <motion.span layoutId={layoutId} className={styles.selected} transition={reduced ? { duration: 0 } : spring.morph} />}
+      aria-label={name(option)} title={name(option)} tabIndex={option === value ? 0 : -1} className={cn(styles.option, classNames?.option)} onClick={() => onChange(option)}>
+      {option === value && <motion.span layoutId={layoutId} className={cn(styles.selected, classNames?.selected)} transition={reduced ? { duration: 0 } : spring.morph} />}
       {render(option)}
     </button>)}
   </div>;

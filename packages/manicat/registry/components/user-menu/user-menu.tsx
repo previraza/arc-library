@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { PanInfo, Transition, Variants } from "motion/react";
 import { ChevronDown, LoaderCircle, LogOut, Monitor, Moon, Sun, SunMoon } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./user-menu.module.css";
 
 export type UserStatus = "available" | "busy" | "away";
@@ -61,6 +62,40 @@ export interface UserMenuProps {
   /** The trigger button, for returning focus after the menu is swapped out. */
   ref?: Ref<HTMLButtonElement>;
   className?: string;
+  /** Extend the inner, named parts of the user menu: dot, portrait, initials, face, rise, keys, key, row, icon, rowLabel, segments, thumb, segment, header, identity, nameRow, name, plan, email, list, highlight, separator, item, itemLabel, spinner, panel, sheet, scrim, handle, triggerName or chevron. */
+  classNames?: {
+    dot?: string;
+    portrait?: string;
+    initials?: string;
+    face?: string;
+    rise?: string;
+    keys?: string;
+    key?: string;
+    row?: string;
+    icon?: string;
+    rowLabel?: string;
+    segments?: string;
+    thumb?: string;
+    segment?: string;
+    header?: string;
+    identity?: string;
+    nameRow?: string;
+    name?: string;
+    plan?: string;
+    email?: string;
+    list?: string;
+    highlight?: string;
+    separator?: string;
+    item?: string;
+    itemLabel?: string;
+    spinner?: string;
+    panel?: string;
+    sheet?: string;
+    scrim?: string;
+    handle?: string;
+    triggerName?: string;
+    chevron?: string;
+  };
 }
 
 type Highlight = { top: number; height: number; tone?: string; glide: boolean };
@@ -93,43 +128,43 @@ export function PresenceDot({ status, className }: { status: UserStatus | "offli
   return <span className={[styles.dot, className].filter(Boolean).join(" ")} data-status={status} aria-hidden="true" />;
 }
 
-function Portrait({ user }: { user: UserMenuUser }) {
+function Portrait({ user, classNames }: { user: UserMenuUser; classNames: UserMenuProps["classNames"] }) {
   const [failed, setFailed] = useState<string>();
   if (!user.avatarSrc || failed === user.avatarSrc) {
     const initials = user.name.trim().split(/\s+/).slice(0, 2).map(part => part[0]?.toUpperCase()).join("");
-    return <span className={`${styles.portrait} ${styles.initials}`}>{initials}</span>;
+    return <span className={cn(styles.portrait, styles.initials, classNames?.portrait, classNames?.initials)}>{initials}</span>;
   }
   // eslint-disable-next-line @next/next/no-img-element -- registry components stay framework agnostic; pass optimized URLs as avatarSrc and avatarSrcSet.
-  return <img className={styles.portrait} src={user.avatarSrc} srcSet={user.avatarSrcSet} alt="" decoding="async" draggable={false} onError={() => setFailed(user.avatarSrc)} />;
+  return <img className={cn(styles.portrait, classNames?.portrait)} src={user.avatarSrc} srcSet={user.avatarSrcSet} alt="" decoding="async" draggable={false} onError={() => setFailed(user.avatarSrc)} />;
 }
 
-function Face({ user, status, size }: { user: UserMenuUser; status?: UserStatus; size: "sm" | "md" }) {
-  return <span className={styles.face} data-size={size}><Portrait user={user} />{status && <PresenceDot status={status} />}</span>;
+function Face({ user, status, size, classNames }: { user: UserMenuUser; status?: UserStatus; size: "sm" | "md"; classNames: UserMenuProps["classNames"] }) {
+  return <span className={cn(styles.face, classNames?.face)} data-size={size}><Portrait user={user} classNames={classNames} />{status && <PresenceDot status={status} className={classNames?.dot} />}</span>;
 }
 
 /** Changing text rises out of a small blur while the old text lifts away. */
-function Rise({ text, reduced }: { text: string; reduced: boolean }) {
+function Rise({ text, reduced, classNames }: { text: string; reduced: boolean; classNames: UserMenuProps["classNames"] }) {
   return <AnimatePresence mode="popLayout" initial={false}>
-    <motion.span key={text} className={styles.rise} initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.35em", filter: `blur(${motionTokens.blur.subtle}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+    <motion.span key={text} className={cn(styles.rise, classNames?.rise)} initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.35em", filter: `blur(${motionTokens.blur.subtle}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.35em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: standard } }}
       transition={reduced ? { duration: 0 } : { duration: motionTokens.duration.standard, ease: enter }}>{text}</motion.span>
   </AnimatePresence>;
 }
 
-function Keys({ keys }: { keys: string[] }) {
-  return <kbd className={styles.keys} aria-hidden="true">{keys.map((key, index) => <kbd key={`${key}-${index}`} className={styles.key}>{key}</kbd>)}</kbd>;
+function Keys({ keys, classNames }: { keys: string[]; classNames: UserMenuProps["classNames"] }) {
+  return <kbd className={cn(styles.keys, classNames?.keys)} aria-hidden="true">{keys.map((key, index) => <kbd key={`${key}-${index}`} className={cn(styles.key, classNames?.key)}>{key}</kbd>)}</kbd>;
 }
 
 /** A compact inline switch. It is one stop in the menu: up and down pass over it, left and right choose within it. */
-function Segmented<T extends string>({ label, icon, value, options, onChange, variants }: { label: string; icon: ReactNode; value: T; options: { value: T; label: string; icon: ReactNode }[]; onChange: (value: T) => void; variants?: Variants }) {
+function Segmented<T extends string>({ label, icon, value, options, onChange, variants, classNames }: { label: string; icon: ReactNode; value: T; options: { value: T; label: string; icon: ReactNode }[]; onChange: (value: T) => void; variants?: Variants; classNames: UserMenuProps["classNames"] }) {
   const index = Math.max(0, options.findIndex(option => option.value === value));
-  return <motion.div className={styles.row} data-stop="group" data-label={label} variants={variants}>
-    <span className={styles.icon} aria-hidden="true">{icon}</span>
-    <span className={styles.rowLabel} aria-hidden="true">{label}</span>
-    <div className={styles.segments} role="group" aria-label={label} style={{ "--index": index, "--count": options.length } as CSSProperties}>
-      <span className={styles.thumb} aria-hidden="true" />
+  return <motion.div className={cn(styles.row, classNames?.row)} data-stop="group" data-label={label} variants={variants}>
+    <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true">{icon}</span>
+    <span className={cn(styles.rowLabel, classNames?.rowLabel)} aria-hidden="true">{label}</span>
+    <div className={cn(styles.segments, classNames?.segments)} role="group" aria-label={label} style={{ "--index": index, "--count": options.length } as CSSProperties}>
+      <span className={cn(styles.thumb, classNames?.thumb)} aria-hidden="true" />
       {options.map(option => <button key={option.value} type="button" role="menuitemradio" tabIndex={-1} aria-checked={option.value === value} aria-label={option.label} title={option.label}
-        className={styles.segment} onClick={() => onChange(option.value)}>{option.icon}</button>)}
+        className={cn(styles.segment, classNames?.segment)} onClick={() => onChange(option.value)}>{option.icon}</button>)}
     </div>
   </motion.div>;
 }
@@ -141,7 +176,7 @@ function focusStop(stop: HTMLElement | undefined) {
   target?.focus({ preventScroll: true });
 }
 
-export function UserMenu({ user, status: statusProp, defaultStatus = "available", onStatusChange, theme: themeProp, defaultTheme = "system", onThemeChange, showTheme = true, items = [], onSignOut, signOutKeys, align = "end", showName = false, open: openProp, defaultOpen = false, onOpenChange, portal = true, ref, className }: UserMenuProps) {
+export function UserMenu({ user, status: statusProp, defaultStatus = "available", onStatusChange, theme: themeProp, defaultTheme = "system", onThemeChange, showTheme = true, items = [], onSignOut, signOutKeys, align = "end", showName = false, open: openProp, defaultOpen = false, onOpenChange, portal = true, ref, className, classNames }: UserMenuProps) {
   const id = useId();
   const menuId = `${id}-menu`;
   const triggerId = `${id}-trigger`;
@@ -353,66 +388,66 @@ export function UserMenu({ user, status: statusProp, defaultStatus = "available"
   const menuProps = { id: menuId, role: "menu", "aria-labelledby": triggerId, tabIndex: -1, onKeyDown };
 
   const content = <>
-    <motion.div className={styles.header} variants={row}>
-      <Face user={user} status={showStatus ? status : undefined} size="md" />
-      <div className={styles.identity}>
-        <div className={styles.nameRow}><span className={styles.name}>{user.name}</span>{user.plan && <span className={styles.plan}>{user.plan}</span>}</div>
-        <span className={styles.email} title={user.email}>{user.email}</span>
+    <motion.div className={cn(styles.header, classNames?.header)} variants={row}>
+      <Face user={user} status={showStatus ? status : undefined} size="md" classNames={classNames} />
+      <div className={cn(styles.identity, classNames?.identity)}>
+        <div className={cn(styles.nameRow, classNames?.nameRow)}><span className={cn(styles.name, classNames?.name)}>{user.name}</span>{user.plan && <span className={cn(styles.plan, classNames?.plan)}>{user.plan}</span>}</div>
+        <span className={cn(styles.email, classNames?.email)} title={user.email}>{user.email}</span>
       </div>
     </motion.div>
-    <div ref={listRef} className={styles.list} onFocus={onListFocus} onPointerMove={onListPointerMove} onPointerLeave={onListPointerLeave}>
-      <motion.span className={styles.highlight} data-tone={highlight?.tone} aria-hidden="true" initial={false}
+    <div ref={listRef} className={cn(styles.list, classNames?.list)} onFocus={onListFocus} onPointerMove={onListPointerMove} onPointerLeave={onListPointerLeave}>
+      <motion.span className={cn(styles.highlight, classNames?.highlight)} data-tone={highlight?.tone} aria-hidden="true" initial={false}
         animate={highlight ? { y: highlight.top, height: highlight.height, opacity: 1 } : { opacity: 0 }}
         transition={{ default: glide, opacity: { duration: reduced ? 0 : motionTokens.duration.instant } }} />
       {items.length > 0 && <>
-        <div className={styles.separator} role="separator" />
-        {items.map(item => <motion.button key={item.label} type="button" role="menuitem" tabIndex={-1} className={styles.item} data-stop="item" data-label={item.label} variants={row}
+        <div className={cn(styles.separator, classNames?.separator)} role="separator" />
+        {items.map(item => <motion.button key={item.label} type="button" role="menuitem" tabIndex={-1} className={cn(styles.item, classNames?.item)} data-stop="item" data-label={item.label} variants={row}
           onPointerMove={onItemPointerMove} onClick={() => { close(true); item.onSelect?.(); }}>
-          <span className={styles.icon} aria-hidden="true">{item.icon}</span>
-          <span className={styles.itemLabel}>{item.label}</span>
-          {item.keys && <Keys keys={item.keys} />}
+          <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true">{item.icon}</span>
+          <span className={cn(styles.itemLabel, classNames?.itemLabel)}>{item.label}</span>
+          {item.keys && <Keys keys={item.keys} classNames={classNames} />}
         </motion.button>)}
       </>}
       {(showTheme || showStatus) && <>
-        <div className={styles.separator} role="separator" />
-        {showStatus && <Segmented label="Status" icon={<PresenceDot status={status} />} value={status} onChange={changeStatus}
-          options={userStatuses.map(option => ({ ...option, icon: <PresenceDot status={option.value} /> }))} variants={row} />}
-        {showTheme && <Segmented label="Theme" icon={<SunMoon size={16} strokeWidth={1.75} />} value={theme} onChange={changeTheme} options={themes} variants={row} />}
+        <div className={cn(styles.separator, classNames?.separator)} role="separator" />
+        {showStatus && <Segmented label="Status" icon={<PresenceDot status={status} className={classNames?.dot} />} value={status} onChange={changeStatus}
+          options={userStatuses.map(option => ({ ...option, icon: <PresenceDot status={option.value} className={classNames?.dot} /> }))} variants={row} classNames={classNames} />}
+        {showTheme && <Segmented label="Theme" icon={<SunMoon size={16} strokeWidth={1.75} />} value={theme} onChange={changeTheme} options={themes} variants={row} classNames={classNames} />}
       </>}
-      <div className={styles.separator} role="separator" />
-      <motion.button type="button" role="menuitem" tabIndex={-1} className={styles.item} data-stop="item" data-tone="danger" data-label="Sign out" variants={row}
+      <div className={cn(styles.separator, classNames?.separator)} role="separator" />
+      <motion.button type="button" role="menuitem" tabIndex={-1} className={cn(styles.item, classNames?.item)} data-stop="item" data-tone="danger" data-label="Sign out" variants={row}
         aria-busy={signingOut || undefined} onPointerMove={onItemPointerMove} onClick={signOut}>
-        <span className={styles.icon} aria-hidden="true">{signingOut ? <LoaderCircle className={styles.spinner} size={16} strokeWidth={1.75} /> : <LogOut size={16} strokeWidth={1.75} />}</span>
-        <span className={styles.itemLabel}><Rise text={signingOut ? "Signing out" : "Sign out"} reduced={reduced} /></span>
-        {signOutKeys && <Keys keys={signOutKeys} />}
+        <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true">{signingOut ? <LoaderCircle className={cn(styles.spinner, classNames?.spinner)} size={16} strokeWidth={1.75} /> : <LogOut size={16} strokeWidth={1.75} />}</span>
+        <span className={cn(styles.itemLabel, classNames?.itemLabel)}><Rise text={signingOut ? "Signing out" : "Sign out"} reduced={reduced} classNames={classNames} /></span>
+        {signOutKeys && <Keys keys={signOutKeys} classNames={classNames} />}
       </motion.button>
     </div>
   </>;
 
   const panel = <AnimatePresence>
-    {open && !sheet && <motion.div key="panel" ref={surfaceRef} {...menuProps} className={styles.panel} data-inline={inline || undefined} data-align={align}
+    {open && !sheet && <motion.div key="panel" ref={surfaceRef} {...menuProps} className={cn(styles.panel, classNames?.panel)} data-inline={inline || undefined} data-align={align}
       variants={reduced ? stillMotion : panelMotion} initial="closed" animate="open" exit="exit">
       {content}
     </motion.div>}
   </AnimatePresence>;
 
   const bottomSheet = <AnimatePresence>
-    {open && sheet && <motion.div key="scrim" className={styles.scrim} aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+    {open && sheet && <motion.div key="scrim" className={cn(styles.scrim, classNames?.scrim)} aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       transition={{ duration: reduced ? .1 : .2, ease: standard }} onClick={() => close(true)} />}
-    {open && sheet && <motion.div key="sheet" ref={surfaceRef} {...menuProps} className={`${styles.panel} ${styles.sheet}`} aria-modal="true"
+    {open && sheet && <motion.div key="sheet" ref={surfaceRef} {...menuProps} className={cn(styles.panel, styles.sheet, classNames?.panel, classNames?.sheet)} aria-modal="true"
       variants={reduced ? stillMotion : sheetMotion} initial="closed" animate="open" exit="exit"
       drag={reduced ? false : "y"} dragConstraints={{ top: 0, bottom: 0 }} dragElastic={{ top: .04, bottom: .9 }} dragMomentum={false} onDragEnd={onDragEnd}>
-      <span className={styles.handle} aria-hidden="true" />
+      <span className={cn(styles.handle, classNames?.handle)} aria-hidden="true" />
       {content}
     </motion.div>}
   </AnimatePresence>;
 
-  return <span ref={rootRef} className={styles.root}>
+  return <span ref={rootRef} className={cn(styles.root, className)}>
     <button ref={setTriggerRef} id={triggerId} type="button" className={[styles.trigger, className].filter(Boolean).join(" ")} data-state={open ? "open" : "closed"} data-name={showName || undefined}
       aria-haspopup="menu" aria-expanded={open} aria-controls={open ? menuId : undefined} aria-label={`Account menu, ${user.name}${showStatus ? `, ${statusLabel(status)}` : ""}`}
       onClick={onTriggerClick} onKeyDown={onTriggerKeyDown}>
-      <Face user={user} status={showStatus ? status : undefined} size="sm" />
-      {showName && <><span className={styles.triggerName}>{user.name}</span><ChevronDown className={styles.chevron} size={16} strokeWidth={1.75} aria-hidden="true" /></>}
+      <Face user={user} status={showStatus ? status : undefined} size="sm" classNames={classNames} />
+      {showName && <><span className={cn(styles.triggerName, classNames?.triggerName)}>{user.name}</span><ChevronDown className={cn(styles.chevron, classNames?.chevron)} size={16} strokeWidth={1.75} aria-hidden="true" /></>}
     </button>
     {sheet ? createPortal(bottomSheet, document.body) : inline ? panel : hydrated ? createPortal(panel, document.body) : null}
   </span>;

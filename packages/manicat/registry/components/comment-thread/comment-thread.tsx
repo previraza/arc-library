@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import type { Transition, Variants } from "motion/react";
 import { Check, ChevronRight, CornerDownRight, RotateCcw, SmilePlus, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./comment-thread.module.css";
 
 export interface CommentAuthor {
@@ -152,6 +153,49 @@ export interface CommentThreadProps {
   /** Words for localization. Leave out any key to keep its English default. */
   labels?: CommentThreadLabels;
   className?: string;
+  /** Extend the inner, named parts of the comment thread: item, comment, deletedDot, main, deleted, meta, name, time, footer, reactions, reaction, actions, prompt, action, emoji, iconAction, toggle, toggleIcon, stack, repliesWrap, replies, resolved, resolvedIcon, resolvedText, resolvedTitle, resolvedSubject, resolvedMeta, reopen, thread, header, heading, title, subtitle, resolve, list, empty, composerArea, replying, replyingInner or replyingName. */
+  classNames?: {
+    item?: string;
+    comment?: string;
+    deletedDot?: string;
+    main?: string;
+    deleted?: string;
+    meta?: string;
+    name?: string;
+    time?: string;
+    footer?: string;
+    reactions?: string;
+    reaction?: string;
+    actions?: string;
+    prompt?: string;
+    action?: string;
+    emoji?: string;
+    iconAction?: string;
+    toggle?: string;
+    toggleIcon?: string;
+    stack?: string;
+    repliesWrap?: string;
+    replies?: string;
+    resolved?: string;
+    resolvedIcon?: string;
+    resolvedText?: string;
+    resolvedTitle?: string;
+    resolvedSubject?: string;
+    resolvedMeta?: string;
+    reopen?: string;
+    thread?: string;
+    header?: string;
+    heading?: string;
+    title?: string;
+    subtitle?: string;
+    resolve?: string;
+    list?: string;
+    empty?: string;
+    composerArea?: string;
+    replying?: string;
+    replyingInner?: string;
+    replyingName?: string;
+  };
 }
 
 type Bezier = [number, number, number, number];
@@ -377,7 +421,7 @@ type Ui = { editing: string | null; confirming: string | null; picker: string | 
 
 export const CommentThread = forwardRef<HTMLElement, CommentThreadProps>(function CommentThread({
   comments, defaultComments = [], onCommentsChange, currentUser, people, resolved, defaultResolved = false, onResolvedChange,
-  title, reactions = DEFAULT_REACTIONS, placeholder = "Reply, or @mention someone", maxDepth = 2, nowLabel = "Just now", labels, className,
+  title, reactions = DEFAULT_REACTIONS, placeholder = "Reply, or @mention someone", maxDepth = 2, nowLabel = "Just now", labels, className, classNames,
 }, forwardedRef) {
   const t = withDefaults(DEFAULT_LABELS, labels);
   const reduced = useReducedFlag();
@@ -455,16 +499,16 @@ export const CommentThread = forwardRef<HTMLElement, CommentThreadProps>(functio
     const replies = comment.replies ?? [];
     const collapsed = !!ui.collapsed[comment.id];
     const editing = ui.editing === comment.id, confirming = ui.confirming === comment.id, picking = ui.picker === comment.id;
-    return <motion.li key={comment.id} className={styles.item} {...grow}>
-      <article className={styles.comment} aria-label={comment.deleted ? t.deletedComment : `${comment.author.name}, ${comment.createdAt}`}>
-        {comment.deleted ? <span className={styles.deletedDot} aria-hidden="true" /> : <Avatar author={comment.author} />}
-        <div className={styles.main}>
+    return <motion.li key={comment.id} className={cn(styles.item, classNames?.item)} {...grow}>
+      <article className={cn(styles.comment, classNames?.comment)} aria-label={comment.deleted ? t.deletedComment : `${comment.author.name}, ${comment.createdAt}`}>
+        {comment.deleted ? <span className={cn(styles.deletedDot, classNames?.deletedDot)} aria-hidden="true" /> : <Avatar author={comment.author} />}
+        <div className={cn(styles.main, classNames?.main)}>
           {comment.deleted
-            ? <p className={styles.deleted}>{t.deletedText}</p>
+            ? <p className={cn(styles.deleted, classNames?.deleted)}>{t.deletedText}</p>
             : <>
-              <header className={styles.meta}>
-                <span className={styles.name}>{comment.author.name}</span>
-                <span className={styles.time}>{comment.createdAt}{comment.edited && ` · ${t.edited}`}</span>
+              <header className={cn(styles.meta, classNames?.meta)}>
+                <span className={cn(styles.name, classNames?.name)}>{comment.author.name}</span>
+                <span className={cn(styles.time, classNames?.time)}>{comment.createdAt}{comment.edited && ` · ${t.edited}`}</span>
               </header>
               {/* Editing swaps the body for a composer in place: the two cross-fade while the comment's height springs between them.
                   The picker and delete prompt can wrap onto a new line on narrow screens, so they spring the height too. */}
@@ -475,12 +519,12 @@ export const CommentThread = forwardRef<HTMLElement, CommentThreadProps>(functio
                 : <motion.div key="view" {...swap}>
                 <Body text={comment.body} people={mentionable} />
 
-              <div className={styles.footer}>
-                {(comment.reactions ?? []).length > 0 && <div className={styles.reactions}>
+              <div className={cn(styles.footer, classNames?.footer)}>
+                {(comment.reactions ?? []).length > 0 && <div className={cn(styles.reactions, classNames?.reactions)}>
                   <AnimatePresence initial={false} mode="popLayout">
                     {(comment.reactions ?? []).map(reaction => {
                       const pressed = reaction.users.includes(currentUser.id);
-                      return <motion.button key={reaction.emoji} type="button" layout={!reduced} className={styles.reaction} aria-pressed={pressed}
+                      return <motion.button key={reaction.emoji} type="button" layout={!reduced} className={cn(styles.reaction, classNames?.reaction)} aria-pressed={pressed}
                         aria-label={t.reactionCount(reaction.emoji, reaction.users.length, pressed)} onClick={() => react(comment.id, reaction.emoji)}
                         initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .7 }} animate={{ opacity: 1, scale: 1 }} exit={reduced ? { opacity: 0 } : { opacity: 0, scale: .7 }}
                         transition={reduced ? { duration: 0 } : motionTokens.spring.snappy}>
@@ -492,28 +536,28 @@ export const CommentThread = forwardRef<HTMLElement, CommentThreadProps>(functio
 
                 <AnimatePresence mode="wait" initial={false}>
                   {confirming
-                    ? <motion.div key="confirm" className={styles.actions} data-open="" initial={reduced ? { opacity: 0 } : { opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: reduced ? 0 : motionTokens.duration.instant, ease: standard } }} transition={{ duration: reduced ? 0 : motionTokens.duration.fast, ease: enter }}
+                    ? <motion.div key="confirm" className={cn(styles.actions, classNames?.actions)} data-open="" initial={reduced ? { opacity: 0 } : { opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: reduced ? 0 : motionTokens.duration.instant, ease: standard } }} transition={{ duration: reduced ? 0 : motionTokens.duration.fast, ease: enter }}
                       onKeyDown={event => { if (event.key === "Escape") { event.stopPropagation(); setUi(current => ({ ...current, confirming: null })); } }}>
-                      <span className={styles.prompt}>{t.deleteConfirm}</span>
-                      <button type="button" className={styles.action} onClick={() => setUi(current => ({ ...current, confirming: null }))}>{t.cancel}</button>
-                      <button type="button" className={styles.action} data-tone="danger" autoFocus onClick={() => remove(comment.id)}>{t.delete}</button>
+                      <span className={cn(styles.prompt, classNames?.prompt)}>{t.deleteConfirm}</span>
+                      <button type="button" className={cn(styles.action, classNames?.action)} onClick={() => setUi(current => ({ ...current, confirming: null }))}>{t.cancel}</button>
+                      <button type="button" className={cn(styles.action, classNames?.action)} data-tone="danger" autoFocus onClick={() => remove(comment.id)}>{t.delete}</button>
                     </motion.div>
                     : picking
-                    ? <motion.div key="picker" role="group" aria-label={t.reactions} className={styles.actions} data-open=""
+                    ? <motion.div key="picker" role="group" aria-label={t.reactions} className={cn(styles.actions, classNames?.actions)} data-open=""
                       onKeyDown={event => { if (event.key === "Escape") { event.stopPropagation(); setUi(current => ({ ...current, picker: null })); } }}
                       initial={reduced ? { opacity: 0 } : { opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: reduced ? 0 : motionTokens.duration.instant, ease: standard } }} transition={{ duration: reduced ? 0 : motionTokens.duration.fast, ease: enter }}>
-                      {reactions.map((emoji, index) => <motion.button key={emoji} type="button" className={styles.emoji} autoFocus={index === 0} aria-label={t.reactWith(emoji)}
+                      {reactions.map((emoji, index) => <motion.button key={emoji} type="button" className={cn(styles.emoji, classNames?.emoji)} autoFocus={index === 0} aria-label={t.reactWith(emoji)}
                         aria-pressed={!!comment.reactions?.find(reaction => reaction.emoji === emoji)?.users.includes(currentUser.id)} onClick={() => react(comment.id, emoji)}
                         initial={reduced ? false : { opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} transition={reduced ? { duration: 0 } : { ...motionTokens.spring.snappy, delay: index * motionTokens.stagger.item }}>{emoji}</motion.button>)}
-                      <button type="button" className={styles.iconAction} aria-label={t.closeReactions} onClick={() => setUi(current => ({ ...current, picker: null }))}><X size={14} strokeWidth={1.75} aria-hidden="true" /></button>
+                      <button type="button" className={cn(styles.iconAction, classNames?.iconAction)} aria-label={t.closeReactions} onClick={() => setUi(current => ({ ...current, picker: null }))}><X size={14} strokeWidth={1.75} aria-hidden="true" /></button>
                     </motion.div>
-                    : <motion.div key="actions" className={styles.actions} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : motionTokens.duration.instant, ease: standard }}>
-                      <button type="button" className={styles.iconAction} aria-label={t.addReaction} onClick={() => setUi(current => ({ ...current, picker: comment.id, confirming: null }))}>
+                    : <motion.div key="actions" className={cn(styles.actions, classNames?.actions)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : motionTokens.duration.instant, ease: standard }}>
+                      <button type="button" className={cn(styles.iconAction, classNames?.iconAction)} aria-label={t.addReaction} onClick={() => setUi(current => ({ ...current, picker: comment.id, confirming: null }))}>
                         <SmilePlus size={15} strokeWidth={1.75} aria-hidden="true" />
                       </button>
-                      <button type="button" className={styles.action} onClick={() => { setReplyTo({ id: comment.id, name: comment.author.name }); setFocusKey(key => key + 1); }}>{t.reply}</button>
-                      {mine && <button type="button" className={styles.action} onClick={() => setUi(current => ({ ...current, editing: comment.id, confirming: null, picker: null }))}>{t.edit}</button>}
-                      {mine && <button type="button" className={styles.action} onClick={() => setUi(current => ({ ...current, confirming: comment.id, editing: null, picker: null }))}>{t.delete}</button>}
+                      <button type="button" className={cn(styles.action, classNames?.action)} onClick={() => { setReplyTo({ id: comment.id, name: comment.author.name }); setFocusKey(key => key + 1); }}>{t.reply}</button>
+                      {mine && <button type="button" className={cn(styles.action, classNames?.action)} onClick={() => setUi(current => ({ ...current, editing: comment.id, confirming: null, picker: null }))}>{t.edit}</button>}
+                      {mine && <button type="button" className={cn(styles.action, classNames?.action)} onClick={() => setUi(current => ({ ...current, confirming: comment.id, editing: null, picker: null }))}>{t.delete}</button>}
                     </motion.div>}
                 </AnimatePresence>
               </div>
@@ -522,20 +566,20 @@ export const CommentThread = forwardRef<HTMLElement, CommentThreadProps>(functio
               </AutoHeight>
             </>}
 
-          {replies.length > 0 && <button type="button" className={styles.toggle} aria-expanded={!collapsed}
+          {replies.length > 0 && <button type="button" className={cn(styles.toggle, classNames?.toggle)} aria-expanded={!collapsed}
             onClick={() => setUi(current => ({ ...current, collapsed: { ...current.collapsed, [comment.id]: !collapsed } }))}>
-            <motion.span className={styles.toggleIcon} initial={false} animate={{ rotate: collapsed ? 0 : 90 }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy} aria-hidden="true">
+            <motion.span className={cn(styles.toggleIcon, classNames?.toggleIcon)} initial={false} animate={{ rotate: collapsed ? 0 : 90 }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy} aria-hidden="true">
               <ChevronRight size={13} strokeWidth={1.75} />
             </motion.span>
             {collapsed ? t.showReplies(countTree(replies)) : t.hideReplies}
-            {collapsed && <span className={styles.stack} aria-hidden="true">{[...authorsOf(replies).values()].slice(0, 3).map(author => <Avatar key={author.id} author={author} size={18} />)}</span>}
+            {collapsed && <span className={cn(styles.stack, classNames?.stack)} aria-hidden="true">{[...authorsOf(replies).values()].slice(0, 3).map(author => <Avatar key={author.id} author={author} size={18} />)}</span>}
           </button>}
         </div>
       </article>
 
       <AnimatePresence initial={false}>
-        {replies.length > 0 && !collapsed && <motion.div key="replies" className={styles.repliesWrap} {...grow}>
-          <ul className={styles.replies} data-depth={depth + 1}>
+        {replies.length > 0 && !collapsed && <motion.div key="replies" className={cn(styles.repliesWrap, classNames?.repliesWrap)} {...grow}>
+          <ul className={cn(styles.replies, classNames?.replies)} data-depth={depth + 1}>
             <AnimatePresence initial={false}>{replies.map(reply => renderComment(reply, depth + 1))}</AnimatePresence>
           </ul>
         </motion.div>}
@@ -549,35 +593,35 @@ export const CommentThread = forwardRef<HTMLElement, CommentThreadProps>(functio
     <AutoHeight reduced={reduced} morphKey={isResolved ? "resolved" : "thread"}>
       <AnimatePresence mode="popLayout" initial={false}>
         {isResolved
-          ? <motion.div key="resolved" className={styles.resolved} {...face}>
-            <span className={styles.resolvedIcon} aria-hidden="true"><Check size={14} strokeWidth={2} /></span>
-            <span className={styles.resolvedText}>
-              <span className={styles.resolvedTitle}>{t.resolved}{title ? <> · <span className={styles.resolvedSubject}>{title}</span></> : null}</span>
-              <span className={styles.resolvedMeta}>{t.commentCount(total)} · {t.peopleCount(participants.length)}</span>
+          ? <motion.div key="resolved" className={cn(styles.resolved, classNames?.resolved)} {...face}>
+            <span className={cn(styles.resolvedIcon, classNames?.resolvedIcon)} aria-hidden="true"><Check size={14} strokeWidth={2} /></span>
+            <span className={cn(styles.resolvedText, classNames?.resolvedText)}>
+              <span className={cn(styles.resolvedTitle, classNames?.resolvedTitle)}>{t.resolved}{title ? <> · <span className={cn(styles.resolvedSubject, classNames?.resolvedSubject)}>{title}</span></> : null}</span>
+              <span className={cn(styles.resolvedMeta, classNames?.resolvedMeta)}>{t.commentCount(total)} · {t.peopleCount(participants.length)}</span>
             </span>
-            <span className={styles.stack} aria-hidden="true">{participants.slice(0, 3).map(author => <Avatar key={author.id} author={author} size={22} />)}</span>
-            <button type="button" className={styles.reopen} data-reopen onClick={() => setResolved(false)}><RotateCcw size={14} strokeWidth={1.75} aria-hidden="true" />{t.reopen}</button>
+            <span className={cn(styles.stack, classNames?.stack)} aria-hidden="true">{participants.slice(0, 3).map(author => <Avatar key={author.id} author={author} size={22} />)}</span>
+            <button type="button" className={cn(styles.reopen, classNames?.reopen)} data-reopen onClick={() => setResolved(false)}><RotateCcw size={14} strokeWidth={1.75} aria-hidden="true" />{t.reopen}</button>
           </motion.div>
-          : <motion.div key="thread" className={styles.thread} {...face}>
-            <header className={styles.header}>
-              <div className={styles.heading}>
-                {title && <h3 className={styles.title}>{title}</h3>}
-                <span className={styles.subtitle}>{t.commentCount(total)}</span>
+          : <motion.div key="thread" className={cn(styles.thread, classNames?.thread)} {...face}>
+            <header className={cn(styles.header, classNames?.header)}>
+              <div className={cn(styles.heading, classNames?.heading)}>
+                {title && <h3 className={cn(styles.title, classNames?.title)}>{title}</h3>}
+                <span className={cn(styles.subtitle, classNames?.subtitle)}>{t.commentCount(total)}</span>
               </div>
-              <button type="button" className={styles.resolve} data-resolve disabled={!total} onClick={() => setResolved(true)}><Check size={15} strokeWidth={1.75} aria-hidden="true" />{t.resolve}</button>
+              <button type="button" className={cn(styles.resolve, classNames?.resolve)} data-resolve disabled={!total} onClick={() => setResolved(true)}><Check size={15} strokeWidth={1.75} aria-hidden="true" />{t.resolve}</button>
             </header>
 
             {list.length > 0
-              ? <ul className={styles.list}><AnimatePresence initial={false}>{list.map(comment => renderComment(comment, 0))}</AnimatePresence></ul>
-              : <p className={styles.empty}>{t.empty}</p>}
+              ? <ul className={cn(styles.list, classNames?.list)}><AnimatePresence initial={false}>{list.map(comment => renderComment(comment, 0))}</AnimatePresence></ul>
+              : <p className={cn(styles.empty, classNames?.empty)}>{t.empty}</p>}
 
-            <div className={styles.composerArea}>
+            <div className={cn(styles.composerArea, classNames?.composerArea)}>
               <AnimatePresence initial={false}>
-                {replyTo && <motion.div key="replying" className={styles.replying} {...grow}>
-                  <span className={styles.replyingInner}>
+                {replyTo && <motion.div key="replying" className={cn(styles.replying, classNames?.replying)} {...grow}>
+                  <span className={cn(styles.replyingInner, classNames?.replyingInner)}>
                     <CornerDownRight size={13} strokeWidth={1.75} aria-hidden="true" />
-                    <span>{highlight(t.replyingTo(replyTo.name), replyTo.name, styles.replyingName)}</span>
-                    <button type="button" className={styles.iconAction} aria-label={t.cancelReply} onClick={() => setReplyTo(null)}><X size={14} strokeWidth={1.75} aria-hidden="true" /></button>
+                    <span>{highlight(t.replyingTo(replyTo.name), replyTo.name, cn(styles.replyingName, classNames?.replyingName))}</span>
+                    <button type="button" className={cn(styles.iconAction, classNames?.iconAction)} aria-label={t.cancelReply} onClick={() => setReplyTo(null)}><X size={14} strokeWidth={1.75} aria-hidden="true" /></button>
                   </span>
                 </motion.div>}
               </AnimatePresence>

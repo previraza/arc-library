@@ -5,6 +5,7 @@ import type { FocusEvent, KeyboardEvent, MouseEvent, ReactNode, RefObject } from
 import { Check, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion, useTransform, type HTMLMotionProps, type MotionValue, type Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./filter-toolbar.module.css";
 
 export interface FilterChip { id: string; label: string; value?: string; }
@@ -27,6 +28,20 @@ export interface FilterToolbarProps {
   onClearAll?: () => void;
   children?: ReactNode;
   label?: string;
+  /** Extend the inner, named parts of the filter toolbar: toolbar, frame, chips, slot, chip, chipLabel, value, clear, separator. */
+  classNames?: {
+    toolbar?: string;
+    frame?: string;
+    chips?: string;
+    slot?: string;
+    chip?: string;
+    chipLabel?: string;
+    value?: string;
+    clear?: string;
+    separator?: string;
+  };
+  /** Extend the inner, named parts of the <FilterToolbar>. */
+  className?: string;
   /** Adds an Add filter trigger that morphs into a two step field and value menu. */
   addFilter?: { fields: FilterField[]; onAdd: (filter: FilterChip, field: FilterField) => void; label?: string; align?: "start" | "end" };
 }
@@ -394,7 +409,7 @@ export function FilterMenu({ fields, onSelect, active = [], label = "Add filter"
   </div>;
 }
 
-export function FilterToolbar({ filters, onRemove, onClearAll, children, label = "Active filters", addFilter }: FilterToolbarProps) {
+export function FilterToolbar({ filters, onRemove, onClearAll, children, label = "Active filters", addFilter, className, classNames }: FilterToolbarProps) {
   const reduced = useReducedMotion() ?? false;
   const root = useRef<HTMLDivElement>(null), list = useRef<HTMLDivElement>(null);
   const armed = useRef(0), pendingFocus = useRef<number | null>(null);
@@ -434,11 +449,11 @@ export function FilterToolbar({ filters, onRemove, onClearAll, children, label =
   const text = reduced ? { ...textMotion(true), initial: false as const } : textMotion(false);
   // The note waits for the leaving chips to fade before it rises in.
   const emptyText = reduced ? text : { ...text, transition: { ...enter, delay: motionTokens.duration.instant * .75 } };
-  return <div ref={root} className={styles.toolbar} role="group" aria-label={label}>
-    <motion.div className={styles.frame} style={{ height: frameHeight }}>
-      <div ref={list} className={styles.chips}>
+  return <div ref={root} className={cn(styles.toolbar, className)} role="group" aria-label={label}>
+    <motion.div className={cn(styles.frame, classNames?.frame)} style={{ height: frameHeight }}>
+      <div ref={list} className={cn(styles.chips, classNames?.chips)}>
         <AnimatePresence initial={false}>
-          {filters.map((filter, index) => <motion.span className={styles.slot} key={filter.id} {...slot(8)}><motion.span className={styles.chip} {...chip}><span className={styles.chipLabel}>{filter.label}{filter.value ? <span className={styles.value}><span className={styles.separator}> · </span><MorphText text={filter.value} /></span> : null}</span><button type="button" data-chip-remove={filter.id} aria-label={`Remove ${filter.label}${filter.value ? `: ${filter.value}` : ""}`} onClick={event => { if (document.activeElement === event.currentTarget) pendingFocus.current = index; onRemove(filter.id); }}><X size={14} strokeWidth={1.8} aria-hidden="true" /></button></motion.span></motion.span>)}
+          {filters.map((filter, index) => <motion.span className={cn(styles.slot, classNames?.slot)} key={filter.id} {...slot(8)}><motion.span className={cn(styles.chip, classNames?.chip)} {...chip}><span className={cn(styles.chipLabel, classNames?.chipLabel)}>{filter.label}{filter.value ? <span className={cn(styles.value, classNames?.value)}><span className={cn(styles.separator, classNames?.separator)}> · </span><MorphText text={filter.value} /></span> : null}</span><button type="button" data-chip-remove={filter.id} aria-label={`Remove ${filter.label}${filter.value ? `: ${filter.value}` : ""}`} onClick={event => { if (document.activeElement === event.currentTarget) pendingFocus.current = index; onRemove(filter.id); }}><X size={14} strokeWidth={1.8} aria-hidden="true" /></button></motion.span></motion.span>)}
         </AnimatePresence>
         {/* The empty note sits over the leading edge instead of in the flow, so it fades in where the chips were rather than riding their collapsing slots across the row. */}
         <AnimatePresence initial={false}>
@@ -450,7 +465,7 @@ export function FilterToolbar({ filters, onRemove, onClearAll, children, label =
       {addFilter ? <FilterMenu fields={addFilter.fields} onSelect={addFilter.onAdd} active={filters} label={addFilter.label} align={addFilter.align} /> : null}
       {children}
       <AnimatePresence initial={false}>
-        {filters.length > 0 ? <motion.span key="clear" className={styles.slot} {...slot(12)}><button className={styles.clear} type="button" onClick={() => { pendingFocus.current = -1; onClearAll?.(); }}><motion.span className={styles.clearText} {...text}>Clear all</motion.span></button></motion.span> : null}
+        {filters.length > 0 ? <motion.span key="clear" className={cn(styles.slot, classNames?.slot)} {...slot(12)}><button className={cn(styles.clear, classNames?.clear)} type="button" onClick={() => { pendingFocus.current = -1; onClearAll?.(); }}><motion.span className={styles.clearText} {...text}>Clear all</motion.span></button></motion.span> : null}
       </AnimatePresence>
     </div>
     <span className={styles.srOnly} role="status">{message}</span>

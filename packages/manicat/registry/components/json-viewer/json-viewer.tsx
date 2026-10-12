@@ -2,6 +2,7 @@
 
 import { forwardRef, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, ReactNode } from "react";
+import { cn } from "@/lib/cn";
 import { AnimatePresence, LayoutGroup, animate, motion, useReducedMotion } from "motion/react";
 import type { AnimationPlaybackControls, Transition } from "motion/react";
 import { Check, ChevronDown, ChevronRight, ChevronUp, ChevronsDownUp, ChevronsUpDown, Copy, Link2, Search, X } from "lucide-react";
@@ -51,6 +52,32 @@ export interface JsonViewerProps {
   /** Accessible name of the tree. */
   label?: string;
   className?: string;
+  /** Extend the inner, named parts of the json-viewer: root, toolbar, search, input, matches, count, tool, tree, row, key, colon, summary, countLabel, value, actions, pathBar, path or pathType. */
+  classNames?: {
+    root?: string;
+    toolbar?: string;
+    search?: string;
+    input?: string;
+    matches?: string;
+    count?: string;
+    grow?: string;
+    divider?: string;
+    tool?: string;
+    tree?: string;
+    row?: string;
+    key?: string;
+    colon?: string;
+    summary?: string;
+    countLabel?: string;
+    value?: string;
+    highlight?: string;
+    line?: string;
+    index?: string;
+    actions?: string;
+    pathBar?: string;
+    path?: string;
+    pathType?: string;
+  };
 }
 
 type Row = {
@@ -206,7 +233,7 @@ const scrollSpring: Transition = motionTokens.spring.smooth;
 export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function JsonViewer({
   data, rootName = "root", defaultExpandDepth = 1, expanded: expandedProp, defaultExpanded, onExpandedChange,
   searchable = true, query: queryProp, defaultQuery = "", onQueryChange, pageSize = 50, copyable = true, onCopy, onSelect,
-  showPath = true, maxHeight = 420, label = "JSON", className,
+  showPath = true, maxHeight = 420, label = "JSON", className, classNames,
 }, ref) {
   const reduced = !!useReducedMotion();
   const uid = useId();
@@ -448,27 +475,27 @@ export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function J
     return isBranch(row.type) ? `${name}, ${row.type}, ${countLabel(row)}` : `${name}: ${primitiveText(row.value, row.type)}`;
   };
 
-  return <div ref={ref} className={[styles.root, className].filter(Boolean).join(" ")} style={heightStyle}>
-    {searchable || rows.length > 1 ? <div className={styles.toolbar}>
-      {searchable ? <label className={styles.search}>
+  return <div ref={ref} className={cn(styles.root, classNames?.root, className)} style={heightStyle}>
+    {searchable || rows.length > 1 ? <div className={cn(styles.toolbar, classNames?.toolbar)}>
+      {searchable ? <label className={cn(styles.search, classNames?.search)}>
         <Search size={15} strokeWidth={1.75} aria-hidden="true" className={styles.searchIcon} />
-        <input ref={searchRef} type="search" className={styles.input} value={query} placeholder="Search keys and values" aria-label="Search JSON" aria-controls={`${uid}-tree`}
+        <input ref={searchRef} type="search" className={cn(styles.input, classNames?.input)} value={query} placeholder="Search keys and values" aria-label="Search JSON" aria-controls={`${uid}-tree`}
           onChange={event => onQuery(event.target.value)} onKeyDown={onSearchKeyDown} spellCheck={false} autoComplete="off" />
         <AnimatePresence initial={false}>
-          {needle ? <motion.span key="matches" className={styles.matches} initial={reduced ? { opacity: 0 } : { opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} exit={reduced ? { opacity: 0 } : { opacity: 0, x: 6 }} transition={{ duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] }}>
-            <span className={styles.count} aria-live="polite">{matchCount ? `${Math.min(matchIndex, matchCount - 1) + 1}/${matchCount}` : "0/0"}</span>
+          {needle ? <motion.span key="matches" className={cn(styles.matches, classNames?.matches)} initial={reduced ? { opacity: 0 } : { opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} exit={reduced ? { opacity: 0 } : { opacity: 0, x: 6 }} transition={{ duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] }}>
+            <span className={cn(styles.count, classNames?.count)} aria-live="polite">{matchCount ? `${Math.min(matchIndex, matchCount - 1) + 1}/${matchCount}` : "0/0"}</span>
             <button type="button" className={styles.tool} aria-label="Previous match" disabled={!matchCount} onClick={() => stepMatch(-1)}><ChevronUp size={15} strokeWidth={1.75} aria-hidden="true" /></button>
             <button type="button" className={styles.tool} aria-label="Next match" disabled={!matchCount} onClick={() => stepMatch(1)}><ChevronDown size={15} strokeWidth={1.75} aria-hidden="true" /></button>
           </motion.span> : null}
         </AnimatePresence>
-      </label> : <span className={styles.grow} />}
-      <span className={styles.divider} aria-hidden="true" />
+      </label> : <span className={cn(styles.grow, classNames?.grow)} />}
+      <span className={cn(styles.divider, classNames?.divider)} aria-hidden="true" />
       <button type="button" className={styles.tool} aria-label="Expand all" title="Expand all" onClick={expandAll}><ChevronsUpDown size={15} strokeWidth={1.75} aria-hidden="true" /></button>
       <button type="button" className={styles.tool} aria-label="Collapse all" title="Collapse all" onClick={collapseAll}><ChevronsDownUp size={15} strokeWidth={1.75} aria-hidden="true" /></button>
     </div> : null}
 
     <LayoutGroup id={uid}>
-      <motion.div ref={treeRef} layoutScroll id={`${uid}-tree`} role="tree" aria-label={label} className={styles.tree} onKeyDown={onTreeKeyDown}>
+      <motion.div ref={treeRef} layoutScroll id={`${uid}-tree`} role="tree" aria-label={label} className={cn(styles.tree, classNames?.tree)} onKeyDown={onTreeKeyDown}>
         <AnimatePresence initial={false}>
           {rows.map(row => {
             const isActive = row.id === active;
@@ -487,26 +514,26 @@ export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function J
                 if (branch) toggle(row.id);
                 moveTo(row.id);
               }}>
-              {isActive ? <motion.span layoutId="json-active" className={styles.highlight} transition={reduced || folded ? { duration: 0 } : scrollSpring} aria-hidden="true" /> : null}
-              <span className={styles.line}>
+              {isActive ? <motion.span layoutId="json-active" className={cn(styles.highlight, classNames?.highlight)} transition={reduced || folded ? { duration: 0 } : scrollSpring} aria-hidden="true" /> : null}
+              <span className={cn(styles.line, classNames?.line)}>
                 {row.kind === "more" ? <span className={styles.more}>
                   <span className={styles.moreLabel}>Show {Math.min(pageSize, row.hidden ?? 0)} more</span>
                   <span className={styles.muted}>{row.hidden} hidden</span>
                 </span> : <>
                   <span className={styles.chevron} data-open={row.open || undefined} data-branch={branch || undefined} aria-hidden="true">{branch ? <ChevronRight size={14} strokeWidth={1.75} /> : null}</span>
-                  <span className={typeof row.name === "number" ? styles.index : styles.key}>
+<span className={cn(styles.index, classNames?.index, styles.key, classNames?.key)} data-active={isActive || undefined} style={{ "--level": row.level - 1 } as CSSProperties}>
                     {row.name === null ? rootName : typeof row.name === "number" ? row.name : <Highlight text={row.name} needle={mark} current={isCurrentMatch} />}
                   </span>
-                  <span className={styles.colon} aria-hidden="true">{row.name === null && branch ? "" : ":"}</span>
+                  <span className={cn(styles.colon, classNames?.colon)} aria-hidden="true">{row.name === null && branch ? "" : ":"}</span>
                   {branch
-                    ? <span className={styles.summary}>
+                    ? <span className={cn(styles.summary, classNames?.summary)}>
                         {!row.open ? <span className={styles.preview}>{row.type === "array" ? "[…]" : `{ ${entries(row.value).slice(0, 3).map(([key]) => key).join(", ")}${row.count > 3 ? ", …" : ""} }`}</span> : null}
-                        <span className={styles.countLabel}>{countLabel(row)}</span>
+                        <span className={cn(styles.countLabel, classNames?.countLabel)}>{countLabel(row)}</span>
                       </span>
-                    : <span className={styles.value} data-type={row.type} title={row.type === "string" && (row.value as string).length > 40 ? row.value as string : undefined}>
+                    : <span className={cn(styles.value, classNames?.value)} data-type={row.type} title={row.type === "string" && (row.value as string).length > 40 ? row.value as string : undefined}>
                         {row.type === "string" ? <>&quot;<Highlight text={row.value as string} needle={mark} current={isCurrentMatch} />&quot;</> : <Highlight text={primitiveText(row.value, row.type)} needle={mark} current={isCurrentMatch} />}
                       </span>}
-                  {copyable ? <span className={styles.actions}>
+                  {copyable ? <span className={cn(styles.actions, classNames?.actions)}>
                     <CopyButton label="Copy value" icon={<Copy size={14} strokeWidth={1.75} aria-hidden="true" />} reduced={reduced} onCopy={() => copy(row, "value")} />
                     <CopyButton label="Copy path" icon={<Link2 size={14} strokeWidth={1.75} aria-hidden="true" />} reduced={reduced} onCopy={() => copy(row, "path")} />
                   </span> : null}
@@ -518,9 +545,9 @@ export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function J
       </motion.div>
     </LayoutGroup>
 
-    {showPath && activeRow ? <div className={styles.pathBar}>
-      <code className={styles.path} title={activeRow.kind === "node" ? activeRow.id : activeRow.parent ?? ""}>{activeRow.kind === "node" ? activeRow.id : activeRow.parent}</code>
-      <span className={styles.pathType}>{activeRow.kind === "node" ? isBranch(activeRow.type) ? `${activeRow.type}, ${countLabel(activeRow)}` : activeRow.type : "page"}</span>
+    {showPath && activeRow ? <div className={cn(styles.pathBar, classNames?.pathBar)}>
+      <code className={cn(styles.path, classNames?.path)} title={activeRow.kind === "node" ? activeRow.id : activeRow.parent ?? ""}>{activeRow.kind === "node" ? activeRow.id : activeRow.parent}</code>
+      <span className={cn(styles.pathType, classNames?.pathType)}>{activeRow.kind === "node" ? isBranch(activeRow.type) ? `${activeRow.type}, ${countLabel(activeRow)}` : activeRow.type : "page"}</span>
       {copyable && activeRow.kind === "node" ? <CopyButton key={activeRow.id} focusable className={styles.pathCopy} label="Copy path" icon={<Copy size={14} strokeWidth={1.75} aria-hidden="true" />} reduced={reduced} onCopy={() => copy(activeRow, "path")} /> : null}
     </div> : null}
     <span className={styles.srOnly} role="status">{announcement}</span>

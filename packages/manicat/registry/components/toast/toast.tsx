@@ -3,8 +3,9 @@ import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, typ
 import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion, type AnimationPlaybackControls, type HTMLMotionProps, type MotionProps, type PanInfo, type TargetAndTransition, type Transition, type Variants } from "motion/react";
 import { X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./toast.module.css";
-export interface ToastProps { title: string; description?: string; open?: boolean; onOpenChange?: (open: boolean) => void; duration?: number; }
+export interface ToastProps { title: string; description?: string; open?: boolean; onOpenChange?: (open: boolean) => void; duration?: number; className?: string; /** Extend the inner, named parts of the toast: icon, frame, copy, title, line, description or close. */ classNames?: { icon?: string; frame?: string; copy?: string; title?: string; line?: string; description?: string; close?: string } }
 
 const subscribeHydration = () => () => {};
 const exitFast: Transition = { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] };
@@ -23,7 +24,7 @@ function Swap(props: HTMLMotionProps<"span">) {
 }
 
 /** Follows its content height. After `morphKey` changes, the height springs from the old size to the new one and then returns to auto, so passive reflows (a resize, a font swap) follow instantly. It clips only while moving, so focus rings stay visible at rest. */
-function HeightFrame({ reduce, morphKey, children }: { reduce: boolean | null; morphKey: string; children: ReactNode }) {
+function HeightFrame({ reduce, morphKey, children, classNames }: { reduce: boolean | null; morphKey: string; children: ReactNode; classNames?: ToastProps["classNames"] }) {
   const frame = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const height = useMotionValue<number | "auto">("auto");
@@ -49,12 +50,12 @@ function HeightFrame({ reduce, morphKey, children }: { reduce: boolean | null; m
     observer.observe(node);
     return () => { observer.disconnect(); controls?.stop(); };
   }, [height, reduce]);
-  return <motion.div ref={frame} className={styles.frame} style={{ height }}>
-    <div ref={content} className={styles.copy}>{children}</div>
+  return <motion.div ref={frame} className={cn(styles.frame, classNames?.frame)} style={{ height }}>
+    <div ref={content} className={cn(styles.copy, classNames?.copy)}>{children}</div>
   </motion.div>;
 }
 
-export default function Toast({ title, description, open = true, onOpenChange, duration = 4500 }: ToastProps) {
+export default function Toast({ title, description, open = true, onOpenChange, duration = 4500, className, classNames }: ToastProps) {
   const reduce = useReducedMotion();
   // Toasts that mount after hydration rise in from their edge; server-rendered ones start settled.
   const hydrated = useSyncExternalStore(subscribeHydration, () => true, () => false);
@@ -115,7 +116,7 @@ export default function Toast({ title, description, open = true, onOpenChange, d
       {visible && <motion.div
         key="toast"
         ref={surface}
-        className={styles.toast}
+        className={cn(styles.toast, className)}
         role="status"
         aria-live="polite"
         aria-atomic="true"
@@ -130,18 +131,18 @@ export default function Toast({ title, description, open = true, onOpenChange, d
         dragMomentum={false}
         onDragEnd={handleDragEnd}
       >
-        <span className={styles.icon} aria-hidden="true">
+        <span className={cn(styles.icon, classNames?.icon)} aria-hidden="true">
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.25} strokeLinecap="round" strokeLinejoin="round">
             <motion.path d="M4 12.5l5 5L20 6.5" initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter], delay: .12 }} />
           </svg>
         </span>
         {/* The copy column follows its content height, so a longer message grows the toast instead of snapping it. */}
-        <HeightFrame reduce={reduce} morphKey={`${title}\n${description ?? ""}`}>
-          <strong className={styles.title}><AnimatePresence mode="popLayout" initial={false}><Swap key={title} className={styles.line} {...swap}>{title}</Swap></AnimatePresence></strong>
-          <AnimatePresence mode="popLayout" initial={false}>{description ? <Swap key={description} className={styles.description} {...swap}>{description}</Swap> : null}</AnimatePresence>
+        <HeightFrame reduce={reduce} morphKey={`${title}\n${description ?? ""}`} classNames={classNames}>
+          <strong className={cn(styles.title, classNames?.title)}><AnimatePresence mode="popLayout" initial={false}><Swap key={title} className={cn(styles.line, classNames?.line)} {...swap}>{title}</Swap></AnimatePresence></strong>
+          <AnimatePresence mode="popLayout" initial={false}>{description ? <Swap key={description} className={cn(styles.description, classNames?.description)} {...swap}>{description}</Swap> : null}</AnimatePresence>
         </HeightFrame>
         <button
-          className={styles.close}
+          className={cn(styles.close, classNames?.close)}
           type="button"
           aria-label="Dismiss notification"
           onClick={() => dismiss(0)}

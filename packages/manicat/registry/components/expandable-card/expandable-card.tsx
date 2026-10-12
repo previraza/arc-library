@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import type { Transition, Variants } from "motion/react";
 import { ChevronDown as NavArrowDown } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { cn } from "@/lib/cn";
 import styles from "./expandable-card.module.css";
 
 export interface ExpandableCardProps extends Omit<ComponentPropsWithoutRef<"article">, "title" | "children" | "onAnimationStart" | "onAnimationEnd" | "onAnimationIteration" | "onDrag" | "onDragStart" | "onDragEnd" | "onDragOver" | "onDragLeave" | "onDragEnter" | "onDragExit" | "onDrop"> {
@@ -17,6 +18,16 @@ export interface ExpandableCardProps extends Omit<ComponentPropsWithoutRef<"arti
   width?: number;
   /** Expanded width cap in px, so the card can grow sideways into more room. Defaults to `width`. */
   expandedWidth?: number;
+  /** Extend the inner, named parts of the expandable card: track, trigger, copy, description, arrow, panel or panelInner. */
+  classNames?: {
+    track?: string;
+    trigger?: string;
+    copy?: string;
+    description?: string;
+    arrow?: string;
+    panel?: string;
+    panelInner?: string;
+  };
 }
 
 /**
@@ -50,7 +61,7 @@ function RollingText({ text, reduced }: { text: string; reduced: boolean }) {
   </span>;
 }
 
-export function ExpandableCard({ title, description, children, defaultExpanded = false, width, expandedWidth, className, style, onKeyDown, ...rest }: ExpandableCardProps) {
+export function ExpandableCard({ title, description, children, defaultExpanded = false, width, expandedWidth, className, classNames, style, onKeyDown, ...rest }: ExpandableCardProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [hold, setHold] = useState(true);
   const lastToggle = useRef(0);
@@ -105,7 +116,7 @@ export function ExpandableCard({ title, description, children, defaultExpanded =
     triggerRef.current?.focus();
   };
 
-  return <div ref={trackRef} className={styles.track}>
+  return <div ref={trackRef} className={cn(styles.track, classNames?.track)}>
     <motion.article
       {...rest}
       className={[styles.card, className].filter(Boolean).join(" ")}
@@ -114,13 +125,13 @@ export function ExpandableCard({ title, description, children, defaultExpanded =
       style={{ ...style, ...capVars, width: boxWidthValue }}
       onKeyDown={handleKeyDown}
     >
-      <button ref={triggerRef} type="button" className={styles.trigger} aria-expanded={expanded} aria-controls={panelId} onClick={() => toggle(!expanded)}>
-        <span className={styles.copy}><strong>{title}</strong>{description && <span className={styles.description}><RollingText text={description} reduced={reduceMotion} /></span>}</span>
-        <motion.span className={styles.arrow} initial={false} animate={{ rotate: expanded ? 180 : 0 }} transition={reduceMotion ? still : boxTransition(expanded, hold)}><NavArrowDown width={18} height={18} aria-hidden="true" /></motion.span>
+      <button ref={triggerRef} type="button" className={cn(styles.trigger, classNames?.trigger)} aria-expanded={expanded} aria-controls={panelId} onClick={() => toggle(!expanded)}>
+        <span className={cn(styles.copy, classNames?.copy)}><strong>{title}</strong>{description && <span className={cn(styles.description, classNames?.description)}><RollingText text={description} reduced={reduceMotion} /></span>}</span>
+        <motion.span className={cn(styles.arrow, classNames?.arrow)} initial={false} animate={{ rotate: expanded ? 180 : 0 }} transition={reduceMotion ? still : boxTransition(expanded, hold)}><NavArrowDown width={18} height={18} aria-hidden="true" /></motion.span>
       </button>
       {/* The panel stays mounted so a second click mid-animation reverses from where it is; inert keeps closed details out of reach. */}
-      <motion.div id={panelId} className={styles.panel} inert={!expanded} initial={false} animate={{ height: expanded ? "auto" : 0 }} transition={reduceMotion ? still : boxTransition(expanded, hold)}>
-        <motion.div className={styles.panelInner} style={innerWidth === undefined ? undefined : { width: innerWidth - 2 }} initial={false} animate={{ opacity: expanded ? 1 : 0 }} transition={reduceMotion ? still : contentTransition(expanded)}>{children}</motion.div>
+      <motion.div id={panelId} className={cn(styles.panel, classNames?.panel)} inert={!expanded} initial={false} animate={{ height: expanded ? "auto" : 0 }} transition={reduceMotion ? still : boxTransition(expanded, hold)}>
+        <motion.div className={cn(styles.panelInner, classNames?.panelInner)} style={innerWidth === undefined ? undefined : { width: innerWidth - 2 }} initial={false} animate={{ opacity: expanded ? 1 : 0 }} transition={reduceMotion ? still : contentTransition(expanded)}>{children}</motion.div>
       </motion.div>
     </motion.article>
   </div>;
