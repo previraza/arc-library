@@ -2,10 +2,10 @@
   import ScrollArea from "@/components/manicat/scroll-area/scroll-area.svelte";
 </script>
 
-<div style="width: min(320px, 100%)">
-  <ScrollArea label="Changelog" maxHeight={140}>
-    {#each Array.from({ length: 12 }, (_, i) => i + 1) as n (n)}
-      <p style="margin: 0 0 8px">Release 1.{n}: a handful of fixes and polish.</p>
+<ScrollArea maxHeight={180} style="width: 100%; max-width: 24rem; border: 1px solid var(--border); border-radius: var(--radius-panel); padding: 16px">
+  <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 20px">
+    {#each Array.from({ length: 12 }, (_, index) => index) as index}
+      <p style="color: var(--text-muted)">Row {index + 1}. The scrollbar fades in when you scroll and fades out when you stop.</p>
     {/each}
-  </ScrollArea>
-</div>
+  </div>
+</ScrollArea>

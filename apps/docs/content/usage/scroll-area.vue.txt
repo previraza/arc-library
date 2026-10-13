@@ -3,7 +3,9 @@ import ScrollArea from "@/components/manicat/scroll-area/scroll-area.vue";
 </script>
 
 <template>
-  <ScrollArea :max-height="180" label="Activity log">
-    <p v-for="n in 12" :key="n">09:{{ 10 + n * 3 }} · Deployment #{{ 140 + n }} finished</p>
+  <ScrollArea :max-height="180" style="width: 100%; max-width: 24rem; border: 1px solid var(--border); border-radius: var(--radius-panel); padding: 16px">
+    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 20px">
+      <p v-for="index in 12" :key="index" style="color: var(--text-muted)">Row {{ index }}. The scrollbar fades in when you scroll and fades out when you stop.</p>
+    </div>
   </ScrollArea>
 </template>
