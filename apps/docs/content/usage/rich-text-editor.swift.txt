@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct RichTextEditorExample: View {
+    @State private var markdown = "**Hello** Manicat"
+
+    var body: some View {
+        ManicatRichTextEditor(markdown: $markdown)
+            .frame(maxWidth: 460)
+    }
+}

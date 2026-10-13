@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct SignaturePadExample: View {
+    @State private var strokes: [ManicatInkStroke] = []
+
+    var body: some View {
+        ManicatSignaturePad(strokes: $strokes, signer: "Ada Lovelace")
+            .frame(maxWidth: 420)
+    }
+}

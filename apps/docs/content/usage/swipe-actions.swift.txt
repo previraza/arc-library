@@ -1,0 +1,14 @@
+import SwiftUI
+
+struct SwipeActionsExample: View {
+    var body: some View {
+        ManicatSwipeActions("Messages") {
+            ManicatSwipeActionsRow("Welcome to Manicat",
+                leading: [ManicatSwipeAction("Read", tone: .accent, onSelect: {})],
+                trailing: [ManicatSwipeAction("Archive", onSelect: {}), ManicatSwipeAction("Delete", tone: .danger, onSelect: {})]) {
+                Text("Welcome to Manicat").font(.subheadline)
+            }
+        }
+        .frame(maxWidth: 420)
+    }
+}

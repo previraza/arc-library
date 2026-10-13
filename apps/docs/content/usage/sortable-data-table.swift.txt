@@ -1,0 +1,20 @@
+import SwiftUI
+
+struct SortableDataTableExample: View {
+    private struct Person: Identifiable { let id: String; let name: String; let role: String; let age: Int }
+    private let people = [
+        Person(id: "1", name: "Ada", role: "Engineer", age: 36),
+        Person(id: "2", name: "Lin", role: "Design", age: 29),
+        Person(id: "3", name: "Grace", role: "Admiral", age: 85),
+    ]
+    @State private var selection: Set<String> = []
+
+    var body: some View {
+        ManicatSortableDataTable(people, columns: [
+            ManicatDataColumn("name", "Name", sortable: true, text: { $0.name }),
+            ManicatDataColumn("role", "Role", sortable: true, text: { $0.role }),
+            ManicatDataColumn("age", "Age", sortable: true, numeric: true, width: 80, sortValue: { Double($0.age) }, text: { String($0.age) }),
+        ], caption: "Team", defaultSort: ManicatSortState(key: "name"), selection: $selection)
+        .frame(maxWidth: 460)
+    }
+}

@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct NotificationCenterExample: View {
+    @State private var notifications = [
+        ManicatNotification(id: "1", title: "Deploy finished", description: "main is live", time: "2m ago", tone: .success),
+        ManicatNotification(id: "2", title: "Invoice overdue", time: "1h ago", tone: .warning),
+        ManicatNotification(id: "3", title: "New comment", description: "Ada replied to your thread", time: "Yesterday", read: true),
+    ]
+
+    var body: some View {
+        ManicatNotificationCenter(notifications: $notifications)
+    }
+}

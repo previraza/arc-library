@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct PhoneInputExample: View {
+    @State private var phone = ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ManicatPhoneInput("Phone number", value: $phone, defaultCountry: "FR", description: "Type +33… to switch country.")
+            Text(phone.isEmpty ? " " : phone).font(.caption.monospacedDigit())
+        }
+        .frame(maxWidth: 360)
+    }
+}

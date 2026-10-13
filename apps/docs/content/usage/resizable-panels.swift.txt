@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct ResizablePanelsExample: View {
+    var body: some View {
+        ManicatResizablePanels([
+            ManicatResizablePanel(id: "nav", label: "navigation", defaultSize: 30, minSize: 15) { Text("Navigation").frame(maxWidth: .infinity, maxHeight: .infinity) },
+            ManicatResizablePanel(id: "main", label: "content", defaultSize: 70) { Text("Content").frame(maxWidth: .infinity, maxHeight: .infinity) },
+        ])
+        .frame(height: 200)
+    }
+}

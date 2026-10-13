@@ -1,0 +1,17 @@
+import SwiftUI
+
+struct ToastStackExample: View {
+    @StateObject private var toasts = ManicatToastStore()
+
+    var body: some View {
+        ManicatToastStack(toasts) {
+            VStack(spacing: 8) {
+                ManicatButton("Saved", variant: .secondary) { toasts.toast(ManicatToastEntry(type: .success, title: "Saved", description: "Your changes are live.")) }
+                ManicatButton("Undoable", variant: .secondary) {
+                    toasts.toast(ManicatToastEntry(title: "Message archived", action: ManicatToastAction("Undo") { _ in }))
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: 280)
+        }
+    }
+}
