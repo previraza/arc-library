@@ -10,5 +10,7 @@ onBeforeUnmount(() => clearInterval(timer));
 </script>
 
 <template>
-  <p>Good interfaces are built on <TextMorph as="strong" :text="words[index]" />.</p>
+  <p style="width: 100%; text-align: center; font-size: 14px; line-height: 20px; color: var(--text-muted)">
+    Good interfaces are built on <TextMorph as="strong">{{ words[index] }}</TextMorph>.
+  </p>
 </template>
