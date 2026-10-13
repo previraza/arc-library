@@ -937,7 +937,7 @@ export function createTextShimmer(label: HTMLElement, { active, duration, reduce
  * before the DOM changes and `play()` just after: every node that moved starts from where it was and springs to where it is.
  * The nodes are measured inside their positioned parent, so a node that is popped out to leave simply stays where it stands.
  */
-export function createFlip(items: () => HTMLElement[], { reduced, spring: curve = "morph" }: { reduced: boolean; spring?: keyof typeof motionTokens.spring }) {
+export function createFlip(items: () => HTMLElement[], { reduced, spring: curve = "morph", transition }: { reduced: boolean; spring?: keyof typeof motionTokens.spring; /** A tween to move on instead of a spring. */ transition?: { duration: number; ease?: "enter" | "exit" | "standard" | "inOut" } }) {
   let before = new Map<HTMLElement, { x: number; y: number }>();
   return {
     measure() {
@@ -950,7 +950,7 @@ export function createFlip(items: () => HTMLElement[], { reduced, spring: curve 
         if (!from) continue;
         const dx = from.x - node.offsetLeft;
         const dy = from.y - node.offsetTop;
-        if (dx || dy) animate(node, { x: [dx, 0], y: [dy, 0] } as never, motionTokens.spring[curve] as never);
+        if (dx || dy) animate(node, { x: [dx, 0], y: [dy, 0] } as never, (transition ? { duration: transition.duration, ease: ease(transition.ease ?? "standard") } : motionTokens.spring[curve]) as never);
       }
       before = new Map();
     },

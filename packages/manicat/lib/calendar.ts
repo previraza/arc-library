@@ -38,3 +38,10 @@ export function isDisabled(date: Date, { minDate, maxDate, disabledDates }: Cale
   const day = startOfDay(date).getTime();
   return Boolean((minDate && day < startOfDay(minDate).getTime()) || (maxDate && day > startOfDay(maxDate).getTime()) || disabledDates?.(date));
 }
+
+export const sameMonth = (a?: Date | null, b?: Date | null) => Boolean(a && b) && a!.getFullYear() === b!.getFullYear() && a!.getMonth() === b!.getMonth();
+/** Moves by whole months and keeps the day, clamped to the shorter month: January 31 plus one month is February 28. */
+export const shiftMonths = (date: Date, amount: number) => new Date(date.getFullYear(), date.getMonth() + amount, Math.min(date.getDate(), new Date(date.getFullYear(), date.getMonth() + amount + 1, 0).getDate()));
+export const isBefore = (a: Date, b?: Date) => Boolean(b && startOfDay(a).getTime() < startOfDay(b).getTime());
+export const isAfter = (a: Date, b?: Date) => Boolean(b && startOfDay(a).getTime() > startOfDay(b).getTime());
+export const dateKey = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;

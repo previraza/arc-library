@@ -6,5 +6,5 @@ const date = ref<Date | undefined>(new Date(2026, 9, 5));
 </script>
 
 <template>
-  <DatePicker v-model="date" label="Ship date" description="Pressing the chosen day again clears it." />
+  <DatePicker v-model="date" label="Ship date" />
 </template>

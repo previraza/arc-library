@@ -1,9 +1,7 @@
 <script lang="ts">
   import Calendar from "@/components/manicat/calendar/calendar.svelte";
-  let day = $state<Date | undefined>(new Date());
+
+  let value = $state<Date | undefined>(new Date(2026, 9, 5));
 </script>
 
-<div style="display: grid; gap: 8px; justify-items: start">
-  <Calendar bind:value={day} />
-  <small>{day?.toDateString()}</small>
-</div>
+<Calendar bind:value month={new Date(2026, 9, 1)} onMonthChange={() => {}} showToday />

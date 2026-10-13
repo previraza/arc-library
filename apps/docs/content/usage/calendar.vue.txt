@@ -2,9 +2,9 @@
 import { ref } from "vue";
 import Calendar from "@/components/manicat/calendar/calendar.vue";
 
-const date = ref<Date | undefined>(new Date());
+const value = ref<Date | undefined>(new Date(2026, 9, 5));
 </script>
 
 <template>
-  <Calendar v-model="date" :min-date="new Date()" />
+  <Calendar v-model="value" :month="new Date(2026, 9, 1)" show-today @update:month="() => {}" />
 </template>
