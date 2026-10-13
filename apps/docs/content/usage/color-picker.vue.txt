@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import ColorPicker from "@/components/manicat/color-picker/color-picker.vue";
+
+const color = ref("#7747ff");
+</script>
+
+<template>
+  <ColorPicker v-model="color" label="Accent" />
+  <div class="h-10 rounded-xl" :style="{ background: color }" />
+</template>

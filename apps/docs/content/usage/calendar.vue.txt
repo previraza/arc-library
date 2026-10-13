@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Calendar from "@/components/manicat/calendar/calendar.vue";
+
+const date = ref<Date | undefined>(new Date());
+</script>
+
+<template>
+  <Calendar v-model="date" :min-date="new Date()" />
+</template>

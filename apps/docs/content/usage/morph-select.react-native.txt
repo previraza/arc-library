@@ -1,0 +1,12 @@
+import { useState } from "react";
+import { MorphSelect } from "@/components/manicat/morph-select/morph-select.rn";
+
+const timezones = [
+  { label: "Europe", options: [{ value: "Europe/London", label: "London", meta: "UTC+0" }, { value: "Europe/Paris", label: "Paris", meta: "UTC+1" }] },
+  { label: "Americas", options: [{ value: "America/New_York", label: "New York", meta: "UTC-5", keywords: "est" }] },
+];
+
+export function Timezone() {
+  const [zone, setZone] = useState<string | null>("Europe/Paris");
+  return <MorphSelect label="Timezone" items={timezones} value={zone} onValueChange={setZone} />;
+}

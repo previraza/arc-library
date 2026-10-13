@@ -1,0 +1,7 @@
+import { useState } from "react";
+import { DateRangePicker, type DateRange } from "@/components/manicat/date-range-picker/date-range-picker.rn";
+
+export function Billing() {
+  const [range, setRange] = useState<DateRange | null>(null);
+  return <DateRangePicker label="Billing period" value={range} onChange={setRange} />;
+}

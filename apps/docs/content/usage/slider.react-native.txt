@@ -1,0 +1,13 @@
+import { useState } from "react";
+import { Slider } from "@/components/manicat/slider/slider.rn";
+
+export function Controls() {
+  const [volume, setVolume] = useState(40);
+  const [price, setPrice] = useState<[number, number]>([20, 80]);
+  return (
+    <>
+      <Slider label="Volume" value={volume} onValueChange={setVolume} />
+      <Slider<[number, number]> label="Price" value={price} onValueChange={setPrice} format={(n) => `$${n}`} />
+    </>
+  );
+}

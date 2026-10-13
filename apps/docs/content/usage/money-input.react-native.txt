@@ -1,0 +1,7 @@
+import { useState } from "react";
+import { MoneyInput } from "@/components/manicat/money-input/money-input.rn";
+
+export function Invoice() {
+  const [amount, setAmount] = useState<number | null>(1250);
+  return <MoneyInput label="Invoice amount" value={amount} onValueChange={setAmount} defaultCurrency="USD" currencies={["USD", "EUR", "GBP"]} />;
+}

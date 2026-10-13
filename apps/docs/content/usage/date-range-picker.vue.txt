@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import DateRangePicker, { type DateRange } from "@/components/manicat/date-range-picker/date-range-picker.vue";
+
+const range = ref<DateRange | null>(null);
+</script>
+
+<template>
+  <DateRangePicker v-model="range" label="Billing period" />
+</template>

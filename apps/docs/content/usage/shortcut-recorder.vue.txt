@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import ShortcutRecorder from "@/components/manicat/shortcut-recorder/shortcut-recorder.vue";
+
+const shortcut = ref<string | null>("mod+k");
+</script>
+
+<template>
+  <ShortcutRecorder v-model="shortcut" label="Open command menu" reset-value="mod+k" :bindings="[{ shortcut: 'mod+p', label: 'Print' }]" />
+</template>

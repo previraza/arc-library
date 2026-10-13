@@ -1,0 +1,7 @@
+import { useState } from "react";
+import { ShortcutRecorder } from "@/components/manicat/shortcut-recorder/shortcut-recorder.rn";
+
+export function Keyboard() {
+  const [shortcut, setShortcut] = useState<string | null>("mod+k");
+  return <ShortcutRecorder label="Open command menu" value={shortcut} onValueChange={setShortcut} resetValue="mod+k" bindings={[{ shortcut: "mod+p", label: "Print" }]} />;
+}

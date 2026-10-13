@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import PhoneInput from "@/components/manicat/phone-input/phone-input.vue";
+
+const phone = ref("");
+const valid = ref(false);
+</script>
+
+<template>
+  <PhoneInput v-model="phone" label="Phone number" default-country="GB" :preferred-countries="['GB', 'IE', 'US']" :description="valid ? undefined : 'We only text about your order'" @change="valid = $event.valid" />
+</template>

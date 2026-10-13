@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import DatePicker from "@/components/manicat/date-picker/date-picker.vue";
+
+const date = ref<Date | undefined>(new Date(2026, 9, 5));
+</script>
+
+<template>
+  <DatePicker v-model="date" label="Ship date" description="Pressing the chosen day again clears it." />
+</template>

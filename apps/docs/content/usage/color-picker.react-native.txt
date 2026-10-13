@@ -1,0 +1,13 @@
+import { useState } from "react";
+import { View } from "react-native";
+import { ColorPicker } from "@/components/manicat/color-picker/color-picker.rn";
+
+export function Brand() {
+  const [color, setColor] = useState("#7747ff");
+  return (
+    <View style={{ gap: 12 }}>
+      <ColorPicker label="Accent" value={color} onValueChange={setColor} />
+      <View style={{ height: 40, borderRadius: 12, backgroundColor: color }} />
+    </View>
+  );
+}

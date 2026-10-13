@@ -1,0 +1,7 @@
+import { useState } from "react";
+import { Calendar } from "@/components/manicat/calendar/calendar.rn";
+
+export function ShipDate() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  return <Calendar value={date} onChange={setDate} minDate={new Date()} />;
+}

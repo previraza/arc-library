@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import MoneyInput from "@/components/manicat/money-input/money-input.vue";
+
+const amount = ref<number | null>(1250);
+const currency = ref("USD");
+</script>
+
+<template>
+  <MoneyInput v-model="amount" v-model:currency="currency" label="Invoice amount" />
+</template>
