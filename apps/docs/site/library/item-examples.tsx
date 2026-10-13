@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { getDemoSource, getExampleSources, readUsage, type ExampleSource } from "@/lib/examples";
+import { getDemoSource, getExampleSources, readExample, readUsage, type ExampleSource } from "@/lib/examples";
 import { getPorts, reactFramework } from "@/lib/frameworks";
 import { highlight } from "@/lib/highlight";
 import type { RegistryItem } from "@/lib/registry";
@@ -55,8 +55,21 @@ export async function loadExamples(item: RegistryItem): Promise<LoadedExample[]>
 }
 
 /** "Examples": concrete scenarios, each a live render with its own copyable file. */
-export function ItemExamples({ examples }: { examples: LoadedExample[] }) {
+export async function ItemExamples({ item, examples }: { item: RegistryItem; examples: LoadedExample[] }) {
   if (examples.length === 0) return null;
+
+  // The same example for each other framework it is written for.
+  const ports = await Promise.all(
+    examples.map(async ({ source }) => {
+      const panels: UsagePanel[] = [];
+      for (const port of getPorts(item)) {
+        const code = readExample(source.exportName, port.framework.id);
+        if (!code) continue;
+        panels.push({ id: port.framework.id, label: port.framework.label, fileName: `${source.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}${port.framework.suffix}`, lang: port.framework.lang, code, html: await highlight(code, port.framework.lang) });
+      }
+      return panels;
+    }),
+  );
 
   return (
     <section id="examples" className="grid scroll-mt-24 gap-8">
@@ -66,7 +79,7 @@ export function ItemExamples({ examples }: { examples: LoadedExample[] }) {
           Real screens rather than isolated props. Switch to Code to copy a whole example into your project.
         </p>
       </div>
-      {examples.map(({ source, Component }) => (
+      {examples.map(({ source, Component }, index) => (
         <ExampleCard
           key={source.exportName}
           id={source.exportName}
@@ -75,6 +88,7 @@ export function ItemExamples({ examples }: { examples: LoadedExample[] }) {
           fileName={`${source.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.tsx`}
           code={source.code}
           html={source.html}
+          ports={ports[index]}
         >
           <Component />
         </ExampleCard>

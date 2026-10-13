@@ -90,7 +90,7 @@ export async function ItemPage({ item, section }: { item: RegistryItem; section:
       </section>
 
       <ItemUsage item={item} />
-      <ItemExamples examples={examples} />
+      <ItemExamples item={item} examples={examples} />
 
       <ItemDetails sections={guidance} />
 

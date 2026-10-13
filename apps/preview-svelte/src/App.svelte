@@ -3,7 +3,8 @@
   import { entries, loadDemo } from "./ports";
 
   const docsUrl = import.meta.env.VITE_DOCS_URL ?? "http://localhost:3000";
-  const fromHash = () => decodeURIComponent(location.hash.slice(1)) || entries[0]?.name || "";
+  const frameFor = (name: string) => (name.startsWith("example:") ? `example/${name.slice(8)}` : `demo/${name}`);
+const fromHash = () => decodeURIComponent(location.hash.slice(1)) || entries[0]?.name || "";
 
   let current = $state(fromHash());
   let dark = $state(matchMedia("(prefers-color-scheme: dark)").matches);
@@ -60,7 +61,7 @@
       {#if compare}
         <section class="viewer__pane">
           <span>React (docs)</span>
-          <div class="viewer__stage"><iframe title={`${current} in React`} src={`${docsUrl}/frame/demo/${current}`}></iframe></div>
+          <div class="viewer__stage"><iframe title={`${current} in React`} src={`${docsUrl}/frame/${frameFor(current)}`}></iframe></div>
         </section>
       {/if}
     </div>

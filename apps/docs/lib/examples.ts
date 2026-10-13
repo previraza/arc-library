@@ -161,3 +161,15 @@ export function readUsage(itemName: string, frameworkId: string): string | undef
     return;
   }
 }
+
+/**
+ * The same example written for another framework: `content/examples/<ExportName>.<framework>.txt`. The viewer of that framework
+ * renders it, so the Examples section can show every example in every framework it is ported to.
+ */
+export function readExample(exportName: string, frameworkId: string): string | undefined {
+  try {
+    return readFileSync(join(process.cwd(), "content", "examples", `${exportName}.${frameworkId}.txt`), "utf8").trimEnd() + "\n";
+  } catch {
+    return;
+  }
+}

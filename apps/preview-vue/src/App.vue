@@ -4,6 +4,7 @@ import type { Component } from "vue";
 import { entries, loadDemo } from "./ports";
 
 const docsUrl = import.meta.env.VITE_DOCS_URL ?? "http://localhost:3000";
+const frameFor = (name: string) => (name.startsWith("example:") ? `example/${name.slice(8)}` : `demo/${name}`);
 const fromHash = () => decodeURIComponent(location.hash.slice(1)) || entries[0]?.name || "";
 
 const current = ref(fromHash());
@@ -60,7 +61,7 @@ const groups = computed(() => ["components", "blocks"].map((kind) => ({ kind, it
         </section>
         <section v-if="compare" class="viewer__pane">
           <span>React (docs)</span>
-          <div class="viewer__stage"><iframe :title="`${current} in React`" :src="`${docsUrl}/frame/demo/${current}`" /></div>
+          <div class="viewer__stage"><iframe :title="`${current} in React`" :src="`${docsUrl}/frame/${frameFor(current)}`" /></div>
         </section>
       </div>
     </main>

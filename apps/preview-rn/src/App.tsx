@@ -4,6 +4,7 @@ import { entries, loadDemo } from "./ports";
 import { setColorScheme } from "./react-native";
 
 const docsUrl = import.meta.env.VITE_DOCS_URL ?? "http://localhost:3000";
+const frameFor = (name: string) => (name.startsWith("example:") ? `example/${name.slice(8)}` : `demo/${name}`);
 const fromHash = () => decodeURIComponent(location.hash.slice(1)) || entries[0]?.name || "";
 
 export function App() {
@@ -78,7 +79,7 @@ export function App() {
             <section className="viewer__pane">
               <span>React (docs)</span>
               <div className="viewer__stage">
-                <iframe title={`${current} in React`} src={`${docsUrl}/frame/demo/${current}`} />
+                <iframe title={`${current} in React`} src={`${docsUrl}/frame/${frameFor(current)}`} />
               </div>
             </section>
           )}
