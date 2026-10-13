@@ -1,0 +1,8 @@
+<script lang="ts">
+  import Sparkline from "@/registry/components/sparkline/sparkline.svelte";
+</script>
+
+<div style="display: flex; gap: 24px; flex-wrap: wrap">
+  <Sparkline label="Revenue" value="$12.4k" change="+8.2%" data={[4, 6, 5, 8, 7, 11, 10, 14]} />
+  <Sparkline label="Churn" value="2.1%" change="-0.4%" tone="danger" data={[9, 8, 8, 6, 7, 5, 4, 4]} />
+</div>
