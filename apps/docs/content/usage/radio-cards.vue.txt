@@ -2,13 +2,13 @@
 import { ref } from "vue";
 import RadioCards from "@/components/manicat/radio-cards/radio-cards.vue";
 
-const plan = ref<string | null>("pro");
+const value = ref<string | null>("pro");
 const options = [
   { value: "free", label: "Free", description: "The whole core library." },
-  { value: "pro", label: "Pro", description: "Motion components and larger blocks.", meta: "$19" },
+  { value: "pro", label: "Pro", description: "Motion components and larger blocks." },
 ];
 </script>
 
 <template>
-  <RadioCards v-model="plan" :options="options" />
+  <RadioCards v-model="value" aria-label="Plan" :options="options" />
 </template>
