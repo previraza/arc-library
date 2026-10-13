@@ -10,7 +10,7 @@ const defaultPresets: DateRangePreset[] = [
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, useId } from "vue";
-import Calendar from "@/registry/components/calendar/calendar.vue";
+import Calendar from "@/registry/components/date-range-picker/range-calendar.vue";
 
 export interface DateRange {
   start: Date;

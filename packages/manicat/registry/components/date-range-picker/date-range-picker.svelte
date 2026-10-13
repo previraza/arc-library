@@ -11,7 +11,7 @@
 </script>
 
 <script lang="ts">
-  import Calendar from "@/registry/components/calendar/calendar.svelte";
+  import Calendar from "@/registry/components/date-range-picker/range-calendar.svelte";
   import { addDays, startOfDay, startOfMonth } from "@/lib/calendar";
 
   const defaultPresets: DateRangePreset[] = [
