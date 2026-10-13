@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import Button from "@/components/manicat/button/button.vue";
 import Drawer from "@/components/manicat/drawer/drawer.vue";
-
-const open = ref(false);
+import DrawerClose from "@/components/manicat/drawer/drawer-close.vue";
+import DrawerContent from "@/components/manicat/drawer/drawer-content.vue";
+import DrawerTrigger from "@/components/manicat/drawer/drawer-trigger.vue";
 </script>
 
 <template>
-  <Drawer v-model:open="open" title="Filters" description="Narrow the list without leaving the page." side="right">
-    <template #trigger="{ open: show }"><Button variant="secondary" @click="show">Filters</Button></template>
-    <p>Status, owner and date range go here.</p>
-    <Button @click="open = false">Show results</Button>
+  <Drawer>
+    <DrawerTrigger as-child>
+      <Button variant="secondary">Open drawer</Button>
+    </DrawerTrigger>
+    <DrawerContent title="Filters" description="Narrow the list without leaving the page.">
+      <p style="font-size: 14px; line-height: 20px; color: var(--text-muted)">A drag on the edge closes the panel, handing its velocity to the exit spring.</p>
+      <DrawerClose as-child><Button>Show results</Button></DrawerClose>
+    </DrawerContent>
   </Drawer>
 </template>

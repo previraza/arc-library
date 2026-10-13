@@ -1,87 +1,112 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  // @manicat-dependencies bits-ui
+  import { Dialog } from "bits-ui";
+  import type { DialogRootProps } from "bits-ui";
 
-  interface Props {
-    title: string;
-    description?: string;
-    side?: "left" | "right" | "top" | "bottom";
-    /** Whether the drawer is open. Bind it with `bind:open`. */
-    open?: boolean;
-    /** Extend the inner, named parts of the drawer: panel, header, title, description, close or body. */
-    classNames?: { panel?: string; header?: string; title?: string; description?: string; close?: string; body?: string };
-    /** The control that opens it. It receives an `open` function to wire to a button. */
-    trigger?: Snippet<[{ open: () => void }]>;
-    children?: Snippet;
-  }
-
-  let { title, description, side = "right", open = $bindable(false), classNames, trigger, children }: Props = $props();
-
-  let dialog = $state<HTMLDialogElement>();
-  const id = $props.id();
-  let opener: HTMLElement | null = null;
-
-  $effect(() => {
-    const node = dialog;
-    if (!node) return;
-    if (open && !node.open) {
-      opener = document.activeElement as HTMLElement | null;
-      node.showModal();
-    } else if (!open && node.open) node.close();
-  });
-
-  $effect(() => () => {
-    if (dialog?.open) dialog.close();
-  });
-
-  function onClose() {
-    open = false;
-    opener?.focus();
-  }
-
-  function onBackdrop(event: MouseEvent) {
-    if (event.target === dialog) open = false;
-  }
+  let { open = $bindable(false), children, ...rest }: DialogRootProps = $props();
 </script>
 
-{@render trigger?.({ open: () => (open = true) })}
-<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
-<dialog bind:this={dialog} class={["mc-drawer", `mc-drawer--${side}`, classNames?.panel]} aria-labelledby="{id}-title" onclose={onClose} onclick={onBackdrop}>
-  <header class={["mc-drawer__header", classNames?.header]}>
-    <div>
-      <h2 id="{id}-title" class={["mc-drawer__title", classNames?.title]}>{title}</h2>
-      {#if description}<p class={["mc-drawer__description", classNames?.description]}>{description}</p>{/if}
-    </div>
-    <button type="button" class={["mc-drawer__close", classNames?.close]} aria-label="Close" onclick={() => (open = false)}>
-      <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8" /></svg>
-    </button>
-  </header>
-  <div class={["mc-drawer__body", classNames?.body]}>{@render children?.()}</div>
-</dialog>
+<Dialog.Root bind:open {...rest}>{@render children?.()}</Dialog.Root>
 
 <style>
 :global {
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-drawer { margin: 0; padding: var(--space-5); overflow: auto; border: 1px solid var(--border); background: var(--surface); color: var(--foreground); box-shadow: var(--shadow-floating); }
-.mc-drawer::backdrop { background: oklch(10% 0 0 / .4); backdrop-filter: blur(6px); }
-.mc-drawer--right { inset: 0 0 0 auto; width: min(85vw, 24rem); height: 100dvh; max-height: none; border-radius: var(--radius-panel) 0 0 var(--radius-panel); }
-.mc-drawer--left { inset: 0 auto 0 0; width: min(85vw, 24rem); height: 100dvh; max-height: none; border-radius: 0 var(--radius-panel) var(--radius-panel) 0; }
-.mc-drawer--top { inset: 0 0 auto 0; width: 100vw; max-width: none; max-height: 70dvh; border-radius: 0 0 var(--radius-panel) var(--radius-panel); }
-.mc-drawer--bottom { inset: auto 0 0 0; width: 100vw; max-width: none; max-height: 70dvh; border-radius: var(--radius-panel) var(--radius-panel) 0 0; }
-.mc-drawer[open] { animation: var(--mc-drawer-in, mc-drawer-right) .32s var(--ease-enter) both; }
-.mc-drawer--left { --mc-drawer-in: mc-drawer-left; } .mc-drawer--top { --mc-drawer-in: mc-drawer-top; } .mc-drawer--bottom { --mc-drawer-in: mc-drawer-bottom; }
-.mc-drawer[open]::backdrop { animation: mc-drawer-fade var(--duration-standard) var(--ease-enter) both; }
-.mc-drawer:focus { outline: none; }
-.mc-drawer__header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4); }
-.mc-drawer__title { margin: 0; font-size: var(--text-lg); font-weight: 500; letter-spacing: var(--tracking-body); }
-.mc-drawer__description { margin: var(--space-1) 0 0; color: var(--text-secondary); font-size: var(--text-sm); }
-.mc-drawer__close { display: grid; place-items: center; width: var(--space-8); height: var(--space-8); border: 1px solid var(--border); border-radius: var(--radius-control); background: transparent; color: var(--text-muted); cursor: pointer; }
+.mc-drawer__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: oklch(10% 0 0 / .38);
+  backdrop-filter: blur(4px);
+}
+
+.mc-drawer__content {
+  --drawer-size: min(30rem, calc(100vw - var(--space-4)));
+  /* Critically damped, like a sheet spring: it never overshoots past the edge it is anchored to. */
+  --ease-drawer: cubic-bezier(.32,.72,0,1);
+  --drawer-from: translateX(100%);
+  position: fixed;
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  width: var(--drawer-size);
+  max-width: 100vw;
+  max-height: 100dvh;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  color: var(--foreground);
+  box-shadow: var(--shadow-floating);
+}
+/* While a layer leaves it lets clicks through, so pressing the trigger again during the close reopens the drawer from wherever it is. */
+/* Radix writes pointer-events inline on the overlay, so the closing state has to win over it. */
+.mc-drawer__overlay[data-state="closed"], .mc-drawer__content[data-state="closed"] { pointer-events: none !important; }
+
+.mc-drawer__content[data-side="right"] { inset: 0 0 0 auto; border-width: 1px 0 1px 1px; border-radius: 22px 0 0 22px; }
+.mc-drawer__content[data-side="left"] { inset: 0 auto 0 0; border-width: 1px 1px 1px 0; border-radius: 0 22px 22px 0; }
+.mc-drawer__content[data-side="top"] { inset: 0 0 auto; width: 100%; max-width: none; max-height: min(32rem, 100dvh); border-width: 0 0 1px; border-radius: 0 0 22px 22px; }
+.mc-drawer__content[data-side="bottom"] { inset: auto 0 0; width: 100%; max-width: none; max-height: min(32rem, 100dvh); border-width: 1px 0 0; border-radius: 22px 22px 0 0; }
+.mc-drawer__content[data-side="bottom"]::before { position: absolute; top: 9px; left: 50%; width: 2.25rem; height: 4px; border-radius: var(--radius-pill); background: var(--border-strong); content: ""; opacity: .75; transform: translateX(-50%); }
+
+/* Motion springs the panel from its edge. Keyframes only run when DrawerContent sits under a bare Radix root. */
+.mc-drawer__content[data-side="left"] { --drawer-from: translateX(-100%); }
+.mc-drawer__content[data-side="top"] { --drawer-from: translateY(-100%); }
+.mc-drawer__content[data-side="bottom"] { --drawer-from: translateY(100%); }
+.mc-drawer__keyframes.mc-drawer__overlay[data-state="open"] { animation: mc-drawer-overlay-in var(--duration-standard) var(--ease-enter) both; }
+.mc-drawer__keyframes.mc-drawer__overlay[data-state="closed"] { animation: mc-drawer-overlay-out var(--duration-fast) var(--ease-standard) both; }
+.mc-drawer__keyframes.mc-drawer__content[data-state="open"] { animation: mc-drawer-drawer-in var(--duration-considered) var(--ease-drawer) both; }
+.mc-drawer__keyframes.mc-drawer__content[data-state="closed"] { animation: mc-drawer-drawer-out var(--duration-standard) var(--ease-standard) both; }
+.mc-drawer__content:focus { outline: none; }
+/* Inside a container the layers anchor to that element instead of the viewport. */
+.mc-drawer__overlay[data-contained], .mc-drawer__content[data-contained] { position: absolute; }
+.mc-drawer__overlay[data-contained] { z-index: 1; background: oklch(10% 0 0 / .16); backdrop-filter: none; }
+.mc-drawer__content[data-contained] { --drawer-size: min(22rem, calc(100% - var(--space-8))); z-index: 2; max-height: 100%; box-shadow: none; }
+.mc-drawer__content[data-contained][data-side="top"], .mc-drawer__content[data-contained][data-side="bottom"] { max-height: min(32rem, calc(100% - var(--space-8))); }
+/* The container already draws the outer edges, so only the inner edge keeps a border. */
+.mc-drawer__content[data-contained][data-side] { border-width: 0; }
+.mc-drawer__content[data-contained][data-side="right"] { border-left-width: 1px; }
+.mc-drawer__content[data-contained][data-side="left"] { border-right-width: 1px; }
+.mc-drawer__content[data-contained][data-side="top"] { border-bottom-width: 1px; }
+.mc-drawer__content[data-contained][data-side="bottom"] { border-top-width: 1px; }
+
+.mc-drawer__header { display: flex; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: var(--space-5); padding: var(--space-6); border-bottom: 1px solid var(--border); }
+/* The header doubles as the drag handle, so touch drags move the panel instead of the page. */
+.mc-drawer__handle { touch-action: none; user-select: none; }
+.mc-drawer__content[data-side="bottom"] .mc-drawer__handle, .mc-drawer__content[data-side="top"] .mc-drawer__handle { cursor: grab; }
+.mc-drawer__title, .mc-drawer__description { position: relative; }
+/* The copy sets its own line height so a page-level heading rule cannot squeeze the title. */
+.mc-drawer__swap { display: block; line-height: var(--leading-body); }
+.mc-drawer__title { margin: 0; font-family: var(--font-body); font-size: var(--text-lg); font-weight: 500; letter-spacing: var(--tracking-body); line-height: var(--leading-body); }
+.mc-drawer__description { max-width: 32rem; margin: var(--space-2) 0 0; color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); }
+/* Centered on the first line of the title rather than its top edge. */
+.mc-drawer__close { display: grid; flex: 0 0 auto; width: var(--space-8); height: var(--space-8); margin-top: calc((var(--text-lg) * var(--leading-body) - var(--space-8)) / 2); place-items: center; border: 1px solid var(--border); border-radius: var(--radius-control); background: color-mix(in oklab, var(--surface-muted) 65%, transparent); color: var(--text-secondary); cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
 @media (hover: hover) and (pointer: fine) { .mc-drawer__close:hover { background: var(--surface-muted); color: var(--foreground); } }
-.mc-drawer__body { display: grid; gap: var(--space-3); }
-@keyframes mc-drawer-right { from { transform: translateX(100%); } to { transform: none; } }
-@keyframes mc-drawer-left { from { transform: translateX(-100%); } to { transform: none; } }
-@keyframes mc-drawer-top { from { transform: translateY(-100%); } to { transform: none; } }
-@keyframes mc-drawer-bottom { from { transform: translateY(100%); } to { transform: none; } }
-@keyframes mc-drawer-fade { from { opacity: 0; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .mc-drawer[open], .mc-drawer[open]::backdrop { animation: none; } }
+.mc-drawer__close:active { transform: scale(.96); transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-instant) var(--ease-standard); }
+.mc-drawer__body { min-height: 0; overflow: auto; padding: var(--space-6); font-size: var(--text-sm); line-height: var(--leading-body); overscroll-behavior: contain; scrollbar-width: thin; }
+
+@media (max-width: 40rem) {
+  .mc-drawer__content { --drawer-size: calc(100vw - var(--space-3)); }
+  .mc-drawer__content[data-side="right"] { border-radius: 18px 0 0 18px; }
+  .mc-drawer__content[data-side="left"] { border-radius: 0 18px 18px 0; }
+  .mc-drawer__content[data-side="top"] { border-radius: 0 0 18px 18px; }
+  .mc-drawer__content[data-side="bottom"] { border-radius: 18px 18px 0 0; }
+  .mc-drawer__header, .mc-drawer__body { padding: var(--space-5); }
+}
+
+@keyframes mc-drawer-overlay-in { from { opacity: 0; } }
+@keyframes mc-drawer-overlay-out { to { opacity: 0; } }
+@keyframes mc-drawer-drawer-in { from { transform: var(--drawer-from); } }
+/* The late fade lets the floating shadow leave with the panel instead of popping away at unmount. */
+@keyframes mc-drawer-drawer-out { 65% { opacity: 1; } to { opacity: 0; transform: var(--drawer-from); } }
+@keyframes mc-drawer-drawer-fade-in { from { opacity: 0; } }
+@keyframes mc-drawer-drawer-fade-out { to { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mc-drawer__keyframes.mc-drawer__overlay[data-state="open"] { animation: mc-drawer-overlay-in var(--duration-instant) linear both; }
+  .mc-drawer__keyframes.mc-drawer__overlay[data-state="closed"] { animation: mc-drawer-overlay-out 100ms linear both; }
+  .mc-drawer__keyframes.mc-drawer__content[data-state="open"] { animation: mc-drawer-drawer-fade-in var(--duration-instant) linear both; }
+  .mc-drawer__keyframes.mc-drawer__content[data-state="closed"] { animation: mc-drawer-drawer-fade-out 100ms linear both; }
+  .mc-drawer__close, .mc-drawer__close:active { transition: none; }
+  .mc-drawer__close:active { transform: none; }
+}
 }
 </style>

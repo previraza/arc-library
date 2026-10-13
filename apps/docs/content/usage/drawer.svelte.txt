@@ -1,9 +1,19 @@
 <script lang="ts">
-  import Drawer from "@/components/manicat/drawer/drawer.svelte";
   import Button from "@/components/manicat/button/button.svelte";
+  import Drawer from "@/components/manicat/drawer/drawer.svelte";
+  import DrawerClose from "@/components/manicat/drawer/drawer-close.svelte";
+  import DrawerContent from "@/components/manicat/drawer/drawer-content.svelte";
+  import DrawerTrigger from "@/components/manicat/drawer/drawer-trigger.svelte";
 </script>
 
-<Drawer title="Notifications" description="Your latest activity.">
-  {#snippet trigger({ open })}<Button variant="secondary" onclick={open}>Open drawer</Button>{/snippet}
-  Nothing new right now.
+<Drawer>
+  <DrawerTrigger>
+    {#snippet child({ props })}<Button variant="secondary" {...props}>Open drawer</Button>{/snippet}
+  </DrawerTrigger>
+  <DrawerContent title="Filters" description="Narrow the list without leaving the page.">
+    <p style="font-size: 14px; line-height: 20px; color: var(--text-muted)">A drag on the edge closes the panel, handing its velocity to the exit spring.</p>
+    <DrawerClose>
+      {#snippet child({ props })}<Button {...props}>Show results</Button>{/snippet}
+    </DrawerClose>
+  </DrawerContent>
 </Drawer>
