@@ -1,0 +1,14 @@
+import SwiftUI
+
+struct ProgressExample: View {
+    @State private var value = 42.0
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            ManicatProgress(value: value, label: "Uploading", showValue: true)
+            ManicatProgress(value: 100, label: "Done", showValue: true)
+            Slider(value: $value, in: 0...100)
+        }
+        .frame(maxWidth: 360)
+    }
+}

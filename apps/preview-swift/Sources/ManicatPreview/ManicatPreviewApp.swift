@@ -1,12 +1,5 @@
 import SwiftUI
 
-/// A demo of one port. Add a file to `Demos/` with a struct that conforms to this and run `pnpm generate`: the viewer lists it.
-protocol ManicatDemo: View {
-    /// The registry item the demo shows, such as "button".
-    static var item: String { get }
-    init()
-}
-
 @main
 struct ManicatPreviewApp: App {
     var body: some Scene {

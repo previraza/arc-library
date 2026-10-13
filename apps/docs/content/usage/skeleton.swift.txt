@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct SkeletonExample: View {
+    var body: some View {
+        ManicatSkeleton(label: "Loading profile", lines: 3, avatar: true)
+            .frame(maxWidth: 360)
+    }
+}

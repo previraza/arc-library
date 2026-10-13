@@ -12,7 +12,7 @@
 import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const extensions = { vue: ".vue", svelte: ".svelte", "react-native": ".tsx" };
+const extensions = { vue: ".vue", svelte: ".svelte", "react-native": ".tsx", swift: ".swift" };
 const [framework, outArg] = process.argv.slice(2);
 if (!extensions[framework] || !outArg) {
   console.error(`Usage: sync-usage-demos.mjs <${Object.keys(extensions).join("|")}> <out-dir>`);

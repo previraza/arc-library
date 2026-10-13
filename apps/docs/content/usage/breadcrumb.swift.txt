@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct BreadcrumbExample: View {
+    var body: some View {
+        ManicatBreadcrumb([
+            ManicatBreadcrumbItem("Home") {},
+            ManicatBreadcrumbItem("Projects") {},
+            ManicatBreadcrumbItem("Manicat"),
+        ])
+    }
+}

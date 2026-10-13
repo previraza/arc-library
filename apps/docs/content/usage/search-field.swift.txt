@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct SearchFieldExample: View {
+    @State private var query = ""
+
+    var body: some View {
+        ManicatSearchField("Search", text: $query, placeholder: "Search components…")
+            .frame(maxWidth: 360)
+    }
+}

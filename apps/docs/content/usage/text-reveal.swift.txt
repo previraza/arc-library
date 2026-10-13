@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct TextRevealExample: View {
+    var body: some View {
+        ManicatTextReveal("Words rise one after another as the heading appears.")
+            .frame(maxWidth: 420)
+    }
+}

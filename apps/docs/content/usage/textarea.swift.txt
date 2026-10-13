@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct TextareaExample: View {
+    @State private var message = ""
+
+    var body: some View {
+        ManicatTextarea("Message", text: $message, placeholder: "How can we help?", description: "\(message.count) / 500", error: message.count > 500 ? "That is a bit long." : nil)
+            .frame(maxWidth: 380)
+    }
+}

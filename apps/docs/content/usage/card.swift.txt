@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct CardExample: View {
+    var body: some View {
+        ManicatCard(title: "Northwind redesign", description: "A new checkout in three sprints.", meta: "Emma Collins", status: "Due Oct 14")
+            .media { Rectangle().fill(.indigo.opacity(0.25)).frame(height: 112) }
+            .avatar { ManicatAvatar(name: "Emma Collins", size: .sm) }
+            .action { ManicatButton("Open", variant: .secondary, size: .sm) {} }
+            .frame(maxWidth: 380)
+    }
+}

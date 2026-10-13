@@ -1,0 +1,15 @@
+import SwiftUI
+
+struct AlertExample: View {
+    @State private var open = true
+
+    var body: some View {
+        VStack(spacing: 10) {
+            ManicatAlert(title: "Heads up", open: open, onDismiss: { open = false }) { Text("Your trial ends in three days.") }
+            ManicatAlert(tone: .success, title: "Saved")
+            ManicatAlert(tone: .warning, title: "Almost full") { Text("You have used 92% of your storage.") }
+            ManicatAlert(tone: .danger, title: "Payment failed")
+        }
+        .frame(maxWidth: 380)
+    }
+}

@@ -1,0 +1,17 @@
+import SwiftUI
+
+struct PopoverExample: View {
+    @State private var open = false
+
+    var body: some View {
+        ManicatPopover(isPresented: $open) {
+            Text("Share").font(.system(size: 14, weight: .medium))
+        } content: {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Share this page").font(.headline)
+                Text("Anyone with the link can view it.")
+                ManicatButton("Copy link", size: .sm) { open = false }
+            }
+        }
+    }
+}

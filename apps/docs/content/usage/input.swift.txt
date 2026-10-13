@@ -1,0 +1,15 @@
+import SwiftUI
+
+struct InputExample: View {
+    @State private var email = ""
+    @State private var name = "Ada"
+
+    var body: some View {
+        VStack(spacing: 16) {
+            ManicatInput("Email", text: $email, placeholder: "you@example.com", kind: .email, description: "We never share it.")
+            ManicatInput("Name", text: $name, error: name.isEmpty ? "Enter your name." : nil)
+            ManicatInput("Locked", text: .constant("Read only")).disabled(true)
+        }
+        .frame(maxWidth: 360)
+    }
+}

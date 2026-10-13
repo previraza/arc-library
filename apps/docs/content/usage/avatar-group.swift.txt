@@ -1,0 +1,14 @@
+import SwiftUI
+
+struct AvatarGroupExample: View {
+    var body: some View {
+        ManicatAvatarGroup(members: [
+            ManicatAvatarGroupMember(name: "Ada Lovelace"),
+            ManicatAvatarGroupMember(name: "Lin Chen"),
+            ManicatAvatarGroupMember(name: "Grace Hopper"),
+            ManicatAvatarGroupMember(name: "Alan Turing"),
+            ManicatAvatarGroupMember(name: "Margaret Hamilton"),
+            ManicatAvatarGroupMember(name: "Dennis Ritchie"),
+        ], max: 4)
+    }
+}

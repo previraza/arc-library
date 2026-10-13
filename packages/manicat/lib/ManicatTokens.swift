@@ -33,11 +33,61 @@ public struct ManicatTokens {
 /// Shape and rhythm shared by every component, in points.
 public enum ManicatMetrics {
     public static let radiusControl: CGFloat = 18
+    public static let radiusPill: CGFloat = 9999
     public static let controlHeight: (sm: CGFloat, md: CGFloat, lg: CGFloat) = (36, 44, 50)
     public static let space: (s1: CGFloat, s2: CGFloat, s3: CGFloat, s4: CGFloat, s5: CGFloat) = (4, 8, 12, 16, 20)
     public static let textXs: CGFloat = 12
     public static let textSm: CGFloat = 14
     public static let textLg: CGFloat = 18
+}
+
+/// Restyles one named part of a component. The counterpart of an entry of `classNames` on the web and of `styles` on React Native:
+/// every component has a `Styles` struct with one of these per part, and applies it to that part.
+public typealias ManicatStyle = (AnyView) -> AnyView
+
+public extension View {
+    /// Applies a `ManicatStyle` to this view.
+    func manicatStyle(_ style: ManicatStyle) -> some View { style(AnyView(self)) }
+}
+
+/// Lays children out in rows that wrap, like flex-wrap on the web. Used by chips, tags, breadcrumbs and anything else that flows.
+public struct ManicatFlowLayout: Layout {
+    public var spacing: CGFloat
+    public var lineSpacing: CGFloat
+
+    public init(spacing: CGFloat = 8, lineSpacing: CGFloat = 8) {
+        self.spacing = spacing
+        self.lineSpacing = lineSpacing
+    }
+
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        arrange(width: proposal.width ?? .infinity, subviews: subviews).size
+    }
+
+    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = arrange(width: bounds.width, subviews: subviews)
+        for (index, origin) in result.origins.enumerated() {
+            subviews[index].place(at: CGPoint(x: bounds.minX + origin.x, y: bounds.minY + origin.y), proposal: .unspecified)
+        }
+    }
+
+    private func arrange(width: CGFloat, subviews: Subviews) -> (size: CGSize, origins: [CGPoint]) {
+        var origins: [CGPoint] = []
+        var x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0, widest: CGFloat = 0
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x > 0, x + size.width > width {
+                x = 0
+                y += rowHeight + lineSpacing
+                rowHeight = 0
+            }
+            origins.append(CGPoint(x: x, y: y))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+            widest = max(widest, x - spacing)
+        }
+        return (CGSize(width: widest, height: y + rowHeight), origins)
+    }
 }
 
 private struct ManicatTokensKey: EnvironmentKey {

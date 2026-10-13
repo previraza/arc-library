@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct TooltipExample: View {
+    var body: some View {
+        HStack(spacing: 16) {
+            ManicatTooltip("Save your changes") { ManicatButton("Save", variant: .secondary) {} }
+            ManicatTooltip("Below the button", side: .bottom) { ManicatButton("Bottom", variant: .secondary) {} }
+        }
+        .padding(.top, 36)
+    }
+}

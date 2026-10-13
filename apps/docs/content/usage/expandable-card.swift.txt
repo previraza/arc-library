@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct ExpandableCardExample: View {
+    var body: some View {
+        ManicatExpandableCard(title: "Billing", description: "Plan and invoices") {
+            Text("Your plan renews on the 1st of each month.")
+        }
+        .frame(maxWidth: 380)
+    }
+}

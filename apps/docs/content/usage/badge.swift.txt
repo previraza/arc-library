@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct BadgeExample: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            ManicatBadge("Draft")
+            ManicatBadge("Live", tone: .success)
+            ManicatBadge("Review", tone: .info)
+            ManicatBadge("Late", tone: .warning, small: true)
+            ManicatBadge("Failed", tone: .danger, small: true)
+        }
+    }
+}

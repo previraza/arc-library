@@ -1,0 +1,12 @@
+import SwiftUI
+
+struct SlotTextExample: View {
+    @State private var count = 1284.0
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ManicatSlotText(count).font(.system(size: 28, weight: .semibold))
+            ManicatButton("Add", variant: .secondary, size: .sm) { count += Double(Int.random(in: 1...900)) }
+        }
+    }
+}

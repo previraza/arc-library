@@ -1,0 +1,14 @@
+import SwiftUI
+
+struct SwitchExample: View {
+    @State private var notifications = true
+    @State private var marketing = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ManicatSwitch(isOn: $notifications, label: "Push notifications")
+            ManicatSwitch(isOn: $marketing, label: "Product updates")
+            ManicatSwitch(isOn: .constant(true), label: "Disabled").disabled(true)
+        }
+    }
+}

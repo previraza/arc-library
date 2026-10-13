@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct ThemeSwitchExample: View {
+    @State private var theme: ManicatTheme = .light
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ManicatThemeSwitch(theme: $theme)
+            ManicatThemeSwitch(theme: $theme, iconOnly: false)
+        }
+        .preferredColorScheme(theme == .dark ? .dark : .light)
+    }
+}

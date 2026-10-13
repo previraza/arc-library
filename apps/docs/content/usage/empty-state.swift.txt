@@ -1,0 +1,9 @@
+import SwiftUI
+
+struct EmptyStateExample: View {
+    var body: some View {
+        ManicatEmptyState(title: "No projects yet", description: "Create your first project to see it here.")
+            .icon { Text("＋").font(.title2) }
+            .action { ManicatButton("New project", size: .sm) {} }
+    }
+}

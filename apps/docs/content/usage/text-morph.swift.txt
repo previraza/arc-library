@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct TextMorphExample: View {
+    private let words = ["Ship", "Design", "Build"]
+    @State private var index = 0
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ManicatTextMorph(words[index]).font(.title2.bold())
+            ManicatButton("Next", variant: .secondary, size: .sm) { index = (index + 1) % words.count }
+        }
+    }
+}

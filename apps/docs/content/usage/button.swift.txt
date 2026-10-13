@@ -1,7 +1,6 @@
 import SwiftUI
 
-struct ButtonDemo: ManicatDemo {
-    static let item = "button"
+struct ButtonExample: View {
     @State private var saving = false
 
     var body: some View {
