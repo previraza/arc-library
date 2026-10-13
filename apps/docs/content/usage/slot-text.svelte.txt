@@ -1,9 +1,17 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import SlotText from "@/components/manicat/slot-text/slot-text.svelte";
-  let count = $state(1284);
+
+  const amounts = [1024, 12480, 99200, 736000];
+  let index = $state(0);
+
+  onMount(() => {
+    const timer = setInterval(() => (index = (index + 1) % amounts.length), 2000);
+    return () => clearInterval(timer);
+  });
 </script>
 
-<div style="display: flex; gap: 12px; align-items: center; font-size: 28px">
-  <SlotText value={count} />
-  <button type="button" onclick={() => (count += Math.round(Math.random() * 900))}>Add</button>
+<div style="display: flex; width: 100%; flex-direction: column; align-items: center; gap: 12px">
+  <p style="font-size: 28px; line-height: 37.3333px; font-weight: 600; font-variant-numeric: tabular-nums">$<SlotText value={amounts[index]} /></p>
+  <p style="font-size: 12px; line-height: 16px; color: var(--text-muted)">The last reel lands on the new digit as the length changes.</p>
 </div>
