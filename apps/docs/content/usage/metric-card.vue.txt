@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import { ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
 import MetricCard from "@/components/manicat/metric-card/metric-card.vue";
+
+const revenue = ref(48250);
 </script>
 
 <template>
-  <MetricCard label="Monthly revenue" :value="48250" suffix=" USD" change="+15.2%" context="vs 41,900 last month" />
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+    <MetricCard label="Monthly revenue" :value="revenue" suffix=" USD" context="vs 41,900 last month" change="+15.2%" />
+    <Button size="sm" variant="secondary" @click="revenue += 1250">Add 1,250</Button>
+  </div>
 </template>

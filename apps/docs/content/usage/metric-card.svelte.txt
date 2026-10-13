@@ -1,5 +1,11 @@
 <script lang="ts">
+  import Button from "@/components/manicat/button/button.svelte";
   import MetricCard from "@/components/manicat/metric-card/metric-card.svelte";
+
+  let revenue = $state(48250);
 </script>
 
-<MetricCard label="Monthly revenue" value={48200} suffix=" USD" change="+15.2%" context="vs $41,800 last month" />
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+  <MetricCard label="Monthly revenue" value={revenue} suffix=" USD" context="vs 41,900 last month" change="+15.2%" />
+  <Button size="sm" variant="secondary" onclick={() => (revenue += 1250)}>Add 1,250</Button>
+</div>

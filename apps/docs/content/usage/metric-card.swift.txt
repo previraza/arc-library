@@ -1,10 +1,12 @@
 import SwiftUI
 
 struct MetricCardExample: View {
+    @State private var revenue = 48250.0
+
     var body: some View {
-        HStack(spacing: 16) {
-            ManicatMetricCard(label: "Revenue", value: 48210, suffix: " USD", context: "vs 41,830 last month", change: "+15.2%")
-            ManicatMetricCard(label: "Churn", value: 2.4, suffix: "%", context: "vs 2.1% last month", change: "-0.3%")
+        ManicatFlowLayout(spacing: 16, lineSpacing: 16) {
+            ManicatMetricCard(label: "Monthly revenue", value: revenue, suffix: " USD", context: "vs 41,900 last month", change: "+15.2%")
+            ManicatButton("Add 1,250", variant: .secondary, size: .sm) { revenue += 1250 }
         }
     }
 }
