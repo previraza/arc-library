@@ -1,0 +1,170 @@
+<script lang="ts" module>
+export type BlogAuthor = { name: string; avatar?: string; role?: string };
+export type BlogPost = {
+  id: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  /** ISO date, used for sorting and the visible date. */
+  date: string;
+  /** Minutes to read. */
+  readTime: number;
+  author: BlogAuthor;
+  image?: { src: string; alt: string };
+  /** Paragraphs for the in-place reader. */
+  body?: string[];
+  featured?: boolean;
+};
+</script>
+
+<script lang="ts">
+const authors: Record<string, BlogAuthor> = {
+  emma: { name: "Emma Collins", role: "Product designer", avatar: "/media/people/emma-collins.jpg" },
+  marcus: { name: "Marcus Johnson", role: "Frontend engineer", avatar: "/media/people/marcus-johnson.jpg" },
+  jasmine: { name: "Jasmine Brooks", role: "Design lead", avatar: "/media/people/jasmine-brooks.jpg" },
+  daniel: { name: "Daniel Kim", role: "Backend engineer", avatar: "/media/people/daniel-kim.jpg" },
+  sofia: { name: "Sofia Ramirez", role: "Operations lead", avatar: "/media/people/sofia-ramirez.jpg" },
+  chloe: { name: "Chloe Nguyen", role: "Data analyst", avatar: "/media/people/chloe-nguyen.jpg" },
+  nathan: { name: "Nathan Cole", role: "Engineering manager", avatar: "/media/people/nathan-cole.jpg" },
+};
+
+const blogPosts: BlogPost[] = [
+  { id: "quiet-software", featured: true, category: "Design", date: "2026-09-18", readTime: 7, author: authors.jasmine, title: "The case for quiet software", excerpt: "Why we removed half the colors from our interface and people started finishing work faster.", image: { src: "/media/photos/living-room.jpg", alt: "A bright living room with timber beams, arched windows, and cream sofas" }, body: ["Last spring we ran an experiment. We took the busiest screen in the product and removed every color that did not carry meaning. Status stayed. Selection stayed. Everything else went neutral.", "Nobody asked for it, and almost nobody noticed the change directly. What they noticed was that the screen felt easier. Task completion went up eleven percent in the first month.", "Quiet does not mean empty. It means every element has a job, and the loud moments are saved for the things that need attention."] },
+  { id: "offline-sync", category: "Engineering", date: "2026-09-12", readTime: 9, author: authors.daniel, title: "How offline sync actually works", excerpt: "Conflict free replicated data, explained with the bugs we hit on the way to shipping it.", image: { src: "/media/photos/curved-facade.jpg", alt: "A white tiled building facade with curved balconies" } },
+  { id: "lisbon-offsite", category: "Company", date: "2026-09-04", readTime: 4, author: authors.sofia, title: "What we learned from a week in Lisbon", excerpt: "Forty people, one shared roadmap, and no slides allowed. Notes from our autumn offsite.", image: { src: "/media/photos/lisbon-rooftops.jpg", alt: "Terracotta rooftops of Lisbon running down to the river" } },
+  { id: "shared-views", category: "Product", date: "2026-08-28", readTime: 3, author: authors.emma, title: "Shared views are here", excerpt: "Save a filter, name it, and share it with your team. Everyone sees the same thing, always current.", image: { src: "/media/photos/home-office.jpg", alt: "A home office with a wooden desk and deep green walls" } },
+  { id: "type-scale", category: "Design", date: "2026-08-21", readTime: 6, author: authors.jasmine, title: "Choosing a type scale you will not regret", excerpt: "Seven sizes, two weights, and the rules we use to keep them that way as the product grows.", image: { src: "/media/photos/concert-hall.jpg", alt: "Curved stainless steel panels of the Walt Disney Concert Hall against a blue sky" } },
+  { id: "query-planner", category: "Engineering", date: "2026-08-14", readTime: 11, author: authors.marcus, title: "Making search ten times faster", excerpt: "A new query planner, a smarter index, and one very embarrassing N plus one we found along the way.", image: { src: "/media/photos/mountain-ridges.jpg", alt: "Layered mountain ridges under a warm evening sky" } },
+  { id: "remote-rituals", category: "Company", date: "2026-08-06", readTime: 5, author: authors.nathan, title: "The rituals that keep a remote team close", excerpt: "Written standups, demo Fridays and the one meeting we will never cancel.", image: { src: "/media/photos/sunroom.jpg", alt: "A sunroom with a round dining table, plants, and windows on three sides" } },
+  { id: "usage-insights", category: "Product", date: "2026-07-30", readTime: 4, author: authors.chloe, title: "Usage insights for every workspace", excerpt: "See which features your team relies on, where people get stuck, and what changed this week.", image: { src: "/media/photos/alpine-lake.jpg", alt: "A calm alpine lake reflecting a rocky peak at golden hour" } },
+  { id: "motion-rules", category: "Design", date: "2026-07-22", readTime: 8, author: authors.emma, title: "Motion should explain, not decorate", excerpt: "Our rules for animation: every movement answers where something came from or where it went.", image: { src: "/media/photos/terracotta-waves.jpg", alt: "Wavy terracotta walls rising toward a blue sky" } },
+  { id: "postgres-upgrade", category: "Engineering", date: "2026-07-15", readTime: 10, author: authors.daniel, title: "Upgrading Postgres with zero downtime", excerpt: "Logical replication, a dry run on a copy of production, and a cutover that took four seconds.", image: { src: "/media/photos/coastline.jpg", alt: "A long coastline with waves rolling onto a beach below green cliffs" } },
+  { id: "series-b", category: "Company", date: "2026-07-08", readTime: 3, author: authors.sofia, title: "Our next chapter", excerpt: "We raised a Series B to build the calmest tool for teams. Here is what changes and what does not.", image: { src: "/media/photos/sea-at-dusk.jpg", alt: "A calm sea at dusk with a low island on the horizon" } },
+  { id: "keyboard-first", category: "Product", date: "2026-06-30", readTime: 5, author: authors.marcus, title: "A keyboard shortcut for everything", excerpt: "Press question mark anywhere to see every shortcut, then make your own.", image: { src: "/media/photos/reading-chair.jpg", alt: "A grey armchair and ottoman with a knit throw in a dark green room" } },
+  { id: "color-tokens", category: "Design", date: "2026-06-24", readTime: 6, author: authors.jasmine, title: "Naming color tokens by job, not by hue", excerpt: "Why surface and border beat gray-100 and gray-200, and how we migrated four hundred files.", image: { src: "/media/photos/pool-house.jpg", alt: "A modern glass house beside a long pool under a clear sky" } },
+];
+
+  interface Props {
+    title?: string;
+    description?: string;
+    posts?: BlogPost[];
+    /** Category filter labels, in order. "All" is added in front. */
+    categories?: string[];
+    /** Cards per page below the featured post. */
+    pageSize?: number;
+    /** Shows the newest post of the current filter as a large card on page one. */
+    showFeatured?: boolean;
+    /** Link for each post. When set, cards are links and the in-place reader is off. */
+    getHref?: (post: BlogPost) => string;
+    /** Called when a post opens, from a link or the in-place reader. */
+    onopen?: (post: BlogPost) => void;
+    /** Extend the inner, named parts of the block: title, description, card or cardTitle. */
+    classNames?: { title?: string; description?: string; card?: string; cardTitle?: string };
+  }
+
+  let { title = "Journal", description = "Product news, design notes and engineering deep dives from the team.", posts = blogPosts, categories = ["Product", "Design", "Engineering", "Company"], pageSize = 6, showFeatured = true, getHref, onopen, classNames }: Props = $props();
+
+  const dateFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+  const formatDate = (iso: string) => dateFormat.format(new Date(`${iso}T00:00:00Z`));
+
+  let category = $state("All");
+  let page = $state(1);
+  let reading = $state<BlogPost | null>(null);
+
+  const filtered = $derived.by(() => {
+    const sorted = [...posts].sort((a, b) => b.date.localeCompare(a.date));
+    return category === "All" ? sorted : sorted.filter((post) => post.category === category);
+  });
+  const featured = $derived(showFeatured && filtered.length > 1 ? (filtered.find((post) => post.featured) ?? filtered[0]) : null);
+  const rest = $derived(featured ? filtered.filter((post) => post !== featured) : filtered);
+  const pageCount = $derived(Math.max(1, Math.ceil(rest.length / pageSize)));
+  const safePage = $derived(Math.min(Math.max(1, page), pageCount));
+  const pagePosts = $derived(rest.slice((safePage - 1) * pageSize, safePage * pageSize));
+
+  function choose(next: string) {
+    category = next;
+    page = 1;
+  }
+  function open(post: BlogPost, event: Event) {
+    onopen?.(post);
+    if (getHref) return;
+    event.preventDefault();
+    reading = post;
+  }
+</script>
+
+<section class="mc-blog" aria-label={title}>
+  {#if reading}
+    <article class="mc-blog__reader">
+      <button type="button" class="mc-blog__back" onclick={() => (reading = null)}>← All posts</button>
+      <p class="mc-blog__meta">{reading.category} · <time datetime={reading.date}>{formatDate(reading.date)}</time></p>
+      <h2 class="mc-blog__title">{reading.title}</h2>
+      <p class="mc-blog__byline">{#if reading.author.avatar}<img src={reading.author.avatar} alt="" width="24" height="24" />{/if} {reading.author.name} · {reading.readTime} min read</p>
+      {#if reading.image}<img class="mc-blog__hero" src={reading.image.src} alt={reading.image.alt} />{/if}
+      <p class="mc-blog__lead">{reading.excerpt}</p>
+      {#each reading.body ?? [] as paragraph (paragraph)}<p>{paragraph}</p>{/each}
+    </article>
+  {:else}
+    <header>
+      <h2 class={["mc-blog__title", classNames?.title]}>{title}</h2>
+      {#if description}<p class={["mc-blog__description", classNames?.description]}>{description}</p>{/if}
+    </header>
+    <div class="mc-blog__filters" role="group" aria-label="Filter by category">
+      {#each ["All", ...categories] as tab (tab)}
+        <button type="button" class="mc-blog__filter" aria-pressed={tab === category} onclick={() => choose(tab)}>{tab}</button>
+      {/each}
+    </div>
+    <div class="mc-blog__grid">
+      {#each [...(featured && safePage === 1 ? [featured] : []), ...pagePosts] as post (post.id)}
+        <a href={getHref?.(post) ?? `#${post.id}`} class={["mc-blog__card", { "mc-blog__card--featured": post === featured }, classNames?.card]} onclick={(event) => open(post, event)}>
+          {#if post.image}<img class="mc-blog__image" src={post.image.src} alt={post.image.alt} loading="lazy" />{/if}
+          <div class="mc-blog__body">
+            <p class="mc-blog__meta">{post.category} · <time datetime={post.date}>{formatDate(post.date)}</time></p>
+            <h3 class={["mc-blog__cardTitle", classNames?.cardTitle]}>{post.title}</h3>
+            <p class="mc-blog__excerpt">{post.excerpt}</p>
+            <p class="mc-blog__byline">{#if post.author.avatar}<img src={post.author.avatar} alt="" width="24" height="24" loading="lazy" />{/if} {post.author.name} · {post.readTime} min read</p>
+          </div>
+        </a>
+      {/each}
+    </div>
+    {#if pageCount > 1}
+      <nav class="mc-blog__pager" aria-label="Pagination">
+        <button type="button" disabled={safePage === 1} onclick={() => (page = safePage - 1)}>← Previous</button>
+        <span>Page {safePage} of {pageCount}</span>
+        <button type="button" disabled={safePage === pageCount} onclick={() => (page = safePage + 1)}>Next →</button>
+      </nav>
+    {/if}
+  {/if}
+</section>
+
+<style>
+:global {
+/* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
+.mc-blog { display: grid; gap: 20px; color: var(--foreground); }
+.mc-blog__title { margin: 0; font-size: 32px; font-weight: 600; letter-spacing: -.04em; }
+.mc-blog__description { margin: 6px 0 0; color: var(--text-secondary); }
+.mc-blog__filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.mc-blog__filter { border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 6px 14px; background: none; color: inherit; font: inherit; font-size: var(--text-sm); cursor: pointer; }
+.mc-blog__filter[aria-pressed="true"] { border-color: var(--foreground); background: var(--surface-muted); }
+.mc-blog__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.mc-blog__card { display: grid; align-content: start; overflow: hidden; border: 1px solid var(--border); border-radius: 24px; background: var(--surface); color: inherit; text-decoration: none; transition: border-color var(--duration-standard) var(--ease-standard); }
+.mc-blog__card:hover { border-color: var(--border-strong, var(--border)); }
+.mc-blog__card--featured { grid-column: 1 / -1; }
+.mc-blog__image, .mc-blog__hero { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.mc-blog__card--featured .mc-blog__image { aspect-ratio: 21 / 9; }
+.mc-blog__body { display: grid; gap: 6px; padding: 16px; }
+.mc-blog__meta { margin: 0; color: var(--text-muted); font-size: var(--text-xs); }
+.mc-blog__cardTitle { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.02em; }
+.mc-blog__card--featured .mc-blog__cardTitle { font-size: 26px; }
+.mc-blog__excerpt { margin: 0; color: var(--text-secondary); font-size: var(--text-sm); }
+.mc-blog__byline { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--text-muted); font-size: var(--text-xs); }
+.mc-blog__byline img { border-radius: 50%; }
+.mc-blog__pager { display: flex; align-items: center; justify-content: space-between; color: var(--text-secondary); font-size: var(--text-sm); }
+.mc-blog__pager button, .mc-blog__back { border: 0; background: none; color: var(--foreground); font: inherit; cursor: pointer; }
+.mc-blog__pager button:disabled { color: var(--text-muted); cursor: default; }
+.mc-blog__reader { display: grid; gap: 14px; max-width: 680px; }
+.mc-blog__back { justify-self: start; font-weight: 500; }
+.mc-blog__lead { font-size: 18px; }
+.mc-blog__reader p { margin: 0; color: var(--text-secondary); line-height: 1.7; }
+}
+</style>
