@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import LoginCentered from "@/components/manicat/blocks/login-centered/login-centered.vue";
+</script>
+
+<template>
+  <LoginCentered terms-href="/terms" privacy-href="/privacy" @sign-in="({ email, mode }) => console.log(mode, email)" />
+</template>

@@ -1,0 +1,5 @@
+import { NewsletterSignup } from "@/components/manicat/blocks/newsletter-signup/newsletter-signup.rn";
+
+export function Subscribe() {
+  return <NewsletterSignup variant="card" readers={{ count: 12400, faces: [] }} onSubscribe={async (email) => { await api.subscribe(email); }} />;
+}

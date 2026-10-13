@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import NewsletterSignup from "@/components/manicat/blocks/newsletter-signup/newsletter-signup.vue";
+
+async function subscribe(email: string) {
+  await api.subscribe(email);
+}
+</script>
+
+<template>
+  <NewsletterSignup variant="card" :on-subscribe="subscribe" />
+</template>

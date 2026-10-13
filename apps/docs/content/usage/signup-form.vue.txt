@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import SignupForm, { type SignupDetails } from "@/components/manicat/blocks/signup-form/signup-form.vue";
+
+async function signup(details: SignupDetails) {
+  await api.signup(details);
+}
+</script>
+
+<template>
+  <SignupForm :on-submit="signup" @provider="startOAuth" />
+</template>

@@ -1,0 +1,5 @@
+import { SignupForm } from "@/components/manicat/blocks/signup-form/signup-form.rn";
+
+export function Register() {
+  return <SignupForm onSubmit={async (details) => { await api.signup(details); }} onProvider={(provider) => startOAuth(provider)} />;
+}

@@ -1,0 +1,5 @@
+import { SignIn } from "@/components/manicat/blocks/sign-in/sign-in.rn";
+
+export function Login() {
+  return <SignIn onSignIn={(account, method) => console.log(account.email, method)} />;
+}

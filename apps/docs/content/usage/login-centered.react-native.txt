@@ -1,0 +1,5 @@
+import { LoginCentered } from "@/components/manicat/blocks/login-centered/login-centered.rn";
+
+export function Welcome() {
+  return <LoginCentered termsHref="https://example.com/terms" onSignIn={({ email, mode }) => console.log(mode, email)} />;
+}
