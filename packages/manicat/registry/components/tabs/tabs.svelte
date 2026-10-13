@@ -1,81 +1,77 @@
-<script lang="ts" module>
-  export interface TabItem {
-    value: string;
-    label: string;
-    disabled?: boolean;
-  }
-</script>
-
 <script lang="ts">
+  // @manicat-dependencies bits-ui motion
+  import { setContext } from "svelte";
   import type { Snippet } from "svelte";
+  import { Tabs } from "bits-ui";
+  import { createPanelMemory, tabsKey } from "@/lib/tabs-motion";
+  import type { TabsClassNames, TabsState } from "@/lib/tabs-motion";
 
   interface Props {
-    items: TabItem[];
-    /** The active tab's value. Bind it with `bind:value`. */
+    /** The active tab's value. Bind it with `bind:value`; without it the tabs keep their own, starting at `defaultValue`. */
     value?: string;
-    /** Draws a panel. It receives the active tab's value, so branch on it to fill each panel. */
-    panel?: Snippet<[string]>;
-    /** Extend the inner, named parts of the tabs: list, trigger, label or content. */
-    classNames?: { list?: string; trigger?: string; label?: string; content?: string };
+    defaultValue?: string;
+    class?: string;
+    children?: Snippet;
+    /** Extend the inner, named parts of the tabs: listShell, scrollButton, viewport, list, trigger, selection, triggerLabel or content. */
+    classNames?: TabsClassNames;
+    [key: string]: unknown;
   }
 
-  let { items, value = $bindable(), panel, classNames }: Props = $props();
-  const id = $props.id();
-  const active = $derived(value ?? items[0]?.value);
+  let { value = $bindable(), defaultValue, class: className, children, classNames, ...rest }: Props = $props();
 
-  function move(event: KeyboardEvent, index: number) {
-    const enabled = items.map((item, position) => ({ item, position })).filter(({ item }) => !item.disabled);
-    const at = enabled.findIndex(({ position }) => position === index);
-    const next = event.key === "ArrowRight" ? enabled[(at + 1) % enabled.length] : event.key === "ArrowLeft" ? enabled[(at - 1 + enabled.length) % enabled.length] : event.key === "Home" ? enabled[0] : event.key === "End" ? enabled.at(-1) : undefined;
-    if (!next) return;
-    event.preventDefault();
-    value = next.item.value;
-    (document.getElementById(`${id}-tab-${next.position}`) as HTMLElement | null)?.focus();
+  let internal = $state(defaultValue ?? "");
+  let direction = $state(1);
+  let root = $state<HTMLElement | null>(null);
+  const memory = createPanelMemory();
+  const active = () => value ?? internal;
+
+  function change(next: string) {
+    const frame = root;
+    memory.leaving = frame?.querySelector(':scope > [role="tabpanel"][data-state="active"]')?.getBoundingClientRect() ?? null;
+    const order = frame ? Array.from(frame.querySelectorAll<HTMLElement>('[role="tab"][data-value]')).filter((tab) => tab.closest(".mc-tabs__root") === frame).map((tab) => tab.dataset.value) : [];
+    const from = order.indexOf(active());
+    const to = order.indexOf(next);
+    if (from >= 0 && to >= 0 && from !== to) direction = to > from ? 1 : -1;
+    internal = next;
+    value = next;
   }
+
+  const tabs: TabsState = { active, direction: () => direction, classNames: () => classNames, memory };
+  setContext(tabsKey, tabs);
 </script>
 
-<div class="mc-tabs">
-  <div class={["mc-tabs__list", classNames?.list]} role="tablist">
-    {#each items as item, index (item.value)}
-      <button
-        id="{id}-tab-{index}"
-        type="button"
-        role="tab"
-        class={["mc-tabs__trigger", classNames?.trigger]}
-        aria-selected={active === item.value}
-        aria-controls="{id}-panel-{index}"
-        tabindex={active === item.value ? 0 : -1}
-        data-state={active === item.value ? "active" : "inactive"}
-        disabled={item.disabled}
-        onclick={() => (value = item.value)}
-        onkeydown={(event) => move(event, index)}
-      >
-        <span class={["mc-tabs__label", classNames?.label]}>{item.label}</span>
-      </button>
-    {/each}
-  </div>
-  {#each items as item, index (item.value)}
-    {#if active === item.value}
-      <div id="{id}-panel-{index}" role="tabpanel" tabindex="0" aria-labelledby="{id}-tab-{index}" class={["mc-tabs__content", classNames?.content]}>
-        {@render panel?.(item.value)}
-      </div>
-    {/if}
-  {/each}
-</div>
+<Tabs.Root {...rest} bind:ref={root} class={["mc-tabs__root", className]} value={active()} onValueChange={change}>{@render children?.()}</Tabs.Root>
 
 <style>
 :global {
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-tabs { position: relative; }
-.mc-tabs__list { display: inline-flex; max-width: 100%; align-items: center; gap: var(--space-1); padding: var(--space-1); overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface-muted); scrollbar-width: none; }
-.mc-tabs__trigger { display: inline-grid; min-width: 5.5rem; min-height: var(--control-height-sm); flex: 0 0 auto; place-items: center; padding: 0 var(--space-3); border: 1px solid transparent; border-radius: calc(var(--radius-control) - 3px); background: transparent; color: var(--text-secondary); font: inherit; font-size: var(--text-sm); font-weight: 500; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
+/* Positioned so an outgoing panel pops out exactly where it was while the next one takes its place. */
+.mc-tabs__root { position: relative; }
+.mc-tabs__listShell { position: relative; display: inline-flex; max-width: 100%; min-width: 0; align-items: center; isolation: isolate; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface-muted); }
+.mc-tabs__viewport { min-width: 0; overflow-x: auto; border-radius: inherit; scrollbar-width: none; }
+.mc-tabs__viewport::-webkit-scrollbar { display: none; }
+.mc-tabs__listShell[data-left="true"] .mc-tabs__viewport { mask-image: linear-gradient(to right, transparent, black 35px, black); }
+.mc-tabs__listShell[data-right="true"] .mc-tabs__viewport { mask-image: linear-gradient(to right, black, black calc(100% - 35px), transparent); }
+.mc-tabs__listShell[data-left="true"][data-right="true"] .mc-tabs__viewport { mask-image: linear-gradient(to right, transparent, black 35px, black calc(100% - 35px), transparent); }
+/* The list owns the stacking context so the gliding highlight passes under every label, not over earlier ones. */
+.mc-tabs__list { isolation: isolate; display: inline-flex; width: max-content; align-items: center; gap: var(--space-1); padding: var(--space-1); }
+.mc-tabs__scrollButton { position: absolute; z-index: 2; top: 0; bottom: 0; display: grid; width: 33px; place-items: center; border: 0; background: var(--surface-muted); color: var(--foreground); }
+.mc-tabs__scrollLeft { left: 0; border-radius: var(--radius-control) 0 0 var(--radius-control); }
+.mc-tabs__scrollRight { right: 0; border-radius: 0 var(--radius-control) var(--radius-control) 0; }
+.mc-tabs__scrollButton:disabled { opacity: 0; pointer-events: none; }
+.mc-tabs__scrollButton:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -3px; }
+.mc-tabs__trigger { position: relative; -webkit-tap-highlight-color: transparent; display: inline-grid; min-width: 5.5rem; place-items: center; flex: 0 0 auto; min-height: var(--control-height-sm); border: 0; border-radius: calc(var(--radius-control) - 3px); padding: 0 var(--space-3); background: transparent; color: var(--text-muted); font: inherit; font-size: var(--text-sm); font-weight: 500; white-space: nowrap; cursor: pointer; transition: color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .mc-tabs__trigger:hover { color: var(--foreground); } }
-.mc-tabs__trigger[data-state="active"] { border-color: var(--border); background: var(--surface); color: var(--accent-strong); box-shadow: var(--shadow-resting); }
-.mc-tabs__trigger:disabled { cursor: not-allowed; opacity: .5; }
+.mc-tabs__trigger:active { color: var(--foreground); }.mc-tabs__trigger[data-state="active"] { color: var(--accent-strong); }
+.mc-tabs__selection { position: absolute; z-index: -1; inset: 0; border: 1px solid var(--border); border-radius: inherit; background: var(--surface); box-shadow: var(--shadow-resting); will-change: transform; }
+.mc-tabs__triggerLabel { position: relative; z-index: 1; }
 .mc-tabs__trigger:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-.mc-tabs__content { margin-top: var(--space-4); color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); animation: mc-tabs-in .24s var(--ease-enter) both; }
+.mc-tabs__trigger:disabled { cursor: not-allowed; opacity: .5; }
+.mc-tabs__content { margin-top: var(--space-4); color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); }
+/* The outgoing panel is lifted out of flow by the presence animation; drop its margin so it stays in place and ignore stray clicks. */
+.mc-tabs__content[data-motion-pop-id] { margin-top: 0; }
+.mc-tabs__content[data-state="inactive"] { pointer-events: none; }
 .mc-tabs__content:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; border-radius: var(--radius-control); }
-@keyframes mc-tabs-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .mc-tabs__trigger { transition: none; } .mc-tabs__content { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .mc-tabs__trigger { transition: none; } }
 }
 </style>

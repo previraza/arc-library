@@ -9,6 +9,7 @@
  *
  * --wait <ms> waits longer before looking, for components that count or fill when they appear (default 1000).
  * --act click|focus|hover opens the first trigger of each demo before comparing, so menus, dialogs and tooltips are compared open.
+ * --nth <n> acts on the n-th trigger instead of the first (0-based), e.g. the second tab.
  * --max-diff sets how much of the picture may differ, in percent (default 2.5). --save <dir> writes the React and port
  * screenshots of every render that differs. Exit code 1 when something differs. Swift has no web viewer, so it is checked by the token and naming checks instead.
  * Set DOCS, VUE, SVELTE and REACT_NATIVE to other origins when the servers are elsewhere.
@@ -93,7 +94,8 @@ const probe = `(() => {
 
 const trigger = `(() => {
   const root = document.querySelector(".viewer__demo") || document.querySelector(".phone__screen") || document.querySelector("main") || document.body;
-  const target = root.querySelector("[aria-haspopup],[data-state],button,[role=button],input") || root;
+  const targets = root.querySelectorAll("[aria-haspopup],[data-state],button,[role=button],input");
+  const target = targets[${Number(flag("--nth") ?? 0)}] || root;
   const mode = ${JSON.stringify(act ?? "")};
   const fire = (type, init = {}) => target.dispatchEvent(new (type.startsWith("pointer") ? PointerEvent : MouseEvent)(type, { bubbles: true, cancelable: true, button: 0, isPrimary: true, pointerType: "mouse", ...init }));
   if (mode === "click") { target.focus?.(); fire("pointerdown"); fire("mousedown"); fire("pointerup"); fire("mouseup"); fire("click"); }

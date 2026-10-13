@@ -1,12 +1,17 @@
 <script lang="ts">
   import Tabs from "@/components/manicat/tabs/tabs.svelte";
-  let tab = $state("overview");
+  import TabsContent from "@/components/manicat/tabs/tabs-content.svelte";
+  import TabsList from "@/components/manicat/tabs/tabs-list.svelte";
+  import TabsTrigger from "@/components/manicat/tabs/tabs-trigger.svelte";
 </script>
 
-<div style="width: min(420px, 100%)">
-  <Tabs bind:value={tab} items={[{ value: "overview", label: "Overview" }, { value: "activity", label: "Activity" }, { value: "settings", label: "Settings" }]}>
-    {#snippet panel(value)}
-      {#if value === "overview"}A summary of the project.{:else if value === "activity"}Recent changes land here.{:else}Tune the project.{/if}
-    {/snippet}
-  </Tabs>
-</div>
+<Tabs defaultValue="overview">
+  <TabsList>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="activity">Activity</TabsTrigger>
+    <TabsTrigger value="settings">Settings</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview">Everything about this project, in one place.</TabsContent>
+  <TabsContent value="activity">Three deploys this week, one rollback.</TabsContent>
+  <TabsContent value="settings">Branches, domains and environment variables.</TabsContent>
+</Tabs>
