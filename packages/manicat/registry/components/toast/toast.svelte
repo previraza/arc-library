@@ -113,7 +113,7 @@
         {#if description}{#key description}<span class={["mc-toast__description", classNames?.description]} in:textIn out:textOut>{description}</span>{/key}{/if}
       </div>
     </div>
-    <button class={["mc-toast__close", classNames?.close]} type="button" aria-label="Dismiss notification" onclick={() => dismiss(0)}><X width={16} height={16} strokeWidth={2} aria-hidden="true" /></button>
+    <button class={["mc-toast__close", classNames?.close]} type="button" aria-label="Dismiss notification" onclick={() => dismiss(0)}><X size={16} strokeWidth={2} aria-hidden="true" /></button>
   </div>
 {/if}
 

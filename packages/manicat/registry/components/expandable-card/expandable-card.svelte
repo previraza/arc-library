@@ -80,7 +80,7 @@
           <span aria-hidden="true">{#each words as word, index (`${index}:${word}`)}<span class="mc-expandable-card__word" in:wordIn out:wordOut>{word}</span>{/each}</span>
         </span>
       </span>{/if}</span>
-      <span bind:this={arrow} class={["mc-expandable-card__arrow", classNames?.arrow]}><ChevronDown width={18} height={18} aria-hidden="true" /></span>
+      <span bind:this={arrow} class={["mc-expandable-card__arrow", classNames?.arrow]}><ChevronDown size={18} aria-hidden="true" /></span>
     </button>
     <!-- The panel stays mounted so a second click mid-animation reverses from where it is; inert keeps closed details out of reach. -->
     <div id={panelId} bind:this={panel} class={["mc-expandable-card__panel", classNames?.panel]} inert={!isOpen}>

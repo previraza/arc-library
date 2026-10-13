@@ -139,7 +139,7 @@
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <span class={["mc-tag-input__tag", classNames?.tag]} data-tag={tag} data-picked={tag === active || undefined} onmousedown={(event) => onTagPointer(event)} onclick={(event) => onTagPointer(event, tag)} in:tagIn out:tagOut>
           <span class={["mc-tag-input__tagLabel", classNames?.tagLabel]}>{tag}</span>
-          <button type="button" aria-label={`Remove ${tag}`} onclick={() => remove(tag)}><X width={14} height={14} aria-hidden="true" /></button>
+          <button type="button" aria-label={`Remove ${tag}`} onclick={() => remove(tag)}><X size={14} aria-hidden="true" /></button>
         </span>
       {/each}
       <input id={inputId} bind:this={input} bind:value={draft} placeholder={value.length ? "" : placeholder} aria-describedby={hintId} oninput={() => (picked = null)} {onkeydown} onblur={() => { add(); picked = null; }} />

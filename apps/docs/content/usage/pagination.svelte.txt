@@ -1,6 +1,10 @@
 <script lang="ts">
   import Pagination from "@/components/manicat/pagination/pagination.svelte";
+
   let page = $state(3);
 </script>
 
-<Pagination pageCount={12} bind:page />
+<div style="display: flex; width: 100%; flex-direction: column; align-items: center; gap: 8px">
+  <Pagination bind:page pageCount={12} />
+  <p style="font-size: 12px; line-height: 16px; color: var(--text-muted)">Page {page} of 12</p>
+</div>

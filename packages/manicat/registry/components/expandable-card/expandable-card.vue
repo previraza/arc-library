@@ -82,7 +82,7 @@ function leaveWord(el: Element, done: () => void) {
             <TransitionGroup tag="span" aria-hidden="true" :css="false" @enter="enterWord" @leave="leaveWord"><span v-for="(word, index) in description.split(/(\s+)/)" :key="`${index}:${word}`" class="mc-expandable-card__word">{{ word }}</span></TransitionGroup>
           </span>
         </span></span>
-        <span ref="arrow" :class="cn('mc-expandable-card__arrow', classNames?.arrow)"><ChevronDown :width="18" :height="18" aria-hidden="true" /></span>
+        <span ref="arrow" :class="cn('mc-expandable-card__arrow', classNames?.arrow)"><ChevronDown :size="18" aria-hidden="true" /></span>
       </button>
       <!-- The panel stays mounted so a second click mid-animation reverses from where it is; inert keeps closed details out of reach. -->
       <div :id="panelId" ref="panel" :class="cn('mc-expandable-card__panel', classNames?.panel)" :inert="!isOpen()">
