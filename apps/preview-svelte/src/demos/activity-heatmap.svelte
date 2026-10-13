@@ -1,0 +1,12 @@
+<script lang="ts">
+  import ActivityHeatmap from "@/registry/components/activity-heatmap/activity-heatmap.svelte";
+  let selected = $state<string | null>(null);
+  const days = Array.from({ length: 84 }, (_, i) => {
+    const date = new Date(Date.UTC(2026, 0, 4 + i, 12)).toISOString().slice(0, 10);
+    return { date, count: (i * 7 + (i % 5) * 3) % 19 };
+  });
+</script>
+
+<div style="width: min(520px, 100%)">
+  <ActivityHeatmap label="Commits" period="12 weeks" {days} bind:selected />
+</div>

@@ -1,0 +1,12 @@
+<script lang="ts">
+  import Tabs from "@/registry/components/tabs/tabs.svelte";
+  let tab = $state("overview");
+</script>
+
+<div style="width: min(420px, 100%)">
+  <Tabs bind:value={tab} items={[{ value: "overview", label: "Overview" }, { value: "activity", label: "Activity" }, { value: "settings", label: "Settings" }]}>
+    {#snippet panel(value)}
+      {#if value === "overview"}A summary of the project.{:else if value === "activity"}Recent changes land here.{:else}Tune the project.{/if}
+    {/snippet}
+  </Tabs>
+</div>

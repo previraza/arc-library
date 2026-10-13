@@ -1,0 +1,11 @@
+<script lang="ts">
+  import ScrollArea from "@/registry/components/scroll-area/scroll-area.svelte";
+</script>
+
+<div style="width: min(320px, 100%)">
+  <ScrollArea label="Changelog" maxHeight={140}>
+    {#each Array.from({ length: 12 }, (_, i) => i + 1) as n (n)}
+      <p style="margin: 0 0 8px">Release 1.{n}: a handful of fixes and polish.</p>
+    {/each}
+  </ScrollArea>
+</div>
