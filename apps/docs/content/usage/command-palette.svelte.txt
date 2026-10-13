@@ -1,16 +1,15 @@
 <script lang="ts">
+  import { FilePlus2, HelpCircle, Redo2, SearchCode, Settings2, Undo2 } from "@lucide/svelte";
   import CommandPalette from "@/components/manicat/command-palette/command-palette.svelte";
-  let chosen = $state("");
+
+  const items = [
+    { id: "new-file", label: "New file", group: "General", icon: FilePlus2, shortcut: "⌘ N" },
+    { id: "search", label: "Search commands", group: "General", icon: SearchCode, shortcut: "⌘ K" },
+    { id: "undo", label: "Undo", group: "Edit", icon: Undo2, shortcut: "⌘ Z" },
+    { id: "redo", label: "Redo", group: "Edit", icon: Redo2, shortcut: "⇧ ⌘ Z" },
+    { id: "settings", label: "Open settings", group: "Preferences", icon: Settings2, keywords: ["options", "config"] },
+    { id: "help", label: "Help center", group: "Preferences", icon: HelpCircle },
+  ];
 </script>
 
-<div style="width: min(420px, 100%); display: grid; gap: 8px">
-  <CommandPalette
-    onselect={(item) => (chosen = item.label)}
-    items={[
-      { id: "new", label: "New file", group: "File", shortcut: "⌘N" },
-      { id: "open", label: "Open…", group: "File", shortcut: "⌘O" },
-      { id: "theme", label: "Toggle theme", group: "View", description: "Switch light and dark" },
-    ]}
-  />
-  <small>{chosen && `Chose ${chosen}`}</small>
-</div>
+<CommandPalette {items} />

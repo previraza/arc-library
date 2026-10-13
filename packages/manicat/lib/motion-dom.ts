@@ -248,9 +248,9 @@ export function pressable(node: HTMLElement, { reduced, enabled, scale }: { redu
 }
 
 /** Takes a node out of the flow where it stands, so what replaces it takes its place at once (`mode="popLayout"` in React). */
-export function popOut(node: HTMLElement) {
+export function popOut(node: HTMLElement, at?: { x: number; y: number }) {
   const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = node;
-  Object.assign(node.style, { position: "absolute", left: `${offsetLeft}px`, top: `${offsetTop}px`, width: `${offsetWidth}px`, height: `${offsetHeight}px`, margin: "0" });
+  Object.assign(node.style, { position: "absolute", left: `${at?.x ?? offsetLeft}px`, top: `${at?.y ?? offsetTop}px`, width: `${offsetWidth}px`, height: `${offsetHeight}px`, margin: "0" });
 }
 
 /** A key that changes when the words or the elements of a label change, and not when only attributes do. */
@@ -942,6 +942,10 @@ export function createFlip(items: () => HTMLElement[], { reduced, spring: curve 
   return {
     measure() {
       before = new Map(items().map((node) => [node, { x: node.offsetLeft, y: node.offsetTop }]));
+    },
+    /** Where a node stood when `measure()` last ran, for a node that is leaving and must stay put (`mode="popLayout"`). */
+    origin(node: HTMLElement) {
+      return before.get(node);
     },
     play() {
       if (reduced) return;
