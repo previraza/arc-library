@@ -1,0 +1,7 @@
+<script lang="ts">
+  import Textarea from "@/registry/components/textarea/textarea.svelte";
+
+  let message = $state("");
+</script>
+
+<div style="width: min(340px, 100%)"><Textarea bind:value={message} label="Message" placeholder="Tell us how we can help" description={`${message.length} / 500`} /></div>
