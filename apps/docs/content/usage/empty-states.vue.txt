@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import EmptyStates from "@/components/manicat/blocks/empty-states/empty-states.vue";
+</script>
+
+<template>
+  <EmptyStates default-scene="inbox" @action="(scene, phase) => console.log(scene, phase)" />
+</template>

@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import BlogGrid from "@/components/manicat/blocks/blog-grid/blog-grid.vue";
+</script>
+
+<template>
+  <BlogGrid :page-size="6" :get-href="(post) => `/blog/${post.id}`" />
+</template>

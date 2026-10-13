@@ -1,0 +1,5 @@
+import { BlogGrid } from "@/components/manicat/blocks/blog-grid/blog-grid.rn";
+
+export function Journal() {
+  return <BlogGrid mediaBase="https://cdn.example.com" pageSize={4} onPostOpen={(post) => console.log(post.id)} />;
+}

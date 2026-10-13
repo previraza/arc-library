@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import ContactSection, { type ContactMessage } from "@/components/manicat/blocks/contact-section/contact-section.vue";
+
+async function send(message: ContactMessage) {
+  await fetch("/api/contact", { method: "POST", body: JSON.stringify(message) });
+}
+</script>
+
+<template>
+  <ContactSection variant="form" :on-submit="send" />
+</template>

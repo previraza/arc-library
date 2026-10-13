@@ -1,0 +1,6 @@
+import * as Clipboard from "expo-clipboard";
+import { ContactSection } from "@/components/manicat/blocks/contact-section/contact-section.rn";
+
+export function Help() {
+  return <ContactSection variant="channels" onCopy={(value) => void Clipboard.setStringAsync(value)} />;
+}

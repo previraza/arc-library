@@ -1,0 +1,5 @@
+import { EmptyStates } from "@/components/manicat/blocks/empty-states/empty-states.rn";
+
+export function Placeholders() {
+  return <EmptyStates defaultScene="offline" onAction={(scene, phase) => console.log(scene, phase)} />;
+}
