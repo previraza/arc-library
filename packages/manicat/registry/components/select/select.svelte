@@ -1,165 +1,111 @@
-<script lang="ts" module>
-  export interface SelectOption {
-    value: string;
-    label: string;
-    disabled?: boolean;
-  }
-</script>
-
 <script lang="ts">
-  import { tick } from "svelte";
+  // @manicat-dependencies motion @lucide/svelte bits-ui
+  import { onMount } from "svelte";
+  import { Select } from "bits-ui";
+  import { Check, ChevronDown, ChevronUp } from "@lucide/svelte";
+  import { createLabelSwap } from "@/lib/motion-dom";
 
   interface Props {
     label: string;
-    options: SelectOption[];
     description?: string;
     placeholder?: string;
+    id?: string;
     disabled?: boolean;
-    /** The selected value. Bind it with `bind:value`. */
     value?: string;
-    /** Extend the inner, named parts of the select: trigger, valueText, chevron, content, item, indicator or hint. */
-    classNames?: { trigger?: string; valueText?: string; chevron?: string; content?: string; item?: string; indicator?: string; hint?: string };
+    options: { value: string; label: string; disabled?: boolean }[];
+    /** Extend the inner, named parts of the select: trigger, valueText, chevron, content, scrollButton, viewport, item, indicator or hint. */
+    classNames?: { trigger?: string; valueText?: string; chevron?: string; content?: string; scrollButton?: string; viewport?: string; item?: string; indicator?: string; hint?: string };
   }
 
-  let { label, options, description, placeholder = "Select…", disabled = false, value = $bindable(), classNames }: Props = $props();
+  let { label, description, placeholder = "Select an option", id, disabled = false, value = $bindable(), options, classNames }: Props = $props();
 
-  const id = $props.id();
-  let root = $state<HTMLElement>();
-  let open = $state(false);
-  let active = $state(-1);
+  const generated = $props.id();
+  const controlId = $derived(id ?? generated);
+  const hintId = $derived(description ? `${controlId}-description` : undefined);
+  const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const index = $derived(options.findIndex((option) => option.value === value));
+  const shown = $derived(value ? (options[index]?.label ?? "") : placeholder);
+  let valueText: HTMLElement;
+  let valueSpan: HTMLElement;
 
-  const selected = $derived(options.find((option) => option.value === value));
-  const enabled = $derived(options.map((option, index) => ({ option, index })).filter(({ option }) => !option.disabled));
+  const cn = (base: string, extra?: string) => (extra ? `${base} ${extra}` : base);
+  // The shown value rolls in the direction of the list: a later option rises from below, an earlier one drops from above.
+  const labelIndex = (text: string) => options.findIndex((option) => option.label === text);
+  const direction = (next: string, previous: string) => (labelIndex(next) >= labelIndex(previous) ? 1 : -1);
 
-  async function show() {
-    if (disabled) return;
-    open = true;
-    active = Math.max(0, options.findIndex((option) => option.value === value));
-    await tick();
-    document.getElementById(`${id}-option-${active}`)?.scrollIntoView({ block: "nearest" });
-  }
-
-  function hide(refocus = false) {
-    open = false;
-    if (refocus) root?.querySelector<HTMLElement>("button")?.focus();
-  }
-
-  function choose(index: number) {
-    const option = options[index];
-    if (!option || option.disabled) return;
-    value = option.value;
-    hide(true);
-  }
-
-  async function move(step: number) {
-    const list = enabled;
-    if (!list.length) return;
-    const at = list.findIndex(({ index }) => index === active);
-    active = list[(at + step + list.length) % list.length].index;
-    await tick();
-    document.getElementById(`${id}-option-${active}`)?.scrollIntoView({ block: "nearest" });
-  }
-
-  function onKeydown(event: KeyboardEvent) {
-    if (!open) {
-      if (["ArrowDown", "ArrowUp", "Enter", " "].includes(event.key)) {
-        event.preventDefault();
-        show();
-      }
-      return;
-    }
-    if (event.key === "ArrowDown") move(1);
-    else if (event.key === "ArrowUp") move(-1);
-    else if (event.key === "Home") active = enabled[0]?.index ?? -1;
-    else if (event.key === "End") active = enabled.at(-1)?.index ?? -1;
-    else if (event.key === "Enter" || event.key === " ") choose(active);
-    else if (event.key === "Escape") hide(true);
-    else if (event.key === "Tab") hide();
-    else if (event.key.length === 1) {
-      // Type-ahead: jump to the next option starting with the typed letter.
-      const letter = event.key.toLowerCase();
-      const next = options.findIndex((option, index) => index > active && !option.disabled && option.label.toLowerCase().startsWith(letter));
-      const first = options.findIndex((option) => !option.disabled && option.label.toLowerCase().startsWith(letter));
-      if (next >= 0 || first >= 0) active = next >= 0 ? next : first;
-      return;
-    } else return;
-    event.preventDefault();
-  }
-
-  function onOutside(event: PointerEvent) {
-    if (open && root && !root.contains(event.target as Node)) hide();
-  }
+  onMount(() => {
+    const swap = createLabelSwap(valueText, valueText, valueSpan, { reduced, width: false, pop: false, variant: "rise", direction });
+    return () => swap.destroy();
+  });
 </script>
 
-<svelte:document onpointerdown={onOutside} />
-
-<div bind:this={root} class="mc-select">
-  <span id="{id}-label" class="mc-select__label">{label}</span>
-  <div class="mc-select__anchor">
-    <button
-      type="button"
-      role="combobox"
-      class={["mc-select__trigger", classNames?.trigger]}
-      aria-labelledby="{id}-label"
-      aria-haspopup="listbox"
-      aria-expanded={open}
-      aria-controls="{id}-list"
-      aria-activedescendant={open && active >= 0 ? `${id}-option-${active}` : undefined}
-      data-state={open ? "open" : "closed"}
-      {disabled}
-      onclick={() => (open ? hide() : show())}
-      onkeydown={onKeydown}
-    >
-      <span class={["mc-select__value", { "mc-select__value--placeholder": !selected }, classNames?.valueText]}>{selected?.label ?? placeholder}</span>
-      <svg class={["mc-select__chevron", classNames?.chevron]} viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 6 4.5 4.5L12.5 6" /></svg>
-    </button>
-    {#if open}
-      <ul id="{id}-list" role="listbox" aria-labelledby="{id}-label" class={["mc-select__content", classNames?.content]}>
-        {#each options as option, index (option.value)}
-          <li
-            id="{id}-option-{index}"
-            role="option"
-            aria-selected={option.value === value}
-            aria-disabled={option.disabled || undefined}
-            data-active={active === index || undefined}
-            class={["mc-select__item", classNames?.item]}
-            onpointermove={() => !option.disabled && (active = index)}
-            onclick={() => choose(index)}
-            onkeydown={() => {}}
-          >
-            <span>{option.label}</span>
-            {#if option.value === value}
-              <svg class={["mc-select__indicator", classNames?.indicator]} viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7" /></svg>
-            {/if}
-          </li>
-        {/each}
-      </ul>
-    {/if}
-  </div>
-  {#if description}<span class={["mc-select__hint", classNames?.hint]}>{description}</span>{/if}
+<div class="mc-select__field">
+  <label for={controlId}>{label}</label>
+  <Select.Root type="single" bind:value {disabled}>
+    <Select.Trigger id={controlId} aria-describedby={hintId} class={["mc-select__trigger", classNames?.trigger]}>
+      <!-- The real value stays for assistive tech; the visible copy below animates between values. -->
+      <span class="mc-select__srOnly">{shown}</span>
+      <span bind:this={valueText} class={["mc-select__valueText", classNames?.valueText]} aria-hidden="true">
+        <span bind:this={valueSpan} data-placeholder={value ? undefined : ""}>{shown}</span>
+      </span>
+      <span class={["mc-select__chevron", classNames?.chevron]}><ChevronDown size={16} strokeWidth={1.75} aria-hidden="true" /></span>
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Content class={["mc-select__content", classNames?.content]} sideOffset={4} collisionPadding={12}>
+        <Select.ScrollUpButton class={["mc-select__scrollButton", classNames?.scrollButton]}><ChevronUp size={16} strokeWidth={1.75} aria-hidden="true" /></Select.ScrollUpButton>
+        <Select.Viewport class={["mc-select__viewport", classNames?.viewport]}>
+          {#each options as option (option.value)}
+            <Select.Item value={option.value} label={option.label} disabled={option.disabled} class={["mc-select__item", classNames?.item]}>
+              {#snippet children({ selected })}
+                <span>{option.label}</span>
+                {#if selected}<span class={["mc-select__indicator", classNames?.indicator]}><Check size={16} strokeWidth={1.75} aria-hidden="true" /></span>{/if}
+              {/snippet}
+            </Select.Item>
+          {/each}
+        </Select.Viewport>
+        <Select.ScrollDownButton class={["mc-select__scrollButton", classNames?.scrollButton]}><ChevronDown size={16} strokeWidth={1.75} aria-hidden="true" /></Select.ScrollDownButton>
+      </Select.Content>
+    </Select.Portal>
+  </Select.Root>
+  {#if description}<span id={hintId} class={["mc-select__hint", classNames?.hint]}>{description}</span>{/if}
 </div>
 
 <style>
 :global {
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-select { display: grid; gap: var(--space-2); min-width: 0; }
-.mc-select__label { font-size: var(--text-sm); font-weight: 500; }
-.mc-select__anchor { position: relative; }
-.mc-select__trigger { box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); width: 100%; min-height: var(--control-height-md); padding: 0 var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--text-sm); text-align: left; cursor: pointer; transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
-@media (hover: hover) and (pointer: fine) { .mc-select__trigger:hover:not(:disabled) { border-color: var(--border-strong); background: var(--surface-muted); } }
-.mc-select__trigger[data-state="open"], .mc-select__trigger:focus-visible { border-color: var(--border-strong); outline: none; }
-.mc-select__trigger:disabled { opacity: .5; cursor: not-allowed; }
-.mc-select__value { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mc-select__value--placeholder { color: var(--text-muted); }
-.mc-select__chevron { flex: 0 0 auto; color: var(--text-muted); transition: transform var(--duration-spring, .3s) var(--ease-spring, var(--ease-standard)); }
+.mc-select__field { display: grid; gap: var(--space-2); min-width: 0; }
+.mc-select__field label { font-size: var(--text-sm); font-weight: 500; }
+/* The trigger anchors the floating menu. Radix opens on pointerdown and measures this box, so it never scales: press feedback is color only. */
+.mc-select__trigger { position: relative; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); width: 100%; min-height: var(--control-height-md); border: 1px solid var(--border); border-radius: var(--radius-control); padding: 0 var(--space-3); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--text-sm); text-align: left; cursor: pointer; transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
+@media (hover: hover) and (pointer: fine) { .mc-select__trigger:hover:not([data-disabled]) { border-color: var(--border-strong); background: var(--surface-muted); } }
+.mc-select__trigger:active:not([data-disabled]), .mc-select__trigger[data-state="open"] { border-color: var(--border-strong); background: var(--surface-muted); }
+.mc-select__trigger:focus-visible { border-color: var(--border-strong); }
+.mc-select__trigger[data-disabled] { opacity: .5; cursor: not-allowed; }
+.mc-select__valueText { display: grid; flex: 1; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.mc-select__valueText > span { grid-area: 1 / 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-select__valueText > [data-placeholder] { color: var(--text-muted); }
+.mc-select__srOnly { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.mc-select__chevron { display: inline-flex; flex: 0 0 auto; color: var(--text-muted); transition: transform var(--duration-spring) var(--ease-spring), color var(--duration-fast) var(--ease-standard); }
 .mc-select__trigger[data-state="open"] .mc-select__chevron { transform: rotate(180deg); }
-.mc-select__content { position: absolute; z-index: 1000; top: calc(100% + 6px); left: 0; box-sizing: border-box; width: 100%; max-height: min(320px, 60vh); margin: 0; padding: 4px; overflow: auto; list-style: none; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface-raised); box-shadow: var(--shadow-floating); animation: mc-select-in .18s var(--ease-enter) both; transform-origin: top center; }
-.mc-select__item { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: var(--control-height-sm); padding: 0 var(--space-3); border-radius: calc(var(--radius-control) - 4px); font-size: var(--text-sm); cursor: pointer; }
-.mc-select__item[data-active] { background: var(--surface-muted); }
-.mc-select__item[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
-.mc-select__indicator { flex: 0 0 auto; }
 .mc-select__hint { color: var(--text-muted); font-size: var(--text-xs); }
-@keyframes mc-select-in { from { opacity: 0; transform: translateY(-4px) scale(.98); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .mc-select__trigger, .mc-select__chevron { transition: none; } .mc-select__content { animation: none; } }
+/* Radix holds the animation until the menu is positioned, so it always grows from the trigger edge. */
+.mc-select__content { --menu-x: 0px; --menu-y: -6px; box-sizing: border-box; z-index: 1000; width: var(--bits-select-anchor-width); min-width: var(--bits-select-anchor-width); max-width: min(24rem, calc(100vw - 20px)); max-height: min(320px, var(--bits-select-content-available-height)); overflow: hidden; border: 1px solid var(--border); border-radius: calc(var(--radius-control) + 2px); padding: 6px; background: var(--surface-raised); color: var(--foreground); box-shadow: var(--shadow-floating); transform-origin: var(--bits-select-content-transform-origin); animation: mc-select-select-in var(--duration-standard) var(--ease-enter) both; }
+.mc-select__content[data-side="top"] { --menu-y: 6px; }
+.mc-select__content[data-side="left"] { --menu-x: 6px; --menu-y: 0px; }
+.mc-select__content[data-side="right"] { --menu-x: -6px; --menu-y: 0px; }
+.mc-select__content[data-state="closed"] { animation: mc-select-select-out var(--duration-instant) var(--ease-standard) both; }
+.mc-select__viewport { padding: 2px 0; }
+.mc-select__item { position: relative; display: flex; align-items: center; min-height: 36px; border-radius: calc(var(--radius-control) - 4px); padding: 0 34px 0 11px; color: var(--foreground); font-size: var(--text-sm); cursor: default; outline: none; user-select: none; transition: background-color var(--duration-instant) var(--ease-standard), color var(--duration-instant) var(--ease-standard); }
+.mc-select__item[data-highlighted] { background: var(--surface-muted); }
+.mc-select__item[data-disabled] { opacity: .45; }
+.mc-select__indicator { position: absolute; right: 10px; display: inline-flex; align-items: center; color: var(--foreground); animation: mc-select-indicator-in var(--duration-standard) var(--ease-enter) 40ms both; }
+.mc-select__scrollButton { display: grid; height: 28px; place-items: center; color: var(--text-muted); }
+@keyframes mc-select-select-in { from { opacity: 0; transform: translate(var(--menu-x), var(--menu-y)) scale(.97); } }
+@keyframes mc-select-select-out { to { opacity: 0; transform: translate(calc(var(--menu-x) / 2), calc(var(--menu-y) / 2)) scale(.98); } }
+@keyframes mc-select-indicator-in { from { opacity: 0; transform: scale(.6); filter: blur(2px); } }
+@media (prefers-reduced-transparency: reduce) { .mc-select__content { background: var(--surface-raised); backdrop-filter: none; -webkit-backdrop-filter: none; } }
+@media (prefers-reduced-motion: reduce) { .mc-select__trigger, .mc-select__chevron, .mc-select__item { transition: none; } .mc-select__content { animation: mc-select-select-fade var(--duration-instant) var(--ease-standard) both; } .mc-select__content[data-state="closed"] { animation: mc-select-select-fade-out var(--duration-instant) var(--ease-standard) both; } .mc-select__indicator { animation: none; } }
+@keyframes mc-select-select-fade { from { opacity: 0; } }
+@keyframes mc-select-select-fade-out { to { opacity: 0; } }
 }
 </style>

@@ -21,5 +21,5 @@ const frames = new Set([...css.matchAll(/@keyframes\s+([\w-]+)/g)].map((match) =
 let out = css;
 for (const name of [...names].sort((a, b) => b.length - a.length)) out = out.replace(new RegExp(`\\.${name}(?![\\w-])`, "g"), `.mc-${item}__${name}`);
 for (const name of frames) out = out.replace(new RegExp(`(?<![\\w-])${name}(?![\\w-])`, "g"), `mc-${item}-${name}`);
-if (vars) out = out.replaceAll("--radix-", `--${vars}-`);
+if (vars) out = out.replaceAll("--radix-select-trigger-width", vars === "bits" ? "--bits-select-anchor-width" : "--reka-select-trigger-width").replaceAll("--radix-", `--${vars}-`);
 process.stdout.write(out);
