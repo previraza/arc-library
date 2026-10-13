@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Carousel from "@/components/manicat/carousel/carousel.vue";
+
+const stays = ["Harbour suites", "Old town lofts", "Wine cellar stay", "Hilltop villa"];
+const index = ref(0);
+</script>
+
+<template>
+  <Carousel v-model="index" label="Featured stays" :count="stays.length">
+    <div v-for="stay in stays" :key="stay" class="grid aspect-[4/3] place-items-center rounded-3xl bg-blue-500 font-medium text-white">{{ stay }}</div>
+  </Carousel>
+</template>

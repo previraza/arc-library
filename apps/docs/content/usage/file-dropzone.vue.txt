@@ -1,0 +1,17 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import FileDropzone, { type FileDropzoneItem } from "@/components/manicat/file-dropzone/file-dropzone.vue";
+
+const items = ref<FileDropzoneItem[]>([]);
+
+async function upload(_item: FileDropzoneItem, { onProgress }: { onProgress: (percent: number) => void }) {
+  for (const step of [20, 55, 100]) {
+    await new Promise((done) => setTimeout(done, 300));
+    onProgress(step);
+  }
+}
+</script>
+
+<template>
+  <FileDropzone v-model="items" label="Add files" description="The cover art and its variants live here." :max-size="5 * 1024 * 1024" note="SVG, PNG or JPG, up to 5 MB." :on-upload="upload" />
+</template>

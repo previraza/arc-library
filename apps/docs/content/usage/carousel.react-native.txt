@@ -1,0 +1,16 @@
+import { Text, View } from "react-native";
+import { Carousel } from "@/components/manicat/carousel/carousel.rn";
+
+const stays = ["Harbour suites", "Old town lofts", "Wine cellar stay", "Hilltop villa"];
+
+export function Gallery() {
+  return (
+    <Carousel label="Featured stays">
+      {stays.map((stay) => (
+        <View key={stay} style={{ aspectRatio: 4 / 3, borderRadius: 24, backgroundColor: "#3b82f6", alignItems: "center", justifyContent: "center" }}>
+          <Text style={{ color: "#fff", fontWeight: "500" }}>{stay}</Text>
+        </View>
+      ))}
+    </Carousel>
+  );
+}

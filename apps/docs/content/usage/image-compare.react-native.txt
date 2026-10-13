@@ -1,0 +1,12 @@
+import { View } from "react-native";
+import { ImageCompare } from "@/components/manicat/image-compare/image-compare.rn";
+
+export function Retouch() {
+  return (
+    <ImageCompare
+      labels={["Original", "Retouched"]}
+      before={<View style={{ flex: 1, backgroundColor: "#1e3a5f" }} />}
+      after={<View style={{ flex: 1, backgroundColor: "#0ea5e9" }} />}
+    />
+  );
+}

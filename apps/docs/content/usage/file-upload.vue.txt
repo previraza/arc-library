@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import FileUpload, { type FileUploadItem } from "@/components/manicat/file-upload/file-upload.vue";
+
+const files = ref<FileUploadItem[]>([]);
+</script>
+
+<template>
+  <FileUpload v-model="files" label="Upload a cover" description="SVG, PNG or JPG, up to 5 MB." accept="image/*" :max-size="5 * 1024 * 1024" />
+</template>

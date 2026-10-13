@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import CommentThread, { type ThreadComment } from "@/components/manicat/comment-thread/comment-thread.vue";
+
+const me = { id: "me", name: "You" };
+const ada = { id: "ada", name: "Ada Lovelace" };
+const comments = ref<ThreadComment[]>([
+  { id: "c1", author: ada, body: "The preview is 64px short on small screens.", createdAt: "2h", replies: [{ id: "c2", author: me, body: "Fixed in the last push.", createdAt: "1h" }] },
+]);
+</script>
+
+<template>
+  <CommentThread v-model="comments" title="Hero headline" :current-user="me" />
+</template>

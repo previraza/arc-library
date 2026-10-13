@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import ImageCompare from "@/components/manicat/image-compare/image-compare.vue";
+
+const position = ref(50);
+</script>
+
+<template>
+  <ImageCompare v-model="position" :labels="['Original', 'Retouched']">
+    <template #before><img src="/photos/original.jpg" alt="Original" /></template>
+    <template #after><img src="/photos/retouched.jpg" alt="Retouched" /></template>
+  </ImageCompare>
+</template>

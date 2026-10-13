@@ -1,0 +1,16 @@
+import * as DocumentPicker from "expo-document-picker";
+import { FileUpload } from "@/components/manicat/file-upload/file-upload.rn";
+
+export function Cover() {
+  return (
+    <FileUpload
+      label="Upload a cover"
+      description="SVG, PNG or JPG, up to 5 MB."
+      maxSize={5 * 1024 * 1024}
+      onPick={async () => {
+        const result = await DocumentPicker.getDocumentAsync({ type: "image/*" });
+        return result.canceled ? [] : result.assets.map((asset) => ({ name: asset.name, size: asset.size ?? 0, source: asset.uri }));
+      }}
+    />
+  );
+}

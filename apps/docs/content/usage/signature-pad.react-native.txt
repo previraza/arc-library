@@ -1,0 +1,5 @@
+import { SignaturePad } from "@/components/manicat/signature-pad/signature-pad.rn";
+
+export function Contract() {
+  return <SignaturePad signer="Ada Lovelace" onChange={(strokes) => console.log(strokes.length, "strokes")} />;
+}

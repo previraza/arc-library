@@ -1,0 +1,13 @@
+import { useState } from "react";
+import { Text, View } from "react-native";
+import { RichTextEditor } from "@/components/manicat/rich-text-editor/rich-text-editor.rn";
+
+export function ReleaseNotes() {
+  const [markdown, setMarkdown] = useState("# v2.4.0\n\n- Faster builds\n- New date range picker\n");
+  return (
+    <View style={{ gap: 8 }}>
+      <RichTextEditor defaultValue={markdown} onChange={(value) => setMarkdown(value.markdown)} />
+      <Text>{markdown.length} characters of Markdown</Text>
+    </View>
+  );
+}

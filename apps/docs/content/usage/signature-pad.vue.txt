@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import SignaturePad, { type InkStroke } from "@/components/manicat/signature-pad/signature-pad.vue";
+
+const strokes = ref<InkStroke[]>([]);
+</script>
+
+<template>
+  <SignaturePad v-model="strokes" signer="Ada Lovelace" />
+</template>

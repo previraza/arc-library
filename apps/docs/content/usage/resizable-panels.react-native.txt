@@ -1,0 +1,15 @@
+import { Text, View } from "react-native";
+import { ResizablePanel, ResizablePanels } from "@/components/manicat/resizable-panels/resizable-panels.rn";
+
+export function Editor() {
+  return (
+    <ResizablePanels label="Editor split" style={{ height: 200 }}>
+      <ResizablePanel id="files" label="Files" defaultSize={40} minSize={20}>
+        <View style={{ padding: 16 }}><Text>Files</Text></View>
+      </ResizablePanel>
+      <ResizablePanel id="editor" label="Editor" defaultSize={60}>
+        <View style={{ padding: 16 }}><Text>Editor</Text></View>
+      </ResizablePanel>
+    </ResizablePanels>
+  );
+}

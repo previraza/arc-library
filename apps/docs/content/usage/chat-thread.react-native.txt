@@ -1,0 +1,11 @@
+import { ChatThread } from "@/components/manicat/chat-thread/chat-thread.rn";
+
+const participants = [{ id: "ada", name: "Ada" }, { id: "me", name: "You" }];
+const messages = [
+  { id: "1", authorId: "ada", text: "Do the reels feel too slow?", createdAt: Date.now() - 3_600_000 },
+  { id: "2", authorId: "me", text: "A touch. Can the last one land on the new digit?", createdAt: Date.now() - 3_000_000, status: "read" as const },
+];
+
+export function Feedback() {
+  return <ChatThread participants={participants} currentUserId="me" defaultMessages={messages} readBy={{ ada: "2" }} onSend={(draft) => console.log(draft.text)} />;
+}

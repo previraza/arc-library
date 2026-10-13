@@ -1,0 +1,22 @@
+import { Text, View } from "react-native";
+import { CardStack } from "@/components/manicat/card-stack/card-stack.rn";
+
+const trips = [{ name: "Lisbon", tag: "Seven hills, ocean light" }, { name: "Kyoto", tag: "Temples and quiet lanes" }, { name: "Reykjavik", tag: "Lava fields, hot springs" }];
+
+export function Shortlist() {
+  return (
+    <CardStack
+      items={trips}
+      getKey={(trip) => trip.name}
+      getLabel={(trip) => trip.name}
+      labels={{ left: "Skip", right: "Shortlist" }}
+      outcomes={{ left: "skipped", right: "shortlisted" }}
+      renderCard={(trip) => (
+        <View style={{ padding: 24, gap: 4 }}>
+          <Text style={{ fontSize: 18, fontWeight: "600" }}>{trip.name}</Text>
+          <Text>{trip.tag}</Text>
+        </View>
+      )}
+    />
+  );
+}

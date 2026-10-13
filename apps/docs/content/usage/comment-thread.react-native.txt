@@ -1,0 +1,15 @@
+import { CommentThread } from "@/components/manicat/comment-thread/comment-thread.rn";
+
+const me = { id: "me", name: "You" };
+const ada = { id: "ada", name: "Ada Lovelace" };
+
+export function Review() {
+  return (
+    <CommentThread
+      title="Hero headline"
+      currentUser={me}
+      defaultComments={[{ id: "c1", author: ada, body: "The preview is 64px short on small screens.", createdAt: "2h", replies: [{ id: "c2", author: me, body: "Fixed in the last push.", createdAt: "1h" }] }]}
+      onCommentsChange={(comments, event) => console.log(event.type, comments.length)}
+    />
+  );
+}

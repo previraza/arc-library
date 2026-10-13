@@ -1,0 +1,23 @@
+import * as DocumentPicker from "expo-document-picker";
+import { FileDropzone } from "@/components/manicat/file-dropzone/file-dropzone.rn";
+
+export function Assets() {
+  return (
+    <FileDropzone
+      label="Add files"
+      description="The cover art and its variants live here."
+      maxSize={5 * 1024 * 1024}
+      note="SVG, PNG or JPG, up to 5 MB."
+      onPick={async () => {
+        const result = await DocumentPicker.getDocumentAsync({ multiple: true });
+        return result.canceled ? [] : result.assets.map((asset) => ({ name: asset.name, size: asset.size ?? 0, source: asset.uri }));
+      }}
+      onUpload={async (item, { onProgress }) => {
+        for (const step of [20, 55, 100]) {
+          await new Promise((done) => setTimeout(done, 300));
+          onProgress(step);
+        }
+      }}
+    />
+  );
+}

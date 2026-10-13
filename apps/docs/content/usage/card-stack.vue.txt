@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import CardStack from "@/components/manicat/card-stack/card-stack.vue";
+
+const trips = [{ name: "Lisbon", tag: "Seven hills, ocean light" }, { name: "Kyoto", tag: "Temples and quiet lanes" }, { name: "Reykjavik", tag: "Lava fields, hot springs" }];
+</script>
+
+<template>
+  <CardStack :items="trips" :get-key="(trip) => trip.name" :get-label="(trip) => trip.name" :labels="{ left: 'Skip', right: 'Shortlist' }" :outcomes="{ left: 'skipped', right: 'shortlisted' }">
+    <template #card="{ item }">
+      <div class="p-6"><p class="text-lg font-semibold">{{ item.name }}</p><p>{{ item.tag }}</p></div>
+    </template>
+  </CardStack>
+</template>

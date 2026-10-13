@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import RichTextEditor, { type RichTextValue } from "@/components/manicat/rich-text-editor/rich-text-editor.vue";
+
+const html = ref("<h2>v2.4.0</h2><ul><li>Faster builds</li><li>New date range picker</li></ul>");
+const markdown = ref("");
+</script>
+
+<template>
+  <RichTextEditor v-model="html" @change="(value: RichTextValue) => (markdown = value.markdown)" />
+  <p>{{ markdown.length }} characters of Markdown</p>
+</template>
