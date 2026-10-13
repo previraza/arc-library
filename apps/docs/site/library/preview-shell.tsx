@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useId, useState, type ReactNode } from "react";
-import { Code2, Eye, Maximize2, Minimize2, Scan, Smartphone } from "lucide-react";
+import { useEffect, useId, useState, type CSSProperties, type ReactNode } from "react";
+import { Code2, Eye, Maximize2, Minimize2, RotateCw, Scan, Smartphone } from "lucide-react";
 
 type Size = "fit" | "mobile";
+
+/** 1 is portrait, 0 landscape, -1 portrait turned upside down. */
+type Orientation = 1 | 0 | -1;
+const nextOrientation: Record<Orientation, Orientation> = { 1: 0, 0: -1, [-1]: 1 };
+const orientationName: Record<Orientation, string> = { 1: "portrait", 0: "landscape", [-1]: "upside down" };
 
 const sizes: { id: Size; label: string; Icon: typeof Scan }[] = [
   { id: "fit", label: "Fit", Icon: Scan },
@@ -29,6 +34,7 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
   const [tab, setTab] = useState<"preview" | "code">("preview");
   const [size, setSize] = useState<Size>("fit");
   const [full, setFull] = useState(false);
+  const [orientation, setOrientation] = useState<Orientation>(1);
   const titleId = useId();
 
   useEffect(() => {
@@ -106,6 +112,17 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
               </button>
             ))}
           </div>
+          {size === "mobile" && (
+            <button
+              type="button"
+              aria-label={`Rotate device, now ${orientationName[orientation]}`}
+              title={`Rotate (${orientationName[orientation]})`}
+              onClick={() => setOrientation((current) => nextOrientation[current])}
+              className="arc-fade-in grid size-8 place-items-center rounded-[var(--radius-pill)] border border-fd-border text-fd-muted-foreground transition-colors hover:text-fd-foreground"
+            >
+              <RotateCw className="size-3.5" aria-hidden />
+            </button>
+          )}
           <button
             type="button"
             aria-label={full ? "Exit fullscreen" : "Fullscreen preview"}
@@ -135,7 +152,7 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
                 }
           }
         >
-          <Device mobile={size === "mobile"} full={full}>
+          <Device mobile={size === "mobile"} full={full} orientation={orientation}>
             {children}
           </Device>
         </div>
@@ -149,64 +166,82 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
   );
 }
 
-const PHONE_RATIO = 393 / 852;
+const ease = "ease-[var(--ease-standard)]";
 
 /**
- * One element that is either the plain preview column or a phone. Switching animates its width, height, bezel and radius,
- * so the phone appears to be built around the example (and folds back into the column) instead of swapping in.
+ * One element that is either the plain preview column or a phone. The phone is sized from the real screen in pixels
+ * (1170 × 2532) divided by `--mobile-ratio`, and `--mobile-orientation` turns it: 1 portrait, 0 landscape, -1 upside down.
+ * Width, height and the bezel are transitions, so the phone grows around the example and turns when rotated.
  */
-function Device({ mobile, full, children }: { mobile: boolean; full: boolean; children: ReactNode }) {
-  const phoneHeight = full ? "min(740px, 85vh)" : "650px";
-  const fade = "transition-opacity duration-300 ease-[var(--ease-standard)] motion-reduce:transition-none";
+function Device({ mobile, full, orientation, children }: { mobile: boolean; full: boolean; orientation: Orientation; children: ReactNode }) {
+  const angle = "var(--mobile-angle)";
+  const turned = (portrait: string, landscape: string) =>
+    `calc(${portrait} * abs(cos(${angle})) + ${landscape} * abs(sin(${angle})))`;
+  // How much of the 44px island side and 20px home-bar side each edge of the screen gives up, for any angle.
+  const edge = (island: string, home: string) => `calc(44px * max(${island}, 0) + 20px * max(${home}, 0))`;
+  const c = `cos(${angle})`;
+  const sn = `sin(${angle})`;
+
+  const frame = {
+    "--mobile-ratio": full ? 3.4 : 3.6,
+    "--mobile-orientation": orientation,
+    "--mobile-angle": "calc((var(--mobile-orientation) - 1) * 90deg)",
+    "--device-width": "calc(1170px / var(--mobile-ratio))",
+    "--device-height": "calc(2532px / var(--mobile-ratio))",
+    interpolateSize: "allow-keywords",
+    width: mobile ? turned("var(--device-width)", "var(--device-height)") : "min(100%, 42rem)",
+    height: mobile ? turned("var(--device-height)", "var(--device-width)") : "auto",
+    padding: mobile ? 7 : 0,
+    borderRadius: mobile ? "2.75rem" : "0rem",
+    backgroundColor: mobile ? "color-mix(in oklab, var(--color-fd-foreground) 90%, transparent)" : "transparent",
+    boxShadow: mobile
+      ? "0 0 0 1px rgb(0 0 0 / 0.12), 0 30px 70px -24px rgb(0 0 0 / 0.45)"
+      : "0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0)",
+  } as CSSProperties;
+
+  const content = {
+    paddingTop: mobile ? `calc(${edge(c, `-1 * ${c}`)} + 0px)` : 0,
+    paddingBottom: mobile ? `calc(${edge(`-1 * ${c}`, c)} + 0px)` : 0,
+    paddingLeft: mobile ? `calc(${edge(`-1 * ${sn}`, sn)} + 0px)` : 0,
+    paddingRight: mobile ? `calc(${edge(sn, `-1 * ${sn}`)} + 0px)` : 0,
+  } as CSSProperties;
+
+  // The chrome keeps the portrait proportions and turns around the centre of the screen.
+  const chrome = {
+    width: "var(--device-width)",
+    height: "var(--device-height)",
+    transform: `translate(-50%, -50%) rotate(${angle})`,
+  } as CSSProperties;
+
+  const fade = `transition-opacity duration-300 ${ease} motion-reduce:transition-none ${mobile ? "opacity-100" : "opacity-0"}`;
 
   return (
     <div
-      className="relative z-10 shrink-0 transition-[width,height,padding,border-radius,background-color,box-shadow] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none"
-      style={{
-        interpolateSize: "allow-keywords",
-        width: mobile ? `calc(${phoneHeight} * ${PHONE_RATIO})` : "min(100%, 42rem)",
-        height: mobile ? phoneHeight : "auto",
-        padding: mobile ? 7 : 0,
-        borderRadius: mobile ? "2.75rem" : "0rem",
-        backgroundColor: mobile ? "color-mix(in oklab, var(--color-fd-foreground) 90%, transparent)" : "transparent",
-        boxShadow: mobile
-          ? "0 0 0 1px rgb(0 0 0 / 0.12), 0 30px 70px -24px rgb(0 0 0 / 0.45)"
-          : "0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0)",
-      }}
+      className={`relative z-10 shrink-0 transition-[width,height,padding,border-radius,background-color,box-shadow] duration-500 ${ease} motion-reduce:transition-none`}
+      style={frame}
     >
-      <span aria-hidden className={`absolute -left-[3px] top-24 h-8 w-[3px] rounded-l bg-fd-foreground/70 ${fade} ${mobile ? "opacity-100" : "opacity-0"}`} />
-      <span aria-hidden className={`absolute -left-[3px] top-36 h-12 w-[3px] rounded-l bg-fd-foreground/70 ${fade} ${mobile ? "opacity-100" : "opacity-0"}`} />
-      <span aria-hidden className={`absolute -right-[3px] top-32 h-16 w-[3px] rounded-r bg-fd-foreground/70 ${fade} ${mobile ? "opacity-100" : "opacity-0"}`} />
-
       <div
-        className="relative flex h-full w-full flex-col overflow-hidden bg-fd-background transition-[border-radius] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none"
+        className={`relative h-full w-full overflow-hidden bg-fd-background transition-[border-radius] duration-500 ${ease} motion-reduce:transition-none`}
         style={{ borderRadius: mobile ? "2.3rem" : "0rem" }}
       >
-        <span
-          aria-hidden
-          className={`absolute left-1/2 top-2 z-20 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-fd-foreground/90 ${fade} ${mobile ? "opacity-100" : "opacity-0"}`}
-        />
         <div
-          aria-hidden
-          className={`flex shrink-0 items-end justify-between overflow-hidden px-7 text-[11px] font-medium text-fd-foreground transition-[height,opacity] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none ${
-            mobile ? "h-11 pb-1 opacity-100" : "h-0 opacity-0"
-          }`}
+          className={`flex h-full w-full items-center justify-center transition-[padding] duration-500 ${ease} motion-reduce:transition-none ${mobile ? "overflow-auto p-4" : ""}`}
+          style={content}
         >
-          <span>9:41</span>
-          <span className="tracking-widest">●●●</span>
-        </div>
-
-        <div className={`flex min-h-0 flex-1 items-center justify-center ${mobile ? "overflow-auto p-4" : ""}`}>
           <div className="flex w-full items-center justify-center">{children}</div>
         </div>
 
-        <span
-          aria-hidden
-          className={`mx-auto shrink-0 rounded-full bg-fd-foreground/80 transition-[height,margin,opacity] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none ${
-            mobile ? "mb-2 mt-1 h-1 w-28 opacity-100" : "h-0 w-28 opacity-0"
-          }`}
-        />
+        <div aria-hidden className={`pointer-events-none absolute left-1/2 top-1/2 transition-transform duration-500 ${ease} motion-reduce:transition-none ${fade}`} style={chrome}>
+          <span className="absolute left-1/2 top-2 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-fd-foreground/90" />
+          <span className="absolute left-7 top-3 text-[11px] font-medium leading-none text-fd-foreground">9:41</span>
+          <span className="absolute right-7 top-3 text-[11px] leading-none tracking-widest text-fd-foreground">●●●</span>
+          <span className="absolute bottom-2 left-1/2 h-1 w-28 -translate-x-1/2 rounded-full bg-fd-foreground/80" />
+        </div>
       </div>
+
+      <span aria-hidden className={`absolute -left-[3px] top-24 h-8 w-[3px] rounded-l bg-fd-foreground/70 ${fade}`} />
+      <span aria-hidden className={`absolute -left-[3px] top-36 h-12 w-[3px] rounded-l bg-fd-foreground/70 ${fade}`} />
+      <span aria-hidden className={`absolute -right-[3px] top-32 h-16 w-[3px] rounded-r bg-fd-foreground/70 ${fade}`} />
     </div>
   );
 }
