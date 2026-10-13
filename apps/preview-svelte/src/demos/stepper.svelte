@@ -1,0 +1,14 @@
+<script lang="ts">
+  import Stepper from "@/registry/components/stepper/stepper.svelte";
+  import Button from "@/registry/components/button/button.svelte";
+  let current = $state(1);
+  const steps = [{ id: "account", label: "Account", description: "Create your login" }, { id: "plan", label: "Plan", description: "Choose a plan" }, { id: "pay", label: "Payment", description: "Add a card" }];
+</script>
+
+<div style="display: grid; gap: 16px; width: min(520px, 100%)">
+  <Stepper {steps} {current} selectable onselect={(index) => (current = index)} />
+  <div style="display: flex; gap: 8px">
+    <Button variant="secondary" size="sm" onclick={() => (current = Math.max(0, current - 1))}>Back</Button>
+    <Button size="sm" onclick={() => (current = Math.min(steps.length, current + 1))}>Next</Button>
+  </div>
+</div>
