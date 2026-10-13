@@ -1,17 +1,10 @@
 <script lang="ts">
   import Button from "@/components/manicat/button/button.svelte";
-
-  let saving = $state(false);
-  function save() {
-    saving = true;
-    setTimeout(() => (saving = false), 1400);
-  }
 </script>
 
-<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
-  <Button onclick={save} loading={saving}>Save changes</Button>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+  <Button>Save changes</Button>
   <Button variant="secondary">Cancel</Button>
-  <Button variant="ghost" size="sm">Skip</Button>
-  <Button variant="danger" size="lg">Delete project</Button>
-  <Button disabled>Disabled</Button>
+  <Button variant="ghost">Learn more</Button>
+  <Button variant="danger">Delete project</Button>
 </div>

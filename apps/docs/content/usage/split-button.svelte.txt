@@ -1,9 +1,11 @@
 <script lang="ts">
   import SplitButton from "@/components/manicat/split-button/split-button.svelte";
-  let message = $state("");
+
+  let count = $state(0);
 </script>
 
-<div style="display: grid; gap: 8px; justify-items: start">
-  <SplitButton label="Publish" onclick={() => (message = "Published")} actions={[{ label: "Schedule…", onSelect: () => (message = "Scheduled") }, { label: "Save draft", onSelect: () => (message = "Draft saved") }, { label: "Discard", destructive: true, onSelect: () => (message = "Discarded") }]} />
-  <small>{message}</small>
-</div>
+<SplitButton
+  label={`Publish (${count})`}
+  onclick={() => count++}
+  actions={[{ label: "Publish now" }, { label: "Schedule for later" }, { label: "Publish to a copy" }]}
+/>

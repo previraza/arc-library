@@ -1,17 +1,13 @@
 import SwiftUI
 
 struct FloatingButtonGroupExample: View {
-    @State private var last = ""
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ManicatFloatingButtonGroup(items: [
-                .action(id: "bold", label: "Bold", shortcut: "⌘B"),
-                .action(id: "italic", label: "Italic", shortcut: "⌘I"),
-                .separator(id: "sep"),
-                .action(id: "link", label: "Link"),
-            ], label: "Editor", variant: .floating) { last = $0 }
-            Text(last.isEmpty ? "" : "Pressed \(last)").font(.caption)
-        }
+        ManicatFloatingButtonGroup(items: [
+            .action(id: "select", label: "Select"),
+            .action(id: "draw", label: "Draw"),
+            .action(id: "share", label: "Share"),
+            .separator(id: "sep"),
+            .action(id: "undo", label: "Undo", shortcut: "⌘Z"),
+        ], label: "Board actions") { _ in }
     }
 }

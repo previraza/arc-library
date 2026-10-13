@@ -1,15 +1,14 @@
+import { useState } from "react";
 import { SplitButton } from "@/components/manicat/split-button/split-button.rn";
 
-export function Publish() {
+export function SplitButtonDemo() {
+  const [count, setCount] = useState(0);
+
   return (
     <SplitButton
-      label="Publish"
-      onClick={() => console.log("publish now")}
-      actions={[
-        { label: "Publish now", onSelect: () => console.log("now") },
-        { label: "Schedule for later", onSelect: () => console.log("later") },
-        { label: "Publish to a copy" },
-      ]}
+      label={`Publish (${count})`}
+      onClick={() => setCount((value) => value + 1)}
+      actions={[{ label: "Publish now" }, { label: "Schedule for later" }, { label: "Publish to a copy" }]}
     />
   );
 }

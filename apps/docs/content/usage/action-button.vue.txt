@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import ActionButton from "@/components/manicat/action-button/action-button.vue";
 
-const publish = () => new Promise<void>((done) => setTimeout(done, 900));
+const wait = (ms: number) => new Promise<void>((done) => setTimeout(done, ms));
 </script>
 
 <template>
-  <ActionButton label="Publish" success-label="Published" :on-action="publish" />
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+    <ActionButton label="Publish" :on-action="() => wait(900)" />
+    <ActionButton label="Archive" :on-action="() => wait(1400)" />
+  </div>
 </template>

@@ -1,12 +1,7 @@
 import { ConfirmMorph } from "@/components/manicat/confirm-morph/confirm-morph.rn";
 
-export function DeleteProject() {
-  return (
-    <ConfirmMorph
-      label="Delete"
-      tone="danger"
-      onConfirm={() => new Promise<void>((done) => setTimeout(done, 1200))}
-      onUndo={() => new Promise<void>((done) => setTimeout(done, 600))}
-    />
-  );
+const wait = (ms: number) => new Promise<void>((done) => setTimeout(done, ms));
+
+export function ConfirmMorphDemo() {
+  return <ConfirmMorph label="Delete" tone="danger" onConfirm={() => wait(1200)} onUndo={() => wait(600)} />;
 }

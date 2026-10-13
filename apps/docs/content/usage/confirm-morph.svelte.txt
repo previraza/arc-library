@@ -1,5 +1,7 @@
 <script lang="ts">
   import ConfirmMorph from "@/components/manicat/confirm-morph/confirm-morph.svelte";
+
+  const wait = (ms: number) => new Promise<void>((done) => setTimeout(done, ms));
 </script>
 
-<ConfirmMorph label="Delete account" tone="danger" prompt="Delete for good?" onConfirm={() => new Promise((resolve) => setTimeout(resolve, 900))} onUndo={() => new Promise((resolve) => setTimeout(resolve, 600))} />
+<ConfirmMorph label="Delete" tone="danger" onConfirm={() => wait(1200)} onUndo={() => wait(600)} />

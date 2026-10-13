@@ -4,7 +4,6 @@ struct ExpandingButtonGroupExample: View {
     var body: some View {
         ManicatExpandingButtonGroup(items: [
             ManicatExpandingButtonItem(id: "archive", label: "Archive", doneLabel: "Archived") { Text("▣") },
-            ManicatExpandingButtonItem(id: "star", label: "Star", doneLabel: "Starred") { Text("★") },
             ManicatExpandingButtonItem(id: "delete", label: "Delete", tone: .danger) { Text("✕") },
         ], label: "Message actions")
     }

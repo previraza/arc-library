@@ -1,5 +1,10 @@
 <script lang="ts">
   import ActionButton from "@/components/manicat/action-button/action-button.svelte";
+
+  const wait = (ms: number) => new Promise<void>((done) => setTimeout(done, ms));
 </script>
 
-<ActionButton label="Save changes" pendingLabel="Saving…" successLabel="Saved" onAction={() => new Promise((resolve) => setTimeout(resolve, 1200))} />
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+  <ActionButton label="Publish" onAction={() => wait(900)} />
+  <ActionButton label="Archive" onAction={() => wait(1400)} />
+</div>

@@ -1,9 +1,10 @@
 <script lang="ts">
   import HoldToConfirm from "@/components/manicat/hold-to-confirm/hold-to-confirm.svelte";
-  let message = $state("");
+
+  let confirmed = $state(false);
 </script>
 
-<div style="display: grid; gap: 8px; justify-items: start">
-  <HoldToConfirm label="Hold to delete" tone="danger" confirmedLabel="Deleted" onconfirm={() => (message = "Confirmed")} />
-  <small>{message}</small>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+  <HoldToConfirm label="Hold to delete" onconfirm={() => (confirmed = true)} />
+  {#if confirmed}<span>Deleted.</span>{/if}
 </div>

@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 import { HoldToConfirm } from "@/components/manicat/hold-to-confirm/hold-to-confirm.rn";
 
-export function DeleteAccount() {
-  const [deleted, setDeleted] = useState(false);
+export function HoldToConfirmDemo() {
+  const [confirmed, setConfirmed] = useState(false);
+
   return (
-    <View style={{ gap: 8 }}>
-      <HoldToConfirm label="Hold to delete" tone="danger" onConfirm={() => setDeleted(true)} />
-      {deleted ? <Text>Account scheduled for deletion.</Text> : null}
+    <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+      <HoldToConfirm label="Hold to delete" onConfirm={() => setConfirmed(true)} />
+      {confirmed ? <Text>Deleted.</Text> : null}
     </View>
   );
 }

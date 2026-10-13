@@ -1,20 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import Button from "@/components/manicat/button/button.vue";
-
-const saving = ref(false);
-
-async function save() {
-  saving.value = true;
-  await new Promise((done) => setTimeout(done, 1200));
-  saving.value = false;
-}
 </script>
 
 <template>
-  <div class="actions">
-    <Button :loading="saving" @click="save">Save changes</Button>
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+    <Button>Save changes</Button>
     <Button variant="secondary">Cancel</Button>
-    <Button variant="danger" :class-names="{ label: 'font-semibold' }">Delete project</Button>
+    <Button variant="ghost">Learn more</Button>
+    <Button variant="danger">Delete project</Button>
   </div>
 </template>

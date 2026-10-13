@@ -1,13 +1,12 @@
 import SwiftUI
 
 struct HoldToConfirmExample: View {
-    @State private var message = ""
+    @State private var confirmed = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ManicatHoldToConfirm("Hold to delete", confirmedLabel: "Deleted", tone: .danger) { message = "Confirmed" }
-            Text(message).font(.caption)
+        HStack(spacing: 12) {
+            ManicatHoldToConfirm("Hold to delete") { confirmed = true }
+            if confirmed { Text("Deleted.").font(.callout) }
         }
-        .frame(maxWidth: 260)
     }
 }

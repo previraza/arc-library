@@ -1,14 +1,13 @@
 import { View } from "react-native";
 import { Button } from "@/components/manicat/button/button.rn";
 
-export function SaveBar() {
+export function ButtonDemo() {
   return (
-    <View style={{ flexDirection: "row", gap: 12 }}>
-      <Button onPress={() => console.log("saved")}>Save changes</Button>
+    <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+      <Button>Save changes</Button>
       <Button variant="secondary">Cancel</Button>
-      <Button variant="danger" styles={{ label: { letterSpacing: 0.2 } }}>
-        Delete project
-      </Button>
+      <Button variant="ghost">Learn more</Button>
+      <Button variant="danger">Delete project</Button>
     </View>
   );
 }

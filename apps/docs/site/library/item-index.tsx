@@ -63,40 +63,51 @@ export function ItemIndex({
         <span className="shrink-0 text-xs tabular-nums text-fd-muted-foreground">{total}</span>
       </label>
 
+      {!query.trim() && (
+        <nav aria-label="Categories" className="flex flex-wrap gap-2">
+          {categories.map((category) => (
+            <a
+              key={category.title}
+              href={`#${slug(category.title)}`}
+              className="rounded-[var(--radius-pill)] border border-fd-border px-3 py-1 text-sm text-fd-muted-foreground transition-colors hover:border-fd-primary/50 hover:text-fd-foreground"
+            >
+              {category.title}{" "}
+              <span className="tabular-nums text-xs opacity-70">
+                {category.groups.reduce((sum, group) => sum + group.items.length, 0)}
+              </span>
+            </a>
+          ))}
+        </nav>
+      )}
+
       {filtered.length === 0 ? (
-        <p className="py-12 text-center text-sm text-fd-muted-foreground">
-          Nothing matches “{query}”.
-        </p>
+        <p className="py-12 text-center text-sm text-fd-muted-foreground">Nothing matches “{query}”.</p>
       ) : (
         filtered.map((category) => (
-          <section key={category.title} className="grid gap-5">
+          <section key={category.title} id={slug(category.title)} className="grid scroll-mt-24 gap-6">
             <div className="flex items-baseline gap-3">
-              <h2 className="text-lg font-medium tracking-(--tracking-display) text-fd-foreground">
-                {category.title}
-              </h2>
+              <h2 className="text-xl font-medium tracking-(--tracking-display) text-fd-foreground">{category.title}</h2>
               <span className="h-px flex-1 bg-fd-border" />
               <span className="text-xs tabular-nums text-fd-muted-foreground">
                 {category.groups.reduce((sum, group) => sum + group.items.length, 0)}
               </span>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {category.groups.map((group) => (
-                <div key={group.title} className="grid gap-3">
-                  <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">
-                    {group.title}
-                  </p>
-                  <div className="grid gap-3">
-                    {group.items.map((item) => (
-                      <ItemCard key={item.name} item={item} base={base} />
-                    ))}
-                  </div>
+            {category.groups.map((group) => (
+              <div key={group.title} className="grid gap-3">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">{group.title}</p>
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {group.items.map((item) => (
+                    <ItemCard key={item.name} item={item} base={base} />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </section>
         ))
       )}
     </div>
   );
 }
+
+const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-");

@@ -2,7 +2,4 @@
   import CopyButton from "@/components/manicat/copy-button/copy-button.svelte";
 </script>
 
-<div style="display: flex; gap: 12px">
-  <CopyButton value="npx shadcn add button" />
-  <CopyButton value="npx shadcn add button" iconOnly variant="plain" />
-</div>
+<CopyButton value="npx shadcn@latest add https://manicat.dev/r/button.json" label="Copy install command" />

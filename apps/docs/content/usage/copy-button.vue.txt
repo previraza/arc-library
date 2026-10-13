@@ -3,5 +3,5 @@ import CopyButton from "@/components/manicat/copy-button/copy-button.vue";
 </script>
 
 <template>
-  <CopyButton value="npx shadcn@latest add @manicat/button" label="Copy command" />
+  <CopyButton value="npx shadcn@latest add https://manicat.dev/r/button.json" label="Copy install command" />
 </template>

@@ -1,12 +1,16 @@
 import { FloatingButtonGroup } from "@/components/manicat/floating-button-group/floating-button-group.rn";
 
-export function BoardTools() {
+export function FloatingButtonGroupDemo() {
   return (
     <FloatingButtonGroup
       label="Board actions"
-      variant="floating"
-      items={[{ id: "select", label: "Select", pressed: true }, { id: "draw", label: "Draw" }, { type: "separator" }, { id: "undo", label: "Undo", shortcut: "⌘Z" }]}
-      onAction={(id) => console.log(id)}
+      items={[
+        { id: "select", label: "Select" },
+        { id: "draw", label: "Draw" },
+        { id: "share", label: "Share" },
+        { type: "separator" },
+        { id: "undo", label: "Undo", shortcut: "⌘Z" },
+      ]}
     />
   );
 }

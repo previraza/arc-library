@@ -1,11 +1,16 @@
 <script lang="ts">
   import SwipeActions from "@/components/manicat/swipe-actions/swipe-actions.svelte";
-  let last = $state("");
 </script>
 
-<div style="width: min(380px, 100%); display: grid; gap: 8px">
-  <SwipeActions label="Message from Ada" leading={[{ label: "Pin", tone: "accent", onSelect: () => (last = "Pinned") }]} trailing={[{ label: "Archive", onSelect: () => (last = "Archived") }, { label: "Delete", tone: "danger", onSelect: () => (last = "Deleted") }]}>
-    <div style="padding: 14px 16px"><strong>Ada</strong><br />Swipe or use the arrow keys.</div>
+<div role="list" aria-label="Message actions">
+  <SwipeActions
+    label="Ada Lovelace"
+    leading={[{ label: "Pin", onSelect: () => {}, keepRow: true }]}
+    trailing={[{ label: "Archive", onSelect: () => {} }, { label: "Delete", tone: "danger", onSelect: () => {} }]}
+  >
+    <span style="font-weight: 500">Ada Lovelace</span> <span style="opacity: 0.6">Analytical engine notes</span>
   </SwipeActions>
-  <small>{last}</small>
+  <SwipeActions label="Grace Hopper" trailing={[{ label: "Delete", tone: "danger", onSelect: () => {} }]}>
+    <span style="font-weight: 500">Grace Hopper</span> <span style="opacity: 0.6">Compiler design</span>
+  </SwipeActions>
 </div>

@@ -1,15 +1,25 @@
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { SwipeActions, SwipeActionsRow } from "@/components/manicat/swipe-actions/swipe-actions.rn";
 
-export function Inbox() {
+const Message = ({ name, subject }: { name: string; subject: string }) => (
+  <View style={{ flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 8 }}>
+    <Text style={{ fontWeight: "500" }}>{name}</Text>
+    <Text style={{ opacity: 0.6 }}>{subject}</Text>
+  </View>
+);
+
+export function SwipeActionsDemo() {
   return (
-    <SwipeActions label="Messages">
+    <SwipeActions label="Message actions">
       <SwipeActionsRow
         label="Ada Lovelace"
-        leading={[{ label: "Pin", onSelect: () => console.log("pin"), keepRow: true }]}
-        trailing={[{ label: "Archive", onSelect: () => console.log("archive") }, { label: "Delete", tone: "danger", onSelect: () => console.log("delete") }]}
+        leading={[{ label: "Pin", onSelect: () => {}, keepRow: true }]}
+        trailing={[{ label: "Archive", onSelect: () => {} }, { label: "Delete", tone: "danger", onSelect: () => {} }]}
       >
-        <Text>Ada Lovelace — Analytical engine notes</Text>
+        <Message name="Ada Lovelace" subject="Analytical engine notes" />
+      </SwipeActionsRow>
+      <SwipeActionsRow label="Grace Hopper" trailing={[{ label: "Delete", tone: "danger", onSelect: () => {} }]}>
+        <Message name="Grace Hopper" subject="Compiler design" />
       </SwipeActionsRow>
     </SwipeActions>
   );

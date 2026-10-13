@@ -1,14 +1,24 @@
 import SwiftUI
 
 struct SwipeActionsExample: View {
+    private func message(_ name: String, _ subject: String) -> some View {
+        HStack(spacing: 12) {
+            Text(name).font(.subheadline.weight(.medium))
+            Text(subject).font(.subheadline).foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 8)
+    }
+
     var body: some View {
-        ManicatSwipeActions("Messages") {
-            ManicatSwipeActionsRow("Welcome to Manicat",
-                leading: [ManicatSwipeAction("Read", tone: .accent, onSelect: {})],
+        ManicatSwipeActions("Message actions") {
+            ManicatSwipeActionsRow("Ada Lovelace",
+                leading: [ManicatSwipeAction("Pin", keepRow: true, onSelect: {})],
                 trailing: [ManicatSwipeAction("Archive", onSelect: {}), ManicatSwipeAction("Delete", tone: .danger, onSelect: {})]) {
-                Text("Welcome to Manicat").font(.subheadline)
+                message("Ada Lovelace", "Analytical engine notes")
+            }
+            ManicatSwipeActionsRow("Grace Hopper", trailing: [ManicatSwipeAction("Delete", tone: .danger, onSelect: {})]) {
+                message("Grace Hopper", "Compiler design")
             }
         }
-        .frame(maxWidth: 420)
     }
 }

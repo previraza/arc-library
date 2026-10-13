@@ -1,5 +1,13 @@
+import { View } from "react-native";
 import { ActionButton } from "@/components/manicat/action-button/action-button.rn";
 
-export function Publish() {
-  return <ActionButton label="Publish" successLabel="Published" onAction={() => new Promise<void>((done) => setTimeout(done, 900))} />;
+const wait = (ms: number) => new Promise<void>((done) => setTimeout(done, ms));
+
+export function ActionButtonDemo() {
+  return (
+    <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+      <ActionButton label="Publish" onAction={() => wait(900)} />
+      <ActionButton label="Archive" onAction={() => wait(1400)} />
+    </View>
+  );
 }

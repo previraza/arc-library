@@ -8,8 +8,5 @@ const items = [
 </script>
 
 <template>
-  <ExpandingButtonGroup label="Message actions" :items="items">
-    <template #icon-archive>▣</template>
-    <template #icon-delete>🗑</template>
-  </ExpandingButtonGroup>
+  <ExpandingButtonGroup label="Message actions" :items="items" />
 </template>

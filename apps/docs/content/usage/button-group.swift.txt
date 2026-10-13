@@ -1,19 +1,14 @@
 import SwiftUI
 
 struct ButtonGroupExample: View {
-    @State private var last = ""
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ManicatButtonGroup(items: [
-                ManicatButtonGroupItem(id: "day", "Day") { last = "Day" },
-                ManicatButtonGroupItem(id: "week", "Week") { last = "Week" },
-                ManicatButtonGroupItem(id: "month", "Month") { last = "Month" },
-            ], label: "View", menuLabel: "More views", menuItems: [
-                ManicatMenuItem("Year") { last = "Year" },
-                ManicatMenuItem("Agenda") { last = "Agenda" },
-            ])
-            Text(last).font(.caption)
-        }
+        ManicatButtonGroup(items: [
+            ManicatButtonGroupItem(id: "copy", "Copy link") {},
+            ManicatButtonGroupItem(id: "star", "Star") {},
+            ManicatButtonGroupItem(id: "delete", "Delete") {},
+        ], label: "Document actions", menuLabel: "More actions", menuItems: [
+            ManicatMenuItem("Move to folder") {},
+            ManicatMenuItem("Archive") {},
+        ])
     }
 }
