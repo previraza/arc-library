@@ -183,32 +183,30 @@ export function PreviewShell({ children, code, label, bare, frameSrc }: PreviewS
 
 const ease = "ease-[var(--ease-standard)]";
 
-/** The phone's real screen in CSS pixels (1170 × 2532 device pixels at ratio 3) and its bezel. Content always lays out at this size. */
+/** The phone's real screen in CSS pixels (1170 × 2532 device pixels at ratio 3). Content always lays out at this size. */
 const SCREEN = { width: 1170 / 3, height: 2532 / 3 };
-const BEZEL = 9;
-const STAGE_PADDING = 96;
-/** An inline phone never gets taller than this once scaled down; fullscreen uses the whole window instead. */
-const INLINE_MAX_HEIGHT = 720;
+/** The bezel and its corner are not scaled with the screen, so the frame keeps the same weight at any size. */
+const BEZEL = 10;
+const STAGE_PADDING = 88;
+/** An inline phone, bezel included, never gets taller than this; fullscreen uses the whole window instead. */
+const INLINE_MAX_HEIGHT = 763;
 
-/** The scale the phone is shown at, and the real size of its frame, for an orientation and the room the stage gives. */
+/** The scale the screen is shown at for an orientation and the room the stage gives, and the size of the framed phone. */
 function phoneFit(orientation: Orientation, stage: { width: number; height: number }, full: boolean) {
   const landscape = orientation === 0;
-  const real = {
-    width: (landscape ? SCREEN.height : SCREEN.width) + BEZEL * 2,
-    height: (landscape ? SCREEN.width : SCREEN.height) + BEZEL * 2,
-  };
-  const roomWidth = Math.max(stage.width - STAGE_PADDING, 240);
-  const roomHeight = full ? Math.max(stage.height - STAGE_PADDING, 240) : INLINE_MAX_HEIGHT;
-  const scale = stage.width > 0 ? Math.min(1, roomWidth / real.width, roomHeight / real.height) : 0.8;
+  const screen = { width: landscape ? SCREEN.height : SCREEN.width, height: landscape ? SCREEN.width : SCREEN.height };
+  const roomWidth = Math.max(stage.width - STAGE_PADDING - BEZEL * 2, 200);
+  const roomHeight = (full ? Math.max(stage.height - STAGE_PADDING, 260) : INLINE_MAX_HEIGHT) - BEZEL * 2;
+  const scale = stage.width > 0 ? Math.min(1, roomWidth / screen.width, roomHeight / screen.height) : 0.8;
 
-  return { scale, real, shown: { width: real.width * scale, height: real.height * scale } };
+  return { scale, shown: { width: screen.width * scale + BEZEL * 2, height: screen.height * scale + BEZEL * 2 } };
 }
 
 /**
- * One element that is either the plain preview column or a phone. The phone is laid out at the real screen size
- * (390 × 844) and then scaled down with a transform to fit the stage, so the example inside always sees a real device
- * width. `--mobile-orientation` turns it: 1 portrait, 0 landscape. Width, height, scale and bezel are transitions, so the
- * phone grows around the example and turns when rotated.
+ * One element that is either the plain preview column or a phone. The screen is laid out at its real size (390 × 844)
+ * inside a scaler that is shrunk with a transform to fit the stage, so the example inside always sees a real device
+ * width; the bezel around it keeps its own fixed weight. `--mobile-orientation` turns the phone: 1 portrait, 0 landscape.
+ * Width, height, scale and bezel are transitions, so the phone grows around the example and turns when rotated.
  */
 function Device({
   mobile,
@@ -239,8 +237,8 @@ function Device({
   const screenWidth = turned("var(--device-width)", "var(--device-height)");
   const screenHeight = turned("var(--device-height)", "var(--device-width)");
 
-  // The box the page lays out: the scaled size of the phone, so nothing around it is pushed by the unscaled frame.
-  const box = {
+  // The shell is what the page lays out: the scaled screen plus the bezel.
+  const shell = {
     "--mobile-ratio": 3,
     "--mobile-orientation": orientation,
     "--mobile-angle": "calc((var(--mobile-orientation) - 1) * 90deg)",
@@ -248,22 +246,23 @@ function Device({
     "--device-height": "calc(2532px / var(--mobile-ratio))",
     "--device-scale": fit.scale,
     interpolateSize: "allow-keywords",
-    width: mobile ? `calc((${screenWidth} + ${BEZEL * 2}px) * var(--device-scale))` : "min(100%, 42rem)",
-    height: mobile ? `calc((${screenHeight} + ${BEZEL * 2}px) * var(--device-scale))` : "auto",
-  } as CSSProperties;
-
-  const frame = {
-    interpolateSize: "allow-keywords",
-    width: mobile ? `calc(${screenWidth} + ${BEZEL * 2}px)` : "100%",
-    height: mobile ? `calc(${screenHeight} + ${BEZEL * 2}px)` : "auto",
-    transform: `scale(${mobile ? "var(--device-scale)" : 1})`,
-    transformOrigin: "0 0",
+    width: mobile ? `calc(${screenWidth} * var(--device-scale) + ${BEZEL * 2}px)` : "min(100%, 42rem)",
+    height: mobile ? `calc(${screenHeight} * var(--device-scale) + ${BEZEL * 2}px)` : "auto",
     padding: mobile ? BEZEL : 0,
-    borderRadius: mobile ? "2.75rem" : "0rem",
+    borderRadius: mobile ? 46 : 0,
     backgroundColor: mobile ? "color-mix(in oklab, var(--color-fd-foreground) 90%, transparent)" : "transparent",
     boxShadow: mobile
       ? "0 0 0 1px rgb(0 0 0 / 0.12), 0 30px 70px -24px rgb(0 0 0 / 0.45)"
       : "0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0)",
+  } as CSSProperties;
+
+  // The scaler lays the screen out at its real size and shrinks it from the top-left corner.
+  const scaler = {
+    interpolateSize: "allow-keywords",
+    width: mobile ? screenWidth : "100%",
+    height: mobile ? screenHeight : "auto",
+    transform: `scale(${mobile ? "var(--device-scale)" : 1})`,
+    transformOrigin: "0 0",
   } as CSSProperties;
 
   const content = {
@@ -281,17 +280,20 @@ function Device({
   } as CSSProperties;
 
   const fade = `transition-opacity duration-300 ${ease} motion-reduce:transition-none ${mobile ? "opacity-100" : "opacity-0"}`;
-  const morph = `transition-[width,height,transform,padding,border-radius,background-color,box-shadow] duration-500 ${ease} motion-reduce:transition-none`;
+  const slow = `duration-500 ${ease} motion-reduce:transition-none`;
 
   return (
-    <div className={`relative z-10 shrink-0 transition-[width,height] duration-500 ${ease} motion-reduce:transition-none`} style={box}>
-      <div className={`relative ${morph}`} style={frame}>
-        <div
-          className={`relative h-full w-full overflow-hidden bg-fd-background transition-[border-radius] duration-500 ${ease} motion-reduce:transition-none`}
-          style={{ borderRadius: mobile ? "2.3rem" : "0rem" }}
-        >
+    <div
+      className={`relative z-10 shrink-0 transition-[width,height,padding,border-radius,background-color,box-shadow] ${slow}`}
+      style={shell}
+    >
+      <div
+        className={`relative h-full w-full overflow-hidden bg-fd-background transition-[border-radius] ${slow}`}
+        style={{ borderRadius: mobile ? 36 : 0 }}
+      >
+        <div className={`relative transition-[width,height,transform] ${slow}`} style={scaler}>
           <div
-            className={`flex h-full w-full items-center justify-center transition-[padding] duration-500 ${ease} motion-reduce:transition-none ${mobile && !framed ? "overflow-auto p-4" : ""}`}
+            className={`flex h-full w-full items-center justify-center transition-[padding] ${slow} ${mobile && !framed ? "overflow-auto p-4" : ""}`}
             style={content}
           >
             {framed ? (
@@ -309,7 +311,7 @@ function Device({
 
           <div
             aria-hidden
-            className={`pointer-events-none absolute left-1/2 top-1/2 transition-[transform,opacity] duration-500 ${ease} motion-reduce:transition-none ${mobile ? "opacity-100" : "opacity-0"}`}
+            className={`pointer-events-none absolute left-1/2 top-1/2 transition-[transform,opacity] ${slow} ${mobile ? "opacity-100" : "opacity-0"}`}
             style={chrome}
           >
             <span className="absolute left-1/2 top-2 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-fd-foreground/90" />
@@ -318,11 +320,11 @@ function Device({
             <span className="absolute bottom-2 left-1/2 h-1 w-28 -translate-x-1/2 rounded-full bg-fd-foreground/80" />
           </div>
         </div>
-
-        <span aria-hidden className={`absolute -left-[3px] top-24 h-8 w-[3px] rounded-l bg-fd-foreground/70 ${fade}`} />
-        <span aria-hidden className={`absolute -left-[3px] top-36 h-12 w-[3px] rounded-l bg-fd-foreground/70 ${fade}`} />
-        <span aria-hidden className={`absolute -right-[3px] top-32 h-16 w-[3px] rounded-r bg-fd-foreground/70 ${fade}`} />
       </div>
+
+      <span aria-hidden className={`absolute -left-[3px] top-24 h-8 w-[3px] rounded-l bg-fd-foreground/70 ${fade}`} />
+      <span aria-hidden className={`absolute -left-[3px] top-36 h-12 w-[3px] rounded-l bg-fd-foreground/70 ${fade}`} />
+      <span aria-hidden className={`absolute -right-[3px] top-32 h-16 w-[3px] rounded-r bg-fd-foreground/70 ${fade}`} />
     </div>
   );
 }
