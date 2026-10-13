@@ -1,0 +1,10 @@
+<script lang="ts">
+  import NotificationCenter, { type NotificationItem } from "@/registry/components/notification-center/notification-center.svelte";
+  let items = $state<NotificationItem[]>([
+    { id: "1", title: "Build succeeded", description: "web · main", time: "2m ago", tone: "success" },
+    { id: "2", title: "Storage almost full", time: "1h ago", tone: "warning" },
+    { id: "3", title: "Welcome to Manicat", time: "1d ago", read: true },
+  ]);
+</script>
+
+<NotificationCenter bind:items />
