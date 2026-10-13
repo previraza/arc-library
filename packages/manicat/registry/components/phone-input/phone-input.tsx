@@ -615,7 +615,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(function
 
         <motion.div className={styles.shape} style={{ width: shapeW, height: shapeH, borderRadius: radius }}>
           <div className={styles.lid}>
-            <button ref={triggerRef} type="button" className={cn(styles.trigger, styles.measure)} disabled={disabled} inert={open || undefined} tabIndex={open ? -1 : 0}
+            <button ref={triggerRef} type="button" className={styles.trigger} disabled={disabled} inert={open || undefined} tabIndex={open ? -1 : 0}
               aria-haspopup="listbox" aria-expanded={open} aria-controls={listId} aria-label={`Country, ${current.name} +${current.dial}`}
               onClick={() => (open ? close("trigger") : openList())} onKeyDown={onTriggerKeyDown}>
               <span className={cn(styles.slot, classNames?.slot)} data-hidden={open || undefined}>
