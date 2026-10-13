@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import Breadcrumb from "@/components/manicat/breadcrumb/breadcrumb.vue";
-
-const items = [
-  { label: "Settings", href: "/settings" },
-  { label: "Billing", href: "/settings/billing" },
-  { label: "Invoices" },
-];
 </script>
 
 <template>
-  <Breadcrumb :items="items" />
+  <Breadcrumb :items="[{ label: 'Settings', href: '#' }, { label: 'Billing', href: '#' }, { label: 'Teams' }]" />
 </template>

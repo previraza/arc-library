@@ -1,50 +1,47 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  // @manicat-dependencies bits-ui
+  import { Popover } from "bits-ui";
+  import type { PopoverRootProps } from "bits-ui";
 
-  interface Props {
-    /** Whether the popover is open. Bind it with `bind:open`. */
-    open?: boolean;
-    /** Extend the inner, named parts of the popover: content. */
-    classNames?: { content?: string };
-    /** The control that opens it. It receives `toggle`, `open` and the `aria-controls` to wire to a button. */
-    trigger?: Snippet<[{ toggle: () => void; open: boolean; "aria-controls": string }]>;
-    /** The content. It receives `close`. */
-    children?: Snippet<[{ close: () => void }]>;
-  }
-
-  let { open = $bindable(false), classNames, trigger, children }: Props = $props();
-  let root = $state<HTMLElement>();
-  const id = $props.id();
-
-  function onOutside(event: PointerEvent) {
-    if (open && root && !root.contains(event.target as Node)) open = false;
-  }
-
-  function onKeydown(event: KeyboardEvent) {
-    if (event.key === "Escape" && open) {
-      open = false;
-      root?.querySelector<HTMLElement>("button")?.focus();
-    }
-  }
+  let { open = $bindable(false), children, ...rest }: PopoverRootProps = $props();
 </script>
 
-<svelte:document onpointerdown={onOutside} />
-
-<div bind:this={root} class="mc-popover" role="presentation" onkeydown={onKeydown}>
-  {@render trigger?.({ toggle: () => (open = !open), open, "aria-controls": id })}
-  {#if open}
-    <div {id} role="dialog" class={["mc-popover__content", classNames?.content]}>
-      {@render children?.({ close: () => (open = false) })}
-    </div>
-  {/if}
-</div>
+<Popover.Root bind:open {...rest}>{@render children?.()}</Popover.Root>
 
 <style>
 :global {
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-popover { position: relative; display: inline-block; }
-.mc-popover__content { position: absolute; z-index: 60; top: calc(100% + 8px); left: 0; width: 16rem; padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface-raised); color: var(--foreground); font-size: var(--text-sm); box-shadow: var(--shadow-floating); animation: mc-popover-in .18s var(--ease-enter) both; transform-origin: top left; }
-@keyframes mc-popover-in { from { opacity: 0; transform: translateY(-4px) scale(.98); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .mc-popover__content { animation: none; } }
+/* Press feedback on the anchor stays in color. Radix measures the trigger when the panel opens, so a scaled trigger would move the panel. */
+.mc-popover__anchor:active:not(:disabled) { transform: none; }
+.mc-popover__content {
+  --popover-x: 0px;
+  --popover-y: -5px;
+  z-index: 80;
+  min-width: 12rem;
+  max-width: min(22rem, calc(100vw - 20px));
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface-raised);
+  color: var(--foreground);
+  box-shadow: var(--shadow-floating);
+  transform-origin: var(--bits-popover-content-transform-origin);
+  transition: opacity var(--duration-fast) var(--ease-enter), transform var(--duration-spring) var(--ease-spring);
+}
+/* The panel starts a few pixels toward its trigger and settles on a spring; it leaves faster than it arrives.
+   Transitions instead of keyframes, so a close that interrupts the open, or a reopen during the close, reverses from where the panel is. */
+.mc-popover__content[data-side="top"] { --popover-y: 5px; }
+.mc-popover__content[data-side="left"] { --popover-x: 5px; --popover-y: 0px; }
+.mc-popover__content[data-side="right"] { --popover-x: -5px; --popover-y: 0px; }
+@starting-style {
+  .mc-popover__content[data-state="open"] { opacity: 0; transform: translate(var(--popover-x), var(--popover-y)) scale(.97); }
+}
+/* Radix unmounts when the exit animation ends, so a no-op keyframe times the exit while the transition does the visual work. */
+.mc-popover__content[data-state="closed"] { opacity: 0; transform: translate(calc(var(--popover-x) * .5), calc(var(--popover-y) * .5)) scale(.98); transition: opacity var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard); animation: mc-popover-popover-exit var(--duration-fast) linear both; pointer-events: none; }
+.mc-popover__content:focus { outline: none; }
+@keyframes mc-popover-popover-exit { to { --popover-exit: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .mc-popover__content, .mc-popover__content[data-state="closed"] { transform: none; transition: opacity var(--duration-instant) var(--ease-standard); }
+}
 }
 </style>

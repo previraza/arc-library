@@ -4,7 +4,7 @@
  * framework, so a port only owns the element and hands it over: the same code runs the same motion in every framework, with the
  * same timings (`motion-tokens`) as the React version, which uses `motion/react`.
  */
-import { animate } from "motion";
+import { animate, cubicBezier, spring } from "motion";
 import type { AnimationPlaybackControls } from "motion";
 import { motionTokens } from "./motion-tokens";
 
@@ -227,10 +227,10 @@ export function drawnCheckIcon(className: string, reduced: boolean, size = 17) {
  * Presses a button in on pointer down and springs it back, as `whileTap` does in the React version. Wide buttons give less
  * (.985 over 220px) so they do not seem to jump. Returns a function that removes the listeners.
  */
-export function pressable(node: HTMLElement, { reduced, enabled }: { reduced: boolean; enabled: () => boolean }) {
+export function pressable(node: HTMLElement, { reduced, enabled, scale }: { reduced: boolean; enabled: () => boolean; /** One scale for every width, instead of the width-based default. */ scale?: number }) {
   if (reduced) return () => undefined;
   const down = () => {
-    if (enabled()) animate(node, { scale: node.offsetWidth > 220 ? 0.985 : node.offsetWidth && node.offsetWidth <= 48 ? 0.96 : 0.97 }, { duration: motionTokens.duration.instant, ease: ease("standard") });
+    if (enabled()) animate(node, { scale: scale ?? (node.offsetWidth > 220 ? 0.985 : node.offsetWidth && node.offsetWidth <= 48 ? 0.96 : 0.97) }, { duration: motionTokens.duration.instant, ease: ease("standard") });
   };
   const up = () => {
     animate(node, { scale: 1 }, motionTokens.spring.snappy);
@@ -356,3 +356,114 @@ export const loaderMotion = (reduced: boolean) => ({
       ? animate(node, { opacity: 0 }, { duration: motionTokens.duration.instant })
       : animate(node, { opacity: 0, scale: 0.8, filter: blur(motionTokens.blur.subtle) }, { duration: motionTokens.duration.fast, ease: ease("standard") }),
 });
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Poses: the same enter and exit motion for a framework that animates with its own transitions (Vue's <Transition>, Svelte's
+ * `in:` and `out:`) as for the helpers above. A pose is where a node rests or where it comes from and goes to.
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+export type Pose = { opacity?: number; x?: number; y?: number; scale?: number; blur?: number };
+
+/** How a pose is reached: a tween with an ease, or a spring (with its own tween for opacity and blur, so blur never overshoots). */
+export type Timing = { duration: number; ease?: "enter" | "exit" | "standard" | "inOut"; delay?: number } | { spring: keyof typeof motionTokens.spring; fade?: number; delay?: number };
+
+const keyframesOf = (from: Pose, to: Pose) => {
+  const out: Record<string, unknown[]> = {};
+  for (const key of ["opacity", "x", "y", "scale"] as const) if (from[key] !== undefined || to[key] !== undefined) out[key] = [from[key] ?? (key === "scale" || key === "opacity" ? 1 : 0), to[key] ?? (key === "scale" || key === "opacity" ? 1 : 0)];
+  if (from.blur !== undefined || to.blur !== undefined) out.filter = [blur(from.blur ?? 0), blur(to.blur ?? 0)];
+  return out;
+};
+
+const optionsOf = (timing: Timing) =>
+  "spring" in timing
+    ? { ...motionTokens.spring[timing.spring], delay: timing.delay, opacity: { duration: timing.fade ?? motionTokens.duration.fast, ease: ease("enter") }, filter: { duration: timing.fade ?? motionTokens.duration.fast, ease: ease("enter") } }
+    : { duration: timing.duration, delay: timing.delay, ease: ease(timing.ease ?? "standard") };
+
+/** Moves a node from one pose to another. */
+export function playPose(node: Element, from: Pose, to: Pose, timing: Timing) {
+  return animate(node, keyframesOf(from, to) as never, optionsOf(timing) as never);
+}
+
+/** The curve of a timing as a function of progress, for engines that drive the animation themselves (Svelte transitions). */
+export function curveOf(timing: Timing): { duration: number; easing: (t: number) => number } {
+  if ("spring" in timing) {
+    const generator = spring({ keyframes: [0, 1], ...(motionTokens.spring[timing.spring] as object) } as never);
+    const samples: number[] = [];
+    let ms = 0;
+    for (;;) {
+      const step = generator.next(ms);
+      samples.push(step.value as number);
+      if (step.done || ms > 4000) break;
+      ms += 16;
+    }
+    const duration = ms || 1;
+    return { duration, easing: (t) => samples[Math.min(samples.length - 1, Math.round(t * (samples.length - 1)))] };
+  }
+  return { duration: timing.duration * 1000, easing: cubicBezier(...ease(timing.ease ?? "standard")) };
+}
+
+/**
+ * A Svelte transition between two poses: `in:poseTransition(from, rest, timing)` or `out:poseTransition(gone, rest, timing)`.
+ * Svelte passes progress 0 to 1 for an `in:` and 1 to 0 for an `out:`, so in both the off-screen pose is `from` and the resting pose is `to`.
+ */
+export function poseTransition(from: Pose, to: Pose, timing: Timing, { pop = false }: { pop?: boolean } = {}) {
+  return (node: HTMLElement) => {
+    if (pop) popOut(node);
+    const { duration, easing } = curveOf(timing);
+    const lerp = (a: number | undefined, b: number | undefined, fallback: number, t: number) => (a ?? fallback) + ((b ?? fallback) - (a ?? fallback)) * t;
+    return {
+      duration,
+      delay: "delay" in timing && timing.delay ? timing.delay * 1000 : 0,
+      easing,
+      css: (t: number) => {
+        const opacity = lerp(from.opacity, to.opacity, 1, t);
+        const x = lerp(from.x, to.x, 0, t);
+        const y = lerp(from.y, to.y, 0, t);
+        const scale = lerp(from.scale, to.scale, 1, t);
+        const filter = lerp(from.blur, to.blur, 0, t);
+        return `opacity: ${opacity}; transform: translate(${x}px, ${y}px) scale(${scale});${from.blur !== undefined || to.blur !== undefined ? ` filter: blur(${filter}px);` : ""}`;
+      },
+    };
+  };
+}
+
+/** `use:pressAction` for Svelte: presses the node in on pointer down, as `whileTap` does. */
+export function pressAction(node: HTMLElement, options: { scale?: number } = {}) {
+  const release = pressable(node, { reduced: typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches, enabled: () => true, scale: options.scale });
+  return { destroy: release };
+}
+
+/** Opens or closes a node along one axis between 0 and its natural size, so what is next to it slides instead of jumping. */
+export function animateSize(node: HTMLElement, axis: "width" | "height", direction: "open" | "close", timing: Timing) {
+  const natural = (() => {
+    const previous = node.style[axis];
+    node.style[axis] = "auto";
+    const size = axis === "width" ? node.offsetWidth : node.offsetHeight;
+    node.style[axis] = previous;
+    return size;
+  })();
+  const [from, to] = direction === "open" ? [0, natural] : [node.getBoundingClientRect()[axis], 0];
+  const run = animate(node, { [axis]: [`${from}px`, `${to}px`] } as never, optionsOf(timing) as never);
+  if (direction === "open") run.finished.then(() => (node.style[axis] = "auto"));
+  return run;
+}
+
+/**
+ * A Svelte transition that opens or closes a node along one axis while it fades and scales, so the nodes next to it slide
+ * instead of jumping: `in:sizeTransition("width", timing, { opacity: 0, scale: 0.9 })`.
+ */
+export function sizeTransition(axis: "width" | "height", timing: Timing, from: Pose = {}) {
+  return (node: HTMLElement) => {
+    const natural = axis === "width" ? node.offsetWidth : node.offsetHeight;
+    const { duration, easing } = curveOf(timing);
+    return {
+      duration,
+      easing,
+      css: (t: number) => {
+        const opacity = (from.opacity ?? 1) + (1 - (from.opacity ?? 1)) * t;
+        const scale = (from.scale ?? 1) + (1 - (from.scale ?? 1)) * t;
+        return `${axis}: ${natural * t}px; opacity: ${opacity}; transform: scale(${scale});`;
+      },
+    };
+  };
+}

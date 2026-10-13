@@ -1,7 +1,13 @@
 <script lang="ts">
   import AvatarGroup from "@/components/manicat/avatar-group/avatar-group.svelte";
 
-  const members = ["Ada Lovelace", "Grace Hopper", "Alan Turing", "Katherine Johnson", "Linus Torvalds", "Margaret Hamilton"].map((name) => ({ name }));
+  const members = [
+  { name: "Ada Lovelace", src: "https://i.pravatar.cc/96?img=47" },
+  { name: "Grace Hopper", src: "https://i.pravatar.cc/96?img=32" },
+  { name: "Alan Turing", src: "https://i.pravatar.cc/96?img=13" },
+  { name: "Katherine Johnson", src: "https://i.pravatar.cc/96?img=45" },
+  { name: "Barbara Liskov", src: "https://i.pravatar.cc/96?img=44" },
+];
 </script>
 
-<AvatarGroup {members} max={4} />
+<AvatarGroup {members} />

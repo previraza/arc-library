@@ -1,5 +1,10 @@
+import { View } from "react-native";
 import { TextReveal } from "@/components/manicat/text-reveal/text-reveal.rn";
 
-export function Headline() {
-  return <TextReveal text="Every word rises as it enters the screen." />;
+export function TextRevealDemo() {
+  return (
+    <View style={{ width: "100%" }}>
+      <TextReveal text="Every word rises as it enters the viewport." />
+    </View>
+  );
 }

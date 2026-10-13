@@ -3,10 +3,10 @@ import Avatar from "@/components/manicat/avatar/avatar.vue";
 </script>
 
 <template>
-  <div class="flex items-center gap-3">
+  <div style="display: flex; align-items: center; gap: 12px">
     <Avatar name="Elia Kuratli" size="sm" />
     <Avatar name="Ada Lovelace" status="online" />
-    <Avatar name="Grace Hopper" size="lg" src="https://i.pravatar.cc/96?img=32" />
+    <Avatar name="Grace Hopper" size="lg" />
     <Avatar name="Alan Turing" size="xl" status="offline" />
   </div>
 </template>

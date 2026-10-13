@@ -3,5 +3,7 @@ import TextReveal from "@/components/manicat/text-reveal/text-reveal.vue";
 </script>
 
 <template>
-  <TextReveal text="Every word rises as it enters the viewport." as="h2" />
+  <div style="width: 100%">
+    <TextReveal text="Every word rises as it enters the viewport." as="h2" />
+  </div>
 </template>

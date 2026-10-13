@@ -5,13 +5,14 @@ struct PopoverExample: View {
 
     var body: some View {
         ManicatPopover(isPresented: $open) {
-            Text("Share").font(.system(size: 14, weight: .medium))
+            Text("Column settings")
         } content: {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Share this page").font(.headline)
-                Text("Anyone with the link can view it.")
-                ManicatButton("Copy link", size: .sm) { open = false }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Visible columns").fontWeight(.medium)
+                Text("The panel stays anchored to the trigger while the trigger springs back.").foregroundStyle(.secondary)
+                ManicatButton("Done", size: .sm) { open = false }.padding(.top, 12)
             }
+            .frame(width: 256)
         }
     }
 }

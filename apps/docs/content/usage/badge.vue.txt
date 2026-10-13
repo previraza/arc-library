@@ -3,10 +3,12 @@ import Badge from "@/components/manicat/badge/badge.vue";
 </script>
 
 <template>
-  <div class="statuses">
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+    <Badge>Neutral</Badge>
     <Badge tone="success">Shipped</Badge>
     <Badge tone="info">Beta</Badge>
     <Badge tone="warning">Deprecated</Badge>
-    <Badge tone="danger" size="sm">Blocked</Badge>
+    <Badge tone="danger">Blocked</Badge>
+    <Badge tone="neutral" size="sm">Small</Badge>
   </div>
 </template>

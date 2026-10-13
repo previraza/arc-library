@@ -2,4 +2,6 @@
   import TextReveal from "@/components/manicat/text-reveal/text-reveal.svelte";
 </script>
 
-<TextReveal text="Words rise one after another as the heading scrolls into view." />
+<div style="width: 100%">
+  <TextReveal text="Every word rises as it enters the viewport." as="h2" />
+</div>

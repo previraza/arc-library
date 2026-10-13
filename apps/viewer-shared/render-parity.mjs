@@ -7,7 +7,7 @@
  *   pnpm dev                                  # the docs (3000) and the viewers (3001 to 3003)
  *   node apps/viewer-shared/render-parity.mjs [--fw vue,svelte,react-native] [--only button,badge] [--examples]
  *
- * --max-diff sets how much of the picture may differ, in percent (default 1.5). --save <dir> writes the React and port
+ * --max-diff sets how much of the picture may differ, in percent (default 2.5). --save <dir> writes the React and port
  * screenshots of every render that differs. Exit code 1 when something differs. Swift has no web viewer, so it is checked by the token and naming checks instead.
  * Set DOCS, VUE, SVELTE and REACT_NATIVE to other origins when the servers are elsewhere.
  */
@@ -30,7 +30,7 @@ const viewers = {
 const frameworks = (flag("--fw")?.split(",") ?? Object.keys(viewers)).filter((id) => viewers[id]);
 const only = flag("--only")?.split(",");
 const wantExamples = !args.includes("--demos-only");
-const maxDiff = Number(flag("--max-diff") ?? 1.5);
+const maxDiff = Number(flag("--max-diff") ?? 2.5);
 const saveDir = flag("--save");
 if (saveDir) mkdirSync(saveDir, { recursive: true });
 

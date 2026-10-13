@@ -26,7 +26,7 @@ const usage = new URL("../../../apps/docs/content/usage/", import.meta.url).path
 const out = path.resolve(process.cwd(), outArg);
 const suffix = `.${framework}.txt`;
 
-await rm(out, { recursive: true, force: true });
+// The folder is updated in place, never deleted and recreated, so a dev server watching it sees ordinary changes.
 await mkdir(out, { recursive: true });
 
 const examples = new URL("../../../apps/docs/content/examples/", import.meta.url).pathname;
@@ -35,13 +35,18 @@ const sources = [
   ...(await readdir(examples).catch(() => [])).filter(name => name.endsWith(suffix)).map(file => ({ dir: examples, file, name: `example--${file.slice(0, -suffix.length)}` })),
 ];
 
+const wanted = new Set(sources.map(({ name }) => name + extensions[framework]));
+for (const stale of (await readdir(out)).filter(file => !wanted.has(file))) await rm(path.join(out, stale), { force: true });
+
 let count = 0;
 for (const { dir, file, name } of sources) {
   const source = (await readFile(path.join(dir, file), "utf8"))
     .replaceAll("@/components/manicat/blocks/", "@/registry/blocks/")
     .replaceAll("@/components/manicat/", "@/registry/components/")
     .replace(/require\((["'`])[^"'`]+\1\)/g, '{ uri: "" }');
-  await writeFile(path.join(out, name + extensions[framework]), source);
+  const target = path.join(out, name + extensions[framework]);
+  // Unchanged files are left alone, so nothing reloads for nothing.
+  if ((await readFile(target, "utf8").catch(() => null)) !== source) await writeFile(target, source);
   count += 1;
 }
 console.log(`${count} ${framework} demos written to ${path.relative(process.cwd(), out)}`);

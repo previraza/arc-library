@@ -2,12 +2,13 @@ import SwiftUI
 
 struct BadgeExample: View {
     var body: some View {
-        HStack(spacing: 8) {
-            ManicatBadge("Draft")
-            ManicatBadge("Live", tone: .success)
-            ManicatBadge("Review", tone: .info)
-            ManicatBadge("Late", tone: .warning, small: true)
-            ManicatBadge("Failed", tone: .danger, small: true)
+        ManicatFlowLayout(spacing: 8, lineSpacing: 8) {
+            ManicatBadge("Neutral")
+            ManicatBadge("Shipped", tone: .success)
+            ManicatBadge("Beta", tone: .info)
+            ManicatBadge("Deprecated", tone: .warning)
+            ManicatBadge("Blocked", tone: .danger)
+            ManicatBadge("Small", tone: .neutral, small: true)
         }
     }
 }

@@ -2,11 +2,11 @@ import { Text } from "react-native";
 import { Button } from "@/components/manicat/button/button.rn";
 import { Popover } from "@/components/manicat/popover/popover.rn";
 
-export function ColumnSettings() {
+export function PopoverDemo() {
   return (
-    <Popover trigger={<Button variant="secondary">Columns</Button>}>
+    <Popover trigger={<Button variant="secondary">Column settings</Button>}>
       <Text style={{ fontWeight: "500" }}>Visible columns</Text>
-      <Text>Choose which columns appear in the table.</Text>
+      <Text style={{ marginTop: 4, opacity: 0.6 }}>The panel stays anchored to the trigger while the trigger springs back.</Text>
     </Popover>
   );
 }

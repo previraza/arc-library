@@ -2,10 +2,11 @@
   import Badge from "@/components/manicat/badge/badge.svelte";
 </script>
 
-<div style="display: flex; flex-wrap: wrap; gap: 8px;">
-  <Badge>Draft</Badge>
-  <Badge tone="success">Live</Badge>
-  <Badge tone="info" size="sm">New</Badge>
-  <Badge tone="warning">Review</Badge>
-  <Badge tone="danger">Failed</Badge>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+    <Badge>Neutral</Badge>
+    <Badge tone="success">Shipped</Badge>
+    <Badge tone="info">Beta</Badge>
+    <Badge tone="warning">Deprecated</Badge>
+    <Badge tone="danger">Blocked</Badge>
+    <Badge tone="neutral" size="sm">Small</Badge>
 </div>

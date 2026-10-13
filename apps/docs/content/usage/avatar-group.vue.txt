@@ -3,13 +3,13 @@ import AvatarGroup from "@/components/manicat/avatar-group/avatar-group.vue";
 
 const members = [
   { name: "Ada Lovelace", src: "https://i.pravatar.cc/96?img=47" },
-  { name: "Grace Hopper" },
-  { name: "Alan Turing", status: "online" as const },
-  { name: "Katherine Johnson" },
-  { name: "Barbara Liskov" },
+  { name: "Grace Hopper", src: "https://i.pravatar.cc/96?img=32" },
+  { name: "Alan Turing", src: "https://i.pravatar.cc/96?img=13" },
+  { name: "Katherine Johnson", src: "https://i.pravatar.cc/96?img=45" },
+  { name: "Barbara Liskov", src: "https://i.pravatar.cc/96?img=44" },
 ];
 </script>
 
 <template>
-  <AvatarGroup :members="members" :max="3" />
+  <AvatarGroup :members="members" />
 </template>

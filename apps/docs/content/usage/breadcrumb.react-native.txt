@@ -1,12 +1,12 @@
 import { Breadcrumb } from "@/components/manicat/breadcrumb/breadcrumb.rn";
 
-export function SettingsTrail({ navigate }: { navigate: (path: string) => void }) {
+export function BreadcrumbDemo() {
   return (
     <Breadcrumb
       items={[
-        { label: "Settings", onPress: () => navigate("/settings") },
-        { label: "Billing", onPress: () => navigate("/settings/billing") },
-        { label: "Invoices" },
+        { label: "Settings", onPress: () => {} },
+        { label: "Billing", onPress: () => {} },
+        { label: "Teams" },
       ]}
     />
   );

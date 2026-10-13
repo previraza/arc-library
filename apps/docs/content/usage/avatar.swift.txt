@@ -3,10 +3,10 @@ import SwiftUI
 struct AvatarExample: View {
     var body: some View {
         HStack(spacing: 12) {
-            ManicatAvatar(name: "Ada Lovelace", size: .sm)
-            ManicatAvatar(name: "Lin Chen", status: .online)
-            ManicatAvatar(name: "Grace Hopper", size: .lg, status: .offline)
-            ManicatAvatar(name: "Alan Turing", size: .xl)
+            ManicatAvatar(name: "Elia Kuratli", size: .sm)
+            ManicatAvatar(name: "Ada Lovelace", status: .online)
+            ManicatAvatar(name: "Grace Hopper", size: .lg)
+            ManicatAvatar(name: "Alan Turing", size: .xl, status: .offline)
         }
     }
 }
