@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "jsx": "preserve", "paths": { "@/*": ["./*"] } },
+  "include": ["types/**/*.d.ts", "registry/**/*.vue"]
+}

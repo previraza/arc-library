@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import Badge from "@/components/manicat/badge/badge.vue";
+</script>
+
+<template>
+  <div class="statuses">
+    <Badge tone="success">Shipped</Badge>
+    <Badge tone="info">Beta</Badge>
+    <Badge tone="warning">Deprecated</Badge>
+    <Badge tone="danger" size="sm">Blocked</Badge>
+  </div>
+</template>

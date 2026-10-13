@@ -9,6 +9,7 @@ import { readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { importSpecifiers, withRelativeImports } from "./registry-install.mjs";
+import { discoverPorts, portPayload } from "./ports.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 process.chdir(root);
@@ -33,6 +34,7 @@ async function expected(file) {
   return /\.(?:tsx?|css)$/.test(file) ? withRelativeImports(file, source, importSpecifiers(file, source), resolveFrom(file)) : source;
 }
 
+let ports = 0;
 for (const item of registry.items) {
   const payload = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
@@ -43,6 +45,13 @@ for (const item of registry.items) {
     payload.files.push({ ...file, content: await expected(file.path) });
   }
   await writeFile(`public/r/${item.name}.json`, JSON.stringify(payload));
+
+  // Files next to the React source with another framework's suffix publish as `<item>-<framework>` ports.
+  for (const port of await discoverPorts(item)) {
+    const built = await portPayload(item, port, expected);
+    await writeFile(`public/r/${built.name}.json`, JSON.stringify(built));
+    ports += 1;
+  }
 }
 
-console.log(`Built ${registry.items.length} items.`);
+console.log(`Built ${registry.items.length} items and ${ports} framework ports.`);

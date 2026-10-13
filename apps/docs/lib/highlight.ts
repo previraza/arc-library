@@ -11,6 +11,9 @@ const languages: Record<string, string> = {
   ".mjs": "js",
   ".ts": "ts",
   ".tsx": "tsx",
+  ".vue": "vue",
+  ".svelte": "svelte",
+  ".swift": "swift",
 };
 
 /** The Shiki language of a file, from its extension. Unknown extensions fall back to plain text. */

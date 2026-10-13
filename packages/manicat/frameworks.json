@@ -1,0 +1,31 @@
+[
+  { "id": "react", "label": "React", "suffix": ".tsx", "lang": "tsx" },
+  {
+    "id": "react-native",
+    "label": "React Native",
+    "suffix": ".rn.tsx",
+    "lang": "tsx",
+    "dependencies": ["react-native"],
+    "shared": ["lib/rn-tokens.ts"],
+    "classNamesProp": "styles"
+  },
+  {
+    "id": "vue",
+    "label": "Vue",
+    "suffix": ".vue",
+    "lang": "vue",
+    "dependencies": ["vue"],
+    "registryDependencies": ["https://manicat.dev/r/manicat-foundation.json"],
+    "classNamesProp": "classNames"
+  },
+  {
+    "id": "svelte",
+    "label": "Svelte",
+    "suffix": ".svelte",
+    "lang": "svelte",
+    "dependencies": ["svelte"],
+    "registryDependencies": ["https://manicat.dev/r/manicat-foundation.json"],
+    "classNamesProp": "classNames"
+  },
+  { "id": "swift", "label": "Swift", "suffix": ".swift", "lang": "swift", "classNamesProp": "styles" }
+]

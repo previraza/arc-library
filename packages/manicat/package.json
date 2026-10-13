@@ -9,15 +9,17 @@
     "./registry.json": "./registry.json",
     "./registry/*": "./registry/*",
     "./lib/*": "./lib/*",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./frameworks.json": "./frameworks.json"
   },
   "files": [
     "registry",
     "lib",
-    "registry.json"
+    "registry.json",
+    "frameworks.json"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && vue-tsc --noEmit -p tsconfig.vue.json",
     "check:registry": "node scripts/check-registry.mjs",
     "build:registry": "node scripts/build-registry.mjs"
   },
@@ -38,6 +40,9 @@
     "next": "^16.3.5",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "typescript": "^6.0.3"
+    "react-native": "~0.79.7",
+    "typescript": "^6.0.3",
+    "vue": "^3.5.43",
+    "vue-tsc": "^3.3.13"
   }
 }

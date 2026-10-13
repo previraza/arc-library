@@ -10,6 +10,7 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { importSpecifiers, installTarget, isPackageName, withRelativeImports } from "./registry-install.mjs";
+import { discoverPorts, portPayload } from "./ports.mjs";
 
 // Every path below is relative to the package root, so the script can run from anywhere.
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -36,6 +37,7 @@ async function expected(file) {
   return /\.(?:tsx?|css)$/.test(file) ? withRelativeImports(file, source, importSpecifiers(file, source), resolveFrom(file)) : source;
 }
 
+let ports = 0;
 for (const item of registry.items) {
   const built = `public/r/${item.name}.json`;
   if (!(await exists(built))) { problems.push(`${item.name}: missing ${built}`); continue; }
@@ -48,10 +50,18 @@ for (const item of registry.items) {
     const embedded = prebuilt.files?.find(entry => entry.path === file.path)?.content;
     if (embedded !== await expected(file.path)) problems.push(`${item.name}: ${built} is out of date for ${file.path}`);
   }
+
+  for (const port of await discoverPorts(item)) {
+    const wanted = await portPayload(item, port, expected);
+    const portBuilt = `public/r/${wanted.name}.json`;
+    if (!(await exists(portBuilt))) { problems.push(`${wanted.name}: missing ${portBuilt}, run pnpm --filter manicat build:registry`); continue; }
+    if (JSON.stringify(JSON.parse(await readFile(portBuilt, "utf8"))) !== JSON.stringify(wanted)) problems.push(`${wanted.name}: ${portBuilt} is out of date`);
+    ports += 1;
+  }
 }
 
 if (problems.length) {
   console.error(`Registry check failed:\n${problems.map(problem => `  - ${problem}`).join("\n")}`);
   process.exit(1);
 }
-console.log(`Registry OK: ${registry.items.length} items, every file present, installed where it belongs and up to date.`);
+console.log(`Registry OK: ${registry.items.length} items, every file present, installed where it belongs and up to date, plus ${ports} framework ports.`);

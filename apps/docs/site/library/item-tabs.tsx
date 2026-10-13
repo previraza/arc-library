@@ -6,6 +6,7 @@ import { CopyCommand } from "@/site/library/install-command";
 import { CodeBlock } from "@/site/library/code-block";
 import type { FrameworkId } from "@/lib/frameworks";
 import { FrameworkSwitch } from "@/site/library/framework-switch";
+import { useFramework } from "@/site/library/use-framework";
 import type { ApiTable, PropRow } from "@/lib/props";
 
 /** A file of the item, already highlighted on the server. */
@@ -18,7 +19,10 @@ export type SourceFile = {
   html?: string;
 };
 
-export type ItemTabsProps = {
+/** Everything the reference panel shows for one framework of an item. */
+export type FrameworkRef = {
+  id: FrameworkId;
+  label: string;
   command: string;
   registryUrl: string;
   /** The raw shadcn registry payload, shown so an install can be done by hand. */
@@ -26,19 +30,28 @@ export type ItemTabsProps = {
   registryHtml?: string;
   files: SourceFile[];
   api?: ApiTable;
-  frameworks: { id: FrameworkId; label: string }[];
   dependencies: { name: string; title: string }[];
+  /** How this framework spells the customisation prop: `classNames` on the web, `styles` on React Native. */
+  classNamesProp: string;
+};
+
+export type ItemTabsProps = {
+  /** React first, then every port found next to the React source. */
+  frameworks: FrameworkRef[];
 };
 
 const tabs = ["Install", "Source", "API", "Registry"] as const;
 type Tab = (typeof tabs)[number];
 
-export function ItemTabs(props: ItemTabsProps) {
+export function ItemTabs({ frameworks }: ItemTabsProps) {
   const [tab, setTab] = useState<Tab>("Install");
+  const [framework] = useFramework(frameworks);
+  const props = frameworks.find((entry) => entry.id === framework) ?? frameworks[0];
 
   return (
     <div className="flex flex-col overflow-hidden rounded-[var(--radius-surface)] border border-fd-border bg-fd-card">
-      <div role="tablist" aria-label="Item reference" className="flex border-b border-fd-border">
+      <div className="flex items-center justify-between gap-3 border-b border-fd-border pr-3">
+      <div role="tablist" aria-label="Item reference" className="flex">
         {tabs.map((name) => (
           <button
             key={name}
@@ -53,11 +66,13 @@ export function ItemTabs(props: ItemTabsProps) {
           </button>
         ))}
       </div>
+        {frameworks.length > 1 && <FrameworkSwitch options={frameworks} />}
+      </div>
 
       <div className="p-4">
         {tab === "Install" && <InstallPane {...props} />}
-        {tab === "Source" && <SourcePane files={props.files} frameworks={props.frameworks} />}
-        {tab === "API" && <ApiPane api={props.api} />}
+        {tab === "Source" && <SourcePane files={props.files} />}
+        {tab === "API" && <ApiPane api={props.api} customisation={props.classNamesProp} />}
         {tab === "Registry" && (
           <RegistryPane json={props.registryJson} html={props.registryHtml} url={props.registryUrl} />
         )}
@@ -66,7 +81,7 @@ export function ItemTabs(props: ItemTabsProps) {
   );
 }
 
-function InstallPane({ command, dependencies, registryJson, registryHtml }: Omit<ItemTabsProps, "files" | "api" | "frameworks">) {
+function InstallPane({ command, dependencies, registryJson, registryHtml }: FrameworkRef) {
   return (
     <div className="grid gap-4">
       <div className="grid gap-2">
@@ -107,7 +122,7 @@ function InstallPane({ command, dependencies, registryJson, registryHtml }: Omit
   );
 }
 
-function SourcePane({ files, frameworks }: { files: SourceFile[]; frameworks: ItemTabsProps["frameworks"] }) {
+function SourcePane({ files }: { files: SourceFile[] }) {
   const withSource = files.filter((file) => file.code);
 
   if (withSource.length === 0) {
@@ -120,7 +135,6 @@ function SourcePane({ files, frameworks }: { files: SourceFile[]; frameworks: It
 
   return (
     <div className="grid gap-4">
-      <FrameworkSwitch options={frameworks} />
       {withSource.map((file) => (
         <CodeBlock
           key={file.path}
@@ -135,7 +149,7 @@ function SourcePane({ files, frameworks }: { files: SourceFile[]; frameworks: It
   );
 }
 
-function ApiPane({ api }: { api?: ApiTable }) {
+function ApiPane({ api, customisation }: { api?: ApiTable; customisation: string }) {
   if (!api || (api.props.length === 0 && !api.exports?.length)) {
     return (
       <p className="py-6 text-center text-sm text-fd-muted-foreground">No public props recorded for this item yet.</p>
@@ -170,6 +184,13 @@ function ApiPane({ api }: { api?: ApiTable }) {
             </tbody>
           </table>
         </div>
+      )}
+
+      {api.props.length > 0 && (
+        <p className="text-xs text-fd-muted-foreground">
+          Style the named parts with <code className="font-mono text-fd-foreground">{customisation}</code>, next to the usual{" "}
+          <code className="font-mono text-fd-foreground">className</code>/<code className="font-mono text-fd-foreground">style</code>.
+        </p>
       )}
 
       {api.exports && api.exports.length > 0 && api.props.length === 0 && (

@@ -28,11 +28,11 @@ export type ApiTable = {
 const cache = new Map<string, ApiTable | undefined>();
 
 /** The .tsx file of an item, when the component lives in a single file. */
-function getSourceFile(item: RegistryItem): string | undefined {
-  const file = item.files.find((entry) => entry.type === "registry:component" && entry.path.endsWith(".tsx"));
-  if (!file) return;
+function getSourceFile(item: RegistryItem, filePath?: string): string | undefined {
+  const path = filePath ?? item.files.find((entry) => entry.type === "registry:component" && entry.path.endsWith(".tsx"))?.path;
+  if (!path) return;
   try {
-    return readFileSync(join(manicatRoot, file.path), "utf8");
+    return readFileSync(join(manicatRoot, path), "utf8");
   } catch {
     return;
   }
@@ -99,13 +99,19 @@ function readDefaults(source: ts.SourceFile): Map<string, string> {
  * from the component signature. Everything on the item page's API reference comes from here, so the table can
  * never drift from the source.
  */
-export function getApiTable(item: RegistryItem): ApiTable | undefined {
-  if (cache.has(item.name)) return cache.get(item.name);
+export function getApiTable(item: RegistryItem, filePath?: string): ApiTable | undefined {
+  const key = `${item.name}:${filePath ?? ""}`;
+  if (cache.has(key)) return cache.get(key);
 
-  const source = getSourceFile(item);
+  const source = getSourceFile(item, filePath);
   if (!source) {
-    cache.set(item.name, undefined);
+    cache.set(key, undefined);
     return;
+  }
+  if (filePath?.endsWith(".vue")) {
+    const table = readVueApi(item, source);
+    cache.set(key, table);
+    return table;
   }
 
   const file = ts.createSourceFile(`${item.name}.tsx`, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
@@ -142,7 +148,7 @@ export function getApiTable(item: RegistryItem): ApiTable | undefined {
     // Items built straight on a Radix primitive type their props inline, so there is no table to read.
     // The exported bindings are still worth listing.
     const table: ApiTable = { name: "", props: [], exports: [...exported] };
-    cache.set(item.name, table);
+    cache.set(key, table);
     return table;
   }
 
@@ -187,8 +193,51 @@ export function getApiTable(item: RegistryItem): ApiTable | undefined {
     props,
     extendsList,
   };
-  cache.set(item.name, table);
+  cache.set(key, table);
   return table;
+}
+
+/**
+ * Props of a Vue single file component: the type literal given to `defineProps<…>()` (inside `withDefaults` or not), with
+ * defaults read from the `withDefaults` object. The script is parsed as TypeScript, so the table comes from the source too.
+ */
+function readVueApi(item: RegistryItem, sfc: string): ApiTable | undefined {
+  const script = /<script\b[^>]*\bsetup\b[^>]*>([\s\S]*?)<\/script>/.exec(sfc)?.[1];
+  if (!script) return;
+
+  const file = ts.createSourceFile(`${item.name}.ts`, script, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  const defaults = new Map<string, string>();
+  let literal: ts.TypeLiteralNode | undefined;
+
+  const visit = (node: ts.Node) => {
+    if (ts.isCallExpression(node) && ts.isIdentifier(node.expression)) {
+      if (node.expression.text === "defineProps" && node.typeArguments?.[0] && ts.isTypeLiteralNode(node.typeArguments[0])) {
+        literal = node.typeArguments[0];
+      }
+      if (node.expression.text === "withDefaults" && node.arguments[1] && ts.isObjectLiteralExpression(node.arguments[1])) {
+        for (const property of node.arguments[1].properties) {
+          if (ts.isPropertyAssignment(property)) defaults.set(property.name.getText(file), print(property.initializer));
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(file);
+  if (!literal) return;
+
+  const props: PropRow[] = literal.members.filter(ts.isPropertySignature).map((member) => {
+    const name = member.name.getText(file);
+    return {
+      name,
+      type: member.type ? print(member.type) : "unknown",
+      defaultValue: defaults.get(name),
+      description: descriptionOf(member),
+      required: member.questionToken === undefined ? true : undefined,
+    };
+  });
+  props.push({ name: "...attrs", type: "HTML attributes", description: "Fall through to the root element." });
+
+  return { name: "Props", props };
 }
 
 function pascal(value: string): string {

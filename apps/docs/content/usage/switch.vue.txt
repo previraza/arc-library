@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Switch from "@/components/manicat/switch/switch.vue";
+
+const push = ref(true);
+const digest = ref(false);
+</script>
+
+<template>
+  <div class="settings">
+    <Switch v-model="push" label="Push notifications" />
+    <Switch v-model="digest" label="Weekly digest" />
+  </div>
+</template>

@@ -1,0 +1,14 @@
+import { useState } from "react";
+import { View } from "react-native";
+import { Switch } from "@/components/manicat/switch/switch.rn";
+
+export function NotificationSettings() {
+  const [push, setPush] = useState(true);
+
+  return (
+    <View style={{ gap: 12 }}>
+      <Switch label="Push notifications" checked={push} onCheckedChange={setPush} />
+      <Switch label="Weekly digest" defaultChecked={false} />
+    </View>
+  );
+}

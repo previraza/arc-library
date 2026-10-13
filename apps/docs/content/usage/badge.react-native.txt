@@ -1,0 +1,13 @@
+import { View } from "react-native";
+import { Badge } from "@/components/manicat/badge/badge.rn";
+
+export function Statuses() {
+  return (
+    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+      <Badge tone="success">Shipped</Badge>
+      <Badge tone="info">Beta</Badge>
+      <Badge tone="warning">Deprecated</Badge>
+      <Badge tone="danger" size="sm">Blocked</Badge>
+    </View>
+  );
+}

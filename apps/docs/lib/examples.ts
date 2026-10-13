@@ -149,3 +149,15 @@ export async function getExampleSources(file: string, exportNames: string[]): Pr
   const entries = exportNames.map((name) => all.get(name)).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
   return Promise.all(entries.map(finish));
 }
+
+/**
+ * The hand-written usage snippet of an item for a non-React framework: `content/usage/<item>.<framework>.txt`.
+ * Drop the file in and the Usage section picks it up for that framework's tab.
+ */
+export function readUsage(itemName: string, frameworkId: string): string | undefined {
+  try {
+    return readFileSync(join(process.cwd(), "content", "usage", `${itemName}.${frameworkId}.txt`), "utf8").trimEnd() + "\n";
+  } catch {
+    return;
+  }
+}

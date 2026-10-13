@@ -1,32 +1,39 @@
 import type { ComponentType } from "react";
-import { getDemoSource, getExampleSources, type ExampleSource } from "@/lib/examples";
-import { frameworksOf } from "@/lib/frameworks";
+import { getDemoSource, getExampleSources, readUsage, type ExampleSource } from "@/lib/examples";
+import { getPorts, reactFramework } from "@/lib/frameworks";
+import { highlight } from "@/lib/highlight";
 import type { RegistryItem } from "@/lib/registry";
 import { demoLocations } from "@/site/demos/registry";
 import { getExamples } from "@/site/examples/registry";
-import { CodeBlock } from "@/site/library/code-block";
 import { ExampleCard } from "@/site/library/example-card";
-import { FrameworkSwitch } from "@/site/library/framework-switch";
+import { UsagePanels, type UsagePanel } from "@/site/library/usage-panels";
 
-/** "Usage": the code of the preview above, ready to paste. */
+/** "Usage": the code of the preview above for React, and a hand-written snippet per other framework found in content/usage. */
 export async function ItemUsage({ item }: { item: RegistryItem }) {
   const location = demoLocations[item.name];
-  const source = location && (await getDemoSource(location.file, location.exportName));
-  if (!source) return null;
+  const react = location && (await getDemoSource(location.file, location.exportName));
+  const panels: UsagePanel[] = [];
 
-  const options = frameworksOf(item.meta);
+  if (react) panels.push({ id: reactFramework.id, label: reactFramework.label, fileName: "example.tsx", lang: "tsx", code: react.code, html: react.html });
+
+  for (const port of getPorts(item)) {
+    const code = readUsage(item.name, port.framework.id);
+    if (!code) continue;
+    panels.push({
+      id: port.framework.id,
+      label: port.framework.label,
+      fileName: `example${port.framework.suffix}`,
+      lang: port.framework.lang,
+      code,
+      html: await highlight(code, port.framework.lang),
+    });
+  }
+
+  if (panels.length === 0) return null;
 
   return (
-    <section id="usage" className="grid scroll-mt-24 gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-medium tracking-(--tracking-display) text-fd-foreground">Usage</h2>
-        <FrameworkSwitch options={options} />
-      </div>
-      <p className="text-sm text-fd-muted-foreground">
-        Install the component, then copy this into your app. Every class and value below works as is; change the content and
-        the props to fit your screen.
-      </p>
-      <CodeBlock label="example.tsx" lang="tsx" html={source.html} code={source.code} maxHeight={520} />
+    <section id="usage" className="scroll-mt-24">
+      <UsagePanels panels={panels} />
     </section>
   );
 }
