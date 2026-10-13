@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { MentionInput, type MentionValue } from "@/components/manicat/mention-input/mention-input.rn";
 
-export function Note() {
+export function MentionInputDemo() {
   const [note, setNote] = useState<MentionValue>({ text: "", mentions: [] });
+
   return (
     <MentionInput
       value={note}
       onChange={setNote}
       placeholder="Write a note, @ to mention someone"
-      people={[{ id: "ada", name: "Ada Lovelace", role: "Engineering" }, { id: "grace", name: "Grace Mbeki", role: "Support" }]}
+      people={[{ id: "ada", name: "Ada Lovelace", role: "Engineering" }]}
       channels={[{ id: "general", name: "general", members: 12 }]}
     />
   );

@@ -1,7 +1,14 @@
 import { useState } from "react";
+import { Text, View } from "react-native";
 import { MoneyInput } from "@/components/manicat/money-input/money-input.rn";
 
-export function Invoice() {
+export function MoneyInputDemo() {
   const [amount, setAmount] = useState<number | null>(1250);
-  return <MoneyInput label="Invoice amount" value={amount} onValueChange={setAmount} defaultCurrency="USD" currencies={["USD", "EUR", "GBP"]} />;
+
+  return (
+    <View style={{ width: "100%", maxWidth: 384, gap: 12 }}>
+      <MoneyInput label="Amount" value={amount} onValueChange={setAmount} defaultCurrency="USD" />
+      <Text style={{ fontSize: 14, opacity: 0.6 }}>{amount === null ? "Nothing charged." : `${amount.toFixed(2)} in the currency above`}</Text>
+    </View>
+  );
 }

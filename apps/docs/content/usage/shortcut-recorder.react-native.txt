@@ -1,7 +1,14 @@
 import { useState } from "react";
+import { Text, View } from "react-native";
 import { ShortcutRecorder } from "@/components/manicat/shortcut-recorder/shortcut-recorder.rn";
 
-export function Keyboard() {
-  const [shortcut, setShortcut] = useState<string | null>("mod+k");
-  return <ShortcutRecorder label="Open command menu" value={shortcut} onValueChange={setShortcut} resetValue="mod+k" bindings={[{ shortcut: "mod+p", label: "Print" }]} />;
+export function ShortcutRecorderDemo() {
+  const [shortcut, setShortcut] = useState<string | null>(null);
+
+  return (
+    <View style={{ width: "100%", maxWidth: 384, gap: 12 }}>
+      <ShortcutRecorder label="Shortcut" value={shortcut} onValueChange={setShortcut} />
+      <Text style={{ fontSize: 14, opacity: 0.6 }}>{shortcut ? `Recorded: ${shortcut}` : "Click, then press keys."}</Text>
+    </View>
+  );
 }

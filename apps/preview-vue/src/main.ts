@@ -1,4 +1,6 @@
 import { createApp } from "vue";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/inter";
 import "@/registry/foundation.css";
 import "../../viewer-shared/viewer.css";
 import App from "./App.vue";

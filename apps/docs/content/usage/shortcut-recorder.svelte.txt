@@ -1,8 +1,10 @@
 <script lang="ts">
   import ShortcutRecorder from "@/components/manicat/shortcut-recorder/shortcut-recorder.svelte";
-  let shortcut = $state<string | null>("mod+k");
+
+  let shortcut = $state<string | null>(null);
 </script>
 
-<div style="width: min(320px, 100%)">
-  <ShortcutRecorder label="Open command palette" resetValue="mod+k" description="Click, then press the keys." bind:value={shortcut} />
+<div style="display: grid; width: 100%; max-width: 384px; gap: 12px">
+  <ShortcutRecorder bind:value={shortcut} label="Shortcut" />
+  <p style="margin: 0; font-size: 14px; opacity: 0.6">{shortcut ? `Recorded: ${shortcut}` : "Click, then press keys."}</p>
 </div>

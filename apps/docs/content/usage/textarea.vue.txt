@@ -2,16 +2,13 @@
 import { ref } from "vue";
 import Textarea from "@/components/manicat/textarea/textarea.vue";
 
-const message = ref("");
+const value = ref("");
+const note = ref("Kept to two lines.");
 </script>
 
 <template>
-  <Textarea
-    v-model="message"
-    label="What could be better?"
-    placeholder="Tell us what got in your way"
-    :rows="4"
-    :description="`${message.length}/280`"
-    :error="message.length > 280 ? 'Over the limit.' : undefined"
-  />
+  <div style="display: grid; width: 100%; max-width: 448px; gap: 16px">
+    <Textarea v-model="value" label="Changelog entry" placeholder="What changed?" :rows="5" />
+    <Textarea v-model="note" label="Short note" :rows="2" description="Two lines is enough." />
+  </div>
 </template>

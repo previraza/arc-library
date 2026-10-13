@@ -1,6 +1,6 @@
 /* Viewer chrome only. Components are styled by foundation.css and their own mc-* rules. */
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans, system-ui, sans-serif); }
+body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
 .viewer { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 100vh; }
 .viewer__nav { position: sticky; top: 0; align-self: start; height: 100vh; overflow: auto; border-inline-end: 1px solid var(--border); padding: 16px 12px; }
 .viewer__nav h2 { margin: 16px 8px 6px; color: var(--text-muted); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
@@ -19,8 +19,10 @@ body { margin: 0; background: var(--background); color: var(--foreground); font-
 .viewer__stage iframe { width: 100%; height: 320px; border: 0; }
 .viewer__empty { color: var(--text-muted); font-size: 13px; }
 
-/* ?embed: only the demo, for the docs site to frame. */
+/* ?embed: only the demo, laid out exactly like the docs' /frame/demo page (a centered column of 42rem with 16px around it),
+   so the same demo can be compared pixel for pixel. */
 .embed .viewer { display: block; min-height: 0; }
 .embed .viewer__nav, .embed .viewer__bar, .embed .viewer__pane:nth-child(n+2), .embed .viewer__pane > span { display: none; }
-.embed .viewer__main { padding: 0; }
-.embed .viewer__stage { min-height: 100vh; border: 0; border-radius: 0; }
+.embed .viewer__main, .embed .viewer__panes, .embed .viewer__pane { display: block; padding: 0; gap: 0; }
+.embed .viewer__stage { display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100%; border: 0; border-radius: 0; padding: 16px; background: transparent; }
+.embed .viewer__stage > :not(iframe) { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 42rem; }

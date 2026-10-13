@@ -1,8 +1,7 @@
 <script lang="ts">
   import TagInput from "@/components/manicat/tag-input/tag-input.svelte";
-  let tags = $state(["design", "svelte"]);
+
+  let tags = $state(["design", "motion"]);
 </script>
 
-<div style="width: min(380px, 100%)">
-  <TagInput label="Topics" description="Press Enter or comma to add." bind:tags />
-</div>
+<TagInput bind:tags label="Topics" placeholder="Add a topic" />

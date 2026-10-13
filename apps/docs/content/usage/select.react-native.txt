@@ -1,20 +1,15 @@
 import { useState } from "react";
-import { View } from "react-native";
 import { Select } from "@/components/manicat/select/select.rn";
 
-const frequencies = [
+const options = [
   { value: "daily", label: "Daily" },
   { value: "weekly", label: "Weekly" },
   { value: "monthly", label: "Monthly" },
   { value: "never", label: "Never", disabled: true },
 ];
 
-export function ReportSchedule() {
-  const [frequency, setFrequency] = useState("weekly");
+export function SelectDemo() {
+  const [value, setValue] = useState("weekly");
 
-  return (
-    <View style={{ padding: 16 }}>
-      <Select label="Send usage report" options={frequencies} value={frequency} onValueChange={setFrequency} description="Delivered Monday morning." />
-    </View>
-  );
+  return <Select label="Report frequency" options={options} value={value} onValueChange={setValue} description="We send it in your timezone." />;
 }

@@ -2,13 +2,13 @@
 import { ref } from "vue";
 import MorphSelect from "@/components/manicat/morph-select/morph-select.vue";
 
-const zone = ref<string | null>("Europe/Paris");
-const timezones = [
-  { label: "Europe", options: [{ value: "Europe/London", label: "London", meta: "UTC+0" }, { value: "Europe/Paris", label: "Paris", meta: "UTC+1" }] },
-  { label: "Americas", options: [{ value: "America/New_York", label: "New York", meta: "UTC-5", keywords: "est" }] },
+const value = ref<string | null>("bill");
+const items = [
+  { label: "Staging", options: [{ value: "preview", label: "Preview", meta: "3 min" }, { value: "bill", label: "Bill", meta: "now" }] },
+  { label: "Production", options: [{ value: "eu", label: "Europe", meta: "1 region" }, { value: "us", label: "United States", meta: "2 regions" }] },
 ];
 </script>
 
 <template>
-  <MorphSelect v-model="zone" label="Timezone" :items="timezones" />
+  <MorphSelect v-model="value" label="Deploy target" :items="items" />
 </template>

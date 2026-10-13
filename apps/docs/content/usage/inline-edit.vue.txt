@@ -2,9 +2,12 @@
 import { ref } from "vue";
 import InlineEdit from "@/components/manicat/inline-edit/inline-edit.vue";
 
-const title = ref("Q4 launch plan");
+const title = ref("Quarterly plan");
 </script>
 
 <template>
-  <InlineEdit v-model="title" label="Title" />
+  <div style="border: 1px solid var(--border); border-radius: 22px; padding: 24px; text-align: center">
+    <InlineEdit v-model="title" label="Title" />
+    <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.6">Click the title to edit it in place.</p>
+  </div>
 </template>

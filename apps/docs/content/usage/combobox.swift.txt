@@ -1,15 +1,14 @@
 import SwiftUI
 
 struct ComboboxExample: View {
-    @State private var framework = ""
+    @State private var value = ""
 
     var body: some View {
         ManicatCombobox("Framework", options: [
-            ManicatComboboxOption(value: "react", label: "React"),
-            ManicatComboboxOption(value: "vue", label: "Vue"),
-            ManicatComboboxOption(value: "svelte", label: "Svelte", keywords: ["kit"]),
-            ManicatComboboxOption(value: "swift", label: "SwiftUI", keywords: ["ios"]),
-        ], value: $framework, placeholder: "Search…")
-        .frame(maxWidth: 300, minHeight: 320, alignment: .top)
+            ManicatComboboxOption(value: "next", label: "Next.js", keywords: ["react", "app router"]),
+            ManicatComboboxOption(value: "vite", label: "Vite", keywords: ["react", "bundler"]),
+            ManicatComboboxOption(value: "astro", label: "Astro", keywords: ["islands"]),
+            ManicatComboboxOption(value: "waku", label: "Waku", keywords: ["react"]),
+        ], value: $value, placeholder: "Choose a framework")
     }
 }

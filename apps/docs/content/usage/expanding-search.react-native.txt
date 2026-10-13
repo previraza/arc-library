@@ -1,11 +1,17 @@
+import { View } from "react-native";
 import { ExpandingSearch } from "@/components/manicat/expanding-search/expanding-search.rn";
 
 const items = [
-  { id: "button", title: "Button", meta: "component", keywords: ["cta"] },
-  { id: "dialog", title: "Dialog", meta: "component" },
-  { id: "hero", title: "Hero section", meta: "block" },
+  { id: "button", title: "Button", group: "Actions", meta: "component", keywords: ["cta", "action"] },
+  { id: "dialog", title: "Dialog", group: "Disclosure", meta: "component" },
+  { id: "line-chart", title: "Line chart", group: "Data", meta: "component", keywords: ["graph", "series"] },
+  { id: "hero-section", title: "Hero section", group: "Blocks", meta: "block" },
 ];
 
-export function Search() {
-  return <ExpandingSearch label="Search the library" placeholder="Search components" items={items} suggestions={items.slice(0, 2)} onSelect={(item) => console.log(item.id)} />;
+export function ExpandingSearchDemo() {
+  return (
+    <View style={{ minHeight: 64, alignItems: "center", justifyContent: "center" }}>
+      <ExpandingSearch label="Search the library" placeholder="Search components" items={items} />
+    </View>
+  );
 }

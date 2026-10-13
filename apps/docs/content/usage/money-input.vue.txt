@@ -3,9 +3,11 @@ import { ref } from "vue";
 import MoneyInput from "@/components/manicat/money-input/money-input.vue";
 
 const amount = ref<number | null>(1250);
-const currency = ref("USD");
 </script>
 
 <template>
-  <MoneyInput v-model="amount" v-model:currency="currency" label="Invoice amount" />
+  <div style="display: grid; width: 100%; max-width: 384px; gap: 12px">
+    <MoneyInput v-model="amount" label="Amount" default-currency="USD" />
+    <p style="margin: 0; font-size: 14px; opacity: 0.6">{{ amount === null ? "Nothing charged." : `${amount.toFixed(2)} in the currency above` }}</p>
+  </div>
 </template>

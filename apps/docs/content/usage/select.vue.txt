@@ -2,8 +2,8 @@
 import { ref } from "vue";
 import Select from "@/components/manicat/select/select.vue";
 
-const frequency = ref("weekly");
-const frequencies = [
+const value = ref("weekly");
+const options = [
   { value: "daily", label: "Daily" },
   { value: "weekly", label: "Weekly" },
   { value: "monthly", label: "Monthly" },
@@ -12,5 +12,5 @@ const frequencies = [
 </script>
 
 <template>
-  <Select v-model="frequency" label="Send usage report" :options="frequencies" description="Delivered Monday morning." />
+  <Select v-model="value" label="Report frequency" :options="options" description="We send it in your timezone." />
 </template>

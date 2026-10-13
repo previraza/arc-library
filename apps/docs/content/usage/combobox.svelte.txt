@@ -1,8 +1,13 @@
 <script lang="ts">
   import Combobox from "@/components/manicat/combobox/combobox.svelte";
-  let framework = $state("");
+
+  let value = $state("");
+  const options = [
+  { value: "next", label: "Next.js", keywords: ["react", "app router"] },
+  { value: "vite", label: "Vite", keywords: ["react", "bundler"] },
+  { value: "astro", label: "Astro", keywords: ["islands"] },
+  { value: "waku", label: "Waku", keywords: ["react"] },
+];
 </script>
 
-<div style="width: min(300px, 100%)">
-  <Combobox label="Framework" placeholder="Search…" bind:value={framework} options={[{ value: "react", label: "React" }, { value: "vue", label: "Vue" }, { value: "svelte", label: "Svelte", keywords: ["kit"] }, { value: "swift", label: "SwiftUI", keywords: ["ios"] }]} />
-</div>
+<Combobox bind:value label="Framework" placeholder="Choose a framework" {options} />

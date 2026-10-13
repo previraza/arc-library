@@ -1,8 +1,13 @@
 <script lang="ts">
   import Select from "@/components/manicat/select/select.svelte";
-  let role = $state<string | undefined>("editor");
+
+  let value = $state<string | undefined>("weekly");
+  const options = [
+  { value: "daily", label: "Daily" },
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+  { value: "never", label: "Never", disabled: true },
+];
 </script>
 
-<div style="width: min(280px, 100%)">
-  <Select label="Role" description="What they can change." bind:value={role} options={[{ value: "viewer", label: "Viewer" }, { value: "editor", label: "Editor" }, { value: "admin", label: "Admin" }, { value: "owner", label: "Owner", disabled: true }]} />
-</div>
+<Select bind:value label="Report frequency" {options} description="We send it in your timezone." />

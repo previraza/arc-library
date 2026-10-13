@@ -2,9 +2,12 @@
 import { ref } from "vue";
 import SearchField from "@/components/manicat/search-field/search-field.vue";
 
-const query = ref("");
+const value = ref("");
 </script>
 
 <template>
-  <SearchField v-model="query" label="Search" placeholder="Find a component" />
+  <div style="display: grid; width: 100%; max-width: 384px; gap: 8px">
+    <SearchField v-model="value" label="Search" placeholder="Find a component" />
+    <p style="margin: 0; font-size: 14px; opacity: 0.6">{{ value ? `Searching for “${value}”` : "Type to search." }}</p>
+  </div>
 </template>

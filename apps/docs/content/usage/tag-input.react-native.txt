@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { TagInput } from "@/components/manicat/tag-input/tag-input.rn";
 
-export function Topics() {
+export function TagInputDemo() {
   const [tags, setTags] = useState(["design", "motion"]);
+
   return <TagInput label="Topics" value={tags} onValueChange={setTags} placeholder="Add a topic" />;
 }

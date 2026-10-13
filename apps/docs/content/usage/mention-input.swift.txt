@@ -1,19 +1,14 @@
 import SwiftUI
 
 struct MentionInputExample: View {
-    @State private var message = ManicatMentionValue()
+    @State private var note = ManicatMentionValue()
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ManicatMentionInput(value: $message, people: [
-                ManicatMentionPerson(id: "1", name: "Ada", role: "Engineer"),
-                ManicatMentionPerson(id: "2", name: "Lin", role: "Design"),
-            ], channels: [
-                ManicatMentionChannel(id: "c1", name: "general", members: 42),
-                ManicatMentionChannel(id: "c2", name: "releases", members: 9),
-            ])
-            Text("\(message.mentions.count) mention\(message.mentions.count == 1 ? "" : "s")").font(.caption)
-        }
-        .frame(maxWidth: 420)
+        ManicatMentionInput(
+            value: $note,
+            people: [ManicatMentionPerson(id: "ada", name: "Ada Lovelace", role: "Engineering")],
+            channels: [ManicatMentionChannel(id: "general", name: "general", members: 12)],
+            placeholder: "Write a note, @ to mention someone"
+        )
     }
 }

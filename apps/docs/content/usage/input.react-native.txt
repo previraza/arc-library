@@ -1,23 +1,12 @@
-import { useState } from "react";
 import { View } from "react-native";
 import { Input } from "@/components/manicat/input/input.rn";
 
-export function SignupFields() {
-  const [email, setEmail] = useState("ada@");
-  const invalid = !/^\S+@\S+\.\S+$/.test(email);
-
+export function InputDemo() {
   return (
-    <View style={{ gap: 16 }}>
-      <Input label="Full name" placeholder="Ada Lovelace" autoComplete="name" />
-      <Input
-        label="Work email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        description="We send the receipt here."
-        error={invalid ? "Enter a valid email address." : undefined}
-      />
+    <View style={{ width: "100%", maxWidth: 384, gap: 16 }}>
+      <Input label="Email" placeholder="ada@example.com" description="We only use it for receipts." />
+      <Input label="Team URL" defaultValue="arc-labs" error="That URL is already taken." />
+      <Input label="Disabled" placeholder="Locked" editable={false} />
     </View>
   );
 }

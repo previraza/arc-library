@@ -2,6 +2,7 @@ import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { behindProxy } from "../viewer-shared/behind-proxy";
+import { syncDemos } from "../viewer-shared/sync-demos";
 
 const root = fileURLToPath(new URL("../../packages/manicat", import.meta.url));
 const shim = fileURLToPath(new URL("./src/react-native.ts", import.meta.url));
@@ -14,9 +15,9 @@ const extensions = [".web.tsx", ".web.ts", ".web.js", ".web.mjs", ".tsx", ".ts",
 // The docs site serves this viewer under /preview/react-native through a rewrite, so every URL starts with that base.
 export default defineConfig({
   base: "/preview/react-native/",
-  plugins: [behindProxy(), react()],
+  plugins: [behindProxy(), syncDemos("react-native"), react()],
   define: { __DEV__: true, global: "globalThis" },
   resolve: { alias: [{ find: /^react-native$/, replacement: shim }, { find: "expo-clipboard", replacement: stub("expo-clipboard") }, { find: "expo-document-picker", replacement: stub("expo-document-picker") }, { find: "@", replacement: root }], extensions },
   optimizeDeps: { esbuildOptions: { resolveExtensions: extensions } },
-  server: { fs: { allow: [root, fileURLToPath(new URL("..", import.meta.url))] } },
+  server: { fs: { allow: [root, fileURLToPath(new URL("../..", import.meta.url))] } },
 });

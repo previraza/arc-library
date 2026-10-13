@@ -1,20 +1,16 @@
-import { useState } from "react";
+import { Text, View } from "react-native";
+import { Button } from "@/components/manicat/button/button.rn";
 import { PhoneInput } from "@/components/manicat/phone-input/phone-input.rn";
 
-export function Contact() {
-  const [phone, setPhone] = useState("");
-  const [valid, setValid] = useState(false);
+export function PhoneInputDemo() {
   return (
-    <PhoneInput
-      label="Phone number"
-      value={phone}
-      onValueChange={(value, details) => {
-        setPhone(value);
-        setValid(details.valid);
-      }}
-      defaultCountry="GB"
-      preferredCountries={["GB", "IE", "US"]}
-      description={valid ? undefined : "We only text about your order"}
-    />
+    <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 12, width: "100%", maxWidth: 448 }}>
+      <View style={{ flex: 1 }}>
+        <PhoneInput label="Mobile number" defaultCountry="US" defaultValue="+12015550123" description="Type + to search by calling code" />
+      </View>
+      <View style={{ marginTop: 30 }}>
+        <Button>Send code</Button>
+      </View>
+    </View>
   );
 }

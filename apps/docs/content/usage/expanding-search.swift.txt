@@ -1,18 +1,15 @@
 import SwiftUI
 
 struct ExpandingSearchExample: View {
-    @State private var chosen = ""
     private let items = [
-        ManicatSearchItem(id: "1", title: "Invoices", meta: "Billing"),
-        ManicatSearchItem(id: "2", title: "Team members", meta: "Settings"),
-        ManicatSearchItem(id: "3", title: "API keys", meta: "Developers"),
+        ManicatSearchItem(id: "button", title: "Button", meta: "component", group: "Actions", keywords: ["cta", "action"]),
+        ManicatSearchItem(id: "dialog", title: "Dialog", meta: "component", group: "Disclosure"),
+        ManicatSearchItem(id: "line-chart", title: "Line chart", meta: "component", group: "Data", keywords: ["graph", "series"]),
+        ManicatSearchItem(id: "hero-section", title: "Hero section", meta: "block", group: "Blocks"),
     ]
 
     var body: some View {
-        HStack(spacing: 12) {
-            Text(chosen.isEmpty ? "" : "Opened \(chosen)").font(.caption)
-            ManicatExpandingSearch("Search the docs", items: items, suggestions: Array(items.prefix(2))) { chosen = $0.title }
-        }
-        .frame(maxWidth: 420, minHeight: 240, alignment: .topTrailing)
+        ManicatExpandingSearch("Search the library", items: items, placeholder: "Search components")
+            .frame(minHeight: 64)
     }
 }

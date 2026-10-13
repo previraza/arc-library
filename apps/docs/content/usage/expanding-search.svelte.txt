@@ -1,10 +1,14 @@
 <script lang="ts">
   import ExpandingSearch from "@/components/manicat/expanding-search/expanding-search.svelte";
-  let chosen = $state("");
-  const items = [{ id: "1", title: "Invoices", meta: "Billing" }, { id: "2", title: "Team members", meta: "Settings" }, { id: "3", title: "API keys", meta: "Developers" }];
+
+  const items = [
+    { id: "button", title: "Button", group: "Actions", meta: "component", keywords: ["cta", "action"] },
+    { id: "dialog", title: "Dialog", group: "Disclosure", meta: "component" },
+    { id: "line-chart", title: "Line chart", group: "Data", meta: "component", keywords: ["graph", "series"] },
+    { id: "hero-section", title: "Hero section", group: "Blocks", meta: "block" },
+  ];
 </script>
 
-<div style="display: flex; gap: 12px; align-items: center; justify-content: flex-end; width: min(420px, 100%)">
-  <small>{chosen && `Opened ${chosen}`}</small>
-  <ExpandingSearch label="Search the docs" {items} suggestions={items.slice(0, 2)} onselect={(item) => (chosen = item.title)} />
+<div style="display: flex; min-height: 64px; align-items: center; justify-content: center">
+  <ExpandingSearch label="Search the library" placeholder="Search components" {items} />
 </div>

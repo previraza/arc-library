@@ -8,9 +8,10 @@ const options = [
   { value: "motion", label: "Motion" },
   { value: "data", label: "Data visualisation" },
   { value: "a11y", label: "Accessibility" },
+  { value: "i18n", label: "Internationalisation" },
 ];
 </script>
 
 <template>
-  <MultiSelect v-model="value" label="Skills" :options="options" />
+  <MultiSelect v-model="value" label="Skills" :max-visible="2" :options="options" />
 </template>

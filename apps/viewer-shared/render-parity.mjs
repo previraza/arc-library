@@ -1,17 +1,18 @@
 /**
  * Checks that a port renders the same thing as the React version. For every demo (the Usage snippet) and every example that a
  * framework has a file for, it opens the React frame of the docs and the framework's viewer in headless Chromium and compares
- * what is on screen: the number of buttons and controls, and every visible word. A port that differs is listed with what is
- * missing from it and what it adds.
+ * what is on screen: the number of buttons and controls, every visible word, and the picture itself (the share of pixels that
+ * differ). A port that differs is listed with what is missing from it, what it adds and how much of the picture is different.
  *
  *   pnpm dev                                  # the docs (3000) and the viewers (3001 to 3003)
  *   node apps/viewer-shared/render-parity.mjs [--fw vue,svelte,react-native] [--only button,badge] [--examples]
  *
- * Exit code 1 when something differs. Swift has no web viewer, so it is checked by the token and naming checks instead.
+ * --max-diff sets how much of the picture may differ, in percent (default 1.5). --save <dir> writes the React and port
+ * screenshots of every render that differs. Exit code 1 when something differs. Swift has no web viewer, so it is checked by the token and naming checks instead.
  * Set DOCS, VUE, SVELTE and REACT_NATIVE to other origins when the servers are elsewhere.
  */
 import { spawn } from "node:child_process";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
 
@@ -29,6 +30,9 @@ const viewers = {
 const frameworks = (flag("--fw")?.split(",") ?? Object.keys(viewers)).filter((id) => viewers[id]);
 const only = flag("--only")?.split(",");
 const wantExamples = !args.includes("--demos-only");
+const maxDiff = Number(flag("--max-diff") ?? 1.5);
+const saveDir = flag("--save");
+if (saveDir) mkdirSync(saveDir, { recursive: true });
 
 const jobs = [];
 for (const fw of frameworks) {
@@ -73,13 +77,14 @@ socket.onmessage = ({ data }) => {
 const send = (method, params = {}) => new Promise((resolve) => { pending.set(++id, resolve); socket.send(JSON.stringify({ id, method, params })); });
 await send("Runtime.enable");
 await send("Page.enable");
+await send("Emulation.setDeviceMetricsOverride", { width: 800, height: 520, deviceScaleFactor: 1, mobile: false });
 
 const probe = `(() => {
   const visible = (el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && !el.closest("[aria-hidden=true],[hidden],[inert]"); };
   const root = document.querySelector("main") || document.querySelector(".phone__screen") || document.querySelector(".viewer__stage") || document.body;
   const count = (selector) => [...root.querySelectorAll(selector)].filter(visible).length;
-  const words = (root.innerText || "").toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(/\\s+/).filter(Boolean);
-  return { buttons: count("button,[role=button],[role=tab],[role=switch],[role=checkbox],[role=radio]"), fields: count("input,textarea,select,[role=textbox],[role=combobox],[role=slider]"), words: [...new Set(words)].sort() };
+  const words = [...(root.innerText || "").toLowerCase().replace(/[^a-z0-9]/g, "")];
+  return { buttons: count("button,[role=button],[role=tab],[role=switch],[role=checkbox],[role=radio]"), fields: count("input,textarea,select,[role=textbox],[role=combobox],[role=slider]"), words: words.sort() };
 })()`;
 
 async function look(url, wait) {
@@ -87,7 +92,30 @@ async function look(url, wait) {
   await send("Page.navigate", { url: "about:blank" });
   await send("Page.navigate", { url });
   await sleep(wait);
-  return (await send("Runtime.evaluate", { expression: probe, returnByValue: true }))?.result?.value;
+  // The Next.js dev badge floats over the React frame; it is not part of the example.
+  await send("Runtime.evaluate", { expression: `document.querySelectorAll("nextjs-portal").forEach((node) => node.remove())` });
+  const found = (await send("Runtime.evaluate", { expression: probe, returnByValue: true }))?.result?.value;
+  if (found) found.png = (await send("Page.captureScreenshot", { format: "png" })).data;
+  return found;
+}
+
+/** The share of pixels, in percent, where two screenshots differ by more than a hair. Compared inside the page with a canvas. */
+async function pictureDiff(a, b) {
+  const expression = `(async () => {
+    const load = (data) => new Promise((resolve) => { const image = new Image(); image.onload = () => resolve(image); image.src = "data:image/png;base64," + data; });
+    const [x, y] = await Promise.all([load(${JSON.stringify(a)}), load(${JSON.stringify(b)})]);
+    const read = (image) => { const canvas = document.createElement("canvas"); canvas.width = image.width; canvas.height = image.height; const ctx = canvas.getContext("2d"); ctx.drawImage(image, 0, 0); return ctx.getImageData(0, 0, image.width, image.height).data; };
+    const left = read(x), right = read(y);
+    let changed = 0, painted = 0;
+    for (let i = 0; i < left.length; i += 4) {
+      const delta = Math.max(Math.abs(left[i] - right[i]), Math.abs(left[i + 1] - right[i + 1]), Math.abs(left[i + 2] - right[i + 2]));
+      const ink = Math.min(left[i], left[i + 1], left[i + 2]) < 250 || Math.min(right[i], right[i + 1], right[i + 2]) < 250;
+      if (ink) painted += 1;
+      if (delta > 64) changed += 1;
+    }
+    return painted ? (changed / painted) * 100 : 0;
+  })()`;
+  return (await send("Runtime.evaluate", { expression, awaitPromise: true, returnByValue: true }))?.result?.value ?? 100;
 }
 
 const reactCache = new Map();
@@ -101,11 +129,20 @@ for (const job of jobs) {
     console.log(`${job.label} [${job.fw}] could not be read (${react ? "viewer" : "React frame"})`);
     continue;
   }
-  const missing = react.words.filter((word) => !port.words.includes(word));
-  const extra = port.words.filter((word) => !react.words.includes(word));
-  if (react.buttons !== port.buttons || react.fields !== port.fields || missing.length || extra.length) {
+  // Letters, not words: some components draw a label letter by letter. Counted as a multiset, so a missing "e" shows.
+  const tally = (letters) => letters.reduce((counts, letter) => ((counts[letter] = (counts[letter] ?? 0) + 1), counts), {});
+  const [have, got] = [tally(react.words), tally(port.words)];
+  const missing = Object.keys(have).filter((letter) => (got[letter] ?? 0) < have[letter]);
+  const extra = Object.keys(got).filter((letter) => (have[letter] ?? 0) < got[letter]);
+  const picture = await pictureDiff(react.png, port.png);
+  if (react.buttons !== port.buttons || react.fields !== port.fields || missing.length || extra.length || picture > maxDiff) {
     differing += 1;
-    console.log(`${job.label} [${job.fw}] React ${react.buttons} buttons, ${react.fields} fields; port ${port.buttons}, ${port.fields}${missing.length ? `; missing: ${missing.slice(0, 8).join(" ")}` : ""}${extra.length ? `; extra: ${extra.slice(0, 8).join(" ")}` : ""}`);
+    console.log(`${job.label} [${job.fw}] picture ${picture.toFixed(1)}% differs; React ${react.buttons} buttons, ${react.fields} fields; port ${port.buttons}, ${port.fields}${missing.length ? `; missing: ${missing.slice(0, 8).join(" ")}` : ""}${extra.length ? `; extra: ${extra.slice(0, 8).join(" ")}` : ""}`);
+    if (saveDir) {
+      const base = `${saveDir}/${job.label.replace(/\W+/g, "-")}-${job.fw}`;
+      writeFileSync(`${base}-react.png`, Buffer.from(react.png, "base64"));
+      writeFileSync(`${base}-port.png`, Buffer.from(port.png, "base64"));
+    }
   }
 }
 console.log(`${jobs.length} renders compared, ${differing} differ.`);

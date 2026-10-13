@@ -3,10 +3,13 @@ import { ref } from "vue";
 import MentionInput, { type MentionValue } from "@/components/manicat/mention-input/mention-input.vue";
 
 const note = ref<MentionValue>({ text: "", mentions: [] });
-const people = [{ id: "ada", name: "Ada Lovelace", role: "Engineering" }, { id: "grace", name: "Grace Mbeki", role: "Support" }];
-const channels = [{ id: "general", name: "general", members: 12 }];
 </script>
 
 <template>
-  <MentionInput v-model="note" placeholder="Write a note, @ to mention someone" :people="people" :channels="channels" />
+  <MentionInput
+    v-model="note"
+    placeholder="Write a note, @ to mention someone"
+    :people="[{ id: 'ada', name: 'Ada Lovelace', role: 'Engineering' }]"
+    :channels="[{ id: 'general', name: 'general', members: 12 }]"
+  />
 </template>

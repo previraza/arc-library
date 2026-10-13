@@ -1,10 +1,9 @@
 import SwiftUI
 
 struct TagInputExample: View {
-    @State private var tags = ["design", "swift"]
+    @State private var tags = ["design", "motion"]
 
     var body: some View {
-        ManicatTagInput("Topics", tags: $tags, description: "Press return or comma to add.")
-            .frame(maxWidth: 380)
+        ManicatTagInput("Topics", tags: $tags, placeholder: "Add a topic")
     }
 }

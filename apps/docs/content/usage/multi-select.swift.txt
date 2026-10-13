@@ -1,15 +1,15 @@
 import SwiftUI
 
 struct MultiSelectExample: View {
-    @State private var teams: Set<String> = ["design"]
+    @State private var value: Set<String> = ["design", "motion"]
 
     var body: some View {
-        ManicatMultiSelect("Teams", options: [
+        ManicatMultiSelect("Skills", options: [
             ManicatMultiSelectOption(value: "design", label: "Design"),
-            ManicatMultiSelectOption(value: "eng", label: "Engineering"),
-            ManicatMultiSelectOption(value: "ops", label: "Operations"),
-            ManicatMultiSelectOption(value: "legal", label: "Legal", disabled: true),
-        ], value: $teams, description: "Pick one or more.")
-        .frame(maxWidth: 320)
+            ManicatMultiSelectOption(value: "motion", label: "Motion"),
+            ManicatMultiSelectOption(value: "data", label: "Data visualisation"),
+            ManicatMultiSelectOption(value: "a11y", label: "Accessibility"),
+            ManicatMultiSelectOption(value: "i18n", label: "Internationalisation"),
+        ], value: $value, maxVisible: 2)
     }
 }

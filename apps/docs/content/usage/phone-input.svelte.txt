@@ -1,9 +1,13 @@
 <script lang="ts">
+  import Button from "@/components/manicat/button/button.svelte";
   import PhoneInput from "@/components/manicat/phone-input/phone-input.svelte";
-  let phone = $state("");
+
+  let phone = $state("+12015550123");
 </script>
 
-<div style="width: min(340px, 100%); display: grid; gap: 8px">
-  <PhoneInput label="Phone" description="Include the country code." bind:value={phone} />
-  <small>{phone || "No number yet"}</small>
+<div style="display: flex; width: 100%; max-width: 28rem; align-items: flex-start; gap: 12px">
+  <div style="min-width: 0; flex: 1">
+    <PhoneInput bind:value={phone} label="Mobile number" defaultCountry="US" description="Type + to search by calling code" />
+  </div>
+  <div style="margin-top: 30px"><Button>Send code</Button></div>
 </div>

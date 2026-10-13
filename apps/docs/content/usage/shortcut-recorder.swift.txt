@@ -1,11 +1,13 @@
 import SwiftUI
 
 struct ShortcutRecorderExample: View {
-    @State private var shortcut: String? = "mod+k"
+    @State private var shortcut: String?
 
     var body: some View {
-        ManicatShortcutRecorder("Open the command palette", value: $shortcut, resetValue: .some("mod+k"),
-            bindings: [ManicatShortcutBinding(shortcut: "mod+p", label: "Print")], description: "Type it, for example mod+shift+p.")
-            .frame(maxWidth: 360)
+        VStack(alignment: .leading, spacing: 12) {
+            ManicatShortcutRecorder("Shortcut", value: $shortcut)
+            Text(shortcut.map { "Recorded: \($0)" } ?? "Click, then press keys.").font(.callout).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: 384)
     }
 }

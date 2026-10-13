@@ -1,15 +1,14 @@
 import SwiftUI
 
 struct SelectExample: View {
-    @State private var role: String? = "editor"
+    @State private var value: String? = "weekly"
 
     var body: some View {
-        ManicatSelect("Role", options: [
-            ManicatSelectOption(value: "viewer", label: "Viewer"),
-            ManicatSelectOption(value: "editor", label: "Editor"),
-            ManicatSelectOption(value: "admin", label: "Admin"),
-            ManicatSelectOption(value: "owner", label: "Owner", disabled: true),
-        ], selection: $role, description: "What they can change.")
-        .frame(maxWidth: 280)
+        ManicatSelect("Report frequency", options: [
+            ManicatSelectOption(value: "daily", label: "Daily"),
+            ManicatSelectOption(value: "weekly", label: "Weekly"),
+            ManicatSelectOption(value: "monthly", label: "Monthly"),
+            ManicatSelectOption(value: "never", label: "Never", disabled: true),
+        ], selection: $value, description: "We send it in your timezone.")
     }
 }

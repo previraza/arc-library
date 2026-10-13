@@ -1,18 +1,18 @@
 import SwiftUI
 
 struct MorphSelectExample: View {
-    @State private var zone: String? = "paris"
+    @State private var value: String? = "bill"
 
     var body: some View {
-        ManicatMorphSelect("Time zone", groups: [
-            ManicatMorphGroup("Europe", options: [
-                ManicatMorphOption(value: "paris", label: "Paris", meta: "UTC+1"),
-                ManicatMorphOption(value: "london", label: "London", meta: "UTC+0"),
+        ManicatMorphSelect("Deploy target", groups: [
+            ManicatMorphGroup("Staging", options: [
+                ManicatMorphOption(value: "preview", label: "Preview", meta: "3 min"),
+                ManicatMorphOption(value: "bill", label: "Bill", meta: "now"),
             ]),
-            ManicatMorphGroup("Americas", options: [
-                ManicatMorphOption(value: "ny", label: "New York", meta: "UTC-5"),
-                ManicatMorphOption(value: "sf", label: "San Francisco", meta: "UTC-8"),
+            ManicatMorphGroup("Production", options: [
+                ManicatMorphOption(value: "eu", label: "Europe", meta: "1 region"),
+                ManicatMorphOption(value: "us", label: "United States", meta: "2 regions"),
             ]),
-        ], value: $zone)
+        ], value: $value)
     }
 }

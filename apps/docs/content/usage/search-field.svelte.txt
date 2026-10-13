@@ -1,8 +1,10 @@
 <script lang="ts">
   import SearchField from "@/components/manicat/search-field/search-field.svelte";
-  let query = $state("");
+
+  let value = $state("");
 </script>
 
-<div style="width: min(360px, 100%)">
-  <SearchField label="Search" placeholder="Search components…" bind:value={query} />
+<div style="display: grid; width: 100%; max-width: 384px; gap: 8px">
+  <SearchField bind:value label="Search" placeholder="Find a component" />
+  <p style="margin: 0; font-size: 14px; opacity: 0.6">{value ? `Searching for “${value}”` : "Type to search."}</p>
 </div>

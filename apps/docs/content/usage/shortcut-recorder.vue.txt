@@ -2,9 +2,12 @@
 import { ref } from "vue";
 import ShortcutRecorder from "@/components/manicat/shortcut-recorder/shortcut-recorder.vue";
 
-const shortcut = ref<string | null>("mod+k");
+const shortcut = ref<string | null>(null);
 </script>
 
 <template>
-  <ShortcutRecorder v-model="shortcut" label="Open command menu" reset-value="mod+k" :bindings="[{ shortcut: 'mod+p', label: 'Print' }]" />
+  <div style="display: grid; width: 100%; max-width: 384px; gap: 12px">
+    <ShortcutRecorder v-model="shortcut" label="Shortcut" />
+    <p style="margin: 0; font-size: 14px; opacity: 0.6">{{ shortcut ? `Recorded: ${shortcut}` : "Click, then press keys." }}</p>
+  </div>
 </template>

@@ -2,14 +2,15 @@ import SwiftUI
 
 struct InputExample: View {
     @State private var email = ""
-    @State private var name = "Ada"
+    @State private var team = "arc-labs"
+    @State private var locked = ""
 
     var body: some View {
         VStack(spacing: 16) {
-            ManicatInput("Email", text: $email, placeholder: "you@example.com", kind: .email, description: "We never share it.")
-            ManicatInput("Name", text: $name, error: name.isEmpty ? "Enter your name." : nil)
-            ManicatInput("Locked", text: .constant("Read only")).disabled(true)
+            ManicatInput("Email", text: $email, placeholder: "ada@example.com", description: "We only use it for receipts.")
+            ManicatInput("Team URL", text: $team, error: "That URL is already taken.")
+            ManicatInput("Disabled", text: $locked, placeholder: "Locked").disabled(true)
         }
-        .frame(maxWidth: 360)
+        .frame(maxWidth: 384)
     }
 }

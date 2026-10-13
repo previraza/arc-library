@@ -2,21 +2,13 @@ import { useState } from "react";
 import { View } from "react-native";
 import { Textarea } from "@/components/manicat/textarea/textarea.rn";
 
-export function FeedbackForm() {
-  const [message, setMessage] = useState("");
-  const limit = 280;
+export function TextareaDemo() {
+  const [value, setValue] = useState("");
 
   return (
-    <View style={{ gap: 12 }}>
-      <Textarea
-        label="What could be better?"
-        placeholder="Tell us what got in your way"
-        rows={4}
-        value={message}
-        onChangeText={setMessage}
-        description={`${message.length}/${limit}`}
-        error={message.length > limit ? "Over the limit." : undefined}
-      />
+    <View style={{ width: "100%", maxWidth: 448, gap: 16 }}>
+      <Textarea label="Changelog entry" placeholder="What changed?" value={value} onChangeText={setValue} rows={5} />
+      <Textarea label="Short note" defaultValue="Kept to two lines." rows={2} description="Two lines is enough." />
     </View>
   );
 }

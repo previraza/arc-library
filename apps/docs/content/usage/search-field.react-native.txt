@@ -1,7 +1,14 @@
 import { useState } from "react";
+import { Text, View } from "react-native";
 import { SearchField } from "@/components/manicat/search-field/search-field.rn";
 
-export function ComponentSearch() {
-  const [query, setQuery] = useState("");
-  return <SearchField label="Search" value={query} onValueChange={setQuery} placeholder="Find a component" />;
+export function SearchFieldDemo() {
+  const [value, setValue] = useState("");
+
+  return (
+    <View style={{ width: "100%", maxWidth: 384, gap: 8 }}>
+      <SearchField label="Search" value={value} onValueChange={setValue} placeholder="Find a component" />
+      <Text style={{ fontSize: 14, opacity: 0.6 }}>{value ? `Searching for “${value}”` : "Type to search."}</Text>
+    </View>
+  );
 }

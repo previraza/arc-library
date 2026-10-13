@@ -1,11 +1,14 @@
 import SwiftUI
 
 struct MoneyInputExample: View {
-    @State private var amount: Double? = 49.5
+    @State private var amount: Double? = 1250
     @State private var currency = "USD"
 
     var body: some View {
-        ManicatMoneyInput("Amount", amount: $amount, currency: $currency, description: "Charged once.")
-            .frame(maxWidth: 320)
+        VStack(alignment: .leading, spacing: 12) {
+            ManicatMoneyInput("Amount", amount: $amount, currency: $currency)
+            Text(amount.map { String(format: "%.2f in the currency above", $0) } ?? "Nothing charged.").font(.callout).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: 384)
     }
 }

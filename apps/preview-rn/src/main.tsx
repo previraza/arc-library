@@ -1,4 +1,6 @@
 import { createRoot } from "react-dom/client";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/inter";
 import "@/registry/foundation.css";
 import "../../viewer-shared/viewer.css";
 import "./phone.css";
