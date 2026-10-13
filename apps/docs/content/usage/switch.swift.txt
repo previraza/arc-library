@@ -1,14 +1,13 @@
 import SwiftUI
 
 struct SwitchExample: View {
-    @State private var notifications = true
-    @State private var marketing = false
+    @State private var reduced = true
+    @State private var always = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ManicatSwitch(isOn: $notifications, label: "Push notifications")
-            ManicatSwitch(isOn: $marketing, label: "Product updates")
-            ManicatSwitch(isOn: .constant(true), label: "Disabled").disabled(true)
+        VStack(alignment: .leading, spacing: 12) {
+            ManicatSwitch(isOn: $reduced, label: "Reduced motion")
+            ManicatSwitch(isOn: $always, label: "Always on")
         }
     }
 }

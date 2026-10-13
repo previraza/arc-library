@@ -3,10 +3,9 @@ import SwiftUI
 struct AccordionExample: View {
     var body: some View {
         ManicatAccordion(items: [
-            ManicatAccordionItem(title: "Is it accessible?", text: "Yes. It follows the platform's accessibility traits."),
-            ManicatAccordionItem(title: "Can I restyle it?", text: "Every part takes a style through Styles."),
-            ManicatAccordionItem(title: "Does it animate?", text: "It does, unless Reduce Motion is on."),
+            ManicatAccordionItem(title: "Do I need Tailwind?", text: "No. Manicat UI styles are CSS modules that read CSS variables."),
+            ManicatAccordionItem(title: "Can I change the tokens?", text: "Change a value in foundation.css and every component follows."),
+            ManicatAccordionItem(title: "What about dark mode?", text: "Set data-theme=\"dark\" on the html element. Values are tuned, not inverted."),
         ], defaultOpen: 0)
-        .frame(maxWidth: 460)
     }
 }

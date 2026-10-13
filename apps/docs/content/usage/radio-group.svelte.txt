@@ -1,6 +1,11 @@
 <script lang="ts">
   import RadioGroup from "@/components/manicat/radio-group/radio-group.svelte";
-  let plan = $state("pro");
+
+  let value = $state("monthly");
+  const options = [
+  { value: "monthly", label: "Monthly", description: "Cancel any time." },
+  { value: "yearly", label: "Yearly", description: "Two months free." },
+];
 </script>
 
-<RadioGroup label="Plan" bind:value={plan} options={[{ value: "free", label: "Free", description: "For side projects" }, { value: "pro", label: "Pro", description: "For teams" }, { value: "scale", label: "Scale" }]} />
+<RadioGroup bind:value label="Billing period" {options} />

@@ -7,69 +7,85 @@
 </script>
 
 <script lang="ts">
+  // @manicat-dependencies motion
+  import { onMount } from "svelte";
+  import { createRadioGroup } from "@/lib/motion-dom";
+
   interface Props {
     label: string;
     options: RadioOption[];
+    value: string;
     name?: string;
-    /** The selected value. Bind it with `bind:value`. Arrow keys move the selection, as in a native radio group. */
-    value?: string;
-    /** Extend the inner, named parts of the radio group: label, option, mark, dot, optionLabel or description. */
-    classNames?: { label?: string; option?: string; mark?: string; dot?: string; optionLabel?: string; description?: string };
+    /** Extend the inner, named parts of the radio group: options, highlight, option, mark or dot. */
+    classNames?: { options?: string; highlight?: string; option?: string; mark?: string; dot?: string };
   }
 
-  let { label, options, name, value = $bindable(), classNames }: Props = $props();
+  let { label, options, value = $bindable(), name, classNames }: Props = $props();
+
   const id = $props.id();
+  let list: HTMLElement;
+  let highlight: HTMLElement;
+  const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let controller: ReturnType<typeof createRadioGroup> | undefined;
+  const selected = $derived(options.findIndex((option) => option.value === value));
 
-  function onKeydown(event: KeyboardEvent, index: number) {
-    const step = event.key === "ArrowDown" || event.key === "ArrowRight" ? 1 : event.key === "ArrowUp" || event.key === "ArrowLeft" ? -1 : 0;
-    if (!step) return;
-    event.preventDefault();
-    const next = (index + step + options.length) % options.length;
-    value = options[next].value;
-    document.getElementById(`${id}-${next}`)?.focus();
-  }
+  onMount(() => {
+    controller = createRadioGroup(list, highlight, { reduced });
+    controller.select(selected);
+    return () => controller?.destroy();
+  });
+  $effect(() => {
+    void options.length;
+    controller?.select(selected);
+  });
 </script>
 
-<div class="mc-radio" role="radiogroup" aria-labelledby="{id}-label">
-  <span id="{id}-label" class={["mc-radio__label", classNames?.label]}>{label}</span>
-  {#each options as option, index (option.value)}
-    <button
-      id="{id}-{index}"
-      type="button"
-      role="radio"
-      class={["mc-radio__option", classNames?.option]}
-      aria-checked={value === option.value}
-      tabindex={value === option.value || (value === undefined && index === 0) ? 0 : -1}
-      data-state={value === option.value ? "checked" : "unchecked"}
-      onclick={() => (value = option.value)}
-      onkeydown={(event) => onKeydown(event, index)}
-    >
-      <span class="mc-radio__hit"><span class={["mc-radio__mark", classNames?.mark]}><span class={["mc-radio__dot", classNames?.dot]}></span></span></span>
-      <span class="mc-radio__copy">
-        <span class={["mc-radio__title", classNames?.optionLabel]}>{option.label}</span>
-        {#if option.description}<span class={["mc-radio__description", classNames?.description]}>{option.description}</span>{/if}
-      </span>
-      {#if name}<input type="radio" {name} value={option.value} checked={value === option.value} hidden tabindex="-1" />{/if}
-    </button>
-  {/each}
-</div>
+<fieldset class="mc-radio-group__group">
+  <legend>{label}</legend>
+  <div bind:this={list} class={["mc-radio-group__options", classNames?.options]}>
+    <span bind:this={highlight} class={["mc-radio-group__highlight", classNames?.highlight]} aria-hidden="true"></span>
+    {#each options as option (option.value)}
+      <label class={["mc-radio-group__option", classNames?.option]}>
+        <input type="radio" name={name ?? id} value={option.value} bind:group={value} />
+        <span class={["mc-radio-group__mark", classNames?.mark]} aria-hidden="true"><span data-dot class={["mc-radio-group__dot", classNames?.dot]}></span></span>
+        <span><strong>{option.label}</strong>{#if option.description}<small>{option.description}</small>{/if}</span>
+      </label>
+    {/each}
+  </div>
+</fieldset>
 
 <style>
 :global {
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-radio { display: grid; }
-.mc-radio__label { margin-bottom: var(--space-1); font-size: var(--text-sm); font-weight: 500; }
-.mc-radio__option { display: flex; align-items: flex-start; padding: 0; border: 0; background: transparent; color: var(--foreground); font: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.mc-radio__hit { display: grid; flex: 0 0 auto; place-items: center; width: var(--control-height-md); height: var(--control-height-md); }
-.mc-radio__mark { display: grid; place-items: center; width: 18px; height: 18px; border: 1px solid var(--border-strong); border-radius: 50%; background: var(--surface); transition: border-color var(--duration-fast) var(--ease-standard); }
-.mc-radio__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--control-on); transform: scale(0); transition: transform .24s var(--ease-spring, var(--ease-standard)); }
-.mc-radio__option[data-state="checked"] .mc-radio__mark { border-color: var(--control-on); }
-.mc-radio__option[data-state="checked"] .mc-radio__dot { transform: scale(1); }
-@media (hover: hover) and (pointer: fine) { .mc-radio__option[data-state="unchecked"]:hover .mc-radio__mark { border-color: var(--text-muted); } }
-.mc-radio__option:focus-visible { outline: none; }
-.mc-radio__copy { display: grid; gap: 2px; padding-top: calc((var(--control-height-md) - var(--text-sm) * 1.4) / 2); }
-.mc-radio__title { font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); }
-.mc-radio__description { color: var(--text-muted); font-size: var(--text-xs); line-height: var(--leading-body); }
-@media (prefers-reduced-motion: reduce) { .mc-radio__mark, .mc-radio__dot { transition: none; } }
+.mc-radio-group__group { display: grid; min-width: 0; margin: 0; border: 0; padding: 0; }
+.mc-radio-group__group legend { margin-bottom: var(--space-2); padding: 0; font-size: var(--text-sm); font-weight: 500; }
+/* One highlight travels between the rows: above their borders and fills, below their text, so it never crosses a label. */
+.mc-radio-group__options { position: relative; display: grid; gap: var(--space-2); }
+.mc-radio-group__highlight { position: absolute; top: 0; right: 0; left: 0; z-index: 1; box-sizing: border-box; border: 1px solid var(--control-on); border-radius: var(--radius-control); background: color-mix(in oklab, var(--control-on) 5%, transparent); opacity: 0; pointer-events: none; }
+/* Rows answer a press with color only; the mark is what moves. */
+/* The mark sits centered on the left edge of the row, whether or not the option has a description. */
+.mc-radio-group__option { position: relative; display: flex; align-items: center; gap: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control); padding: var(--space-3); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard); }
+@media (hover: hover) and (pointer: fine) { .mc-radio-group__option:hover { background: var(--surface-muted); } }
+.mc-radio-group__option:active { background: var(--surface-muted); }
+/* Until the highlight is placed (server paint or no script), the checked row carries the same look itself. */
+.mc-radio-group__options:not([data-ready]) .mc-radio-group__option:has(input:checked) { border-color: var(--control-on); background: color-mix(in oklab, var(--control-on) 5%, transparent); }
+.mc-radio-group__option input { position: absolute; opacity: 0; }
+/* Rows are not stacking contexts, so their mark and copy rise above the highlight while their border and fill stay below it. */
+.mc-radio-group__option > span { position: relative; z-index: 2; }
+.mc-radio-group__mark { display: grid; width: 17px; height: 17px; flex: 0 0 auto; place-items: center; border: 1px solid var(--border-strong); border-radius: 50%; transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
+/* 7px keeps the dot on whole pixels inside the 15px interior of the mark. */
+.mc-radio-group__mark::after, .mc-radio-group__dot { grid-area: 1 / 1; width: 7px; height: 7px; border-radius: 50%; background: var(--foreground); }
+/* A faint dot previews the choice while the pointer is down, then the real dot springs in on release. */
+.mc-radio-group__mark::after { content: ""; opacity: 0; transition: opacity var(--duration-instant) var(--ease-standard); }
+.mc-radio-group__option:active:not(:has(input:checked)) .mc-radio-group__mark::after { opacity: .22; }
+/* The mark alone answers a press: a quick dip, then a spring back. */
+.mc-radio-group__option:active .mc-radio-group__mark { transform: scale(.88); transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), transform 100ms var(--ease-standard); }
+.mc-radio-group__option:has(input:checked) .mc-radio-group__mark { border-color: var(--control-on); background: var(--control-on); }
+.mc-radio-group__option:has(input:checked) .mc-radio-group__dot { background: var(--control-glyph); }
+.mc-radio-group__option strong, .mc-radio-group__option small { display: block; }
+.mc-radio-group__option strong { color: var(--text-secondary); font-size: var(--text-sm); font-weight: 500; transition: color var(--duration-standard) var(--ease-standard); }
+.mc-radio-group__option:has(input:checked) strong { color: var(--foreground); }
+.mc-radio-group__option small { margin-top: 2px; color: var(--text-muted); font-size: var(--text-xs); }
+@media (prefers-reduced-motion: reduce) { .mc-radio-group__option, .mc-radio-group__mark, .mc-radio-group__mark::after, .mc-radio-group__option strong { transition: none; } .mc-radio-group__option:active .mc-radio-group__mark { transform: none; } }
 }
 </style>

@@ -2,15 +2,14 @@
 import { ref } from "vue";
 import Checkbox from "@/components/manicat/checkbox/checkbox.vue";
 
-const newsletter = ref(true);
+const checked = ref<boolean | "indeterminate">("indeterminate");
 const digest = ref(false);
-const terms = ref<boolean | "indeterminate">("indeterminate");
 </script>
 
 <template>
-  <div class="grid gap-3">
-    <Checkbox v-model="newsletter" label="Email me about releases" />
+  <div style="display: grid; gap: 12px">
+    <Checkbox v-model="checked" label="Email me about releases" />
     <Checkbox v-model="digest" label="Include a digest" description="One email a week, never more." />
-    <Checkbox v-model="terms" label="Accept the terms" />
+    <Checkbox label="Locked" disabled />
   </div>
 </template>

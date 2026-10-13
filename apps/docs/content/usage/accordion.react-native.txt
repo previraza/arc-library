@@ -1,14 +1,11 @@
 import { Accordion } from "@/components/manicat/accordion/accordion.rn";
 
-export function Faq() {
-  return (
-    <Accordion
-      defaultOpen={0}
-      items={[
-        { title: "Can I cancel any time?", content: "Yes. Your plan stays active until the end of the billing period." },
-        { title: "Do you offer refunds?", content: "Within 14 days of a purchase, no questions asked." },
-        { title: "Is there a team discount?", content: "Teams of ten or more get 20% off." },
-      ]}
-    />
-  );
+const items = [
+  { title: "Do I need Tailwind?", content: "No. Manicat UI styles are CSS modules that read CSS variables." },
+  { title: "Can I change the tokens?", content: "Change a value in foundation.css and every component follows." },
+  { title: "What about dark mode?", content: "Set data-theme=\"dark\" on the html element. Values are tuned, not inverted." },
+];
+
+export function AccordionDemo() {
+  return <Accordion defaultOpen={0} items={items} />;
 }

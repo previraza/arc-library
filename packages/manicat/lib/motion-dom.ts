@@ -272,9 +272,9 @@ export function createLabelSwap(
   slot: HTMLElement,
   content: HTMLElement,
   phase: HTMLElement,
-  { reduced, follower: shared, icon: alwaysIcon = false, pop = true }: { reduced: boolean; /** A width follower the caller owns, when the slot has other content that changes too. */ follower?: WidthFollower; /** The content is an icon, so it scales instead of rising. */ icon?: boolean; /** Take the old content out of the flow (a label); an icon stacked in a grid cell leaves in place. */ pop?: boolean },
+  { reduced, follower: shared, icon: alwaysIcon = false, pop = true, width = true }: { reduced: boolean; /** Follow the width of the content on a spring. Off for a label whose box is set by its container. */ width?: boolean; /** A width follower the caller owns, when the slot has other content that changes too. */ follower?: WidthFollower; /** The content is an icon, so it scales instead of rising. */ icon?: boolean; /** Take the old content out of the flow (a label); an icon stacked in a grid cell leaves in place. */ pop?: boolean },
 ): LabelSwap {
-  const follower = shared ?? followWidth(slot, content, reduced);
+  const follower = shared ?? (width ? followWidth(slot, content, reduced) : { arm: () => undefined, destroy: () => undefined });
   let key = labelKey(phase);
   const snapshot = () => ({ copy: phase.cloneNode(true) as HTMLElement, box: { left: phase.offsetLeft, top: phase.offsetTop, width: phase.offsetWidth, height: phase.offsetHeight } });
   let before = snapshot();
@@ -491,4 +491,180 @@ export function createEyeMorph(host: HTMLElement, { slashed, reduced }: { slashe
   };
   apply(slashed, false);
   return { set: (next: boolean) => apply(next, true) };
+}
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Controls
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+const checkPath = "M4.25 9.25 L7.25 12.25 L13.75 5.75";
+const dashPath = "M4.75 9 L9 9 L13.25 9";
+
+/** The checkbox mark: the fill springs in, and the check morphs into the dash and back (both share three points). */
+export function animateCheckbox(parts: { fill: HTMLElement; path: SVGPathElement }, state: boolean | "indeterminate", { reduced, animated }: { reduced: boolean; animated: boolean }) {
+  const on = state !== false;
+  const fade = { duration: on ? motionTokens.duration.instant : motionTokens.duration.fast, ease: ease("standard") };
+  const instant = reduced || !animated;
+  animate(parts.fill, { opacity: on ? 1 : 0, scale: on ? 1 : 0.6 }, instant ? { duration: 0 } : ({ scale: motionTokens.spring.snappy, opacity: fade } as never));
+  animate(parts.path, { d: state === "indeterminate" ? dashPath : checkPath, pathLength: on ? 1 : 0, opacity: on ? 1 : 0 } as never, instant ? { duration: 0 } : ({ d: motionTokens.spring.morph, pathLength: motionTokens.spring.snappy, opacity: fade } as never));
+}
+
+export const checkboxPath = checkPath;
+
+/**
+ * The thumb of a switch: it stretches like a held finger while pressed and keeps its far edge anchored, then travels on a critically
+ * damped spring; a change that no press caused adds one brief stretch. The counterpart of the motion in switch.tsx.
+ */
+export function createSwitchThumb(root: HTMLElement, thumb: HTMLElement, { on, reduced, disabled }: { on: boolean; reduced: boolean; disabled: () => boolean }) {
+  const size = 18;
+  const travel = 18;
+  const stretch = 5;
+  const glide = { type: "spring", visualDuration: 0.3, bounce: 0 } as const;
+  let current = on;
+  let pressed = false;
+  let releasedAt = -Infinity;
+
+  const place = (animated: boolean) => {
+    const extra = pressed && !reduced && !disabled() ? stretch : 0;
+    animate(thumb, { x: current ? travel - extra : 0, width: size + extra }, animated && !reduced ? ({ x: glide, width: motionTokens.spring.snappy } as never) : { duration: 0 });
+  };
+  place(false);
+
+  const down = (event: PointerEvent) => {
+    if (event.button !== 0) return;
+    pressed = true;
+    place(true);
+  };
+  const up = () => {
+    if (pressed && !disabled()) releasedAt = performance.now();
+    pressed = false;
+    place(true);
+  };
+  const away = () => {
+    pressed = false;
+    place(true);
+  };
+  const keydown = (event: KeyboardEvent) => {
+    if (event.key === " ") {
+      pressed = true;
+      place(true);
+    }
+  };
+  root.addEventListener("pointerdown", down);
+  root.addEventListener("pointerup", up);
+  root.addEventListener("pointerleave", away);
+  root.addEventListener("pointercancel", away);
+  root.addEventListener("keydown", keydown);
+  root.addEventListener("keyup", up);
+  root.addEventListener("blur", away);
+
+  return {
+    set(next: boolean) {
+      if (next === current) return;
+      current = next;
+      place(true);
+      // A pointer or Space press already stretched the thumb, so only a change without one gets a stretch of its own.
+      if (!reduced && performance.now() - releasedAt >= 250) animate(thumb, { scaleX: [1, 1.16, 1] }, { duration: 0.34, times: [0, 0.4, 1], ease: ["easeOut", "easeInOut"] });
+    },
+    destroy() {
+      root.removeEventListener("pointerdown", down);
+      root.removeEventListener("pointerup", up);
+      root.removeEventListener("pointerleave", away);
+      root.removeEventListener("pointercancel", away);
+      root.removeEventListener("keydown", keydown);
+      root.removeEventListener("keyup", up);
+      root.removeEventListener("blur", away);
+    },
+  };
+}
+
+/** One spring drives the fill of a progress bar and the counted label, so the number always matches the bar. */
+export function createProgress(parts: { fill: HTMLElement; count?: HTMLElement }, { percent, reduced }: { percent: number; reduced: boolean }) {
+  let shown = percent;
+  let running: AnimationPlaybackControls | undefined;
+  const paint = (value: number) => {
+    shown = value;
+    const clamped = Math.min(Math.max(value, 0), 100);
+    parts.fill.style.transform = `translateX(${clamped - 100}%)`;
+    if (parts.count) parts.count.textContent = `${Math.round(clamped)}%`;
+  };
+  paint(percent);
+  return {
+    set(next: number) {
+      running?.stop();
+      if (reduced) return paint(next);
+      running = animate(shown, next, { ...motionTokens.spring.smooth, onUpdate: paint });
+    },
+    destroy: () => running?.stop(),
+  };
+}
+
+/**
+ * A panel whose height follows its content on a spring that never overshoots, while the answer settles down into place with a brief
+ * focus pull; closed panels leave the accessibility tree once they finish collapsing. The counterpart of the accordion panel.
+ */
+export function createCollapse(panel: HTMLElement, inner: HTMLElement, { open, reduced }: { open: boolean; reduced: boolean }) {
+  let running: AnimationPlaybackControls | undefined;
+  const settle = (isOpen: boolean) => {
+    panel.style.height = isOpen ? "auto" : "0px";
+    panel.style.opacity = isOpen ? "1" : "0";
+    panel.style.visibility = isOpen ? "visible" : "hidden";
+    inner.style.transform = isOpen ? "none" : "translateY(-6px)";
+    inner.style.filter = isOpen ? "none" : blur(motionTokens.blur.subtle);
+  };
+  settle(open);
+  return {
+    set(next: boolean) {
+      running?.stop();
+      if (reduced) return settle(next);
+      panel.style.visibility = "visible";
+      const from = panel.getBoundingClientRect().height;
+      const to = next ? inner.scrollHeight : 0;
+      panel.style.height = `${from}px`;
+      running = animate(panel, { height: [`${from}px`, `${to}px`], opacity: next ? 1 : 0 }, { height: motionTokens.spring.smooth, opacity: next ? { duration: motionTokens.duration.standard, ease: ease("enter") } : { duration: motionTokens.duration.fast, ease: ease("standard") } } as never);
+      animate(inner, next ? { y: 0, filter: [blur(motionTokens.blur.subtle), blur(0)] } : { y: -6, filter: blur(motionTokens.blur.subtle) }, next ? { y: motionTokens.spring.smooth, filter: { duration: motionTokens.duration.standard, ease: ease("enter") } } as never : { duration: motionTokens.duration.fast, ease: ease("standard") });
+      running.finished.then(() => settle(next)).catch(() => undefined);
+    },
+    destroy: () => running?.stop(),
+  };
+}
+
+/**
+ * The highlight of a radio group: one box travels to the chosen row while the new dot springs in and the old one shrinks away.
+ * A new choice glides on the morph spring; the first paint and resizes place it at once.
+ */
+export function createRadioGroup(list: HTMLElement, highlight: HTMLElement, { reduced }: { reduced: boolean }) {
+  const rows = () => [...list.querySelectorAll<HTMLElement>(":scope > label")];
+  const dots = () => [...list.querySelectorAll<HTMLElement>("[data-dot]")];
+  let at = "";
+  let shown: number | null = null;
+
+  const place = (row: HTMLElement | undefined, glide: boolean) => {
+    const next = row ? `${row.offsetTop} ${row.offsetHeight}` : "";
+    if (next === at) return;
+    const visible = at !== "";
+    at = next;
+    if (!row) return void animate(highlight, { opacity: 0 }, { duration: 0 });
+    const target = { y: row.offsetTop, height: row.offsetHeight, opacity: 1 };
+    if (glide && visible) return void animate(highlight, target, { ...motionTokens.spring.morph, opacity: { duration: 0 } } as never);
+    Object.assign(highlight.style, { transform: `translateY(${target.y}px)`, height: `${target.height}px`, opacity: "1" });
+    animate(highlight, target, { duration: 0 });
+  };
+
+  const observer = new ResizeObserver(() => place(rows()[shown ?? -1], false));
+  observer.observe(list);
+  rows().forEach((row) => observer.observe(row));
+
+  return {
+    select(index: number) {
+      place(rows()[index], shown !== null && shown !== index && !reduced);
+      dots().forEach((dot, at) => {
+        const checked = at === index;
+        animate(dot, checked ? { scale: 1, opacity: 1 } : { scale: 0.4, opacity: 0 }, reduced || shown === null ? { duration: 0 } : ({ ...motionTokens.spring.snappy, opacity: { duration: checked ? motionTokens.duration.fast : motionTokens.duration.instant } } as never));
+      });
+      shown = index;
+      list.setAttribute("data-ready", "");
+    },
+    destroy: () => observer.disconnect(),
+  };
 }

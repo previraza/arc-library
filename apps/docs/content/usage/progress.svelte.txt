@@ -1,8 +1,14 @@
 <script lang="ts">
+  import Button from "@/components/manicat/button/button.svelte";
   import Progress from "@/components/manicat/progress/progress.svelte";
+
+  let value = $state(64);
 </script>
 
-<div style="display: grid; gap: 16px; width: min(320px, 100%)">
-  <Progress value={42} label="Uploading" showValue />
-  <Progress value={100} label="Complete" showValue />
+<div style="display: grid; width: 100%; max-width: 24rem; gap: 16px">
+  <Progress label="Migrating components" {value} showValue />
+  <div style="display: flex; gap: 8px">
+    <Button size="sm" variant="secondary" onclick={() => (value = Math.max(0, value - 20))}>-20</Button>
+    <Button size="sm" onclick={() => (value = Math.min(100, value + 20))}>+20</Button>
+  </div>
 </div>

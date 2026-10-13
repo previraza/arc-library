@@ -1,10 +1,12 @@
 <script lang="ts">
   import Checkbox from "@/components/manicat/checkbox/checkbox.svelte";
-  let terms = $state<boolean | "indeterminate">(false);
+
+  let checked = $state(false);
+  let indeterminate = $state(true);
 </script>
 
 <div style="display: grid; gap: 12px">
-  <Checkbox label="Accept the terms" description="You can change this later." bind:checked={terms} />
-  <Checkbox label="Some selected" checked="indeterminate" />
-  <Checkbox label="Disabled" disabled />
+  <Checkbox bind:checked bind:indeterminate label="Email me about releases" />
+  <Checkbox label="Include a digest" description="One email a week, never more." />
+  <Checkbox label="Locked" disabled />
 </div>

@@ -2,13 +2,13 @@
 import { ref } from "vue";
 import Switch from "@/components/manicat/switch/switch.vue";
 
-const push = ref(true);
-const digest = ref(false);
+const checked = ref(true);
+const always = ref(false);
 </script>
 
 <template>
-  <div class="settings">
-    <Switch v-model="push" label="Push notifications" />
-    <Switch v-model="digest" label="Weekly digest" />
+  <div style="display: grid; gap: 12px">
+    <Switch v-model="checked" label="Reduced motion" />
+    <Switch v-model="always" label="Always on" />
   </div>
 </template>

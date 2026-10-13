@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
 import Progress from "@/components/manicat/progress/progress.vue";
 
-const value = ref(0);
-let timer: ReturnType<typeof setInterval>;
-
-onMounted(() => {
-  timer = setInterval(() => (value.value = Math.min(100, value.value + 10)), 250);
-});
-onUnmounted(() => clearInterval(timer));
+const value = ref(64);
 </script>
 
 <template>
-  <Progress label="Uploading brand-assets.zip" :value="value" show-value />
+  <div style="display: grid; width: 100%; max-width: 24rem; gap: 16px">
+    <Progress label="Migrating components" :value="value" show-value />
+    <div style="display: flex; gap: 8px">
+      <Button size="sm" variant="secondary" @click="value = Math.max(0, value - 20)">-20</Button>
+      <Button size="sm" @click="value = Math.min(100, value + 20)">+20</Button>
+    </div>
+  </div>
 </template>

@@ -1,14 +1,16 @@
 import SwiftUI
 
 struct ProgressExample: View {
-    @State private var value = 42.0
+    @State private var value = 64.0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            ManicatProgress(value: value, label: "Uploading", showValue: true)
-            ManicatProgress(value: 100, label: "Done", showValue: true)
-            Slider(value: $value, in: 0...100)
+            ManicatProgress(value: value, label: "Migrating components", showValue: true)
+            HStack(spacing: 8) {
+                ManicatButton("-20", variant: .secondary, size: .sm) { value = max(0, value - 20) }
+                ManicatButton("+20", size: .sm) { value = min(100, value + 20) }
+            }
         }
-        .frame(maxWidth: 360)
+        .frame(maxWidth: 384)
     }
 }

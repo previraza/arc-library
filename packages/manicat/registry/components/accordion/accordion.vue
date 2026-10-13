@@ -1,77 +1,91 @@
 <script setup lang="ts">
-import { ref, useId } from "vue";
+// @manicat-dependencies motion lucide-vue-next reka-ui
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { AccordionContent, AccordionHeader, AccordionItem as AccordionItemRoot, AccordionRoot, AccordionTrigger } from "reka-ui";
+import { animate } from "motion";
+import { ChevronDown } from "lucide-vue-next";
+import { createCollapse } from "@/lib/motion-dom";
+import { motionTokens } from "@/lib/motion-tokens";
 
 export interface AccordionItem {
   title: string;
-  content: string;
+  /** Plain text of the panel. For anything richer, fill the `content` slot, which receives the item and its index. */
+  content?: string;
 }
 
 const props = withDefaults(
   defineProps<{
     items: AccordionItem[];
-    /** Index of the item open at first. */
     defaultOpen?: number;
+    /** "lg" suits page-level FAQs: questions at the large text size, answers at body size. */
     size?: "md" | "lg";
-    /** Extend the inner, named parts of the accordion: item, trigger, icon, panel or panelInner. */
-    classNames?: { item?: string; trigger?: string; icon?: string; panel?: string; panelInner?: string };
+    /** Extend the inner, named parts of the accordion: item, header, trigger, icon, panel or panelInner. */
+    classNames?: { item?: string; header?: string; trigger?: string; icon?: string; panel?: string; panelInner?: string };
   }>(),
-  { size: "md" },
+  { defaultOpen: 0, size: "md" },
 );
 
-const open = ref<number | undefined>(props.defaultOpen);
-const id = useId();
+const openValue = ref(props.defaultOpen >= 0 && props.defaultOpen < props.items.length ? String(props.defaultOpen) : "");
+const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+const panels = ref<HTMLElement[]>([]);
+const inners = ref<HTMLElement[]>([]);
+const icons = ref<HTMLElement[]>([]);
+const controllers: ReturnType<typeof createCollapse>[] = [];
+
+const cn = (base: string, ...extra: (string | false | undefined)[]) => [base, ...extra].filter(Boolean).join(" ");
+
+onMounted(() => {
+  props.items.forEach((_, index) => {
+    controllers[index] = createCollapse(panels.value[index], inners.value[index], { open: openValue.value === String(index), reduced });
+    icons.value[index].style.transform = openValue.value === String(index) ? "rotate(180deg)" : "none";
+  });
+});
+watch(openValue, (next, previous) => {
+  controllers.forEach((controller, index) => controller.set(next === String(index)));
+  icons.value.forEach((icon, index) => {
+    const open = next === String(index);
+    if (open === (previous === String(index))) return;
+    if (reduced) icon.style.transform = open ? "rotate(180deg)" : "none";
+    else animate(icon, { rotate: open ? 180 : 0 }, motionTokens.spring.snappy);
+  });
+});
+onBeforeUnmount(() => controllers.forEach((controller) => controller.destroy()));
 </script>
 
 <template>
-  <div :class="['mc-accordion', `mc-accordion--${size}`]">
-    <div v-for="(item, index) in items" :key="`${item.title}-${index}`" :class="['mc-accordion__item', classNames?.item]">
-      <h3 class="mc-accordion__header">
-        <button
-          type="button"
-          :id="`${id}-trigger-${index}`"
-          :class="['mc-accordion__trigger', classNames?.trigger]"
-          :aria-expanded="open === index"
-          :aria-controls="`${id}-panel-${index}`"
-          :data-state="open === index ? 'open' : 'closed'"
-          @click="open = open === index ? undefined : index"
-        >
+  <AccordionRoot v-model="openValue" :class="cn('mc-accordion__accordion', size === 'lg' && 'mc-accordion__lg')" type="single" collapsible>
+    <AccordionItemRoot v-for="(item, index) in items" :key="`${item.title}-${index}`" :class="cn('mc-accordion__item', classNames?.item)" :value="String(index)">
+      <AccordionHeader :class="cn('mc-accordion__header', classNames?.header)">
+        <AccordionTrigger :class="cn('mc-accordion__trigger', classNames?.trigger)">
           <span>{{ item.title }}</span>
-          <svg :class="['mc-accordion__icon', classNames?.icon]" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 6 4.5 4.5L12.5 6" /></svg>
-        </button>
-      </h3>
-      <div
-        :id="`${id}-panel-${index}`"
-        role="region"
-        :aria-labelledby="`${id}-trigger-${index}`"
-        :class="['mc-accordion__panel', classNames?.panel]"
-        :data-state="open === index ? 'open' : 'closed'"
-      >
-        <div class="mc-accordion__clip">
-          <div :class="['mc-accordion__inner', classNames?.panelInner]">
-            <!-- Rich content: fill the slot named after the item's index instead of using `content`. -->
-            <slot :name="`item-${index}`" :item="item">{{ item.content }}</slot>
-          </div>
+          <span :ref="(el) => (icons[index] = el as HTMLElement)" :class="cn('mc-accordion__icon', classNames?.icon)"><ChevronDown :size="17" aria-hidden="true" /></span>
+        </AccordionTrigger>
+      </AccordionHeader>
+      <!-- Reka keeps semantics and ids; the height is driven here, so a toggle mid-flight retargets instead of restarting. -->
+      <AccordionContent force-mount as-child>
+        <div :ref="(el) => (panels[index] = el as HTMLElement)" :class="cn('mc-accordion__panel', classNames?.panel)">
+          <div :ref="(el) => (inners[index] = el as HTMLElement)" :class="cn('mc-accordion__panelInner', classNames?.panelInner)"><slot name="content" :item="item" :index="index">{{ item.content }}</slot></div>
         </div>
-      </div>
-    </div>
-  </div>
+      </AccordionContent>
+    </AccordionItemRoot>
+  </AccordionRoot>
 </template>
 
 <style>
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-accordion { width: 100%; border-top: 1px solid var(--border); }
+.mc-accordion__accordion { width: 100%; border-top: 1px solid var(--border); }
 .mc-accordion__item { border-bottom: 1px solid var(--border); }
 .mc-accordion__header { margin: 0; }
-.mc-accordion__trigger { display: flex; width: 100%; min-height: var(--control-height-lg); align-items: center; justify-content: space-between; gap: var(--space-5); padding: var(--space-2) 0; border: 0; background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-sm); font-weight: 500; text-align: left; cursor: pointer; }
+.mc-accordion__trigger { display: flex; width: 100%; min-height: var(--control-height-lg); align-items: center; justify-content: space-between; gap: var(--space-5); padding: var(--space-2) 0; border: 0; background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .mc-accordion__trigger:hover { color: var(--text-secondary); } .mc-accordion__trigger:hover .mc-accordion__icon { color: var(--foreground); } }
-.mc-accordion__icon { flex: 0 0 auto; color: var(--text-muted); transition: transform .3s var(--ease-standard), color var(--duration-fast) var(--ease-standard); }
-.mc-accordion__trigger[data-state="open"] .mc-accordion__icon { color: var(--foreground); transform: rotate(180deg); }
-/* The panel animates its height through grid rows, so it needs no measuring. */
-.mc-accordion__panel { display: grid; grid-template-rows: 0fr; color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); transition: grid-template-rows .3s var(--ease-standard); }
-.mc-accordion__panel[data-state="open"] { grid-template-rows: 1fr; }
-.mc-accordion__clip { overflow: hidden; min-height: 0; }
-.mc-accordion__inner { overflow-wrap: anywhere; padding: 0 var(--space-8) var(--space-5) 0; }
-.mc-accordion--lg .mc-accordion__trigger { min-height: 76px; gap: var(--space-8); padding-block: var(--space-5); font-size: var(--text-lg); letter-spacing: var(--tracking-body); }
-.mc-accordion--lg .mc-accordion__panel { font-size: var(--text-base); line-height: 1.65; }
-@media (prefers-reduced-motion: reduce) { .mc-accordion__icon, .mc-accordion__panel { transition: none; } }
+/* Rotation is driven by a spring in accordion.mc-accordion__tsx; CSS only handles color. */
+.mc-accordion__icon { display: inline-flex; flex: 0 0 auto; color: var(--text-muted); transition: color var(--duration-fast) var(--ease-standard); }
+.mc-accordion__trigger[data-state="open"] .mc-accordion__icon { color: var(--foreground); }
+.mc-accordion__panel { overflow: hidden; color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); }
+.mc-accordion__panelInner { overflow-wrap: anywhere; padding: 0 var(--space-8) var(--space-5) 0; }
+.mc-accordion__lg .mc-accordion__trigger { min-height: 76px; gap: var(--space-8); padding-block: var(--space-5); font-size: var(--text-lg); letter-spacing: var(--tracking-body); }
+.mc-accordion__lg .mc-accordion__panel { font-size: var(--text-base); line-height: 1.65; }
+.mc-accordion__lg .mc-accordion__panelInner { max-width: 62ch; padding: 0 var(--space-12) var(--space-6) 0; }
+@media (max-width: 520px) { .mc-accordion__lg .mc-accordion__trigger { min-height: 68px; font-size: var(--text-base); } .mc-accordion__lg .mc-accordion__panel { font-size: var(--text-sm); } .mc-accordion__lg .mc-accordion__panelInner { padding-right: var(--space-6); } }
+@media (prefers-reduced-motion: reduce) { .mc-accordion__trigger, .mc-accordion__icon { transition: none; } }
 </style>

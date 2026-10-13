@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
+import { Button } from "@/components/manicat/button/button.rn";
 import { Progress } from "@/components/manicat/progress/progress.rn";
 
-export function UploadProgress() {
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => setValue((current) => Math.min(100, current + 10)), 250);
-    return () => clearInterval(timer);
-  }, []);
+export function ProgressDemo() {
+  const [value, setValue] = useState(64);
 
   return (
-    <View style={{ padding: 16 }}>
-      <Progress label="Uploading brand-assets.zip" value={value} showValue />
+    <View style={{ width: "100%", maxWidth: 384, gap: 16 }}>
+      <Progress label="Migrating components" value={value} showValue />
+      <View style={{ flexDirection: "row", gap: 8 }}>
+        <Button size="sm" variant="secondary" onPress={() => setValue((current) => Math.max(0, current - 20))}>-20</Button>
+        <Button size="sm" onPress={() => setValue((current) => Math.min(100, current + 20))}>+20</Button>
+      </View>
     </View>
   );
 }
