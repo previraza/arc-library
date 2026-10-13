@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A short fixed list where typing is not needed, such as region or sort order.\n- Form fields that should submit natively through Radix's hidden select via name."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use combobox for long or searchable lists.\n- Use multi-select when several values can be chosen.\n- Use segmented-control for two to four choices that should stay visible."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space / ArrowDown | Opens the list from the trigger. |\n| ArrowUp / ArrowDown | Moves between enabled items. |\n| Enter / Space | Selects the highlighted item and closes. |\n| Escape | Closes without changing the value. |\n| Type a letter | Jumps to the next item starting with it (Radix typeahead). |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Built on Radix Select, so the trigger, listbox, and options get the right roles and focus handling.\n- The real value renders in a visually hidden Radix Value; the animated copy is aria-hidden.\n- Label is linked with htmlFor, and description through aria-describedby."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- A later option rises in from below and an earlier one drops from above, with a soft blur.\n- Reduced motion swaps the value with an instant crossfade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The menu matches the trigger width, caps at min(24rem, 100vw minus 20px), and at 320px or the available height, then scrolls.\n- Long labels ellipsize in the trigger instead of widening it.\n- The trigger never scales on press, so Radix measures a stable anchor on touch."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The menu renders in a Radix portal only while open; items are not virtualized, so keep the list short.\n- The translucent menu drops its backdrop blur under prefers-reduced-transparency."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Pick for a short fixed list where typing is not needed. Use combobox for long or searchable lists, multi-select for several values, and segmented-control for two to four visible choices.\n- Controlled with value and onValueChange, or uncontrolled with defaultValue; pass name to submit with a form."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Independent on and off choices confirmed by a submit, such as accepting terms.\n- Parent rows that show a partial selection through the indeterminate state."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use switch for settings that apply immediately.\n- Use radio-group when only one option can be chosen.\n- Use chip-group for filter facets people toggle often."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Space | Toggles the checkbox. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Radix renders a button with role=\"checkbox\" and aria-checked, including \"mixed\" for indeterminate.\n- The label is a real label element tied by id; description is linked through aria-describedby.\n- The drawn mark is aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The fill scales in on a snappy spring while the check path draws; switching to indeterminate morphs the same path into a dash.\n- Reduced motion applies every state change instantly."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The hit box is a full control-height square, so it stays easy to tap even though the drawn box is smaller.\n- The label and description wrap beside the box; the box stays top-aligned with the first line."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- A single spring on the fill and a path draw per toggle; long lists of checkboxes are fine."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for independent on/off choices in forms. Use switch for settings that apply immediately and chip-group for filter facets.\n- Set checked=\"indeterminate\" on a parent checkbox when only some children are selected.\n- Radix renders a hidden native input when name is set, so it submits with forms."
+    }
+  ]
+}

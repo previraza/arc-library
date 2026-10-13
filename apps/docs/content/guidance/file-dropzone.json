@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Attachments and uploads with drag and drop plus a file picker.\n- Uploads that need per-file progress, retry, and cancel through onUpload."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use input with type file only when a native picker with no list is enough.\n- Use empty-state when the drop area is the only thing on an empty page and needs a larger call to action."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | On the drop target, opens the native file picker. |\n| ArrowUp / ArrowDown | In the file list, moves focus to the same action (remove or retry) on the adjacent row. |\n| Delete / Backspace | In the file list, removes the focused row. |\n| ⌘ + V / Ctrl + V | Pastes files from the clipboard, such as a screenshot, while the pointer is over the dropzone or focus is inside it. Ignored inside text fields. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The target is a native button; the hidden file input is removed from the tab order.\n- Uploading rows expose role=\"progressbar\" with aria-valuenow; remove and retry buttons are labelled with the file name.\n- Additions, completions, and failures are announced through a polite role=\"status\" region; rejection errors use role=\"alert\".\n- Removing a row moves focus to a neighbouring row so keyboard users are not dropped."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The icon lifts while files hover, the edge animates, rows enter and collapse on a smooth spring, and progress bars ease toward their target.\n- Reduced motion replaces height and lift animations with short fades and keeps progress changes instant."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The file list is a container query: below 440px retry becomes icon-only, and below 300px the file icon hides.\n- File names and failure reasons ellipsize instead of wrapping.\n- The whole target is one tap area that opens the native picker, so it works without drag and drop on touch."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The dashed edge is refitted by a ResizeObserver, plus a rAF loop only while the corner radius is transitioning.\n- Rows are not virtualized and maxFiles defaults to 5; row entrances stagger up to eight steps."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for file attachments and uploads. Without onUpload the list shows plain selections; read them from onFilesChange and submit yourself.\n- Files can be dropped, picked, or pasted. Pass preview on defaultItems (for example a stored thumbnail URL) to show earlier image uploads as thumbnails.\n- With onUpload, the component manages per-file status, retry, and abort; wire it to fetch or XHR and pass signal through.\n- Also exports formatFileSize(bytes) and the FileDropzoneItem, FileDropzoneStatus, and FileDropzoneUpload types."
+    }
+  ]
+}

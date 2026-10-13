@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Verification codes from email or SMS.\n- Two-factor authentication code entry."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use password-field for secrets people type from memory.\n- Use input for any other text."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| 0-9 / characters | Fills the slot and moves to the next one. |\n| ArrowLeft / ArrowRight | Moves between slots. |\n| Backspace | On an empty slot, clears the previous one and moves back. |\n| Delete | Clears the current slot. |\n| Cmd/Ctrl + V | Pastes a code across the slots from the focused one. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Slots sit in a labelled role=group, each with an aria-label like Verification code, digit 1 of 6.\n- Helper and error text are linked with aria-describedby; the error uses role=alert and sets aria-invalid.\n- The first slot uses autocomplete one-time-code so browsers can offer SMS codes."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Typed characters rise into the slot and unblur; a paste lands as a short left-to-right wave.\n- One focus ring glides between slots, and a new error nudges the row side to side once.\n- Reduced motion removes the glide, shake, and blur and uses instant fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Slots are 42px wide and can shrink with max-width 100%; below 360px gaps tighten and slots drop to 44px tall.\n- The first slot uses autocomplete one-time-code, so iOS and Android can offer SMS codes.\n- numeric inputMode brings up the number pad on phones."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Only a handful of inputs plus one gliding ring; a ResizeObserver springs the message height."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for verification and two-factor codes. Use input or password-field for anything else.\n- It is controlled: keep value in state and submit when value.length equals length. There is no default export, so import it by name."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Facet filters people toggle often, like topics or categories.\n- Single clearable choices shown as chips, via multiple={false}.\n- Long option sets folded behind a +N more chip with maxVisible."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use multi-select when space is tight.\n- Use checkbox in forms.\n- Use segmented-control for one choice among a few views."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Arrow keys | Move focus between chips and the more chip, wrapping. |\n| Home / End | Focus the first or last chip. |\n| Enter / Space | Toggles the focused chip or opens the overflow. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The group has role=\"group\" and aria-label; each chip is a button with aria-pressed.\n- Roving tabindex keeps one chip in the tab order; the more chip uses aria-expanded.\n- Check icons and surfaces are aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Selecting grows a check in, slides the label over, and springs the chip edge while neighbours glide to new places, even across lines. Revealed chips stagger in and the group height morphs.\n- Reduced motion replaces the morphs with short fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Chips wrap onto new lines and the frame height follows on a spring.\n- Selected chips always stay visible, even beyond maxVisible, so folding never hides active filters."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Every chip has layout position animation and its own ResizeObserver; keep sets to a few dozen and fold the rest.\n- Revealed chips stagger in, capped at 0.3s total."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for facet filters people toggle often. Use multi-select when space is tight and checkbox in forms.\n- Always controlled. Set multiple={false} for a single, clearable choice.\n- Exported as both named and default."
+    }
+  ]
+}

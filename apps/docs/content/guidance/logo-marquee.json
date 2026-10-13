@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A customer or integration logo strip on a landing page.\n- Social proof sections with a heading and a short supporting line."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use integrations when each logo needs a description or a connect action.\n- Use testimonial-stage when quotes matter more than logos.\n- Use carousel when people should browse items by hand."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The duplicated loop copy is aria-hidden, so each brand is read once.\n- The pause button uses aria-pressed and a live region announces the motion state."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- A CSS keyframe loop scrolls two copies of the list for a seamless track.\n- Under prefers-reduced-motion the animation stops and the duplicate list is hidden."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Below 700px the heading and description stack and the marks shrink.\n- The track fades at both edges with a mask, so logos never hard-cut at narrow widths."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The loop is a single CSS transform keyframe on one track, with no JavaScript animation.\n- Two copies of the list are rendered for a seamless loop; under reduced motion the animation stops and the copy is hidden.\n- Logos are CSS masks from SVG URLs, so use small single-color SVGs."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a customer or integration logo strip on a landing page.\n- Only pass brands you have permission to show; the defaults are illustrative.\n- Composes Arc Button for the pause control."
+    }
+  ]
+}

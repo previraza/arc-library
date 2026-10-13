@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Before and after visuals such as photo edits, redesigns, or cleanup results.\n- Top and bottom comparisons, via orientation vertical."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use carousel to browse many images.\n- Use resizable-panels to split live content rather than images."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Arrow keys | Moves the divider by 1 percent, or 10 with Shift. |\n| PageUp / PageDown | Moves the divider by 10 percent. |\n| Home / End | Shows all of the before or all of the after image. |\n| Double click | On the handle, recenters the divider. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The handle is a focusable role=\"slider\" with aria-orientation and aria-valuetext like \"40% after\".\n- Caption chips are aria-hidden; give both images meaningful alt text.\n- Dragging works anywhere on the frame, not only on the handle."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The divider follows the pointer and settles with release velocity; the handle stretches into a capsule while dragging.\n- Keyboard presses at an edge give a small bump; captions fade as the divider reaches them.\n- Reduced motion jumps the divider and handle without springs."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The frame is full width with a fixed aspect ratio, so it scales to any column.\n- On touch the photo waits for a sideways drag before moving the divider, so vertical swipes still scroll the page; a tap jumps the divider there."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The divider runs on motion values and one ResizeObserver, with no React re-render per drag frame.\n- Both images stay mounted and stacked, so size them for the frame."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for visual diffs: photo edits, redesigns, before and after results. Use carousel to browse many images.\n- Both images should share the same crop and size so the reveal lines up."
+    }
+  ]
+}

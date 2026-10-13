@@ -9,6 +9,7 @@ export interface ManicatTokens {
   textSecondary: string;
   textMuted: string;
   border: string;
+  borderStrong: string;
   accent: string;
   accentStrong: string;
   accentSubtle: string;
@@ -29,6 +30,7 @@ export const lightTokens: ManicatTokens = {
   textSecondary: "#6e6e6e",
   textMuted: "#8f8f8f",
   border: "#ebebeb",
+  borderStrong: "#c9c9c9",
   accent: "#4a4a4a",
   accentStrong: "#303030",
   accentSubtle: "rgba(74, 74, 74, 0.1)",
@@ -49,6 +51,7 @@ export const darkTokens: ManicatTokens = {
   textSecondary: "#c4c4c4",
   textMuted: "#a0a0a0",
   border: "#454545",
+  borderStrong: "#5c5c5c",
   accent: "#cfcfcf",
   accentStrong: "#e6e6e6",
   accentSubtle: "rgba(207, 207, 207, 0.13)",
@@ -67,7 +70,7 @@ export const metrics = {
   radiusPill: 9999,
   controlHeight: { sm: 36, md: 44, lg: 50 },
   space: { 1: 4, 2: 8, 3: 12, 4: 16, 5: 20 },
-  text: { xs: 12, sm: 14 },
+  text: { xs: 12, sm: 14, lg: 18 },
 } as const;
 
 /** The tokens for the device's current colour scheme. Wrap the app in your own provider if you manage the theme yourself. */

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Click-opened panels with interactive content, like share settings or a small filter form.\n- Non-modal helpers that should stay open while people interact with the rest of the page.\n- Custom pickers built from your own controls anchored to a button."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use tooltip for short hover labels.\n- Use hover-card for read-only previews that open on hover.\n- Use dialog when the choice must block the page, and dropdown-menu for a list of commands."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Opens the popover from the trigger. |\n| Escape | Closes the popover and returns focus to the trigger. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Radix sets aria-expanded, aria-controls, and aria-haspopup=\"dialog\" on the trigger.\n- Focus moves into the content on open and back to the trigger on close.\n- Content is non-modal by default; give it a heading or aria-label when it holds controls."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- CSS transitions: the panel fades and settles from 5px toward its trigger at 0.97 scale on a spring; it leaves in 140ms.\n- Transitions instead of keyframes, so a reopen mid-close reverses from where the panel is.\n- Reduced motion drops the transform and keeps a short opacity fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The panel is at least 12rem and at most min(22rem, 100vw minus 20px), so it never overflows a phone screen.\n- Radix collision handling keeps it 10px from viewport edges by default and flips sides when needed."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Pure CSS transitions with no motion runtime; content mounts in a portal only while open."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for click-opened, non-modal panels with interactive content. Use tooltip for short hover labels, hover-card for read-only previews, dialog when the choice must block.\n- Compose Popover > PopoverTrigger asChild + PopoverContent. Pass side for placement."
+    }
+  ]
+}

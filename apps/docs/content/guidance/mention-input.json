@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Comment and reply boxes where people are tagged with @ and should be notified by id.\n- Chat or task composers that link #channels or projects inline.\n- Any text field whose stored value needs structured references alongside the plain text."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use textarea for plain notes with no references.\n- Use tag-input when the tokens are a separate list rather than part of a sentence.\n- Use rich-text-editor when the text also needs headings, lists, or links."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| @ / # | Opens people or channel suggestions after a space, line start, or opening bracket or quote. |\n| Arrow Down / Arrow Up | Moves through suggestions, wrapping at the ends. |\n| Enter / Tab | Turns the highlighted suggestion into a mention. |\n| Escape | Dismisses suggestions for the current trigger without leaving the field. |\n| Backspace / Delete | Next to a mention, one press removes the whole token. |\n| Arrow Left / Arrow Right | Steps over a mention as one unit. |\n| Enter / Shift+Enter | With submitOnEnter, Enter submits and Shift+Enter adds a line. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The textarea is a combobox with aria-autocomplete=\"list\", aria-expanded, aria-controls, and aria-activedescendant pointing at the highlighted option.\n- Suggestions are a listbox labelled People or Channels, with options marked aria-selected.\n- A polite live region announces the result count, such as 3 people or No matches.\n- Mention tints come from an aria-hidden mirror behind a transparent textarea, so assistive tech reads the plain text.\n- Choosing a suggestion types through execCommand insertText, so native undo keeps working."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The field height springs to its content between minRows and maxRows.\n- Suggestions pop in from the caret with a small scale and a snappy spring; the highlight glides between rows and the panel height springs as results change.\n- Reduced motion jumps the height and highlight and fades the panel without scale or offset."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Fills its container width. The suggestion panel is 272px wide, capped to the field width, and clamped so it never runs past the right edge.\n- With placement auto the panel flips above the caret near the bottom of the viewport, which suits composers pinned to the bottom of a mobile screen.\n- Options use pointer events and click, so touch taps choose a suggestion without a hover state."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Each edit rebuilds a mirror of the text to draw token tints and reconciles mention offsets with a prefix and suffix diff; fine for messages, not for pages of text.\n- Two ResizeObservers drive the field and panel height springs; ranking runs over the full people and channels arrays each keystroke, so pass a pre-filtered list past a few thousand entries."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for comment boxes, message composers, and task descriptions that tag people or channels. Use textarea for plain multi-line text and tag-input for a list of chips outside the text.\n- Store serializeMentions(value) or the mentions array, not only value.text, so renamed people still resolve by id.\n- Filter people on the server by passing a fresh people array per keystroke; ranking is prefix, then word start, then substring, then role or description.\n- Hook a toolbar @ button to ref.openSuggestions(\"person\")."
+    }
+  ]
+}

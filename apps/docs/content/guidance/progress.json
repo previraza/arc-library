@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Determinate progress for uploads, imports, or long tasks.\n- Progress with a visible percentage and a check at completion, via showValue."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use skeleton while content is loading with no progress to report.\n- Use usage-meter for quota against a limit, and gauge for dashboard metrics.\n- Use stepper to show position in a multi-step flow."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders role=\"progressbar\" with aria-valuemin, aria-valuemax, aria-valuenow, and a percentage aria-valuetext.\n- Label changes crossfade; outgoing copies are aria-hidden while they fade.\n- It is not a live region; announce completion separately if it matters."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- One smooth spring drives both the fill and the counted number, so they always agree. The fill slides in from the left to keep its rounded end.\n- At 100% the fill turns to the success colour and a check settles in beside the count.\n- Reduced motion jumps the fill and count to the new value."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The bar fills its container width, so it works in cards, rows, and full-width layouts."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One spring drives both the fill and the counted number; no observers or timers.\n- It is not a live region, so announce completion separately if it matters."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for determinate task progress. Use skeleton while content has no progress to report, gauge or activity-rings for dashboard metrics, and usage-meter for quota against a limit.\n- Pass raw value and max; the percentage is computed and clamped for you."
+    }
+  ]
+}

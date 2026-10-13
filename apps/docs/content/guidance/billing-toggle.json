@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- The billing period switch at the top of a pricing page.\n- Any price display that should roll to a new amount when a period or plan changes, using BillingPrice.\n- A small plan picker with a savings note, such as yearly versus lifetime."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use segmented-control for switching views or filters with no pricing meaning.\n- Use radio-group when options need descriptions or a vertical layout.\n- Use switch for a single on or off setting."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves focus to the selected option only (roving tabindex). |\n| Arrow Right / Arrow Down | Selects and focuses the next option, wrapping at the end. |\n| Arrow Left / Arrow Up | Selects and focuses the previous option, wrapping at the start. |\n| Home / End | Selects the first or last option. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The toggle is role=\"radiogroup\" labelled by label. Each option is a button with role=\"radio\" and aria-checked.\n- Badges are part of the option text, so the saving is read with the option name.\n- The sliding thumb is aria-hidden.\n- BillingPrice uses del for the old price. The rolling digits come from AnimatedCounter."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- One thumb is measured from the selected option and glides to its x and width on a critically damped spring (0.34s, no bounce).\n- When an option with a badge is selected, the badge takes a faint --billing-accent tint and its text crossfades with a short rise. Every candidate text reserves space, so the badge never changes width.\n- BillingPrice rolls digits to the new amount, fades the old price in from the left, and swaps the period text in place.\n- Reduced motion jumps the thumb and swaps badge text without travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The group is inline-flex and capped at 100% width. Options do not wrap, so keep labels and badges short on phones.\n- Hover color only applies on devices with a fine pointer. Tap highlight is removed on touch."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Only the thumb and badge text animate. One ResizeObserver re-measures the thumb when the group resizes.\n- BillingPrice renders one AnimatedCounter; keep it to a few per page section."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for the monthly or yearly switch above pricing cards. Use segmented-control for general view switching that has nothing to do with price.\n- It is controlled only. Keep the period in state and derive every price from it so all cards update together.\n- Put the concrete saving in activeBadge, and a percentage in badge, so the confirmed number appears once chosen.\n- Recolor the savings note with --billing-accent on any ancestor, for example --billing-accent: var(--accent) in a wrapper's CSS.\n- Use BillingPrice for each card's amount so the digits roll together when the period flips.\n- More than two options work, such as monthly, yearly, and lifetime."
+    }
+  ]
+}

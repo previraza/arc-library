@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A product changelog or release notes page grouped by month.\n- Release notes with type filters such as features, fixes, and improvements.\n- Changelogs that should offer an email subscribe action in the header."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use timeline for a short vertical list of events without filters.\n- Use accordion for plain expandable content that is not dated."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Escape | Cancels the subscribe form and returns to the Subscribe button. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Each entry row is a button with aria-expanded and aria-controls pointing at its detail panel.\n- Filter chips are toggle buttons with aria-pressed, and the visible count is announced in a polite status region.\n- The month nav marks the current month with aria-current, and the scroll area is focusable with an aria-label."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Entries open in place on a spring while the chevron rotates; the month label slides in the scroll direction.\n- The subscribe control morphs from button to form to a drawn check with a short blur crossfade.\n- Reduced motion makes these changes instant."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Below 640px the header stacks, rows move date and type above the text, and the scroller drops from 560px to 520px.\n- Below 480px month counts and the shown count are hidden so the month nav fits on one line.\n- Hover styles apply only on hover-capable fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The feed scrolls inside a fixed-height area; entries are not virtualized, so paginate or load older months on demand.\n- Scroll tracking for the month bar is batched to one requestAnimationFrame, and a ResizeObserver resyncs it on resize."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a product changelog or release notes page.\n- Replace the entries array and the imported sample images with data from your release notes source or CMS.\n- The subscribe submit only changes local state; post the email to your mailing list provider."
+    }
+  ]
+}

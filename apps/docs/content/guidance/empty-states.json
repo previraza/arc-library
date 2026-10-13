@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A reference for no results, offline, inbox zero, and 404 moments with one shared illustration style.\n- Extracting one scene as a richer empty state for a key screen."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use empty-state for a simple empty state with an icon, text, and action.\n- Use onboarding-illustration for first-run screens that teach the product.\n- Use skeleton while content is still loading."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Left / Right | Move between scene tabs (wraps around). |\n| Home / End | Jump to the first or last scene. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Scenes use role=\"tablist\", \"tab\" and \"tabpanel\" with aria-selected and aria-controls.\n- The illustration is a role=\"img\" labelled by the scene; a polite live region reports action results."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Each shape morphs its path to the next scene with slight per-shape delays, and the tab indicator glides with a layoutId.\n- Reduced motion swaps scenes with a short fade and no morph."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The block is a container query root; from a 560px container the title steps up a size.\n- Pointer parallax only turns on for hover-capable fine pointers, so touch devices get a still illustration."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Shape morphs run on a small requestAnimationFrame loop that stops as soon as every shape settles.\n- A ResizeObserver springs the copy height when scenes change."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use as a reference for no results, offline, inbox zero or 404 moments; usually you extract one scene rather than ship the tabbed gallery.\n- Actions (clear filters, retry, refresh, search) are simulated; wire them to your real handlers.\n- For a single simple empty state, prefer the empty-state component."
+    }
+  ]
+}

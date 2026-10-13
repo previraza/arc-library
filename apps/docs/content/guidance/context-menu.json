@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Secondary actions on a file, card, or row where a visible menu button would add clutter.\n- Desktop-style right-click menus that also open from the keyboard with Shift+F10 or the ContextMenu key.\n- Short flat lists of item actions with one destructive option."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use dropdown-menu when the actions deserve a visible trigger.\n- Use swipe-actions for touch-first lists like an inbox.\n- Avoid it on targets that need their own click action, since a plain click on the target also opens the menu."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ContextMenu / Shift+F10 | Opens the menu under the focused target. |\n| ArrowDown / ArrowUp | Moves between enabled items, wrapping at the ends. |\n| Home / End | Jumps to the first or last enabled item. |\n| Enter / Space | Selects the focused item and closes the menu. |\n| Escape | Closes the menu and returns focus to the target. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The target is focusable with aria-haspopup=\"menu\" and aria-expanded; the menu has role=\"menu\" and items role=\"menuitem\".\n- Opening focuses the first enabled item; closing returns focus to the target.\n- Items without an icon show a check when checked, but checked state is not exposed to assistive tech, so say it in the label if it matters."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The menu grows from the pointer on a snappy spring, even when clamped away from a viewport edge; reopening fades the old one out in place.\n- A shared highlight glides between rows for the pointer and jumps for the keyboard.\n- Reduced motion drops the scale and glide and uses a short opacity fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The menu is clamped 8px inside the viewport and capped at the viewport width minus 16px, with a max height of 300px and scrolling beyond that.\n- On touch, a tap on the target opens the menu under it, so it works without a right mouse button.\n- The menu closes on any scroll or resize instead of repositioning."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The menu mounts only while open and is positioned once from the pointer, with no scroll tracking loop.\n- Items are plain buttons with one shared highlight element; there is no virtualization, so keep the list short."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for secondary actions on a content object (file, card, row) where a visible menu button would add clutter. Use dropdown-menu when the commands deserve a visible trigger.\n- A plain click on the target also opens the menu, so do not wrap targets that need their own click action.\n- The menu closes on scroll, resize, and outside press; keep items to a short flat list."
+    }
+  ]
+}

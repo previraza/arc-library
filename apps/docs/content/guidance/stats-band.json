@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Marketing pages that back a claim with a few numbers.\n- About and investor pages with headline metrics."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Live product metrics with trends. Use Metric card or Metrics dashboard.\n- More than four numbers. Split them or use a table."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Stats are a description list: the label is the term, the number, detail, and context are its descriptions. Screen readers get both the detail and the context line.\n- Stats with a context line are focusable, so keyboard and touch users reveal it too. Visuals are decorative and aria-hidden; the copy carries the meaning.\n- Screen readers get the final formatted value once; the counting digits are aria-hidden.\n- The section is labelled by the title or, without one, by \"Key numbers\"."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Each number counts from zero with a strong ease out over 1.6s, staggered 90ms per stat, the first time the band is half in view.\n- Digits are tabular and the final value reserves the width underneath, so nothing shifts while counting.\n- Stats rise 8px and fade in; in the divided layout the top and bottom rules draw across and the hairlines grow between stats.\n- Once a number has mostly landed, its visual draws in: the sparkline and map wipe in from the left, bars grow from the baseline in a short sweep, and the trend end dot settles last.\n- Hover or focus cross-fades the detail line to the context line and gives that stat's visual the accent; the others stay neutral.\n- Reduced motion shows final values, lines, and visuals at once."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- One row of up to four stats, two columns below 760px container width, one column below 420px.\n- Dividers reflow with the grid: vertical between neighbours, horizontal between rows.\n- Number size scales with container width between 36px and 72px."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Counting writes text straight to the DOM from one Motion tween per stat; React does not rerender per frame.\n- One IntersectionObserver for the band, disconnected after the first view."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use three or four stats with specific, verifiable numbers. Round numbers read as made up.\n- Put units in suffix (%, ms, +, /5) so they render smaller and muted beside the number. Use notation: \"compact\" for large counts; it counts within its final unit.\n- Give each stat a visual that proves the number, and a context line that compares it (up from, down from, p95). Leave both out for a plain numbers band.\n- Place it under a hero or between a features section and testimonials.\n- Edit stats-band-data.ts to replace the sample numbers."
+    }
+  ]
+}

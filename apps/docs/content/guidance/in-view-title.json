@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Section headings that should animate once they scroll into view.\n- Feature pages where each section title needs a consistent entrance style.\n- Headings that should replay on each entry, via once={false}."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use text-reveal for hero copy that animates on load.\n- Use scroll-highlight for a paragraph that follows scroll progress.\n- Use text-shimmer for status lines, not headings."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The heading carries aria-label with the full text; the animated parts are aria-hidden.\n- Titles already scrolled past show immediately, and server-rendered titles appear on their own if scripts are slow.\n- Choose as to match the page's heading outline."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Triggers when 45% of the title is visible. Opacity leads, blur clears next, and the transform settles last, so text is readable before it fully arrives.\n- Hiding (with once={false}) is a quick fade with no stagger.\n- Reduced motion shows the title instantly with no transform, blur, or mask."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Word, blur, and tracking variants wrap naturally at any width.\n- The line variant uses your explicit lines, which do not rewrap, so keep each line short enough for mobile."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One IntersectionObserver per title via useInView, triggering at 45% visibility.\n- Each word or line is a motion span with blur and transform; fine for headings, not for long body text."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Default choice for section headings that should animate on scroll. Use text-reveal for on-load hero copy and scroll-highlight for a key paragraph.\n- Pass lines only with variant=\"line\"; the other variants split on words."
+    }
+  ]
+}

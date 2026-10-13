@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- App-wide command search opened with Cmd or Ctrl plus K.\n- Jumping to pages, creating items, and running actions from one input.\n- Inline search panels that group results with shortcuts."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use combobox to pick a value inside a form.\n- Use dropdown-menu for a short list of actions.\n- Use expanding-search or search-field to search page content."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Cmd/Ctrl + K | Focuses the search input from anywhere on the page. |\n| ArrowDown / ArrowUp | Moves the active result. |\n| Home / End | Jumps to the first or last result. |\n| Enter | Runs the active result. |\n| Escape | Clears the query, or calls onClose when it is already empty. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The input is a combobox with aria-controls and aria-activedescendant pointing at the listbox option, so focus never leaves the input.\n- Results are role=option buttons with aria-selected, grouped in labelled role=group containers.\n- It renders inline, not in a modal. Put it in a dialog yourself if it should trap focus and close on outside click."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The panel rises in on a spring; the results frame springs to the list height as the query filters.\n- Remaining rows glide into place when the shift is small and snap when it is a long jump; the highlight springs for pointer moves and slides in 70ms for arrow keys.\n- Reduced motion removes the entrance, glides, and highlight travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- It fills its container width; below 480px shortcut hints are hidden and padding tightens.\n- Below 340px the footer drops its last hint.\n- Results scroll inside a 342px maximum height, and long labels ellipsize."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Filtering is a simple substring match over label, description, group, and keywords on every keystroke.\n- Rows are not virtualized and animate with layout; keep lists to a few hundred items or filter on the server."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for app-wide command search. For picking a value inside a form use combobox; for a small list of actions use dropdown-menu.\n- Wrap it in dialog and pass onClose to close the dialog; map onSelect to your router or action handlers by item.id."
+    }
+  ]
+}

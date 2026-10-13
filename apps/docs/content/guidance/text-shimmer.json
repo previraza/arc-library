@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- AI thinking or loading labels such as Generating summary.\n- Short status lines that should show ongoing work and settle when done."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use text-stream for the response text itself.\n- Use skeleton for content placeholders and progress for measurable progress."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Sets aria-busy while active; the text itself stays real, readable text.\n- Announce completion from your own aria-live region; the component does not."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- A bell-shaped highlight band in the current text color sweeps linearly over a muted base, pausing briefly between passes.\n- The sweep only runs while active, in view, and the page is visible; a paused band resumes where it stopped. A changed label rises in with a soft blur.\n- Reduced motion stops the sweep and swaps labels with a plain fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Keeps max-width 100%, but the band is tuned for one short line, so avoid wrapping text.\n- In forced-colors mode the gradient is removed and the text renders in the system color."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The sweep runs only while active, within 64px of the viewport, and while the page is visible.\n- It animates a background-clip gradient on one element, with no per-letter spans."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for AI thinking or loading labels. Pair with text-stream for the response itself, and use skeleton or progress for content placeholders.\n- Flip active to false when work finishes instead of unmounting, so the text settles smoothly."
+    }
+  ]
+}

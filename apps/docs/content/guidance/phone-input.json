@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Sign up, checkout, and contact forms that need a phone number in E.164.\n- International audiences where the country and calling code must be clear.\n- Two factor setup before sending an SMS code."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use input with type=\"tel\" when you only store free text and never dial or text the number.\n- Use otp-input for the verification code itself.\n- Use a full metadata library if you need carrier or number type validation beyond length."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| + (in the number) | Opens the picker with a calling code search. |\n| ArrowDown / ArrowUp (on the country button) | Opens the picker. |\n| Any letter (on the country button) | Opens the picker searching for that letter. |\n| ArrowDown / ArrowUp / PageDown / PageUp | Moves through countries while searching. |\n| Home / End | First or last country when the search is empty. |\n| Enter | Picks the highlighted country and returns to the number. |\n| Escape | Closes the picker and returns to the country button. |\n| Backspace / Delete | Over a separator, deletes the digit beside it. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The search is a combobox with aria-activedescendant over a listbox of options grouped into Suggested and All countries.\n- The country button reads \"Country, <name> +<code>\"; picks, pasted country changes, and result counts are announced politely.\n- The number input is type=\"tel\" with autocomplete=\"tel\"; errors are linked with aria-describedby and shown with role=\"alert\" after blur.\n- A valid number is announced as \"Valid <country> number\" while a check appears."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- One surface springs its width, height, and corner radius from the country button into the list, and back when closing.\n- The flag and code roll in the direction of the list when the country changes; the highlight glides between rows.\n- Messages open on a height spring with a small rise and blur; the valid check pops in.\n- Reduced motion jumps the surface to size and replaces rolls, blurs, and glides with short fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The open list is as wide as the field up to 340px, measured with a ResizeObserver, so it fits phones without covering the page.\n- The number input uses inputMode=\"tel\" for the phone keypad; hover styles apply only on fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The country table is about 50 entries inline, with no network request; search filters it on each keystroke.\n- The morph animates width and height on one element; keep one picker open at a time."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Store the E.164 value; format it for display with formatPhoneNumber. details.valid tells you when the length matches the country.\n- Validation checks length per country only; confirm ownership with an OTP step (otp-input) when it matters.\n- Pasted or autofilled international numbers choose their own country, and +1 splits into Canada by area code.\n- Restrict countries with countries and pin the likely ones with preferredCountries; the table ships inline with no metadata download."
+    }
+  ]
+}

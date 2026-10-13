@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Choices where each option needs a description, price, or estimate to decide.\n- Plan, shipping, region, or size pickers inside checkout and setup flows.\n- Options that may be unavailable and need a visible reason."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use radio-group for short text-only options.\n- Use segmented-control for two to four view modes that switch content instantly.\n- Use select or combobox for long lists."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Focuses the selected card, or the first enabled one. One tab stop for the group. |\n| Arrow keys | Move to the next or previous enabled card and select it, wrapping. Left and right flip in RTL. |\n| Home / End | Select the first or last enabled card. |\n| Enter / Space | Selects the focused card. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- role=\"radiogroup\" with role=\"radio\" cards, aria-checked, and aria-disabled; give the group an aria-label or aria-labelledby.\n- Each card is labelled by its label and described by its description, or by disabledReason when disabled.\n- Selection is shown by a ring and a filled indicator dot, not color alone."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- One ring springs to the selected card's box and its size; resizes snap it without replaying the glide.\n- The indicator dot scales in on the snappy spring.\n- Reduced motion jumps the ring and dot to their final state."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The grid uses auto-fill columns with a minimum of minColumnWidth, so it drops to one column in narrow containers.\n- List layout keeps the indicator, text, and meta on one row and truncates nothing; long descriptions wrap."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One ResizeObserver on the group keeps the ring aligned; the ring moves with motion values without re-rendering cards."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for three to six options that each need a description or price: plans, shipping speeds, regions, instance sizes.\n- Pass name to submit with a native form; the value is carried by a hidden input.\n- Use disabledReason to explain why an option is unavailable instead of hiding it."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Settings pages where people remap keyboard shortcuts.\n- A keyboard shortcut cheatsheet or help dialog, with ShortcutList.\n- Inline key hints in menus, tooltips, and docs, with ShortcutKbd or ShortcutKeys."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use ShortcutKbd alone when shortcuts are fixed and only need to be shown.\n- Use command-palette to let people run actions by name rather than bind keys.\n- Avoid it on touch-only products where no hardware keyboard is expected."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Starts recording. |\n| Any combination (while recording) | Records it; held modifiers show as caps as you build the chord. |\n| Escape (while recording) | Cancels recording. |\n| Backspace / Delete | Clears the shortcut, while recording or while the field has focus. |\n| Tab (while recording) | Stops recording and moves on without recording Tab. |\n| Escape (in list search) | Clears the ShortcutList search. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The recorder is a button with aria-pressed while recording, named by the label plus the spoken shortcut, such as \"Command Shift K\".\n- Recording, results, conflicts, and clears are announced through a polite live region; the message row is linked with aria-describedby.\n- Key caps are aria-hidden inside the recorder; ShortcutKeys uses role=\"img\" with a spoken aria-label.\n- Conflicts offer Use anyway and Cancel as real buttons, and focus returns to the recorder after either."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Caps pop in with a small scale and blur, staggered when a finished shortcut settles, and slide on a snappy layout spring as the chord changes.\n- A recording dot pulses; the message row opens on a height spring.\n- In ShortcutList, groups and rows collapse on a height spring as search filters them.\n- Reduced motion removes the scale, stagger, layout slide, and height springs; caps and messages fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- ShortcutList is a container with a query at 520px that puts groups in two columns; below that they stack.\n- The recorder keeps a fixed height and caps wrap within it; hover styles apply only on fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- usePressedKeys adds window keydown and keyup listeners only while enabled; turn off highlightPressed for lists that do not need it.\n- ShortcutList filters on every keystroke by building token strings per row; it suits lists of a few hundred shortcuts."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Store shortcuts as normalized strings with mod (\"mod+shift+k\"); they read as ⌘ on Mac and Ctrl elsewhere without a second binding.\n- Run bound actions with matchesShortcut in a keydown listener; it compares physical keys, so ⌥K matches \"alt+k\" rather than \"˚\".\n- Pass every existing binding in bindings, and use details.replaced from onValueChange to unbind the old owner after Use anyway.\n- Use ShortcutList for a help sheet and ShortcutKbd for inline hints such as in menus or command-palette rows."
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Status words that change a few letters at a time, such as Follow and Following.\n- Custom buttons or badges that need a morphing label without the rest of the button.\n- Inline counters or short state labels that should glide instead of jump."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use word-rotate for a sentence with one cycling word.\n- Use button or action-swap when you want the morph plus button behaviour.\n- Avoid it for text that wraps, since it always renders a single line."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The plain label is in a visually hidden span; the animated glyphs are aria-hidden.\n- It does not announce changes. Wrap it in your own aria-live region if a status change must be announced."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Letters are matched by character and occurrence, so shared letters glide to their new positions on a spring while new letters stagger in with a blur.\n- The frame width springs to the new label; font loading or resizes follow immediately without animating.\n- Reduced motion swaps the label and width instantly."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The frame width springs to each label, and a ResizeObserver follows font loading and container resizes without animating.\n- The label never wraps, so keep it short in narrow layouts."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Every character is a motion span with layout animation; keep labels to a few words."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for status words that change a few letters at a time (Follow / Following, Save / Saved). For a sentence with a cycling word use word-rotate.\n- Keep labels to one short line; it never wraps."
+    }
+  ]
+}

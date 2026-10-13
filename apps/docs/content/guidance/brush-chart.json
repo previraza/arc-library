@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Product analytics with a year or more of daily data.\n- Incident reviews where events need to be read against a metric.\n- Any chart where people ask to zoom into a stretch without losing context."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use line-chart for a few weeks of data or several series.\n- Use sparkline for a small inline trend without interaction.\n- Avoid it for data that dips below zero or needs a log scale."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight (plot) | Moves the crosshair between points in view. |\n| ArrowLeft / ArrowRight (window) | Pans by a tenth of the window; Shift or PageUp and PageDown pan by half. |\n| + / - (window) | Zooms in or out around the window's centre. |\n| ArrowLeft / ArrowRight (handles) | Moves that edge by one point; Shift moves by ten. |\n| Home / End | Moves the window or edge to the start or end. |\n| Escape / 0 | Resets the window to the whole series. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The window and both handles are sliders with dates as aria-valuetext.\n- The plot is a focusable group; each reading is announced with its date, value, and any event on that day.\n- A visually hidden table lists every point in the window with its event.\n- Event markers pair the second series hue with a text label or tooltip; they never rely on color alone."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The line draws in from the left once, the first time it is seen.\n- Dragging tracks the pointer 1:1; presets, resets, and controlled changes glide the window on a spring.\n- The value axis springs to the tallest point in view, and the raw line crossfades with the smoothed trend as density changes.\n- Reduced motion places the window directly and keeps the crosshair without travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Both charts fill their container; date ticks pick days, weeks, months, or years to fit the width.\n- Handles have a 28 by 44px hit area for touch, and the strip keeps vertical page scroll free.\n- Event labels are placed left to right and skip themselves when they would collide."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Past two points per pixel, each pixel column keeps only its low and high, so spikes survive and paths stay small.\n- The overview path is built once per width; the rolling average is computed once per data change.\n- Window moves re-render one component; a few thousand points stay smooth."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for long daily or hourly series where people need both the whole history and a close look.\n- Control range to sync presets (30D, 90D, 1Y) or other charts with the window.\n- Use annotations for launches, incidents, and pricing changes; keep labels to a word or two.\n- The value axis starts at zero, so it suits counts and totals rather than prices that hover far from zero."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- One-line labels on icon-only buttons in toolbars.\n- Revealing the full text of truncated labels on hover or focus.\n- Dense toolbars where moving between icons should show labels instantly after the first one."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use popover for anything with links or controls inside.\n- Use hover-card for rich previews such as a person or link.\n- Avoid it for information people must see on touch devices, where hover does not exist."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Focusing the trigger opens the tooltip. |\n| Escape | Closes the tooltip. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Radix links the content to the trigger with aria-describedby and renders role=\"tooltip\".\n- Content is supplemental: icon-only triggers still need their own aria-label.\n- Do not put interactive elements inside; use popover instead."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Opens after 250ms with a 3px rise from 0.97 scale; within 300ms of another tooltip it opens instantly with a fade only.\n- Changing string content rises in with a blur while the bubble springs to the new size.\n- Reduced motion removes the transform and keeps a 90ms opacity fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The bubble caps at 15rem and wraps longer text; Radix flips it to the other side near viewport edges.\n- It opens on hover and keyboard focus, so touch users rarely see it; never hide essential information in one."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Each tooltip brings its own provider and mounts content in a portal only while open.\n- A ResizeObserver measures the text only to spring the bubble size when content changes while open."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for one-line labels on icon buttons and truncated text. Use hover-card for rich previews and popover for anything interactive.\n- Each Tooltip brings its own provider; no app-level wrapper is needed."
+    }
+  ]
+}

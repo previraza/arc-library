@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Filtering a visible list or table in place.\n- Toolbar search where the query should be clearable with one click."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use expanding-search for compact header search with results.\n- Use combobox when the search sets a form value.\n- Use filter-toolbar when search sits with other filters and sort."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Escape | Clears the field (native type=\"search\" behavior in most browsers). |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Native input type=\"search\" with a real label.\n- Clear button is labelled \"Clear search\" and returns focus to the input.\n- The search icon is aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The clear button scales in from 0.8 with a slight blur on a snappy spring and presses to 0.96.\n- Reduced motion fades it in and out without scale or blur; the reserved slot keeps the field width fixed either way."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The clear button has a reserved slot, so the field width never shifts when it appears.\n- It fills its column with min-width 0 and shrinks inside narrow toolbars."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- onValueChange fires on every keystroke; debounce expensive filtering or fetching yourself."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use to filter a visible list in place. Use expanding-search for a compact header search with results, and combobox to choose a value.\n- Always controlled: pass value and onValueChange, and debounce expensive filtering yourself."
+    }
+  ]
+}

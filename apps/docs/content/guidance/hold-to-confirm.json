@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Destructive actions like delete or revoke where the consequence is already visible on screen.\n- Replacing a confirm dialog with a deliberate press in compact settings rows.\n- Actions that should not fire on an accidental tap on touch devices."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use dialog when people need to read what will happen before confirming.\n- Use button or action-button for safe, easily undone actions.\n- Use swipe-actions for delete in touch lists."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Space / Enter (hold) | Fills the button; releasing early rewinds it. |\n| Tab away | Cancels an active hold. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- aria-describedby points to a hidden hint: \"Press and hold for N seconds to confirm. With a keyboard, hold Space or Enter.\"\n- aria-label tracks the visible label; a role=\"status\" region announces confirmedLabel.\n- Once done the button sets aria-disabled; the text is drawn twice so it changes color exactly at the fill edge."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The fill advances on a linear timeline while held, rewinds on a smooth spring when released, and resumes from where it was on a quick re-press.\n- The button presses to about 0.97; on completion the label morphs, the width springs, and a check draws itself in. Touch devices get a short vibration.\n- Reduced motion drops the press scale and rewind spring and swaps label and icon with a fade; the fill still tracks the hold."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Uses pointer events with capture, so mouse, pen, and touch holds all work; sliding more than 24px off the button cancels the hold.\n- Touch holds trigger a short vibration on completion where the device supports it.\n- Keyboard users hold Space or Enter, and a hidden hint explains the duration."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The fill runs on a single linear motion animation, not a React state update per frame.\n- The label is drawn twice to change color at the fill edge; a ResizeObserver handles the width spring on completion."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for destructive or hard-to-undo actions when the consequence is already visible on screen. Use dialog when people need to read what will happen first.\n- Write the label as an instruction (\"Hold to …\"); pass confirmed to reset it after an undo or a failed request.\n- Pair with onHoldChange to show a nearby hint while the press is held."
+    }
+  ]
+}

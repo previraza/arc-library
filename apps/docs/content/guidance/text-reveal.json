@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Above-the-fold hero headlines that animate on page load.\n- Landing page intros where text must appear on first paint even if scripts are slow."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use in-view-title for section titles further down the page.\n- Use scroll-highlight for a key paragraph that reveals with scroll.\n- Use word-rotate when one word in the headline should cycle."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The full text sits in a visually hidden span; the animated words are aria-hidden, so screen readers read one clean sentence.\n- Line breaks are read as spaces.\n- Pick the heading level with as so the page outline stays correct."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Words rise out of a clip and sharpen from blur on a per-word stagger; total stagger is capped so long text never drags.\n- The entrance is pure CSS, so text is never left hidden when scripts load slowly.\n- Reduced motion drops the clip and rise and fades the words in quickly."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The element caps at 24ch with balanced wrapping, so lines stay even on any width.\n- Use \\n only for breaks that work on every width, since forced breaks apply on mobile too."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Pure CSS keyframes, no JavaScript animation or observers.\n- Total stagger is capped, so long text does not lengthen the entrance; each word still gets its own blur filter."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for above-the-fold headlines that should animate on page load. For titles further down the page use in-view-title; for body copy worth slowing down on use scroll-highlight.\n- It plays once per mount. Change the element's key to replay it."
+    }
+  ]
+}

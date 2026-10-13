@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Seasonal or categorical distributions such as temperatures by month or response times by region.\n- Showing where two groups differ in shape, such as bimodal winters."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use beeswarm when each individual observation matters.\n- Use bar-chart when only one summary number per group matters."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowUp / ArrowDown | Lifts the previous or next ridge. |\n| ArrowLeft / ArrowRight | Moves the reading cursor along the values by one axis step. |\n| Home / End | Lifts the first or last ridge. |\n| Escape | Lowers the ridge and clears the reading. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The plot is a focusable group; the lifted ridge's median, middle half, range, and count are announced through a polite live region.\n- A visually hidden table lists median, quartiles, extremes, and count for every series.\n- Every row is labelled in text; the median tint is backed by the table and tooltip."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Curves are sampled on a shared grid, so a new dataset or domain interpolates every point: ridges swell, slide, and split in one spring.\n- The first reveal rolls the ridges in from the top row down.\n- The lifted ridge is a copy drawn above the others that rises 6px on a spring, with its middle half shaded and its median marked.\n- The tooltip glides after the pointer and stays inside the chart. Reduced motion draws final shapes immediately."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Label gutter and tick count adapt to width; the plot redraws at the measured size so strokes stay crisp.\n- Touch taps lift a ridge and read at the tapped value."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Densities are computed once per dataset (96 samples per ridge); animation interpolates arrays and writes path strings directly.\n- Suitable for up to a few thousand observations per series."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it to compare the shape of many distributions: spread, skew, and bimodality, not just averages.\n- Pass raw observations, at least 20 per series, and fix domain when switching datasets so shapes move on a still axis.\n- Keep rows to about 20; beyond that, use small multiples or a box plot.\n- Colors come from the shared --series-1 to --series-4 tokens in foundation.css: series 1 is the accent itself and series 2 to 4 rotate its hue, validated all-pairs for color vision deficiency across every accent in light and dark. Override the tokens on any ancestor to rebrand."
+    }
+  ]
+}

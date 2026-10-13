@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Comments, notes, and posts where people expect markdown shortcuts and a selection toolbar.\n- Forms that need Markdown or clean HTML out without pulling in a full editor framework.\n- Short to medium documents with headings, lists, quotes, and code blocks."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use textarea for plain text, or mention-input when the only rich part is tagging people.\n- Use inline-edit for a single line edited in place.\n- Use code-block to display code, not to write prose."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Cmd/Ctrl+B | Toggles bold. |\n| Cmd/Ctrl+I | Toggles italic. |\n| Cmd/Ctrl+Shift+X | Toggles strikethrough. |\n| Cmd/Ctrl+E | Toggles inline code within one block. |\n| Cmd/Ctrl+K | Opens the link field for the selection or the link under the caret. |\n| Cmd/Ctrl+Z / Cmd/Ctrl+Shift+Z / Cmd/Ctrl+Y | Undo and redo in the editor's own history. Underline (Cmd/Ctrl+U) is blocked. |\n| / | After a space or at line start, opens the block menu. Type to filter; Arrow Up and Down move, Enter or Tab chooses, Escape closes. |\n| Tab / Shift+Tab | Indents or outdents a list item; in a code block Tab inserts two spaces. |\n| Enter / Shift+Enter | New block or a line break. Enter on an empty list item or quote leaves it; two Enters at the end of a code block exit it. |\n| Backspace | At the start of a heading, quote, code block, or list item, turns it back into a paragraph or outdents it; after a divider, removes the divider. |\n| Alt+F10 | Moves focus into the floating toolbar while it is open. Arrow Left and Right move between buttons; Escape returns to the text. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The editing surface has role textbox with aria-multiline and aria-label, and aria-readonly when read-only.\n- The slash menu is a listbox wired to the textbox with aria-controls and aria-activedescendant.\n- The floating toolbar has role toolbar with toggle buttons using aria-pressed; titles show shortcuts.\n- A polite live region announces Formatted, Link added, Undone, and similar results.\n- Toolbar buttons prevent mousedown so the text selection survives clicks."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The toolbar glides with the selection and its surface springs between the formatting face and the link face, which slide and blur across each other.\n- The slash menu pops from the slash, its highlight glides between rows, and its height springs as results filter.\n- Reduced motion jumps the toolbar position and size, crossfades the faces, and fades menus without scale or offset."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The root is an inline-size container; under 330px wide the toolbar hides its heading and quote buttons and keeps the inline marks.\n- The toolbar and slash menu flip above or below based on the nearest scrolling or clipping ancestor, and the toolbar is clamped inside the editor width.\n- Enter, Backspace, and undo go through beforeinput, so mobile keyboards and IME composition behave the same as hardware keys."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Each selection change is batched to one requestAnimationFrame; each edit clones the DOM once to produce HTML, Markdown, and text for onChange.\n- Undo keeps up to 300 HTML snapshots, merging typing within one second; very long documents make each snapshot and the per-edit clone more costly.\n- No editor framework: only motion and lucide-react icons ship with it."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for comments, notes, posts, and descriptions that need headings, lists, quotes, code, and links. Use textarea for plain text and mention-input when the only structure is @ mentions.\n- Store onChange markdown or html; both are clean. The value prop is HTML and only rewrites the DOM when it differs from the last emitted HTML, so feeding onChange html back is safe.\n- Supported blocks are p, h1 to h3, ul, ol, blockquote, pre, and hr; inline marks are strong, em, s, code, and a. Images, tables, and underline are not supported.\n- Paste runs through sanitizeHtml, and markdown-looking plain text is converted, so content from docs and other editors stays tidy.\n- Build your own undo buttons with onHistoryChange and ref.undo and ref.redo."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Theme editors and brand settings where users choose an exact color.\n- Design tools that need hex, RGB, HSL, and OKLCH input plus opacity.\n- Any color choice where contrast against a background should be visible while picking."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use segmented-control or radio-group when the choice is between a few fixed colors.\n- Use input for a plain hex field with no visual picking.\n- Use chip-group for tagging items with a small preset palette."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Arrow keys | Move the saturation and brightness thumb in 2D, or the focused hue or opacity slider; Shift takes steps of ten. |\n| PageUp / PageDown | Step a slider by ten. |\n| Home / End | Move a slider to its minimum or maximum; in the swatch row, jump to the first or last swatch. |\n| Enter | Applies the typed value in the text field; an invalid value shakes the field and shows an error. |\n| Alt + ArrowLeft / ArrowRight | Moves the focused swatch. |\n| Delete / Backspace | Removes the focused swatch. |\n| Escape | Discards a typed draft first, then closes the panel and returns focus to the trigger. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The trigger has aria-haspopup=\"dialog\" and aria-expanded; the panel is a labelled dialog that turns inert while closing.\n- The area thumb is a role=\"slider\" with aria-roledescription=\"2D slider\" and a value text naming saturation and brightness; hue and opacity are sliders with degree and percent value texts.\n- The text field sets aria-invalid and points to a polite error message; the contrast ratio and its WCAG grade are also written out for screen readers.\n- Saved swatches are a horizontal listbox with a roving tabindex, aria-selected on the current color, and labels that explain move and delete."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The panel grows out of the swatch with an animated clip-path inset on a spring, and its drop shadow follows the clipped shape.\n- Thumbs chase the pointer on a quick spring with slight bounce, and the contrast ratio counts to its new value.\n- The format button morphs the text between hex, RGB, HSL, and OKLCH with text-morph; swatches pop in and reorder with layout springs.\n- Reduced motion jumps the thumbs, fades the panel instead of clipping it, and skips the format morph and shake."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The panel is min(19rem, 100vw - 32px) wide and opens down and to the right of the swatch, so leave room there.\n- Below 360px viewport width the \"against background\" caption hides to keep the contrast row on one line.\n- The area and sliders use touch-action: none with pointer capture, so dragging on touch never scrolls the page."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Colors are converted in plain math (HSV, HSL, OKLCH) with no color library.\n- The panel mounts only while open, and a ResizeObserver measures it for the clip-path animation.\n- Thumbs animate motion values, so dragging does not re-render the slider tracks."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for picking a single brand or theme color with an alpha channel. onValueChange always returns hex; parse it elsewhere if you need another format.\n- Pass the real surface color as background so the contrast readout reflects where the color will be used.\n- The eyedropper button appears only where window.EyeDropper exists (Chromium desktop).\n- Imports TextMorph from the Arc text-morph component, so install that alongside it."
+    }
+  ]
+}

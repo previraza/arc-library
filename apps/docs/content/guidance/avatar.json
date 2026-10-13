@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Showing one person next to their name, comment, or record.\n- Presence in a header or list, via the online or offline status dot.\n- Places where a photo may be missing and initials should stand in."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use avatar-group for several people with an overflow count.\n- Use user-menu when the avatar is the trigger for account actions."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The root is role=\"img\" with an aria-label of the name plus status, such as \"Maya Chen, online\".\n- The image and initials are decorative, so the name is read once.\n- The status dot is hidden from assistive tech; the label carries the state."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- A photo still loading fades in from a soft blur; a cached one shows at once.\n- The status dot pops in and out on a snappy spring.\n- Reduced motion swaps the dot instantly and drops the image fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Size is fixed by the size prop, from 28px to 88px, and never changes by breakpoint.\n- It passes a sizes hint per size, so with next/image (through ArcProvider) phones never download a larger photo than the circle shows."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The photo is a plain lazy img by default. Pass next/image through ArcProvider to optimize it; remote hosts then need next.config images settings.\n- A cached photo shows at once; only a still-loading photo runs the short blur fade."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a single person. For a row of people with an overflow count use avatar-group.\n- Renders a plain img, so any host works in any React app. To use next/image or your own image component, wrap the app once in ArcProvider from @/components/arc/lib/arc-provider: <ArcProvider image={Image}>. With next/image, remote hosts must be allowed in next.config images."
+    }
+  ]
+}

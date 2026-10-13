@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- One default action with a few close variants, like Merge with Squash and Rebase.\n- Export or share actions where one format is the usual pick and others sit behind the chevron.\n- Copy actions that swap the label to Copied in place while offering alternatives."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use dropdown-menu when there is no default action and every option is equal.\n- Use button when there are no alternatives.\n- Use context-menu for actions tied to a piece of content rather than a toolbar."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Runs the main action, or opens the menu from the chevron. |\n| ArrowDown / ArrowUp | Moves between menu items, looping at the ends. |\n| Escape | Closes the menu and returns focus to the chevron. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Two native buttons; the chevron is labelled \"<label> more actions\".\n- The menu is a Radix DropdownMenu with menu and menuitem roles and focus management.\n- The main label is announced through a polite live region when it changes."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The main label and icon morph in place while its width springs; the menu half never scales, so the menu opens from a still anchor.\n- Menu items fade in with a short stagger.\n- Reduced motion removes the press scale, width spring, and menu transform, leaving a quick opacity fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The menu opens aligned to the end of the button with 12px collision padding, so it stays on screen near viewport edges.\n- The secondary variant sets a 142px minimum on the main half; the pair does not collapse on narrow screens, so give it its own row on mobile."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The main label animates per letter with a ResizeObserver-driven width spring; the menu mounts only while open through a Radix portal."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use when one action is the default and two to five close variants exist. For a menu with no default action use dropdown-menu.\n- Keep the menu actions as variations of the main action; put unrelated commands elsewhere.\n- Swap label and icon (Copy page → Copied) to show the result in place."
+    }
+  ]
+}

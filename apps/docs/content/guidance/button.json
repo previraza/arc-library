@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Any single action on a page, form, or dialog, such as Save, Continue, or Cancel.\n- Actions whose label changes in place, like Save to Saved, where the width should spring instead of jump.\n- Short async work where a spinner on the button is enough feedback, via loading."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use action-button when the button itself should show pending and success states after an async commit.\n- Use split-button when one default action has two to five close variants.\n- Use hold-to-confirm for destructive actions that need more than a single click."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Activates the button. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders a native button, so role and focus come for free.\n- Loading uses aria-busy and aria-disabled instead of disabled, so keyboard focus is not lost mid-action.\n- Icon-only buttons need an aria-label.\n- Disabled primary buttons fade as a whole. Disabled secondary and danger buttons keep their border and take a muted fill and label, and disabled ghost buttons take a muted label, so an unavailable action still reads as a button."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Presses scale to about 0.97 on a snappy spring; icon-sized buttons press slightly deeper.\n- A new label crossfades with a short blur while the width springs to fit.\n- Reduced motion drops the press scale and swaps labels with a plain fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Size is fixed by the size prop; the button never changes layout by breakpoint, so pick lg for primary touch targets.\n- Hover styles apply only on hover-capable fine pointers, so taps on touch screens do not stick in a hover state."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- A ResizeObserver measures the label so the width can spring; one per button is cheap, but avoid hundreds in a long list.\n- Label changes animate opacity, transform, and a small blur only, with no layout thrash beyond the width spring."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Default choice for any single action. Use action-button for dense icon toolbars and split-button when one action has close alternatives.\n- Pass a changing label (Save → Saved) as children to get the width morph for free.\n- Wrap in a Radix trigger with asChild; the press scale turns off automatically for popup anchors."
+    }
+  ]
+}

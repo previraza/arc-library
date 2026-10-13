@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- The top of a project, repository, or record page with breadcrumbs, status, people, and tabs.\n- Detail pages with long content where the header should fold into a compact bar as people scroll.\n- Headers that need a few primary actions plus an overflow menu for the rest."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use tabs and breadcrumb on their own when the page only needs navigation, not status and people.\n- Use workspace-sidebar for app-level navigation between sections.\n- Use settings-page for settings screens that need a section nav rather than a record header."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Arrow keys | Move between tabs (Radix tabs) and through the actions menu, which loops. |\n| Enter / Space | Activates the focused tab or menu item. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Tabs use Radix roles (tab, tabpanel) and the current breadcrumb carries aria-current.\n- The icon-only actions trigger has aria-label=\"More actions\"; disabled items use aria-disabled.\n- A polite role=\"status\" region announces results of Follow, Share, Copy link and Archive."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Past a short scroll threshold the header folds into a compact bar; the tab indicator glides with a shared layoutId and counts roll with Animated counter.\n- Reduced motion swaps springs for fades, uses instant scroll instead of smooth, and keeps widths static."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- A ResizeObserver moves secondary actions into the menu when the action row runs out of room.\n- Below a 560px container the root breadcrumb hides, the tab row scrolls sideways with a faded edge, and below 460px the create button drops to an icon.\n- The header condenses from the scroll of its own inner scroller, not the window, so page content must live inside that scroller."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Scroll handling only compares scrollTop to a 16px threshold, so it re-renders when crossing it, not on every frame.\n- Tab counts roll with Animated counter and the tab indicator uses a shared layoutId; both are cheap at a handful of tabs."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use at the top of a project, repository or record page that scrolls beneath it.\n- The block takes no props: replace the in-file project, people and tab data with your own, or lift them into props.\n- Follow, Share update, Copy link, New issue and Archive are simulated; wire them to your API and the breadcrumbs to your router.\n- Composes Arc Button, Badge, Animated counter, Avatar, Avatar group and Progress."
+    }
+  ]
+}

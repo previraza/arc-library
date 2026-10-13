@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Free-form lists of short values like tags, keywords, or emails.\n- Fields where people add values by pressing Enter or comma."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use multi-select or chip-group when values come from a fixed list.\n- Use input for a single value."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / , | Adds the typed text as a tag. Duplicates (case-insensitive) pulse the existing tag instead. |\n| Backspace | At the start of the input, picks the last tag; pressed again, removes the picked tag. |\n| Delete | Removes the picked tag. |\n| ArrowLeft / ArrowRight | Moves the pick between tags and back to the input. |\n| Escape | Clears the pick. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Each tag has a remove button labelled \"Remove <tag>\".\n- Adds, removals, picks, and duplicates are announced in a polite aria-live region.\n- Blurring the input commits any typed draft as a tag."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- New tags blur and scale in where the text was typed; removed tags leave and the rest glide on the morph spring. The shell follows wrapped rows on a smooth spring.\n- A ring glides between picked tags. Reduced motion removes layout travel, scale, and blur, keeping fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Tags wrap onto new rows and the shell height follows on a spring, so the field never scrolls horizontally.\n- The text input keeps an 80px minimum, dropping to its own row when the last row is full."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Every tag is a motion element with layout position animation; fine for dozens of tags, not hundreds.\n- Two ResizeObservers track the content and message heights."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for free-form values like tags, emails, or keywords. Use multi-select or chip-group when values come from a fixed list.\n- Controlled or uncontrolled. Tags are plain strings; validate or normalize in onValueChange."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Mobile-first secondary tasks such as details, filters, or share options.\n- Content that benefits from a peek height before expanding to nearly full screen.\n- Maps and media views where the sheet should be dragged between detents."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use dialog for interrupting decisions on any screen size.\n- Use drawer for side panels on wide desktop layouts.\n- Use popover for small anchored content that should not dim the page."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowUp / ArrowDown | On the grabber, moves one detent up or down. |\n| Home / End | On the grabber, jumps to the tallest or smallest detent. |\n| Enter / Space | On the grabber, toggles between smallest and tallest detent. |\n| ArrowDown / PageDown / Space | On the sheet, expands to full height first, then scrolls the content. |\n| Escape | Closes the sheet. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Built on Radix Dialog: role=\"dialog\", focus trap, and focus return to the trigger. Initial focus lands on the sheet itself.\n- The grabber is a button with aria-expanded and an Expand or Collapse sheet label.\n- Detent changes are announced through a polite live region.\n- Tabbing into content below the fold expands the sheet so focused elements are visible."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- One motion value drives the sheet: drags follow the finger 1:1, rubber-band past the tallest detent, and releases project velocity to pick a detent or dismiss.\n- The backdrop dim is a function of sheet position, so it tracks drags instead of running on a timer.\n- Reduced motion jumps between detents and fades the sheet in and out."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The sheet is min(100%, 36rem) wide and detents are fractions of the dynamic viewport height, so it adapts to mobile browser chrome.\n- Below 40rem the header and body use tighter side padding.\n- Touch drags on the content move the sheet until it is fully open, then the content scrolls; mouse and pen drag from the header."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One motion value drives position and backdrop, so drags do not re-render React per frame.\n- A ResizeObserver re-fits detents on viewport changes; content is not virtualized, so paginate long lists inside it."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for mobile-first secondary tasks where a peek helps: details, filters, share options. Use dialog for interrupting decisions and drawer for side panels on wide layouts.\n- Pass a trigger or control open yourself. Use a single-value detents array for a fixed-height sheet."
+    }
+  ]
+}

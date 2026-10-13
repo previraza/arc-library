@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Browsable items in a grid, such as projects, listings, or posts.\n- Items that should open into a larger quick look dialog without leaving the page, via details.\n- Content with media, an owner byline, and a status line that updates in place."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use expandable-card for inline disclosure without a dialog.\n- Use stat-card or metric-card for numbers.\n- Use dialog when the content has no card to grow from."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | On the title, opens the quick look when details is set. |\n| Escape | Closes the quick look and returns focus to the title. |\n| Tab | Stays trapped inside the open quick look. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders an article with an h3 title; the quick look uses Radix Dialog with the title and description wired as its label and description.\n- Only the title becomes a button, so nested actions stay separately focusable.\n- Status changes are read through a role=\"status\" region.\n- Give media images alt text or an empty alt when decorative, and an aria-label to icon-only actions."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Hover lifts the card 2px and slowly zooms the media.\n- The quick look shares layout ids with the card, so surface, photo, title, and byline travel on one spring; details fade in after.\n- Reduced motion drops the lift, zoom, and morph, and the dialog simply fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The card fills its grid cell with min-width 0; the quick look panel is min(30rem, 100vw minus a gutter) wide and capped at the viewport height.\n- Hover lift and media zoom run only for a mouse; touch and pen never lift."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The quick look shares layout ids with the card, so the morph animates several elements; the dialog mounts only while open.\n- The overlay uses a 7px backdrop blur, which can cost frames on low-end devices over busy pages."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for browsable items in a grid: projects, listings, posts. Use expandable-card for inline disclosure without a dialog, and stat-card or metric-card for numbers.\n- Add details only when there is real extra content; without it the card is a static article.\n- Keep status short and change it in place to get the rolling update."
+    }
+  ]
+}

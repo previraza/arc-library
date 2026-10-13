@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Showing the changing share of topics, channels, or genres week by week.\n- Storytelling dashboards where the shape of seasonality and spikes is the point.\n- Comparing ranges where a morph between them explains what changed."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use line-chart when exact values or comparisons between series matter.\n- Use bar-chart for a few periods or categories.\n- Avoid it for data with negative values; streams stack magnitudes."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Focuses the plot and reads the latest point. |\n| ArrowLeft / ArrowRight | Moves through time. |\n| ArrowUp / ArrowDown | Moves the isolated layer up or down the stack. |\n| PageUp / PageDown / Home / End | Jumps by a sixth of the range, or to the first or last point. |\n| Escape | Clears the reading. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The plot is a focusable group; each reading is announced with the point, the isolated layer's value, and the total.\n- Legend toggles are buttons with aria-pressed; hovering or focusing one isolates its layer.\n- A visually hidden table lists every point and layer value.\n- Layers are separated by a 2px surface gap and named in place, so identity never rests on shade alone."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The stream swells out of a hairline along its centre the first time it is seen.\n- New data blends every layer on a shared grid, so ranges of different lengths morph without redrawing.\n- Hidden layers thin to nothing while the rest reflow; the crosshair and tooltip glide on springs.\n- Reduced motion jumps to the final shapes and keeps the crosshair and tooltip without travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The plot fills its container; axis labels thin out to one per 72px, counted back from the latest.\n- Direct labels hide where a layer is too thin or the plot too narrow; the tooltip and legend still name it.\n- Touch drags scrub through time with pointer capture while vertical page scroll stays free."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Each layer is resampled once per data change onto 161 points; paint recomputes the baseline and writes paths directly.\n- Hover state re-renders only the tooltip and a few attributes; morphs never re-render React per frame."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for how a mix changes over time when the overall rhythm matters more than exact totals.\n- Put the most important layer first; it runs through the middle of the stream.\n- Use offset=\"zero\" when people need to read totals against a baseline, like a stacked area chart.\n- Keep layers to about eight; fold the rest into Other."
+    }
+  ]
+}

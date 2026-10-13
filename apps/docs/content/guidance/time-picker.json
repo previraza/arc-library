@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Picking a time of day at a fixed interval, such as meetings or reminders.\n- Fields that show 12-hour times but store 24-hour HH:mm values."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use date-picker for dates, pairing the two for a timestamp.\n- Use time-dial for a more tactile, showcase time selection.\n- Use select when only a few named times are allowed."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Opens the list, or selects the active time when open. |\n| ArrowDown / ArrowUp | Opens the list, then moves through times, wrapping. |\n| Escape | Closes the list. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Trigger has aria-haspopup=\"listbox\", aria-expanded, aria-controls, and aria-labelledby combining the label and a hidden value.\n- The menu is role=\"listbox\" with role=\"option\" items carrying aria-selected.\n- The list opens centered on the selected time and scrolls only itself, never the page."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- A later time rises in from below and an earlier one drops from above with a soft blur; the menu springs in from slightly above.\n- Reduced motion crossfades the value and opens the menu with opacity only."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The list spans the field width and caps at 250px, scrolling itself with contained overscroll.\n- It closes on any pointerdown outside the field."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- All options at the chosen step render at once; minuteStep 1 means 1,440 rows, so prefer 5 or more."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for picking a time of day at a fixed interval. Pair with date-picker for a full timestamp.\n- Controlled or uncontrolled; values are always 24-hour \"HH:mm\" strings regardless of display format."
+    }
+  ]
+}

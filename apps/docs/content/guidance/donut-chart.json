@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Traffic by source, spend by category, or storage by file type.\n- A dashboard card where the total and one highlighted share matter most.\n- Switching between datasets, such as this month and last month, with the same categories."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use bar-chart when precise comparison between parts matters or there are many parts.\n- Use gauge or usage-meter for a single value against a limit.\n- Use line-chart for change over time."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowDown / ArrowRight | Moves to the next legend row, looping at the end. |\n| ArrowUp / ArrowLeft | Moves to the previous legend row. |\n| Home / End | Jumps to the first or last row. |\n| Enter / Space | Shows or hides the focused segment; with legendAction select, pins or unpins it. |\n| Escape | Clears the pinned segment. |\n| Arrow keys on the ring | Without a legend the ring takes focus: arrows walk the segments, Enter pins one, and each is announced. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The legend is the keyboard path: each row is a button with aria-pressed (shown, or pinned with legendAction select) and a label giving value, share, and grouped members.\n- Showing or hiding a segment is announced in a polite live region with the new total. Without a legend the ring is focusable and announces each segment as the arrows reach it.\n- The ring and center readout are aria-hidden; a hidden summary and table list every part, including the members of Other.\n- Keyboard focus previews a segment in the ring; hover previews with a mouse only. Pointer focus draws no ring; keyboard focus shows Arc's shared focus ring."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- One sweep the first time the chart scrolls into view: every segment leaves the top together and each trailing edge follows a beat behind the one before.\n- New data and hidden segments morph start and end angles, never paths, from wherever each arc is on screen. Springs keep their velocity, so an interrupted change continues smoothly. Segments keep their order and never remount mid-morph.\n- The active segment slides out along its middle and thickens slightly while the others dim. One pointer handler hit-tests the angle, so crossing a gap never drops the hover.\n- The center readout rolls like a drum toward the active segment with tabular numbers in a fixed cell; totals and shares count to new values.\n- Reduced motion jumps arcs, lifts, and text to their final state."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The figure is a container: at 460px and wider the legend sits beside the ring, below that it stacks under it.\n- The ring scales down from size to fit narrower containers while keeping its aspect ratio.\n- Legend hover styles only apply on hover-capable fine pointers; taps pin a segment."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Arc angles and lifts are motion values; one batched paint per frame writes every path d and transform straight to the DOM, with no React render per frame.\n- Counting numbers write their text directly; center readouts stay mounted, so hovering never mounts or unmounts nodes."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for two to six parts of one whole. With more parts, lean on groupBelow and maxSegments or use bar-chart.\n- Keep keys stable between datasets so arcs morph in place.\n- Leave color out to get the shared --series-1 to --series-4 palette in data order, then neutral steps; a key keeps its color across datasets. Pass colors only when they carry meaning.\n- Legend rows show and hide segments by default; set legendAction to select for the older pin behavior.\n- Drive activeKey from a table or filter to highlight the same category elsewhere."
+    }
+  ]
+}

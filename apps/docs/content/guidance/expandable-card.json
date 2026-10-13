@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A single summary card with optional details, like a plan, order, or log entry.\n- Cards whose summary line updates and should roll changed words in place."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use accordion for a list of mutually exclusive sections.\n- Use card when there is nothing to reveal.\n- Use card-stack for browsing several cards in one spot."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Toggles the card from its header button. |\n| Escape | Closes the card while focus is inside it and returns focus to the header. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The header is a native button with aria-expanded and aria-controls pointing at the panel.\n- The rolling description keeps a screen-reader-only copy of the full text; animated words are aria-hidden.\n- The collapsed panel is inert, so its content is not reachable by keyboard or screen readers while closed."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Open and close are one morph: width and height move together on the smooth spring, which never overshoots, and the arrow turns on the same spring.\n- Details fade in once the box has made room and fade out before it shrinks. They are laid out at their open width throughout, so text never reflows or stretches.\n- Clicking again mid-animation reverses from the current size with its velocity. Changed words in the description rise in; unchanged words hold still.\n- Reduced motion applies end states instantly and swaps the description without animation."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Without width caps the card fills its container. With width and expandedWidth it stays centered and grows sideways to the open cap, never wider than its container, so on a phone it simply uses the full width.\n- The whole header is the toggle with a 64px minimum height, so it is an easy touch target."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The panel stays mounted but inert at zero height when collapsed, so a second click mid-animation reverses smoothly.\n- Width and height are animated for real on one spring rather than scaled, so text and corners never stretch; keep the details short.\n- The description splits into one span per word for the roll; keep it to a short line."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a single standalone expandable summary such as a plan, order, or log entry. Use accordion for a list of mutually exclusive sections.\n- State is internal; there is no controlled prop."
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Pricing toggles, KPI cards, dashboards changing period.\n- Launch moments, raffles, and reveals."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Values that update several times a second.\n- Long sentences; reels are for short values."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The full value is real text in a visually hidden span; the reels are aria-hidden.\n- announce adds a polite live region for values that change without user action."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Each reel spins with a fast start and a long, soft landing that never passes the target.\n- Reels stop one after another left to right; blur follows each reel's speed, so fast spins smear and landings are sharp.\n- A reel's width follows its new character on a critically damped spring, and new characters grow in while removed ones collapse.\n- Leading symbols such as a currency sign stay on their own reels, and separators stay aligned from the end, so 999 to 1,000 only spins digits.\n- Changing the value mid-spin restarts from the cell on screen, keeping its offset, so nothing jumps.\n- Reduced motion swaps values instantly."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- It is inline text and scales with its font size; reels are measured in em."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Each reel is one transform on a motion value; React re-renders only when the value changes.\n- Blur is removed when a reel is still."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use it where a change deserves a beat: prices switching plans, stats changing period, a launch status flipping.\n- Put it inside text you style; it inherits font, size, weight, and color. Digits use tabular numerals.\n- For values that tick every second, use a counter with spins={0} or animated-counter; long spins on every tick get tiring."
+    }
+  ]
+}

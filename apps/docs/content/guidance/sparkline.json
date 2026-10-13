@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A compact trend inside a card, table row, or KPI tile.\n- Small charts people can scrub by pointer or keyboard to read past values."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use bar-chart for comparing discrete periods with axes.\n- Use stat-card or metric-card when only the latest value matters."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight | Moves the cursor one point back or forward (ArrowDown and ArrowUp too). |\n| PageDown / PageUp | Moves about a sixth of the series. |\n| Home / End | Jumps to the first or last point. |\n| Escape | Stops scrubbing and returns to the latest value. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The figure has an aria-label describing the series; the SVG is hidden.\n- When interactive, the plot is a focusable role=\"slider\" whose aria-valuetext reads the point label and value.\n- Pass labels so scrubbed points read as dates rather than positions."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The line draws in on first view and the end dot appears as it lands.\n- While scrubbing, the cursor springs between points, later points dim, and headline copy rolls.\n- Reduced motion shows the full line at once and moves the cursor without springing."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The plot measures its width with a ResizeObserver and redraws to fill its container.\n- Scrubbing uses touch-action pan-y, so a horizontal drag scrubs while vertical swipes still scroll the page.\n- On touch the readout returns to the latest value when the finger lifts."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Each chart has its own ResizeObservers and an in-view draw; set interactive to false in dense tables to drop tab stops and handlers."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a compact trend inside a card or table row. Use bar-chart for comparing discrete periods with axes.\n- Pass value as the formatted latest reading; formatValue should match it so scrubbed values look consistent.\n- Set interactive to false in dense tables to avoid many tab stops."
+    }
+  ]
+}

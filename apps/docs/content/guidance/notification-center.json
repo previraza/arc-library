@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A bell in the app header with an unread badge and an inbox of recent updates.\n- Notifications people can mark read, expand, and dismiss in bulk."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use toast-stack for transient messages that should disappear.\n- Use inbox-triage for a full-page inbox.\n- Use badge for a count without a panel."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Opens the panel from the trigger, toggles a row's details, and activates actions. |\n| Escape | Closes the panel and returns focus to the trigger (Radix Popover). |\n| Tab | Moves through view toggles, rows, and row actions. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The trigger's aria-label includes the unread count; the visual badge is aria-hidden.\n- The summary line is aria-live polite, and outgoing text copies are aria-hidden while they fade.\n- Row toggles use aria-expanded and announce unread state; view toggles use aria-pressed.\n- Focus moves to the next row, or a view toggle, after an item is read, dismissed, or cleared."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The bell tilts when open; counts roll like an odometer in the direction of change.\n- Rows open and collapse their own height on a spring, and bulk actions cascade down the list in under a quarter second.\n- Reduced motion replaces height, roll, and tilt with instant fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The panel is min(424px, 100vw minus 24px) wide and at most min(590px, 100vh minus 24px) tall, with the list scrolling inside.\n- Below 380px padding tightens, the details indent shrinks, and the Mark all read label becomes icon only.\n- Titles and previews ellipsize on one line."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The list is not virtualized and keeps its own copy of the notifications; cap what you pass in.\n- The panel mounts in a portal only while open."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use in an app header for an inbox of updates. Use toast or toast-stack for transient messages and inbox-triage for a full-page inbox.\n- notifications seeds internal state; sync changes back to your server through onReadChange and onDismiss rather than re-passing the array."
+    }
+  ]
+}

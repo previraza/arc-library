@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Loading states for content whose shape is known, like a profile or comment.\n- Swapping a placeholder into real content with a crossfade and height spring."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use progress when you can report a percentage.\n- Use empty-state when loading finished and there is nothing to show.\n- Use text-shimmer for an AI thinking or status line."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The placeholder is role=\"status\" with aria-busy and an aria-label; its shapes are aria-hidden.\n- With children, the wrapper sets aria-busy while loading."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Blocks pulse in a staggered wave, each a beat after the one above.\n- On load the placeholder fades out, content rises 4px into place, and the height springs from placeholder to content.\n- Reduced motion stops the pulse and swaps with short fades and no height animation."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Lines are percentages of the container width, so the placeholder scales with its slot.\n- It only draws text lines and an avatar; build custom shapes for grids or media."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The pulse is a CSS animation that stops under reduced motion.\n- A ResizeObserver springs the height from placeholder to content; avoid hundreds of skeletons at once."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use while fetching content whose shape is known. Use progress when you can report a percentage, and empty-state when there is nothing to show.\n- Wrap the real content as children and drive loading to get the crossfade; without children it renders only the placeholder."
+    }
+  ]
+}

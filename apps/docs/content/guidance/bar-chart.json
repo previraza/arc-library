@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- One measure across days, weeks, or months, with an average line.\n- Charts with a range switch, where stable keys let bars morph between ranges."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use sparkline for a compact trend.\n- Use activity-heatmap for daily rhythm over a year."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight | Moves between bars (ArrowDown and ArrowUp too). |\n| PageDown / PageUp | Moves up to seven bars. |\n| Home / End | Jumps to the first or last bar. |\n| Escape | Stops scrubbing and returns to the average. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The SVG is role=\"img\" with a summary of average, highest, and lowest.\n- A focusable role=\"slider\" scrubber reads each bar as its label and value.\n- A visually hidden table lists every value, and range changes are announced politely."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Bars grow in with a stagger on first view; new ranges morph bars, ticks, and the average line.\n- Scrubbing moves a cursor and rolls the headline value.\n- Reduced motion shows bars at once and swaps values without movement."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The plot measures its width with a ResizeObserver and bars cap at 28px, so wide containers get spacing rather than fat bars.\n- Scrubbing uses touch-action pan-y, so a horizontal drag scrubs while vertical swipes scroll the page."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Bars, ticks, and the average line animate with motion values; one series and many bars per view is the intended load.\n- A visually hidden table renders every value, so very long ranges double the DOM."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for one measure across days, weeks, or months. Use sparkline for a compact trend and activity-heatmap for daily rhythm over a year.\n- Use stable keys such as ISO dates so switching ranges morphs instead of redrawing."
+    }
+  ]
+}

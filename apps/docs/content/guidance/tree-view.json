@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Files, folders, and nested categories people expand and select.\n- Side panels next to code-block or a detail view where selection drives content.\n- Hierarchies that need full keyboard navigation with arrow keys."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use accordion for a few collapsible sections of content.\n- Use breadcrumb to show the path to the current page."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowDown / ArrowUp | Moves to the next or previous visible row. |\n| ArrowRight | Opens a folder, or moves to its first child if open. |\n| ArrowLeft | Closes an open folder, or moves to the parent. |\n| Home / End | Moves to the first or last visible row. |\n| Enter / Space | Selects the row and toggles a folder. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Uses role=\"tree\" and role=\"treeitem\" with aria-level, aria-posinset, aria-setsize, aria-expanded, and aria-selected.\n- Roving tabindex keeps one row in the tab order.\n- Icons, chevrons, and branch lines are aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Opening a folder grows the space and staggers its children in; closing collapses rows smoothly.\n- The selection highlight glides between rows and the chevron rotates on a snappy spring.\n- Reduced motion shows and hides rows instantly."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Rows are a fixed 36px and labels ellipsize, so deep paths clip rather than overflow on narrow panels.\n- Each level indents 18px, so very deep trees lose label space on mobile.\n- Hover highlights apply only on hover-capable fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Every visible row renders with position layout animation; nodes are not virtualized, so keep open folders reasonable.\n- Closed folders do not render their children."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for hierarchical data such as files or nested categories. Use accordion for a few collapsible sections of content.\n- IDs must be unique across the whole tree. Control expandedIds when the open set must persist or sync with routing."
+    }
+  ]
+}

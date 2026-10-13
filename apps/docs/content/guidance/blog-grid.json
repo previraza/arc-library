@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A marketing site blog or journal index.\n- Resource hubs with a few categories and a featured story."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use changelog-page for release notes with versions.\n- Use a data table for large archives that need sorting and search."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves through filters, cards, and pagination. |\n| Enter | Opens the focused post, or picks the focused filter or page. |\n| Space | Picks the focused filter or page. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Filters are buttons with aria-pressed; pagination is a nav with aria-current on the active page.\n- Each card is one link with the title, excerpt and byline as its content, so screen readers announce it once.\n- The reader moves focus to its back button, and closing returns focus to the card you opened.\n- Images carry real alt text; author avatars are decorative."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The filter and page highlights glide on the morph spring.\n- Filtering crossfades the grid with a short rise; paging slides it in the direction of travel.\n- Opening a post morphs the card image into the reader hero, and back on close.\n- Card images zoom 3% on hover (fine pointers only).\n- Reduced motion swaps travel and morphs for plain fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Three columns above 900px, two to 540px, then one.\n- The featured post stacks its image above the text below 680px.\n- Filters scroll sideways on phones; Previous and Next collapse to arrows."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Only one page of cards renders at a time; images below the fold load lazily.\n- Transitions animate transform and opacity only."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose this for a blog, journal, news or resources index.\n- Pass getHref for real article routes; leave it out for a self-contained demo or a small site that reads posts in place.\n- Drive category and page from the URL with the controlled props so the index is linkable."
+    }
+  ]
+}

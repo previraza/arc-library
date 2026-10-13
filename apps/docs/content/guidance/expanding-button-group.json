@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A compact action bar on a message, file, or card where space is tight but labels should be one glance away.\n- Toolbars where actions finish in place and deserve a confirmation without a toast, such as Archive or Copy link."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use toggle-group or segmented-control when the buttons select a value instead of running an action.\n- Use plain labelled buttons when there are only one or two actions and space allows; hiding labels then costs clarity.\n- Use a dropdown menu for more than about six actions, or for actions that need descriptions."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves into the toolbar onto one action (the last focused, else the resting one) and out again. |\n| Arrow left / Arrow right | Moves focus to the previous or next action, wrapping at the ends. The focused action expands to show its label. |\n| Home / End | Moves focus to the first or last action. |\n| Enter / Space | Runs the focused action. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The root is a toolbar named by label, with one tab stop and roving arrow key focus.\n- Each button keeps its full label as its accessible name while collapsed; the visible label and icon are hidden from assistive technology so nothing is read twice.\n- Disabled actions use aria-disabled instead of disabled, so they stay focusable and still reveal their label, but do nothing when activated.\n- A confirmation is announced through a polite live region, such as \"Archived\". The same word is announced again on a repeat action.\n- A busy action (a promise from onSelect) sets aria-busy until it settles.\n- The expansion itself is the focus indicator; pointer focus draws no ring and keyboard focus shows Arc's shared focus ring. Only keyboard focus expands, so a mouse click does not leave a label open after the pointer leaves.\n- Confirmation is never color alone: the icon becomes a check and the label changes to a past tense word."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Each button's width springs on the morph spring between its icon size and icon plus measured label. Neighbours slide aside in normal flow and the group's own width follows, so nothing resizes in a single frame.\n- The label slot always reserves the longer of label and doneLabel, so the confirmation never changes the width. The server render already shows the resting action at that exact width, so hydration moves nothing.\n- Anchor the group at its start edge (not centred) and reserve its widest width in the layout, so expansion only moves buttons inside the group.\n- The icon keeps the same left inset in both states; the label slides out from behind it with a short fade and blur, and tucks back faster than it came.\n- A confirmation draws a check where the icon was and lifts the old word out while the new one rises in, while the width springs between the two words.\n- Hover only follows real pointer movement, and moving to a neighbour needs the pointer 4px inside it, so a button that slides under a resting pointer never takes over and a pointer resting on a boundary never flips between two actions.\n- Pressing shrinks the icon slightly; the button box never scales, because its width is the animation.\n- With reduced motion, labels and widths change at once with a quick fade and the check appears without drawing."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Five medium actions with one label open take about 260 to 280px, depending on the longest label. Reserve that width in narrow layouts rather than letting the group squeeze content.\n- Touch has no hover: the first tap expands an action and the second runs it. A tap outside the group closes a label opened by touch.\n- Buttons are 36px tall at md and 28px at sm; use md where touch matters."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Each label is measured from invisible copies in its own slot (and again if its font or text changes) with a ResizeObserver; width is a Motion value, so React renders only when the expanded action changes.\n- Width animation causes layout in the group only; keep the group out of large reflowing containers."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use it for a row of three to six related actions on one object, where icons are recognisable but labels help: message, file and card actions.\n- Give every action a short verb label and a matching lucide icon. Use doneLabel only for actions that finish at once (Archive, Snooze, Copy link); leave it out for actions that open something (Reply, Rename).\n- Mark at most one destructive action with tone=\"danger\". It needs no confirm dialog when the surrounding UI offers Undo.\n- One action is always expanded. Put the primary action first, or set defaultExpanded to it, so it reads as a labelled button at rest.\n- This is an action group. For choosing one or several values use toggle-group or segmented-control.\n- On touch the first tap reveals the label and a second tap runs it; the resting action runs on the first tap.\n- Place it start aligned in a row that reserves its widest width, so the expansion never moves surrounding content."
+    }
+  ]
+}

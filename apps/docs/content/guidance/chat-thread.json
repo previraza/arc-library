@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Customer support or in-app messaging with read receipts and typing state.\n- Team or DM threads that need reactions and image or file attachments.\n- Comment threads on an object where replies arrive live."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use log-stream for streaming system or build output.\n- Use timeline for an activity history rather than a two-way conversation.\n- Use textarea or mention-input when you only need the input box inside your own layout."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter | Sends the message from the composer. Ignored during IME composition. |\n| Shift+Enter | Adds a line in the composer. |\n| Tab | Reaches the add reaction button of each message; it shows on focus within the row. |\n| Arrow Left / Arrow Right | Moves between emoji in an open reaction picker, wrapping at the ends. |\n| Escape | Closes the reaction picker and returns focus to its button. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Messages are an ordered list with role log, aria-live polite, and aria-relevant additions, so new messages are read out.\n- Typing is announced in a separate status region, such as Sam is typing; the visual dots are aria-hidden.\n- Reaction chips are toggle buttons with aria-pressed and labels like 👍 3, including you.\n- Read receipts carry an aria-label listing who read the message; avatars are decorative.\n- The picker focuses its first emoji on open and uses a roving tabindex."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- New messages rise in from their own side with a small scale on a smooth spring, and the list glides up by the added height instead of jumping.\n- Reader avatars share a layoutId, so a receipt travels to the newly read message.\n- Reaction chips pop in, counts roll up or down, and the reaction row and attachment tray spring open.\n- The send arrow lifts out and a new one rises in on each send; the jump to latest pill springs in from below.\n- Reduced motion turns these into short fades, stops the typing dots, and scrolls to the bottom instantly."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Bubbles are capped at min(78%, 34rem); below 420px the content padding tightens to 12px and bubbles may reach 84%.\n- On touch devices (hover none) the add reaction button stays visible at reduced opacity instead of waiting for hover.\n- The reaction picker opens above the bubble unless that would pass the top of the scroller, then opens below."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Every message renders; there is no virtualization, so page older history in chunks past a few hundred messages.\n- A ResizeObserver on the content keeps the list pinned and drives the glide; images take width and height to avoid layout shift.\n- Uncontrolled sends create object URLs for attached files and never revoke them; controlled threads should upload and pass real URLs."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for support widgets, DMs, and team chat. Use log-stream for machine output and timeline for dated events that are not a conversation.\n- Give the parent a fixed height; the root is a flex column at height 100% with its own scroller.\n- For a server-backed thread, pass messages and append an optimistic message with status sending in onSend, then update status or set failed and handle onRetry.\n- Keep readBy in sync from your realtime source; only the furthest read message marks the viewer's latest message as Read.\n- Use ChatComposer alone when messages render elsewhere, such as an AI chat."
+    }
+  ]
+}

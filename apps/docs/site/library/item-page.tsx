@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getItemReference } from "@/lib/item-reference";
 import { getItemPath, getRelated, getSiblings, type RegistryItem } from "@/lib/registry";
 import { ItemPreview } from "@/site/library/item-preview";
+import { getGuidance, decisionIds } from "@/lib/guidance";
+import { ItemDecision, ItemDetails } from "@/site/library/item-guidance";
 import { ItemExamples, ItemUsage, loadExamples } from "@/site/library/item-examples";
 import { ItemTabs } from "@/site/library/item-tabs";
 import { TableOfContents, type TocEntry } from "@/site/library/table-of-contents";
@@ -18,13 +20,17 @@ export async function ItemPage({ item, section }: { item: RegistryItem; section:
   const related = getRelated(item.name);
   const base = `/${section}`;
   const examples = await loadExamples(item);
+  const guidance = getGuidance(item.name);
+  const details = guidance.filter((section) => !(decisionIds as readonly string[]).includes(section.id));
   const toc: TocEntry[] = [
     ...(demoLocations[item.name] ? [{ id: "preview", title: "Preview" }] : []),
+    ...(guidance.some((section) => section.id === "when-to-use") ? [{ id: "when-to-use", title: "When to use" }] : []),
     { id: "installation", title: "Installation" },
     ...(demoLocations[item.name] ? [{ id: "usage", title: "Usage" }] : []),
     ...(examples.length > 0
       ? [{ id: "examples", title: "Examples" }, ...examples.map(({ source }) => ({ id: source.exportName, title: source.title, depth: 1 }))]
       : []),
+    ...details.map((section) => ({ id: section.id, title: section.title })),
     ...(related.length > 0 ? [{ id: "related", title: "Related" }] : []),
   ];
 
@@ -77,12 +83,16 @@ export async function ItemPage({ item, section }: { item: RegistryItem; section:
         <ItemPreview item={item} />
       </section>
 
+      <ItemDecision sections={guidance} />
+
       <section id="installation" className="scroll-mt-24">
         <ItemTabs {...(await getItemReference(item))} />
       </section>
 
       <ItemUsage item={item} />
       <ItemExamples examples={examples} />
+
+      <ItemDetails sections={guidance} />
 
       {related.length > 0 && (
         <section id="related" className="grid scroll-mt-24 gap-4">

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Approximate values like volume, opacity, or a price range.\n- Ranges with two thumbs, labelled marks, and a formatted readout."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use number-field when the exact number matters.\n- Use progress to show a value people cannot change."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowRight / ArrowUp | Increases by step. |\n| ArrowLeft / ArrowDown | Decreases by step. |\n| Shift + Arrow / PageUp / PageDown | Moves by largeStep. |\n| Home / End | Moves to the lowest or highest allowed value for that thumb. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Each thumb is role=\"slider\" with aria-valuemin, aria-valuemax, aria-valuenow, aria-valuetext from format, and aria-orientation.\n- Thumbs are named by label, or by thumbLabels for ranges.\n- The readout, bubble, and marks are aria-hidden because the thumbs carry the value."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Released drags carry a little momentum before snapping; the bubble springs up over an active thumb and digits roll in the readout. At a limit the thumb strains toward the key press and springs back.\n- Reduced motion removes momentum, the strain, and digit rolling, and turns off CSS transitions."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- It fills its column; the track uses touch-action pan-y, so horizontal drags move the thumb while vertical swipes scroll the page.\n- On coarse pointers the value bubble sits higher so the finger does not cover it.\n- The bubble and end mark labels clamp inside the track so they never overflow the edges."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Drags write motion values with pointer capture, so the thumb follows 1:1 without React re-renders per frame.\n- onValueChange fires on every step; put fetching or heavy work in onValueCommit."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for approximate values and ranges like volume, price filters, or opacity. Use number-field when the exact number matters.\n- Controlled or uncontrolled; pass a tuple for a range. Put heavy work such as fetching in onValueCommit, not onValueChange.\n- Pass name to submit through hidden inputs. Exported as both named and default."
+    }
+  ]
+}

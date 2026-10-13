@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- FAQ sections on pricing, product, and support pages.\n- Long FAQs that benefit from categories or live search."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use accordion for generic collapsible content that is not a question list.\n- Use a docs page when answers need code, images, or long structure."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowUp / ArrowDown | Move between questions in one list. |\n| Home / End | First or last question. |\n| Enter / Space | Opens or closes the focused answer. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Questions are buttons with aria-expanded controlling their answer region.\n- Search matches are wrapped in mark elements; closed items that match only in the answer show a short excerpt.\n- The search variant uses Arc SearchField with a real label."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Answers open with height and opacity together and the plus icon turns.\n- Filtering and category changes move remaining items with layout animation.\n- Reduced motion opens and filters instantly."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Container queries: below 760px the category rail becomes a horizontal scrolling row above the questions; below 480px padding tightens."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Search filters in memory on each keystroke; fine for dozens of items, not thousands."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Keep answers plain text; the search variant matches and highlights inside them.\n- Pass stable ids when questions may be reworded, so controlled open state survives edits.\n- Composes Arc SearchField and SegmentedControl."
+    }
+  ]
+}

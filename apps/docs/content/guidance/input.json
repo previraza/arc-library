@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Any single-line text value in a form, such as name, email, or URL.\n- Fields whose helper or error copy changes as the person types, where the message should reword in place.\n- Plain form posts, since it forwards name and every native input attribute."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use textarea for multi-line text.\n- Use password-field, search-field, or number-field when the value has that shape.\n- Use inline-edit for a value shown as page text and edited in place."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders a native input with a real label, so focus and form behavior are native.\n- Description and error ids are merged into aria-describedby alongside any caller value.\n- Errors set aria-invalid and announce through role=\"alert\"; animated words are aria-hidden with a plain screen reader copy."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Helper and error rows open their height on a smooth spring, then changed words rise in and unblur while numbers roll digit by digit.\n- Reduced motion mounts rows at full height and swaps words with an instant fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The field fills its grid column with min-width 0, so it shrinks inside narrow layouts without overflowing.\n- Text stays at the small size on touch, unlike password-strength, so iOS may zoom on focus if your --text-sm is below 16px.\n- Hover border styles apply only on hover-capable fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One ResizeObserver per field measures the helper row for its height spring; cheap for a form, but avoid hundreds in a table.\n- Only changed words animate, and numbers roll only the digits that changed."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Default single-line text field. Use password-field, search-field, or number-field when the value has that shape.\n- Works controlled or uncontrolled like a native input; pass name for plain form submission.\n- Changing the error string rewords it in place, so derive it from state instead of toggling separate messages."
+    }
+  ]
+}

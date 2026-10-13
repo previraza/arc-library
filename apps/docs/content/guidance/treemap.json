@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Many parts where the biggest ones matter and people drill for detail.\n- Showing size and a second measure at once."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use bar-chart when exact comparisons between similar values matter.\n- Use sunburst when the depth of the hierarchy is the story."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Arrow keys | Move to the nearest top level tile in that direction. |\n| Home / End | Move to the first or last tile. |\n| Enter / Space | Zooms into the tile in focus. |\n| Escape / Backspace | Zooms out one level. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The tiles form a focusable group with a description of its keys; the breadcrumb is a nav with aria-current on the current level.\n- The tile in focus is announced with its path, value, share of parent, and shading measure through a polite live region.\n- A visually hidden table lists every node's path, value, share, and measure."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Drilling in carries every tile through one affine zoom: the chosen tile grows to fill the view, its siblings fly outward, and its children open inside it.\n- Zooming out reverses the same path, so each level shrinks back into the tile it came from.\n- Changing a measure re-lays out the same ids, so tiles resize and recolor in place; totals roll and breadcrumbs slide.\n- Text never scales: tiles are sized each frame and labels appear only where they fit. Reduced motion places tiles immediately."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The layout squarifies to the measured width, so tiles stay close to square on any screen; headers and labels hide where they would not fit.\n- Tap a tile to read it, tap a branch to drill in."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Layouts are computed per focus; animation interpolates rects and writes transforms and sizes directly. Comfortable up to a few hundred nodes."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for part-to-whole across a hierarchy with many leaves, such as revenue by region, country, and plan.\n- Give nodes stable ids so switching the size measure morphs rather than rebuilds.\n- The shading measure should be a magnitude (growth, margin), not identity; identity comes from the top level hue.\n- Colors come from the shared --series-1 to --series-4 tokens in foundation.css: series 1 is the accent itself and series 2 to 4 rotate its hue, validated all-pairs for color vision deficiency across every accent in light and dark. Override the tokens on any ancestor to rebrand."
+    }
+  ]
+}

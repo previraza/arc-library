@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- The closing section of a marketing, docs, or product site.\n- Footers that need a newsletter signup and a status link.\n- Minimal one-row footers for app shells and docs."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use a plain row with breadcrumb or links inside signed-in app screens.\n- Use contact-section when the main goal is to start a conversation."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders a footer landmark with labelled link groups.\n- The newsletter validates in place with a message tied to the field, and confirms without a toast.\n- External links show an outward arrow and open in a new tab.\n- Status tone is paired with its label, not shown by color alone."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The subscribe button morphs to its confirmed state while the form keeps its width.\n- The logo variant's large mark fades toward the bottom edge.\n- Reduced motion swaps states without travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Container queries: below 760px the newsletter stacks above the columns; below 520px columns become two per row and the bottom row stacks.\n- Link rows wrap rather than truncate."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Static markup apart from the newsletter form; no observers or timers."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Defaults are Arc sample content; pass brand, columns, legal, socials, and newsletter for real sites.\n- Pass newsletter={null} and status={null} when you have no backend for them.\n- Composes Arc Button and SegmentedControl."
+    }
+  ]
+}

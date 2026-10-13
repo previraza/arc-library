@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Two to six mutually exclusive options that need descriptions, such as plans.\n- Form choices that should submit natively through name."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use segmented-control for short inline view options.\n- Use select for longer lists.\n- Use checkbox when several options can be on at once."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Arrow keys | Move the selection between options (native radio behavior). |\n| Tab | Enters and leaves the group at the selected option. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Uses a fieldset and legend with native radio inputs wrapped in labels.\n- The highlight and dot are aria-hidden decoration."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- One highlight glides to the chosen row on the morph spring while the new dot springs in and the old one shrinks away.\n- Reduced motion places the highlight and dot instantly; resizes never animate."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Rows stack vertically and stretch to the column, so long descriptions wrap cleanly on narrow screens.\n- A ResizeObserver re-places the highlight on resize without animating it."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One shared highlight moves between rows instead of a layout animation per row."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for two to six mutually exclusive options that need descriptions. Use segmented-control for short inline choices and select for longer lists.\n- Always controlled: value and onValueChange are required. Pass name to submit with a form."
+    }
+  ]
+}

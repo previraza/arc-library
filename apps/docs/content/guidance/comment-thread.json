@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Review threads on documents, designs, tickets, or pull requests.\n- Discussions that need replies, reactions, mentions, and a resolved state.\n- Sidebars of feedback attached to one object."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use chat-thread for real-time back-and-forth conversation.\n- Use ai-chat for assistant conversations with streaming replies.\n- Use mention-input alone when you only need a composer."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ⌘ + Enter / Ctrl + Enter | Sends the composer. |\n| @ | Opens mention suggestions in the composer. |\n| ArrowUp / ArrowDown | Move through mention suggestions. |\n| Enter / Tab | Insert the active mention. |\n| Escape | Closes suggestions, then cancels an edit or reply; also closes the reaction picker or delete confirmation. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The composer is a combobox with a listbox of people and aria-activedescendant.\n- Each comment is an article labelled with author and time; deleted ones read \"Deleted comment\".\n- Reaction chips are toggle buttons with aria-pressed and a label like \"👍 3, including you\".\n- Reply toggles expose aria-expanded; icon-only actions have specific labels."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The thread height springs when replies expand, comments arrive, or the thread folds into the resolved chip.\n- Reaction counts roll to the new value; chips move with layout animation as they are added or removed.\n- Edit, confirm, and picker rows slide in from the side.\n- Reduced motion swaps content without travel and turns off transitions."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Below 420px the composer hides its avatar and nested replies indent less (12px).\n- Hover styles only apply on fine pointers; every action is a visible button on touch."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Each change rebuilds the tree immutably and renders every comment; paginate or collapse very long threads.\n- Reply nesting is capped by maxDepth, which keeps indentation and render depth bounded."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for comments attached to a document, design, or record. Persist changes with the event passed to onCommentsChange rather than diffing trees.\n- currentUser decides which comments show Edit and Delete; enforce the same rule on your server.\n- Deleting a comment with replies keeps a placeholder so the thread structure survives."
+    }
+  ]
+}

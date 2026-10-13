@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- FAQ sections where only one answer should be open at a time.\n- Settings or help pages that group long content under short, scannable questions.\n- Page-level FAQs that need larger type, via size=\"lg\"."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use expandable-card for a single standalone disclosure such as a plan or order summary.\n- Use tabs when sections are peer views that people switch between.\n- Use onboarding-checklist when the rows are setup tasks to complete."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Toggles the focused row. |\n| ArrowDown / ArrowUp | Moves focus between row triggers. |\n| Home / End | Jumps to the first or last trigger. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Radix wires aria-expanded, aria-controls, and region labelling between each trigger and panel.\n- Closed panels stay mounted but switch to visibility hidden once collapsed, so they leave the accessibility tree.\n- Triggers sit inside heading elements; the chevron is aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Panel height springs without overshoot while the answer slides down 6px out of a subtle blur; the chevron rotates on a snappy spring.\n- A toggle mid-flight retargets from the current height instead of restarting.\n- Reduced motion applies the same end states in one step."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Rows fill their container width; the lg size caps answers at 62ch for readable line length.\n- Below 520px the lg size drops to a 68px row and smaller answer text with tighter right padding.\n- Hover color changes apply only on hover-capable fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Closed panels stay mounted and hidden, so every answer is in the DOM; keep very heavy content lazy inside the panel.\n- Height springs through motion on the one row that changes, with no layout observers."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for FAQs and settings groups where only one section should be open. Use expandable-card for a single standalone disclosure and tabs when sections are peers.\n- Content is plain data; pass rich ReactNode answers directly. Only single mode is supported."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Product chrome and dashboards where the theme change should be calm.\n- Icon-only toggles in a top bar, as the library's own header uses it."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use theme-switch-eclipse for a dramatic change on a showcase page.\n- Use user-menu when theme belongs with account settings."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Toggles the theme. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Same button as theme-switch: aria-pressed reflects dark mode and the label names the next theme.\n- Keep the rise off for reduced motion and swap the theme directly."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- variant=\"rise\": the next appearance rises into place from the bottom; run it in onThemeChange with a view transition.\n- The icon lifts 2px in dark mode.\n- Reduced motion removes the nudge and swaps the icon with a fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The labelled button fits a desktop top bar; pass iconOnly for a fixed 38px square on narrow headers and mobile.\n- Hover styles apply only on hover-capable fine pointers, so touch taps do not leave a stuck hover state."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The button itself is tiny: one icon swap on a spring, and the first theme after hydration applies without animating.\n- The page transition is yours; a full-page view transition snapshots the whole document, so keep it short and skip it for reduced motion."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Select with variant=\"rise\". The prop only styles the icon nudge and is passed back to onThemeChange; the page animation is your code.\n- The calmest of the four; the library's own top bar uses it with iconOnly."
+    }
+  ]
+}

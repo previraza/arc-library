@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- One-by-one triage such as shortlisting, review queues, or onboarding picks.\n- Decks where swiping left or right should be undoable."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use a list or sortable-data-table when people compare items side by side.\n- Use carousel to browse items without deciding.\n- Use swipe-actions for quick actions on rows in a list."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight | Decides the top card left or right when the stack is focused. |\n| Backspace / Cmd+Z / Ctrl+Z | Undoes the last decision. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The stage is a focusable role=\"group\" with aria-roledescription=\"card stack\" and a hidden hint describing drag and keys.\n- Each card is labelled like \"Lisbon, 1 of 3\".\n- Decisions, undo, and reset are announced in a polite status region.\n- Buttons mirror every gesture, so swiping is never required."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The top card follows the drag with tilt and stamps; a flick or far drag throws it off with its velocity.\n- Cards beneath rise into place, and undo flies a card back from where it left.\n- Reduced motion fades cards out and in at home without travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The stage is min(100%, 20rem) wide; below 26rem the cards get shorter, and below 22.5rem Undo becomes icon-only.\n- Cards use touch-action pan-y, so vertical swipes still scroll the page."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Only the top four cards render in the stage, however long the deck.\n- Drag and throw run on motion values without per-frame React updates."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for one-by-one triage: shortlisting, review queues, onboarding picks. Use a list or sortable-data-table when people compare items side by side.\n- Persist decisions from onDecide and reverse them in onUndo."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Contact pages and sections on marketing sites.\n- Sales or support pages that list several channels with response times.\n- Companies with offices in several time zones."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use support-widget for an in-app help launcher.\n- Use signup-form or login blocks for account flows."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Arrow keys | Move between topic chips, which form a radio group. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Fields use labelled Arc Input and Textarea; errors appear after the first submit and update as you type.\n- A failed send shows a role=\"alert\" message and keeps the form.\n- Office open status is written out, not shown by color alone."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The form card springs into the confirmation; faces slide along one axis in the direction of travel out of a soft blur.\n- The topic highlight glides between chips.\n- Reduced motion swaps faces without travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Container queries: below 820px the form layout stacks and the channel list becomes a horizontal scrolling row; below 520px field rows stack and the submit button fills the width."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The offices variant re-renders every 15 seconds to keep local times live; other variants have no timers."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Without onSubmit the form only simulates sending; always wire it in production.\n- Offices compute local time and open status with Intl.DateTimeFormat in each timeZone.\n- Composes Arc Input, Textarea, Button, CopyButton, SegmentedControl, and Avatar."
+    }
+  ]
+}

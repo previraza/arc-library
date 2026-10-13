@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Inspecting a JSON payload in a developer dashboard, such as webhooks or API logs.\n- Large nested objects where search and copy path save time.\n- Arrays with hundreds of items, which load in pages of pageSize."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use code-block to show JSON as formatted source for copying whole.\n- Use tree-view for folders, navigation, or other non-JSON hierarchies.\n- Use data-grid when the data is a flat list of records."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowDown / ArrowUp | Moves to the next or previous visible row. |\n| ArrowRight | Opens a closed branch, or moves into an open one. |\n| ArrowLeft | Closes an open branch, or moves to the parent. |\n| Home / End | Jumps to the first or last visible row. |\n| Enter / Space | Toggles a branch, or loads the next page on a Show more row. |\n| Cmd/Ctrl + C | Copies the focused row's value; add Shift to copy its path. Ignored while text is selected. |\n| / | Focuses the search field. |\n| Enter / Shift + Enter (in search) | Jumps to the next or previous match. |\n| Escape (in search) | Clears the query. |\n| ArrowDown (in search) | Moves focus into the tree. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Follows the WAI-ARIA tree pattern: role=\"tree\" with treeitems carrying aria-level, aria-posinset, aria-setsize, aria-expanded, and aria-selected.\n- One row is tabbable at a time; each row's label reads its key and value, or its type and item count.\n- The match counter is aria-live polite, and a status region announces copies and failures.\n- Row copy buttons are out of the tab order; use Cmd or Ctrl with C, or the path bar's copy button, from the keyboard."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Each row unfolds its own height, so opening a branch, loading a page, or expanding all share one motion.\n- The current-row highlight glides between rows with a shared layout id, and the tree scroll springs to where the row will sit once rows settle.\n- Copy glyphs swap to a check or cross with a small scale and blur.\n- Reduced motion, or more than 400 visible rows, makes row changes instant; reduced motion also jumps the scroll and highlight."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The tree scrolls inside maxHeight; long keys and values truncate with an ellipsis and strings over 40 characters show in full on hover.\n- At 420px viewport width and below the indent drops from 16px to 12px, keys cap at 40% of the row, and the path type hides.\n- Row copy actions show on hover with a fine pointer; on touch they show on the current row."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Rows are a flat list rebuilt only when data, open branches, pages, or search change; nothing is virtualized, so paging keeps the DOM small.\n- Above 400 visible rows the height animations switch off to keep expand all fast.\n- Search walks the whole value on each keystroke; for multi-megabyte payloads control query and debounce it."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for API responses, webhook payloads, logs, and config inspection in developer tools.\n- Search matches keys and primitive values case-insensitively, opens the branches that hold them, and stops at 2000 matches.\n- Control expanded to persist open branches across reloads, or to open a path from elsewhere in the page.\n- For formatted source code use code-block; for tabular data use data-grid."
+    }
+  ]
+}

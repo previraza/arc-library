@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Collecting emails for a newsletter, digest, or changelog that has real issues to show.\n- The end of a blog post or docs page."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Account creation with a password. Use Signup form.\n- Longer forms with several fields. Use Contact section.\n- A launch waitlist at the top of a page. Use Hero signup."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter | In the email field, submits the form. The phone keyboard shows a send key. |\n| Tab | Moves from the field to the button, the privacy link, and after success to \"Use a different email\". |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The email field has a visually hidden label, type email, inputmode email, autocomplete email, and aria-invalid when the address is wrong.\n- The line under the field is its description: privacy note, error, or confirmation. Errors use role alert; the line is a polite live region and names the address the link went to.\n- Validation starts when the field loses focus with text in it, then updates as you type. On an invalid submit, focus stays in the field.\n- While sending, the button sets aria-busy and aria-disabled and ignores repeat submits. On success, focus moves to \"Use a different email\", which restores the form and refocuses the field.\n- Only the front issue is exposed to assistive technology; the issues behind it and the thumbnails are hidden as decoration."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- On success the next issue, addressed to you, rises onto the front of the stack while the others step back and the oldest drops away. It is one no-overshoot spring, and opacity resolves fast so two issues never read through each other.\n- The reader count rolls up by one, and \"including you\" fades in after it.\n- An invalid or failed submit shakes the field a few pixels and tints its border; the message swaps in place of the note.\n- Every message, button label, and issue has its space reserved, so nothing below the form moves between states.\n- Reduced motion places the issues at once with a short fade, removes the shake and the roll, and keeps the check and labels as quick fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Inline puts the stack under the copy and form below 860px container width.\n- Below 400px read times hide and an addressed issue shows the recipient instead of the date.\n- When the form is narrower than 300px the field and button separate and stack, both full width.\n- The card is at most 460px wide; its tray crops the stack and fades it out at the edge."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Issue thumbnails and faces use next/image at their rendered size.\n- Motion is transform and opacity only; no layout animation.\n- No network code: bring your own onSubscribe."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Pass onSubscribe and throw on failure; the component handles validation, busy, error, retry, and success states.\n- Give it your own publication so the stack shows real past issues. Use short subjects and story titles; titles clamp at two lines.\n- Keep the privacy note honest and specific.\n- Use inline between page sections; use card in a sidebar, at the end of a post, or centered in a footer band.\n- Edit newsletter-signup-data.ts for copy, issues, and reader faces."
+    }
+  ]
+}

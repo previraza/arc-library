@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- The last section of a landing page, asking for a trial or demo.\n- An in-page prompt beside a product visual that shows the outcome.\n- A slim promotional banner above content."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- The first screen of a page. Use Hero section.\n- Collecting an email. Use Newsletter signup.\n- A persistent site-wide notice. Use Announcement bar."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves through the actions, then the dismiss button in the banner. |\n| Enter or Space | Runs an action or dismisses the banner. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Each variant is a section labelled by its heading.\n- Actions with href are real links; others are buttons. Simulated confirmations announce politely.\n- The dismiss button has the name \"Dismiss\"; the banner closes its gap so focus order stays clean.\n- The setup card is aria-hidden: the copy beside it carries the message."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Primary actions lean their arrow forward on hover; buttons press to .97 and morph their width when the label changes.\n- Split: the stage rises into view once, then the setup card ticks its three steps, fills its progress line, and slides in teammates' faces.\n- Banner: dismissing fades it, scales it to .98, and springs its height closed so the page below moves up smoothly.\n- Reduced motion shows the finished setup card and removes travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Split stacks copy above the visual below 860px container width.\n- Below 560px actions go full width and stack, and the banner puts its text above the action and dismiss button.\n- Headings scale with the container between 30px and 52px."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The setup card runs three timers once after it enters view; everything else is CSS transitions.\n- No images except up to four small avatars."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use centered at the end of a landing page, split mid page next to a relevant product state, and banner at the top of an app or docs page.\n- Pass href for real navigation. Leave both href and onClick out only for previews.\n- One primary and at most one secondary action. Keep labels to two or three words with a verb.\n- Edit cta-section-data.ts for the sample copy and the setup card content."
+    }
+  ]
+}

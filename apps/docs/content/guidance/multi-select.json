@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Picking several values from a fixed list in a compact field, such as labels or assignees.\n- Filters where the chosen values should show in the field with a +N overflow."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use chip-group when every option should stay visible.\n- Use tag-input for free-form values.\n- Use select for a single value."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Opens or closes the list; Enter toggles the active option while open. |\n| ArrowDown / ArrowUp | Opens the list and moves through enabled options, wrapping. |\n| Escape | Closes the list. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Trigger has aria-haspopup=\"listbox\", aria-expanded, and aria-labelledby combining the label and a hidden list of selected labels.\n- The menu is role=\"listbox\" with aria-multiselectable; options carry aria-selected and aria-disabled.\n- Clear button is labelled \"Clear selections\"; chips are aria-hidden in favor of the spoken summary."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Chips open their slot width on a smooth spring and grow in from 0.9 with a blur; the +N count rolls up or down.\n- Checks draw in the menu; the menu springs in from slightly above.\n- Reduced motion turns every change into a short crossfade with no scale or width travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Chips cap at 9rem and ellipsize, and maxVisible limits how many show before +N, so the trigger holds one line.\n- The menu spans the field width and has no max height or scroll, so keep option lists short on small screens."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Options are not virtualized and the menu does not scroll; for long lists use combobox instead.\n- Chips animate slot width and scale per change; fine for a few selections."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for picking several values from a fixed list in a compact field. Use chip-group when all options should stay visible and tag-input for free-form values.\n- Controlled with value and onValueChange or uncontrolled with defaultValue. There is no name prop, so serialize the array yourself for forms."
+    }
+  ]
+}

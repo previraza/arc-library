@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Panels, sidebars, and popovers whose content can outgrow their box.\n- Horizontal strips of cards or chips that need mouse-wheel scrolling and snap points.\n- Places where platform scrollbars look heavy but native scrolling must be kept."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use carousel when items should page one at a time with controls.\n- Do not wrap the whole page; let the document scroll natively.\n- Use data-grid for large tabular data; it virtualizes its own scroll."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | The viewport is focusable (tabIndex 0). |\n| Arrow keys / Page Up / Page Down / Home / End / Space | Scroll natively once the viewport has focus. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Scrolling stays native, so keyboard, screen reader, and touch behavior match the platform.\n- With label, the viewport is a named region; without one, give it context another way.\n- The overlay tracks and thumbs are aria-hidden; the hidden native scrollbar remains the real control."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Scrollbars fade in while scrolling or on hover and fade out after hideDelay; the thumb thickens under the pointer.\n- Pressing the track pages 90% of the viewport toward the pointer with smooth scrolling, or instantly under reduced motion.\n- Reduced motion removes scrollbar transitions."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Touch keeps native momentum scrolling; the overlay bars only appear while scrolling.\n- Thumbs only thicken on hover-capable fine pointers.\n- Content changes and resizes are tracked with ResizeObserver and MutationObserver, so fades and thumbs stay correct as layouts reflow."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Fades and thumb positions are written straight to the DOM on each scroll event; scrolling never re-renders React.\n- Horizontal wheel conversion only captures the wheel while there is room to scroll, so the page still scrolls at the ends.\n- Edge fades use CSS mask-image, which is cheap but still composited; set fade={0} in very long lists if you see cost."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use it wherever content scrolls inside a fixed box: sidebars, panels, menus, horizontal card strips.\n- Give vertical areas a height or maxHeight; the viewport scrolls only when it has a constrained size.\n- Use onEdgeChange to show a \"more below\" affordance or to load more when bottom becomes false."
+    }
+  ]
+}

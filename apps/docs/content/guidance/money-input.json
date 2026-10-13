@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Payment, tip, transfer, or budget amounts entered by hand.\n- Invoice and expense forms where the currency may change.\n- Amount fields that benefit from quick add chips such as +$10."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use number-field for quantities and non currency numbers.\n- Use slider or price-ladder when people pick from a range rather than type.\n- Use scrub-input for design tool style drag adjustments."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowUp / ArrowDown | Adds or subtracts one step (one major unit by default). |\n| Shift+ArrowUp / Shift+ArrowDown | Moves ten steps. |\n| PageUp / PageDown | Moves ten steps. |\n| Enter | Settles the fraction, such as 12.5 to 12.50. |\n| Backspace / Delete | Over a group separator, deletes the digit beside it. |\n| ArrowDown / ArrowUp (on the currency button) | Opens the currency menu. |\n| ArrowDown / ArrowUp / Home / End (in the menu) | Moves through currencies; typing jumps by code or name. |\n| Enter / Space (in the menu) | Picks the highlighted currency. |\n| Escape (in the menu) | Closes the menu and returns to the button. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The input has role=\"spinbutton\" with aria-valuenow in major units, aria-valuetext as the full currency string, and min and max when set.\n- The animated digits are aria-hidden; the real input carries the value, so screen readers and autofill see plain text.\n- The range, hint, and error are linked with aria-describedby; limits, chip adds, and currency changes are announced politely.\n- The currency menu is a listbox with aria-activedescendant and typeahead."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Chips and arrow keys roll each digit column in the direction of change while new columns open their width; typing cuts straight to the result so the caret never lags.\n- A refused change kicks the amount sideways on a bouncy spring and flashes the range.\n- The currency symbol swaps with a short roll while its slot springs to the new width; long amounts scale down to fit on a spring.\n- Reduced motion removes the rolls, kick, and width springs; digits fade and sizes jump."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Under 420px viewport width the amount text drops a size and the padding tightens.\n- A ResizeObserver scales the amount down to fit its box instead of scrolling, so long numbers stay readable on phones.\n- inputMode is decimal (numeric for zero decimal currencies like JPY), which brings up the number keypad on touch."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Intl.NumberFormat instances are cached per locale and currency.\n- Each digit is its own animated column; amounts are capped at 12 integer digits, which keeps the column count small."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Store the value in minor units (integers) to avoid floating point errors; details.major and details.formatted are for display.\n- Use for money only. For plain numbers with units use number-field, and for drag-to-adjust values use scrub-input.\n- Pass one code in currencies to lock the currency; the code then shows as static text.\n- max refuses typing past it; min is only checked on blur, so people can type through smaller amounts on the way."
+    }
+  ]
+}

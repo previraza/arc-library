@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- The first section of a SaaS landing page, when the product screen is the pitch (Screenshot).\n- Developer tools, automation, and infrastructure products, where showing the product working is the pitch (Workflow).\n- A launch or download page that wants one confident line and a sense of atmosphere (Mesh)."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use page-header for titles inside app screens.\n- Use hero-signup when the goal is collecting an email in the first section."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Each design has one h1, and the calls to action are real links or buttons with visible text.\n- The dashboard is a labelled group of sample data; its range control is a segmented control and the chart keeps its screen reader table.\n- The workflow graph is a labelled group; each step's state has a text label (waiting, running, done, skipped) and its result is written out, never shown by color alone.\n- The mesh and glow are decorative and hidden from assistive technology. Pointer focus draws no ring; keyboard focus shows Arc's shared focus ring."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Screenshot: the copy rises in reading order, then the window rises in behind it and settles flat from a tilt.\n- Workflow: each step turns to the accent while it runs, the data draws along the edge to the next one, and the result and time swap in with a small spring. The run pauses while the hero is off screen or the tab is hidden.\n- Mesh: the gradient drifts on the Gradient mesh editor's seamless 20 second loop.\n- Reduced motion removes every transform: no rise or tilt, the mesh draws one still frame, content fades in briefly, and the workflow shows each event as its finished run without playing; Send test event moves to the next one at once."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Every design is one full screen (100svh, full width) on desktop and phones. Container queries: the split layout stacks below 900px; below 560px padding tightens and actions fill the width.\n- The dashboard and the workflow graph are drawn at a fixed design size and scaled like a screenshot. The dashboard switches to a compact layout without the sidebar under 720px and runs off the bottom edge into a fade; the graph switches to compact action nodes on phones.\n- On phones the logo row of the Mesh design becomes a grid."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One WebGL canvas at most per hero, drawn at one pixel per CSS pixel and thirty frames a second, only while on screen and the tab is visible. A static CSS render of the same mesh shows first.\n- The workflow advances one React state step every few hundred milliseconds only while the hero is on screen and the tab is visible; nothing else loops at rest."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- The three designs carry sample products (Lumen, Relay, Cadence). Replace the copy in hero-lumen.tsx, hero-relay.tsx, and hero-cadence.tsx, the dashboard data in hero-lumen-data.ts, and the sample events at the top of hero-relay.tsx, or pass title and friends for a plain content hero.\n- Mesh colors live in CSS per theme (hero-lumen.module.css and hero-cadence.module.css), in the variables --mesh-base and --mesh-1 onward.\n- Brand marks are sample customers from public/block-logos, not endorsements.\n- Composes Arc Button, LineChart, Sparkline, SegmentedControl, and Avatar."
+    }
+  ]
+}

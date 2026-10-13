@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A small set of related actions on the same object, shown together in a header, toolbar or card footer.\n- Compact tool clusters such as zoom out, the current level and zoom in, or stacked map controls.\n- A primary action row, such as Reply, Reply all and Forward on a message."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use toggle-group or segmented-control when the segments are options that stay selected.\n- Use split-button when there is one main action and a few variants of it.\n- Use separate buttons when the actions are unrelated or one of them is much more important than the rest.\n- Use tabs for switching between views."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab / Shift+Tab | Moves into, through and out of the group. Every segment is a tab stop, so the group behaves like the buttons it replaces. |\n| Arrow right / Arrow left | Also moves between segments in a horizontal group, wrapping at the ends (mirrored in right to left layouts). |\n| Arrow down / Arrow up | Moves between segments in a vertical group. On the chevron segment, Arrow down opens the menu instead. |\n| Home / End | Moves to the first or last segment. |\n| Enter / Space | Activates the focused segment. Link segments follow the link with Enter. |\n| Enter / Space / Arrow down | On the chevron segment: opens the menu with the first item highlighted. |\n| Arrow keys / Home / End | In the menu: moves between items, looping at the ends; disabled items are skipped. |\n| Escape | Closes the menu and returns focus to the chevron. |\n| Tab (menu open) | Closes the menu and moves on, since the menu is non-modal. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The root is a div with role=\"group\" named by label. Segments are native buttons (or links with href), so they keep their own roles and activation keys.\n- Disabled segments use aria-disabled instead of the disabled attribute, so they stay focusable and are read as dimmed; their onSelect never runs. A disabled whole group uses the disabled attribute.\n- Icon-only segments, segments with content and collapsed segments take their label as aria-label and as a tooltip; icons are hidden from assistive technology.\n- When a segment's label changes within a second of its press, such as \"Share\" to \"Copied\", a polite live region in the group announces the new label once; the quiet return to \"Share\" is not announced.\n- The chevron segment is a Radix dropdown trigger named by menu.label, with aria-expanded and aria-haspopup. The menu manages focus, typeahead, Escape and outside clicks, and returns focus to the chevron. It is non-modal, so opening it never locks scroll or shifts the page.\n- Keyboard focus moves the same highlight the pointer does; pointer focus draws no ring and keyboard focus shows Arc's shared focus ring. A mouse click focuses without the highlight, so nothing stays lit after the pointer leaves.\n- State is never carried by color alone: confirmations change the label and icon, and disabled segments are dimmed and announced."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- One highlight lives under all segments. Moving the pointer or keyboard focus to another segment carries it there on the snappy spring; arriving from outside the group it fades in where it lands, so it only travels between segments.\n- The hairline dividers on either side of the highlighted segment fade out, so the highlight reads as one soft shape inside the joined surface.\n- A press dips the segment's content to 0.97 (0.9 for icon-only) and springs back, while the highlight under it deepens. The group and its neighbours never move. The chevron anchors the menu, so it answers with the deeper highlight only.\n- On touch, the highlight appears under the finger while pressed and fades on release.\n- Nothing in the group moves or resizes on hover, focus, press, menu open or a label change: every reserved label sits invisibly in the segment, so a confirmation crossfades inside a fixed box. The new label rises in from a soft blur while the old one lifts away.\n- A label that was not reserved never snaps either: the segment springs to its width on the morph spring, and the highlight stays locked to it while it resizes.\n- The highlight is measured at sub-pixel precision, so it sits exactly on its segment at rest.\n- The menu grows from the group's edge with a short offset and scale and leaves faster than it arrives; the chevron turns over while it is open.\n- With reduced motion, the highlight jumps between segments, the press dip and chevron turn are removed, and labels and the menu crossfade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- A horizontal group never exceeds its container: when it would, segments with an icon drop their label (collapseLabels), and anything still too wide scrolls sideways without a visible scrollbar. At 320px the document example collapses to icons with its names kept as tooltips and aria-labels.\n- The vertical orientation suits narrow rails and canvas corners; segments stretch to the widest one.\n- Segments are 34px tall at sm and 42px at md inside the border, matching the button heights. The highlight follows the pointer only for mouse and pen; touch gets it while pressed."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The highlight is one element moved by transforms and size motion values; segments never re-render on hover beyond a state update in the group.\n- Two ResizeObservers per group keep the highlight on its segment and decide when labels collapse; each label slot has its own observer for the width morph.\n- The menu renders only while open."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for two to five related actions on one object, such as a document's Share, Duplicate and Archive, or zoom controls. Put rarely used and destructive actions in menu.\n- It is an action group: every segment does something now. For choosing one or more options that stay pressed, use toggle-group or segmented-control instead.\n- Give confirmations by changing an item's label and icon (\"Share\" to \"Copied\") and resetting it after a moment, and list every label in reserve so the row never resizes. Keep confirmation labels close in length to the resting label, since the segment takes the widest.\n- Use iconOnly only for actions with universally understood icons (zoom, alignment, playback). The label still names the action for screen readers and the tooltip.\n- Use the solid variant for the main actions of a view, at most once per screen; outline for everything else."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Centered layouts where the theme should open symmetrically from a middle seam.\n- Pages where the switch position varies, since the split does not depend on where the button sits."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use theme-switch for a reveal that grows from the button itself.\n- Use theme-switch-rise for the calmest option in product UI."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Toggles the theme. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Same button as theme-switch: aria-pressed reflects dark mode and the label names the next theme.\n- Keep the split reveal off for reduced motion and swap the theme directly."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- variant=\"split\": the next appearance opens from a slim center seam; run it in onThemeChange with a view transition.\n- The icon shifts 1px right in dark mode.\n- Reduced motion removes the nudge and swaps the icon with a fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The labelled button fits a desktop top bar; pass iconOnly for a fixed 38px square on narrow headers and mobile.\n- Hover styles apply only on hover-capable fine pointers, so touch taps do not leave a stuck hover state."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The button itself is tiny: one icon swap on a spring, and the first theme after hydration applies without animating.\n- The page transition is yours; a full-page view transition snapshots the whole document, so keep it short and skip it for reduced motion."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Select with variant=\"split\". The prop only styles the icon nudge and is passed back to onThemeChange; the page animation is your code.\n- Split is symmetric and does not depend on where the button sits, so it suits centered layouts."
+    }
+  ]
+}

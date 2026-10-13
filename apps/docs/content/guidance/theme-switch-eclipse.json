@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Marketing or showcase pages where the theme change should feel like an event.\n- Layouts where a directional sweep across the page reads naturally."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use theme-switch-rise for everyday product chrome where a calmer change fits.\n- Use theme-switch-split when the button sits in the center and direction should not matter."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Toggles the theme. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Same button as theme-switch: aria-pressed reflects dark mode and the label names the next theme.\n- Keep the eclipse sweep off for reduced motion and swap the theme directly."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- variant=\"eclipse\": the next appearance crosses the page like an eclipse; run it in onThemeChange with a view transition.\n- The icon shifts 2px left in dark mode to lean into the sweep.\n- Reduced motion removes the nudge and swaps the icon with a fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The labelled button fits a desktop top bar; pass iconOnly for a fixed 38px square on narrow headers and mobile.\n- Hover styles apply only on hover-capable fine pointers, so touch taps do not leave a stuck hover state."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The button itself is tiny: one icon swap on a spring, and the first theme after hydration applies without animating.\n- The page transition is yours; a full-page view transition snapshots the whole document, so keep it short and skip it for reduced motion."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Select with variant=\"eclipse\". The prop only styles the icon nudge and is passed back to onThemeChange; the page animation is your code.\n- Pick eclipse for a dramatic, directional change on marketing or showcase pages; rise suits product chrome better."
+    }
+  ]
+}

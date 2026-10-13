@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Faceted filtering above tables and lists, with removable chips.\n- Adding filters through a two step field then value menu.\n- Views that pair with sortable-data-table and pagination for a full list page."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use chip-group for a fixed set of toggles.\n- Use search-field for free text search.\n- Use multi-select when one field takes several values in a form."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowDown / ArrowUp | On the trigger, opens the menu at the first or last item; inside, moves between items. |\n| Home / End | Moves to the first or last menu item. |\n| ArrowRight / ArrowLeft | Drills into a field's values, or goes back to fields. |\n| Letters | Typeahead jumps to the matching item. |\n| Escape | Closes the menu and returns focus to the trigger. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The toolbar is role=\"group\"; the menu panel is a labelled role=\"dialog\" holding a role=\"menu\" of checkable items.\n- Remove buttons are labelled like \"Remove Status: Open\", and removing a chip moves focus to its neighbor or the Add filter trigger.\n- Additions and removals are announced through a role=\"status\" region."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Chips open and close their slot on a spring so neighbors glide; values morph in place.\n- The Add filter trigger morphs into the menu surface and steps slide between fields and values.\n- Reduced motion replaces the morphs and slides with instant changes and short fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Below 520px the toolbar stacks into a column with actions aligned to the end.\n- The menu panel is min(16rem, 100vw minus a gutter) wide, flips its edge when there is no room, and its list caps at min(20rem, 55vh).\n- Hover highlights apply only on hover-capable fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Several ResizeObservers measure chips and the menu for morphs; menu options are not virtualized, so keep value lists short."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use above tables and lists for faceted filtering. Use chip-group for a fixed set of toggles and search-field for free text.\n- Keep one chip per field: onAdd receives a chip keyed by field id, so replace any existing chip with that id.\n- Pair with sortable-data-table and pagination for a full list view."
+    }
+  ]
+}

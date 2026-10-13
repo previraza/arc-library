@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A floating editor or canvas toolbar with undo, redo, share and present.\n- A selection toolbar that appears over text or objects.\n- A vertical tools rail with zoom and insert actions."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use toggle-group for formatting toggles or alignment where the choice stays pressed.\n- Use segmented-control to switch between views.\n- Use split-button when there is one main action with a few alternatives.\n- Use a dropdown menu when there are more actions than fit in one row."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves into the toolbar on one button, the last one focused, and out again. The highlight appears on the focused button. |\n| Arrow left / Arrow right | In a row: moves focus to the previous or next enabled button, wrapping at the ends. The highlight follows. |\n| Arrow up / Arrow down | In a column: moves focus to the previous or next enabled button, wrapping at the ends. |\n| Home / End | Moves focus to the first or last enabled button. |\n| Enter / Space | Runs the focused action. The highlight darkens while the key is held. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The tray is a toolbar with aria-label and aria-orientation, and a single tab stop that roves between buttons.\n- Every button has an accessible name from its label, also when it shows only an icon. Icon only buttons and buttons with a shortcut get a tooltip with the label and shortcut, which screen readers hear as the description.\n- Mode actions set aria-pressed. Disabled actions use aria-disabled, stay readable with their tooltip, and are skipped by the arrow keys.\n- Separators have the separator role with the orientation across the toolbar.\n- Pointer focus draws no ring; keyboard focus shows Arc's shared focus ring. The shared highlight is the keyboard indicator, shown only for keyboard focus so a mouse click never leaves it behind.\n- When a label changes, such as Share to Copied, the accessible name changes with it and the outgoing label is hidden from assistive technology while it fades. Reserved label ghosts are hidden from assistive technology."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- One highlight per tray, driven by motion values so moving it never re-renders the buttons. It travels in position and size to the hovered or focused button on the morph spring, and stays put while the pointer crosses a gap or a separator.\n- Appearing from nothing it lands in place and grows in from 94 percent on the snappy spring, instead of sliding from wherever it last was. It fades when the pointer leaves the tray.\n- Pressing darkens the highlight and settles it to 96.5 percent in place on the snappy spring; the buttons themselves never scale, so neighbours and tooltip anchors stay still.\n- A new label crossfades in place with a short rise and blur. With reserveLabels the button already has the widest label's width, so nothing around it moves; without it, the highlight re-measures and follows the new width.\n- Nothing but the highlight ever moves: hover, focus, press and label changes leave the tray and every button at the same box. The highlight is measured exactly in tray coordinates, snapped to device pixels and corrected for ancestor transforms.\n- The pointer leaving the tray is detected with a native listener, because React bubbles pointer events through portals and a tooltip would otherwise count as inside the tray.\n- With reduced motion the highlight jumps to its button and fades briefly, and labels crossfade without travel."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The tray keeps its natural size and never wraps or clips a button. At narrow widths make secondary items icon only; to switch without a layout shift after hydration, render both densities and pick one with a container query, as the demo does below 360px.\n- Touch shows the highlight under the finger while pressed and fades it on release; hover only tracks a mouse or pen.\n- The highlight re-measures when the tray or any button resizes, so it stays aligned through font loading, label changes and container reflow."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The highlight moves on transform and size through motion values without React renders; only hover and focus changes re-render the buttons.\n- One ResizeObserver per tray, observing the tray and its buttons. Reserved labels are plain CSS grid ghosts, measured by layout, not by script."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use it for actions, not selection. When one or more options stay chosen, use toggle-group or segmented-control.\n- Group related actions with separators and keep a toolbar to about seven buttons. Make secondary actions icon only before dropping labels from the main one.\n- Give every icon only item a specific label, such as \"Zoom to fit\", not \"Fit\".\n- shortcut is a hint only. Bind the key yourself, scoped so it does not fight the page.\n- Pass reserveLabels whenever an item's label changes, so the toolbar never shifts.\n- Use variant floating when the toolbar sits over content such as a canvas or a text selection; use muted in a page or a panel."
+    }
+  ]
+}

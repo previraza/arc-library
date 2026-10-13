@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Settings that take effect as soon as they are flipped, like notifications.\n- Settings lists where each row is one on and off preference."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use checkbox when the choice waits for a submit button.\n- Use segmented-control for a choice between named options.\n- Use theme-switch for a light and dark toggle."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Space / Enter | Toggles the switch. Holding Space stretches the thumb until release. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Radix renders a button with role=\"switch\" and aria-checked.\n- The label prop becomes aria-label unless one is passed; icon-only usage needs an aria-label."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Pressing stretches the thumb toward the other side like a held finger; releasing sends it across on a snappy spring.\n- Reduced motion removes the stretch and moves the thumb instantly; CSS transitions are also disabled."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The switch is inline and keeps a control-height minimum, so the whole label is a touch target.\n- Hover styles apply only on fine pointers; touch gets the press stretch."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Motion is CSS transitions on the track and thumb, with no observers or per-frame work."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for settings that take effect immediately. Use checkbox for choices confirmed by a submit button.\n- Exported both as a named and a default export.\n- Pass name to submit with a form through Radix's hidden input."
+    }
+  ]
+}

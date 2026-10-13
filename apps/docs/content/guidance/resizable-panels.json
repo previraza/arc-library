@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Editor, mail, or dashboard layouts where people trade space between side-by-side panes.\n- Sidebars that should collapse by dragging or flicking toward the edge.\n- Layouts whose pane sizes should persist between visits via onLayoutChange."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use drawer for a panel that slides over the page.\n- Use tabs when only one pane needs to be visible at a time.\n- Avoid it for vertical splits, since it is horizontal only."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight | Moves the focused divider 16px; with Shift, 64px. Past a limit, collapses a collapsible pane. |\n| Home / End | Moves the divider to its minimum or maximum. |\n| Enter | Collapses or restores a collapsible neighbouring pane. |\n| Escape | During a drag, returns the divider to where it started. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Each divider is a focusable role=\"separator\" with aria-orientation, aria-controls, aria-valuenow, min, and max in percent.\n- aria-valuetext announces the share, or that a pane is hidden and Enter shows it.\n- Collapsed panes are inert. The group has role=\"group\"; pass label to name it."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Dividers follow the pointer 1:1, rubber-band past limits, and spring to rest; flicks toward an edge collapse a pane. Double-click resets the layout.\n- Pane content fades as it is squeezed below its minimum and a restore tab pops in on a snappy spring.\n- Reduced motion jumps panes to their targets and fades the restore tab."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Panes do not stack on narrow screens; on mobile, render a single pane or switch to tabs yourself.\n- Dividers use pointer capture with touch-action none, so touch, pen, and mouse drags all work.\n- The group needs a definite height from its parent."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- A ResizeObserver on the group refits pane widths when the container resizes.\n- Dragging sets widths directly and springs only on release or collapse; pane content is never re-rendered by the drag itself."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for editor, mail, or dashboard layouts where people trade space between side-by-side panes. Horizontal only.\n- Give the parent a definite height and persist onLayoutChange shares to restore via defaultSize."
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- One value against a known range, such as disk quota or health score.\n- Values with labelled bands, like Healthy, Filling up, and Critical."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use progress for task completion.\n- Use usage-meter for plan limits and activity-rings for several goals at once."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The ring is role=\"meter\" with aria-valuemin, aria-valuemax, aria-valuenow, and an aria-valuetext including the band label.\n- Threshold labels name the state in text, so it never rests on color alone.\n- The SVG and animated readout are aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The ring fills once when half in view without overshoot, then springs to new values while the percent counts.\n- The band color and label change exactly as the count crosses a threshold.\n- Reduced motion lands on the value at once."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The ring is min(100%, 176px) wide and keeps its aspect ratio, so it shrinks in narrow columns."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- It fills once when half in view, then springs to new values; it is one SVG arc with no running loop."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for one value against a known range, such as quota or health. Use progress for task completion and usage-meter for plan limits.\n- Always add thresholds with labels when tone carries meaning."
+    }
+  ]
+}

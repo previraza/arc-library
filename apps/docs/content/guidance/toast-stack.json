@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- App-wide notifications for async results, errors, and undo.\n- Loading toasts that morph into success or error when work finishes.\n- Toasts with an action button, like View or Undo."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use toast for a single locally controlled confirmation.\n- Use alert for persistent messages tied to a page.\n- Use notification-center for a history people can come back to."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Alt+T | Moves focus to the front toast and fans out the stack. |\n| Tab | Moves between toast actions and dismiss buttons. |\n| Escape | Dismisses the focused toast. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The viewport is a labelled section with aria-live=\"polite\" and aria-relevant=\"additions text\", so new and updated toasts are announced.\n- Each toast prefixes a screen-reader-only type label such as \"Error:\"; outgoing copy is aria-hidden while it fades.\n- Hidden and leaving toasts are inert. When a focused toast closes, keyboard focus moves to the next toast or back to where it came from.\n- Timers pause while the stack is hovered, focused, dragged, or the tab is hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- New toasts rise from their own height below the edge; older ones tuck behind at 14px peeks and 0.05 scale steps, and fan out on a morph spring.\n- Swiping right follows the finger and throws with velocity; left rubber-bands. Updates morph the icon, copy, height, and action width in place.\n- Reduced motion jumps positions and uses short opacity fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The viewport is min(22.5rem, 100% minus a 32px gutter) wide; below 30rem it centers at the bottom regardless of position.\n- Below a 21rem toast width the action button drops under the copy instead of squeezing it.\n- On touch, a tap fans out the stack, and a right swipe dismisses a toast."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- At most 12 toasts are kept by default and only 3 show; each has its own ResizeObserver for height.\n- Timers pause while hovered, focused, dragged, or when the tab is hidden."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Default for app-wide notifications, async results, and undo. Use toast for a single locally controlled confirmation and alert for persistent inline messages.\n- Render ToastStack once inside ToastStackProvider and call useToastStack anywhere below. Reuse an id or call update to morph loading into success or error."
+    }
+  ]
+}

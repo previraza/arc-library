@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Previews of people behind mentions, avatars, or author names.\n- Link or reference previews where the click must stay free for navigation.\n- Dense lists where moving between triggers should open cards almost instantly."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use tooltip for a plain text label.\n- Use popover when the content has buttons or inputs.\n- Use user-menu for the account menu on your own avatar."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Keyboard focus on the trigger opens the card immediately. |\n| Enter | Opens the card without the hover delay. |\n| Escape | Closes the card and keeps it closed while the pointer rests on the trigger. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The card has role=\"tooltip\" and the trigger gets aria-describedby while it is open.\n- Focus never moves into the card, so keep its content read only.\n- On touch, a tap toggles the card instead of relying on hover."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Grows from the trigger edge: scale from 0.96 and a 4px offset on a smooth spring, with a separate fade. Mid-exit returns retarget instead of jumping.\n- Within 300ms of another card, the next opens after 80ms with a fade only. Profile rows settle in with a small stagger.\n- Reduced motion drops scale and travel and keeps a short fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The card is 18.5rem wide, capped at the space Radix reports as available or the viewport minus 24px.\n- On touch, a tap toggles the card instead of waiting for hover.\n- Long names and roles ellipsize and stats wrap onto new lines."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Only one hover card is open on the page, and it mounts in a portal only while open.\n- Open and close use timers, not pointer tracking loops; the profile avatar decodes async."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for previews of people, links, or references where the click must stay free for navigation. Use tooltip for plain labels and popover for interactive content.\n- Only one hover card is open at a time on the page. Anything actionable belongs behind the trigger itself."
+    }
+  ]
+}

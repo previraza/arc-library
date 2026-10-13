@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- The top bar of a marketing site, landing page, or docs site.\n- Product sites with grouped destinations that deserve a mega menu with a feature card.\n- Pages that need one clear sign-up action in the header."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use workspace-sidebar or sidebar-rail inside a signed-in app.\n- Use morph-nav for a single-surface animated navigation with built-in search.\n- Use menubar for application commands."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight | Move between top level items in the mega variant. |\n| ArrowDown | On an item with links, opens its panel and focuses the first link. |\n| ArrowUp / ArrowDown / Home / End | Move between links inside an open panel. |\n| Escape | Closes the open panel or the mobile sheet and returns focus to its trigger. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- A labelled nav landmark; the current item is marked with aria-current.\n- Panel triggers expose aria-expanded; outside presses and Escape close whichever layer is open.\n- The mobile sheet locks page scroll while open and returns focus to the menu button when closed."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Mega panels open on hover after a short intent delay and close after a leave grace; switching items morphs the panel to the new content.\n- The header background turns solid past scrollThreshold.\n- Reduced motion removes panel travel and uses fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- It is a container-query component: below 760px of its own width the links, panels, and wide actions hide and a menu button opens a sheet.\n- From 760px the sheet and scrim are removed; widening the container closes an open sheet.\n- Hover-to-open panels only apply to fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Panels mount only while open; the scroll listener updates a single solid-state attribute.\n- Feature images use next/image with sizes set, so they load only when a panel opens."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for marketing and docs sites. For in-app navigation use workspace-sidebar or sidebar-rail.\n- The defaults are Arc sample content; always pass brand, items, and actions for real sites.\n- Links render as anchors when an href is set; wire onNavigate for client-side routing or analytics.\n- The mega variant uses next/image for feature images; allow their host in your image config."
+    }
+  ]
+}

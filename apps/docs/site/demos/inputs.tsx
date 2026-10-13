@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "manicat/registry/components/button/button";
 import { Input } from "manicat/registry/components/input/input";
 import { Textarea } from "manicat/registry/components/textarea/textarea";
 import { PasswordField } from "manicat/registry/components/password-field/password-field";
@@ -131,7 +132,14 @@ export function MoneyInputDemo() {
 }
 
 export function PhoneInputDemo() {
-  return <PhoneInput label="Phone" defaultCountry="GB" defaultValue="+447911123456" />;
+  return (
+    <div className="flex w-full max-w-md items-start gap-3">
+      <div className="min-w-0 flex-1">
+        <PhoneInput label="Mobile number" defaultCountry="US" defaultValue="+12015550123" description="Type + to search by calling code" />
+      </div>
+      <Button className="mt-[30px]">Send code</Button>
+    </div>
+  );
 }
 
 export function TagInputDemo() {

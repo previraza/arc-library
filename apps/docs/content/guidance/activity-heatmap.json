@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Daily rhythm over a long range, like contributions or workouts.\n- Views where streaks and quiet weeks matter more than exact comparison."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use bar-chart when the exact comparison is the point.\n- Use calendar to pick dates."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowUp / ArrowDown | Moves one day back or forward. |\n| ArrowLeft / ArrowRight | Moves one week back or forward. |\n| Home / End | Jumps to the first or last day. |\n| Enter / Space | Selects the focused day. |\n| Escape | Hides the tooltip. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The grid is role=\"grid\" with labelled gridcells and a hidden legend explaining the levels.\n- Legend swatches are toggle buttons with aria-pressed that highlight days of one level.\n- The total and hovered day are announced through status and polite live regions; the tooltip itself is aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Cells wave in once on view and a new range recolors the grid in a sweep.\n- The tooltip glides between cells and its text rolls; the total counts to new values.\n- Reduced motion drops the wave, sweep, and glide in favor of short fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Cells scale between 9px and 15px with the container, then the grid scrolls horizontally from the newest week.\n- Below a 440px container the caption switches to a short form.\n- On touch the tooltip lingers after a tap instead of hiding at once."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Every day is its own cell, so a year is about 370 elements; the reveal wave is capped in total time.\n- One shared tooltip serves the whole grid."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use when rhythm, streaks, and quiet weeks matter more than exact comparison. Use bar-chart when the exact comparison is the point.\n- Pass a range switch through actions and swap days to change the period."
+    }
+  ]
+}

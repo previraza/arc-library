@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Showing where a page sits in a hierarchy, such as Workspace, Settings, Billing.\n- Client-side paths like a file browser, where crumbs call onClick instead of navigating.\n- Paths that grow as people drill in, where new crumbs should slide in."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use tree-view when people need to browse the whole hierarchy.\n- Use tabs for switching between sibling views.\n- Use pagination for moving through pages of a list."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves between crumb links and buttons. |\n| Enter | Follows the focused crumb. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders a nav landmark with an ordered list.\n- The last item is a span with aria-current=\"page\" and is never a link.\n- Chevron separators are aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Crumbs present on first render stay still; new crumbs slide in 8px from the left out of a blur while siblings shift on a smooth spring.\n- Reduced motion adds and removes crumbs without movement."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The list wraps onto new lines on narrow screens; individual crumbs never wrap internally.\n- It does not truncate or collapse long paths, so keep labels short or shorten the path on mobile yourself."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Crumbs use layout position animation only when the path changes; static paths do not animate."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for hierarchical page location. For client-side paths such as a file browser, pass onClick without href.\n- Links are plain anchors by default. For client-side navigation, wrap the app once in ArcProvider from @/components/arc/lib/arc-provider with your router's Link: <ArcProvider link={Link}>.\n- Keep labels short; the component does not truncate or collapse long paths."
+    }
+  ]
+}

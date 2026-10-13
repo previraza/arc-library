@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Touch-first triage lists such as mail, notifications, or tasks.\n- Rows with one or two quick actions per side, like Archive and Mark unread.\n- Lists where a full swipe should commit the main action and the row should animate away."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use context-menu or dropdown-menu for desktop-first tables.\n- Use reorderable-list when rows need to be dragged vertically.\n- Use hold-to-confirm for a single destructive action outside a list."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Opens a row's More actions menu from its button. |\n| ArrowDown / ArrowUp | Moves between the row's actions in the menu. |\n| Escape | Closes the menu or puts away an open row. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The list is a ul with role=\"list\" and aria-label; each row is an li.\n- Every row has a \"More actions for <label>\" menu with the same actions, so the gesture is never required.\n- Revealed action buttons are aria-hidden and out of the tab order; after a removing action, focus moves to a neighbouring row."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The row tracks the finger, rubber-bands past its last stop, and settles on a spring that carries the release velocity; a flick projects its travel.\n- Past the threshold the outer action stretches across the row, then the row slides out and the list closes the gap.\n- Reduced motion jumps the row to its stops and fades rows in and out instead of animating height."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Swipes lock to the horizontal axis after the first movement, so vertical page scrolling still works on touch.\n- A full swipe commits past the larger of the open width plus 48px or 56% of the row, measured with a ResizeObserver.\n- Every row also has a More actions menu, so mouse and keyboard users never need the gesture."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Drag updates a motion value directly, so rows do not re-render while following the finger.\n- Rows are not virtualized and each has its own ResizeObserver; paginate long lists."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for short, triage-style lists on touch (mail, notifications, tasks). For desktop-first tables use context-menu or a row menu.\n- Remove the item from state inside onSelect; set keepRow for actions that keep the item, such as mark as unread.\n- Rows must be direct children of SwipeActions, keyed by item id, so removal and undo animate."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Next to API keys, install commands, links, or code snippets.\n- Icon-only copy controls in dense rows, with an accessible label.\n- Any copy action that should confirm Copied or Could not copy in place."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use split-button when copying has alternatives, such as Copy link and Copy as Markdown.\n- Use code-block for full code samples, which include their own copy control."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Copies the value. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Native button named by label, including when iconOnly.\n- A polite role=\"status\" region announces \"<label>: Copied\" or \"<label>: Could not copy\".\n- The label cell reserves the widest of its three states, so the layout never shifts."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Icons trade places through a blur on a slow, nearly critically damped spring, and the check draws its stroke in.\n- Only the changed letters of the label move; the same motion plays in reverse on reset.\n- Reduced motion swaps icon and text with an instant fade and skips the stroke draw."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The label reserves the width of its widest state, so the button never shifts its neighbours when it changes.\n- It sizes to max-content with max-width 100%, so it stays compact in narrow rows."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Only changed letters animate; the icon swap and stroke draw are a single short spring per copy.\n- Clipboard access is async and needs a secure context; failures show the Failed state rather than throwing."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use next to any copyable value: API keys, install commands, links, code. For a copy action that also has alternatives use split-button.\n- Named export only; there is no default export.\n- Clipboard state and reset timing come from lib/use-copy-feedback, so copy that file along with the component."
+    }
+  ]
+}

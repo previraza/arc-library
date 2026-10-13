@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Showing shares of one whole where people should be able to count units.\n- Comparing the same categories across a few datasets, such as countries or years.\n- Replacing a pie or donut when small shares need to stay visible."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use line-chart or streamgraph for how shares change over time.\n- Use bar-chart when exact comparison of many categories matters more than the whole.\n- Use sunburst for nested parts of a whole."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Focuses the grid, then each legend item. |\n| Arrow keys | Move the reading cell by cell across the grid. |\n| PageUp / PageDown | Jump to the first cell of the previous or next category. |\n| Home / End | Go to the first or last filled cell. |\n| Escape | Clears the reading. |\n| Enter / Space on a legend item | Pins or releases that category. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The grid is a focusable group with a roledescription and instructions; cells are decorative and aria-hidden.\n- A polite live region reads the category, share, and value under the keyboard cursor.\n- A visually hidden summary and a table list every category with its value, share, and cell count.\n- Legend items are toggle buttons with aria-pressed; identity never relies on colour alone because every category is named in the legend."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Cells are persistent: a data change keeps as many cells in place as possible and flies the rest to their new block, staggered by position so the grid refills like a wave.\n- A travelling cell dips in scale mid-flight and changes colour with the same delay, so it reads as lifting out of one group and landing in another.\n- Shares in the legend roll to their new values on a critically damped spring.\n- The first time the chart is seen, cells pop in from the bottom-left corner.\n- Reduced motion places cells and shares immediately and drops the dip, pop, and stagger."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The grid is square and fills up to 300px; the legend moves beside it from 420px of container width.\n- Legend labels truncate with an ellipsis; the full name stays in the tooltip, the live region, and the table.\n- Touch reads cells with a press and drag; the page still scrolls vertically."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One element per cell, 100 by default, animated with transforms only.\n- Hover is resolved from pointer position arithmetic, not per-cell listeners.\n- Grid size is measured with one ResizeObserver."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for part-to-whole with four to eight categories where countable units help, such as energy mix, survey answers, or budget split.\n- Keep categories in a meaningful order; the fill order is the reading order.\n- Use accentKey for the category the story is about and leave the rest neutral.\n- Switching datasets with the same keys is where it shines: cells travel instead of repainting."
+    }
+  ]
+}

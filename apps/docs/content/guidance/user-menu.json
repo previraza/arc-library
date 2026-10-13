@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- The single account entry point in an app top bar.\n- Menus that combine presence status, theme preference, account links, and sign out.\n- Apps that want async sign out with a spinner in the menu."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use dropdown-menu for generic command lists.\n- Use theme-switch for a standalone light and dark toggle.\n- Use workspace-sidebar when account and workspace switching live in a side navigation."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space / ArrowDown | Opens the menu from the avatar and moves to the first row. |\n| ArrowUp | Opens the menu from the avatar and moves to the last row. |\n| ArrowDown / ArrowUp | Moves between rows, looping at the ends. The highlight follows. |\n| Home / End | Moves to the first or last row. |\n| A to Z | Typeahead jumps to the next row starting with the typed letters. |\n| ArrowLeft / ArrowRight | Chooses the previous or next option in the theme or status switch. |\n| Enter / Space | Activates the row, or chooses a theme or status without closing. |\n| Escape / Tab | Closes the menu and returns focus to the avatar. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The trigger has aria-haspopup=\"menu\" and aria-expanded, and is labelled \"Account menu, <name>\" plus the status when one is shown.\n- Rows are menuitem buttons; the theme and status switches are labelled groups of menuitemradio buttons with aria-checked.\n- Pointer focus draws no ring; keyboard focus shows Arc's shared focus ring. The highlight marks the keyboard position. Outside press, the scrim, and swipe down close the menu.\n- Sign out sets aria-busy while an async handler runs; shortcut hints are aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The panel scales and fades out of the avatar on a spring that never overshoots; rows fade in with a short stagger, and closing is a quick fade.\n- One highlight glides between rows for the pointer and the keyboard; the switch thumb slides between options.\n- On phones the sheet rises from the bottom edge and follows a downward drag, closing past a short distance or a quick flick.\n- Reduced motion opens and closes with a short fade, jumps the highlight, and turns off dragging."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The menu is 17.5rem wide, capped at the viewport width minus 24px, with 12px collision padding.\n- Long names and emails ellipsize instead of widening the menu.\n- The trigger is a fixed 40px avatar, and the theme row keeps a 44px minimum height for touch."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Content renders only while open; each opening gets a fresh layout namespace so shared indicators do not animate from stale positions.\n- The avatar image decodes async and falls back to initials on error."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use as the single account entry point in an app top bar. For generic command lists use dropdown-menu; for a standalone light/dark toggle use theme-switch.\n- Keep items to three or four account destinations; the theme switch and sign out are built in.\n- onThemeChange only reports; apply the theme to the document yourself, optionally with a view transition.\n- Return the sign out promise so the item shows progress and the menu closes when it settles."
+    }
+  ]
+}

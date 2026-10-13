@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Showing who owns or edits something in a header, card, or table cell.\n- Collaborator stacks where people join and leave while the page is open.\n- Long member lists that should collapse into a +N chip."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use avatar for a single person.\n- Use a list or sortable-data-table when people need to see every name and role."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders role=\"group\" with the label as its name.\n- The overflow chip is role=\"img\" labelled like \"2 more editors\".\n- Each avatar keeps its own name and status label."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Joining or leaving members open and close their slot on a spring, so the stack slides instead of jumping.\n- The overflow count rolls up when it grows and down when it shrinks.\n- Hover fans the stack apart in CSS. Reduced motion removes the fan and swaps counts with a plain fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The stack is inline-flex and does not wrap; lower max on narrow rows so it stays compact.\n- The hover fan applies only on hover-capable fine pointers, so touch taps do not spread the stack."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Only max avatars render; the rest collapse into one overflow chip, so long member lists stay cheap.\n- Joins and leaves animate slot width on a spring; the fan is plain CSS transforms."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for presence and ownership in headers, cards, and table cells. Use avatar for one person.\n- Pass the full member list and let max handle truncation; do not slice it yourself or the overflow count is lost."
+    }
+  ]
+}

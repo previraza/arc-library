@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Empty lists, zero search results, and first-run views.\n- A view that should morph between states, such as empty and success, by changing props."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use skeleton while data is still loading.\n- Use alert for errors inside a page that still has content.\n- Use onboarding-checklist when first-run needs several steps."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders a section with an h3 title; pass label to name the region.\n- The icon is aria-hidden.\n- Outgoing copy is hidden from assistive tech while it fades."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Changing title or description rolls the copy in place while the block height springs to fit.\n- A new icon pops in with a short blur.\n- Reduced motion swaps copy with a fade and snaps height; the icon's idle animation stops."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Padding scales with the viewport between fixed bounds, and the description caps at 18rem so lines stay short.\n- Actions wrap and center, so two buttons stack on narrow screens."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One ResizeObserver drives the height spring; the icon's idle animation is CSS and stops under reduced motion."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for empty lists, zero search results, and first-run views. Use skeleton while data is loading.\n- Keep it mounted and change its props to morph between states such as empty and success."
+    }
+  ]
+}

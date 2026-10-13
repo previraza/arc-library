@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Contracts, delivery confirmations, and consent forms that need a drawn signature.\n- Initials or quick sketches where pen pressure and natural stroke width matter.\n- Flows that need a clean, cropped PNG or SVG of the signature."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use input for a typed name when a legal drawn signature is not required.\n- Use file-upload when the user already has a scanned signature image.\n- Use hold-to-confirm for a simple deliberate confirmation without a signature artifact."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Mod + Z | Undoes the last change while the pad is focused. |\n| Shift + Mod + Z / Mod + Y | Redoes. |\n| Delete / Backspace | Clears the signature with the wipe; undo brings it back. |\n| Escape | Stops a replay in progress. |\n| Arrow keys | Move between ink colors or nib widths inside each radio group. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The pad is focusable with role=\"img\", aria-roledescription=\"signature pad\", and a label that states the stroke count.\n- Keyboard shortcuts are described through aria-describedby on a visually hidden paragraph.\n- Ink color and width are radio groups with roving tabindex; toolbar icon buttons carry aria-label and title.\n- A polite status region announces strokes added, undo, redo, clear, replay, and export results."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Clear sweeps a squeegee edge across the pad while a clip-path wipe removes the ink over 0.56s.\n- Replay redraws each stroke in its original rhythm with a nib dot, capping gaps between strokes and fitting the whole replay into about 3.2s.\n- The hint fades up from a soft blur; the selected color and width highlight glides with a shared layout spring.\n- Reduced motion skips the wipe and blur and uses short opacity fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The pad keeps a 600 / 260 aspect ratio at every width, and strokes scale with it.\n- touch-action: none on the pad keeps finger strokes from scrolling the page; coalesced pointer events capture fast strokes on touch and pen.\n- The toolbar wraps on narrow widths; hover styles apply only on hover-capable fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The live stroke writes its SVG path directly to the DOM on each pointer move, without a React render.\n- History keeps the last 60 states; replay runs a rAF loop that re-renders the visible strokes each frame, so very long signatures cost more to replay.\n- PNG export draws to an offscreen canvas at 3x by default."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for capturing a handwritten signature or initials. Store the InkStroke[] from onChange, or convert it with signatureToSvg or signatureToPng on submit.\n- Strokes are stored in a 600 by 260 coordinate space (PAD_WIDTH, PAD_HEIGHT), so they scale with the pad and can be replayed later.\n- getStrokeOutline, outlineToPath, and strokePath are also exported if you need the raw outline math.\n- The pad is uncontrolled; to reset it, remount it with a new key."
+    }
+  ]
+}

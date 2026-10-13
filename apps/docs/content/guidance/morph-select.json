@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Form fields and property panels where one value is picked from a known list.\n- Grouped lists like time zones, assignees, or projects, with optional icons and meta.\n- Compact toolbars where the picker should look like a pill until opened."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use combobox when users type free text or the list is very long and remote.\n- Use multi-select when more than one value can be chosen.\n- Use dropdown-menu for actions rather than a stored value."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space / ArrowDown / ArrowUp | Opens the list on the selected option; Enter or Space picks the active option when open. |\n| ArrowDown / ArrowUp | Moves the active option, skipping disabled ones. |\n| PageDown / PageUp | Moves eight options at a time. |\n| Home / End | Moves to the first or last option; when closed, opens on it. |\n| Alt + ArrowUp | Picks the active option and closes. |\n| Printable characters | Type-ahead jumps to a matching label, or starts a search when search is on. |\n| Escape | Closes and returns focus to the trigger. |\n| Tab | Closes and moves focus on without picking. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The trigger is a role=\"combobox\" with aria-haspopup=\"listbox\", aria-expanded, and aria-activedescendant pointing at the active option.\n- With search on, the input takes over as the combobox with aria-autocomplete=\"list\", and the trigger turns inert.\n- Options are role=\"option\" with aria-selected and aria-disabled; groups are role=\"group\" labelled by their heading.\n- A polite status announces the number of search results or No matches."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The trigger surface grows into the list on a physical spring with slight bounce and folds back without overshoot; the corner radius morphs with it.\n- One highlight glides between options; the chosen label lifts out of the list and flies into the trigger while the trigger width springs.\n- Values in the trigger roll up or down depending on whether the new option is later or earlier in the list.\n- Reduced motion jumps the size, removes the fly and roll, and uses short fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The closed trigger sizes to its label up to min(20rem, 100vw - 2rem); the open list is max(trigger width, min(panelWidth, 100vw - 2rem)).\n- Set align=\"end\" for triggers near the right edge so the surface grows leftward.\n- Hover highlight follows the mouse only; on touch a tap picks directly, and hover styles apply only on fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- A hidden measuring copy and a ResizeObserver size the trigger and list; the surface animates width, height, and radius through motion values.\n- All options render; there is no virtualization, so keep lists to a few hundred items.\n- Search filters in memory on label, meta, and keywords."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for compact property pickers and form fields with up to a few hundred options, including avatars or icons.\n- Add keywords to options so search matches synonyms; meta shows trailing detail like counts or offsets.\n- Pass name to submit with a native form; the hidden input carries the value.\n- Use combobox when people mostly type free text, and multi-select for several values."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A list of commands behind a labelled button, such as Rename, Duplicate, and Delete.\n- Row or card actions where a visible trigger is clearer than right-click.\n- Short grouped menus with separators and one destructive item at the end."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use split-button when one command is the default.\n- Use context-menu for right-click actions on content.\n- Use user-menu for the account menu, and command-palette for searching many commands."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space / ArrowDown | Opens the menu from the trigger. |\n| ArrowDown / ArrowUp | Moves between items, looping at the ends. |\n| Home / End | Jumps to the first or last item. |\n| Escape | Closes the menu and returns focus to the trigger. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Built on Radix DropdownMenu: the trigger gets aria-haspopup and aria-expanded, items get menuitem roles and typeahead.\n- Icons and the highlight are aria-hidden; destructive items are marked by color and should say what they destroy.\n- Disabled items are skipped by the keyboard."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The highlight glides between items on a snappy spring for the pointer and jumps instantly for the keyboard.\n- The menu scales in from the trigger and items fade in with a short stagger.\n- Reduced motion removes the menu transform and highlight glide, keeping a quick opacity fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The trigger label ellipsizes within max-width 100%, so it shrinks inside narrow toolbars instead of overflowing.\n- The menu uses Radix collision handling with 12px padding and a 12rem minimum width, flipping away from viewport edges.\n- Hover styles apply only on fine pointers; touch taps select without a stuck highlight."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Menu content renders in a portal only while open; items are not virtualized, so keep lists short.\n- The menu has a translucent backdrop blur, which drops to a solid surface under prefers-reduced-transparency."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Default choice for a list of commands behind a button. Use split-button when one command is the default, and context-menu for right-click on content.\n- Group items with separatorBefore; put destructive items last.\n- Items are data, not children, so build the array from your actions."
+    }
+  ]
+}

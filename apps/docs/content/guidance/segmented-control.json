@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Two to five short view options like Day, Week, and Month.\n- Toolbar toggles between layouts or modes that apply immediately."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use tabs when each option swaps a panel of content.\n- Use radio-group in forms or when options need descriptions.\n- Use switch for a single on and off setting."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves focus into the control, onto the selected segment, and out again. |\n| Arrow keys | Select and focus the previous or next segment, wrapping at the ends. |\n| Home / End | Select the first or last segment. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders role=\"group\" labelled by label, with native buttons using aria-pressed for the selected segment. Only the selected segment is a tab stop.\n- The sliding pill is aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- A shared layoutId pill slides to the selected segment on the morph spring, scoped per instance by a LayoutGroup.\n- Reduced motion moves the pill instantly and disables button transitions."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The row is inline with max-width 100% and scrolls horizontally with a hidden scrollbar when segments do not fit.\n- Segments never shrink or wrap, so keep labels short on mobile."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One shared layoutId pill per instance, scoped by a LayoutGroup; no observers."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for two to five short, mutually exclusive view options like time ranges or layouts. Use tabs when each option swaps a panel, and radio-group in forms.\n- Always controlled. Import it as a default export."
+    }
+  ]
+}

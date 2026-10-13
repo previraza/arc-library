@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Traffic, revenue, or latency over days or weeks in a dashboard card.\n- Comparing this period against a previous period or target with a dashed series.\n- Charts that switch ranges (7d, 30d, 90d) and should morph rather than redraw."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use sparkline for a tiny inline trend with no axes or tooltip.\n- Use bar-chart for discrete categories or counts per bucket.\n- Use donut-chart when the question is the share of a whole, not change over time."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowDown | Moves the crosshair to the previous point. |\n| ArrowRight / ArrowUp | Moves to the next point; from rest it starts on the latest point. |\n| PageUp / PageDown | Jumps about a sixth of the range. |\n| Home / End | Jumps to the first or last point. |\n| Escape | Lets go of the crosshair. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The figure is named by label; the plot is a role=\"slider\" whose aria-valuetext reads the date and every visible series value.\n- A visually hidden summary gives the range and latest values, and a hidden table lists every point for screen readers.\n- Legend toggles are buttons with aria-pressed; a hidden live region says Loading while loading is true.\n- The SVG and tooltip are aria-hidden, so values are never read twice."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Lines draw left to right the first time the chart scrolls into view.\n- New data morphs every line from the shape on screen, sampled on shared x positions, and the value scale springs to its new range while gridlines slide.\n- A hidden series flattens into the baseline as it fades; the crosshair glides between points and the tooltip follows on its own spring, flipping sides near the edge.\n- Reduced motion skips the draw, morphs, and glides, and stops the loading pulse."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Width follows the container through a ResizeObserver; the plot redraws in its own pixels, and axis labels thin to one per 76px.\n- Touch scrubs with pointer capture and releases on lift; touch-action: pan-y keeps vertical page scroll working over the plot.\n- A mouse scrubs on hover and releases on leave. The value gutter is a fixed 48px column."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Paths are written straight to the DOM from motion values, not React state, so scrubbing and morphs do not re-render the tree.\n- Smooth curves are sampled up to 16 points per segment (about 192 per line); keep data to a few hundred points per series.\n- One ResizeObserver per chart; the draw-in waits for useInView."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for one to three measures over time when the trend shape matters. For category comparison use bar-chart; for parts of a whole use donut-chart.\n- Keep series and datum keys stable across range changes so lines morph instead of redrawing.\n- Set axisLabel only on the dates you want on the axis; the chart thins them further to one per 76px, always keeping the newest.\n- Drive a headline number from onActiveChange, as in metric-card or stat-card layouts."
+    }
+  ]
+}

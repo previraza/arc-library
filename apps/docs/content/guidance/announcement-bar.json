@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Site-wide promotions, launches, or maintenance notices at the top of every page.\n- Rotating two to four short announcements in one slim bar.\n- A sale banner with a live countdown to its end."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use alert for a message tied to one section or form.\n- Use toast for feedback on something the visitor just did.\n- Use cookie-consent for consent choices."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves through the call to action and dismiss button, plus previous, pause, and next when controls is on. Focus inside pauses rotation. |\n| Enter / Space | Presses the focused control. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The bar is a labelled section; with several messages it is a carousel and each message a slide labelled n of total.\n- The viewport is aria-live off while rotating and polite while paused, so auto-rotation is not read aloud.\n- With controls, the pause ring is a toggle button with aria-pressed and previous and next buttons control the slides region. Without controls, rotation still pauses on hover and focus.\n- Countdowns are role=\"timer\" with aria-live off and a spoken label in hours and minutes.\n- Rotation pauses on hover, keyboard focus inside, or a hidden tab."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Next messages rise from below and leave upward (previous runs the other way) while the viewport springs to the new height.\n- With controls, the ring around the pause button fills linearly over the interval, stops where it is on pause, and finishes the rest on resume.\n- Countdown digits drop in from above; dismissing collapses the bar's height so the page below eases up.\n- Reduced motion turns rotation off, swaps messages and digits with fades, and removes the height collapse."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Wide bars mirror the controls with an empty column so the message stays centered on the page.\n- The bar is an inline-size container; at 560px and below messages align to the start edge instead of centering.\n- Messages wrap on small screens and the viewport springs to the wrapped height; icon buttons are 32px."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One linear motion value drives the ring; it stops while paused, hidden, or dismissed.\n- A countdown ticks with one timeout per second, waking just after each whole second."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Place it above the site header. With an id, dismissal persists; call clearAnnouncementDismissal(id) or change the id to show it again.\n- Keep messages to one short sentence; the call to action is a link when href is set, a button otherwise.\n- For a standalone countdown elsewhere on the page use countdown; this bar has its own lighter timer."
+    }
+  ]
+}

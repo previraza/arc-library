@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Inline date picking where the month should stay visible, such as booking pages.\n- Picking one date with blocked days via minDate, maxDate, and disabledDates."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use date-picker for a form field that opens a calendar popover.\n- Use time-picker for times of day.\n- Use booking-pill for a full compact booking flow."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Arrow keys | Move by one day or one week, skipping blocked days and crossing months. |\n| Home / End | Move to the start or end of the week. |\n| PageUp / PageDown | Move by one month; with Shift, by one year. |\n| Enter / Space | Selects the focused day. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Days sit in a role=\"grid\" with role=\"row\" and role=\"gridcell\" buttons carrying full date aria-labels, aria-selected, and aria-current=\"date\" for today.\n- Roving tabindex keeps one day in the tab order; month changes are announced through a polite live region.\n- Previous and next buttons are labelled and use aria-disabled at the min or max month."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Months slide in the direction of travel while the title letters and year digits roll; the selection highlight glides between days on the morph spring.\n- Reduced motion, applied after hydration, swaps months and moves the highlight instantly."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The calendar is min(100%, 328px) wide and days are square cells that scale with it.\n- The header is a container query: below 260px the title takes its own row and the controls move under it."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Only the incoming month is observed with a ResizeObserver, to morph between four, five, and six rows.\n- Each day is a button, so a month is about 42 cells; render one calendar rather than many side by side."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use inline where the calendar is always visible, such as booking pages. Use date-picker for a form field that opens a calendar popover.\n- value is controlled only; month can be controlled or left internal.\n- Also exports date helpers addDays, addMonths, sameDay, and startOfDay, and the CalendarDateMatcher type."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Peer views of the same object, such as Overview, Activity, and Settings.\n- Panels with different heights, where the container should spring between them.\n- Long tab sets that need to scroll horizontally with edge buttons."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use segmented-control for a compact value toggle not tied to panels.\n- Use accordion for stacked sections people read in order.\n- Use liquid-tab-bar or morph-nav for app-level navigation between routes."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight | Moves between tabs and activates them. |\n| Home / End | Jumps to the first or last tab. |\n| Tab | Moves focus from the tab list into the active panel. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Radix provides role=\"tablist\", role=\"tab\", role=\"tabpanel\", aria-selected, and aria-controls.\n- The outgoing panel is made inert while it fades so it cannot take focus.\n- Overflow scroll buttons are labelled \"Scroll tabs left\" and \"Scroll tabs right\"; give TabsList an aria-label."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The selection pill glides between triggers on a morph spring, scoped to one Tabs instance.\n- Panels slide 8px in the direction of travel while the height springs from the previous panel.\n- Reduced motion swaps the pill instantly and crossfades panels in place without height animation."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The tab list keeps max-width 100% and scrolls horizontally when triggers overflow, with scroll buttons at the edges.\n- Focusing a tab scrolls it into view, so keyboard navigation works on narrow screens.\n- Triggers keep a 5.5rem minimum width, so many tabs overflow sooner on mobile."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- ResizeObservers track list overflow and the active panel height; one per Tabs instance is cheap.\n- The selection pill is a shared layout animation scoped to one Tabs; avoid dozens of tab sets on one screen."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for peer views of the same object. Use segmented-control for a compact value toggle that is not tied to panels, and accordion for stacked sections.\n- Every TabsTrigger value needs a matching TabsContent. Long lists scroll horizontally on their own."
+    }
+  ]
+}

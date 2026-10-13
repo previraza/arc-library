@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Titles and descriptions read far more often than edited, like a project name.\n- Single fields that save on their own with optimistic updates and rollback."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use input or textarea in a form when several fields save together.\n- Use input when the field should always look editable."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | On the text, starts editing. |\n| Enter | Saves the draft. In multiline mode, Shift+Enter inserts a line break. |\n| Escape | Cancels and rolls the text back. |\n| Tab | Leaving the component saves, the way a rename does. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The resting text is a native button labelled \"<label>: <value>\", so it is focusable and announced as editable.\n- The field has aria-label and aria-invalid; validation and save errors render in a polite live region linked through aria-describedby.\n- Save progress and results are announced through a role=\"status\" region; save and cancel buttons are labelled."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Text rolls between values, a check draws once a save lands, and multiline boxes follow their height; failed saves roll back with motion.\n- Reduced motion crossfades text, draws the check instantly, and replaces the spinner with a static mark."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Text wraps within the column and reserves 66px at the end for the save and cancel buttons.\n- With multiline the box grows in height as the text wraps.\n- Hover hints apply only on fine pointers; on touch a tap starts editing."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Two ResizeObservers size the frame; sizes are measured in a layout effect, so no frame shows a wrong width."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for single fields read far more often than edited, like titles and descriptions. Use a regular form with input or textarea when several fields save together.\n- value is controlled by the saved data; update it after onSave resolves. Return a promise from onSave to get saving, saved, and failed states.\n- Exported as both named and default."
+    }
+  ]
+}

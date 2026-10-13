@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Uploading files with per-file progress, retry, and remove.\n- Attachments that must be validated by type and size before upload.\n- Uploads that should abort when a file is removed, via the AbortSignal."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use file-dropzone when you only need to pick files without upload state.\n- Use import-mapper when uploaded data needs column mapping."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Opens the file picker from the dropzone. |\n| Tab | Moves through the dropzone and each row's retry and remove buttons. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The dropzone is role=button with aria-disabled and aria-describedby for the helper text.\n- An aria-live polite status line announces added, rejected, uploaded, failed, and removed files.\n- Retry and remove buttons are labelled with the file name.\n- After removing a file, focus moves to the neighbouring remove button or back to the dropzone."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The dropzone label swaps to Drop to add files while dragging; rows open and close their height on a spring.\n- One spring drives the progress bar and the counted percentage, the bar folds away once the file lands, and a check draws in.\n- Reduced motion jumps progress and replaces height and blur swaps with fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The dropzone and list fill their container; file names ellipsize on one line.\n- On touch devices the dropzone opens the native file picker, since drag and drop is desktop only."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Uploads run through your onUpload, one call per valid file; there is no concurrency limit, so queue large batches yourself.\n- The file list is not virtualized; keep it to a reasonable number of files."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use when files are uploaded with progress. Use file-dropzone when you only need to pick files without upload state.\n- Wire onUpload to fetch or XHR and honour the AbortSignal; without onUpload files are only listed and validated."
+    }
+  ]
+}

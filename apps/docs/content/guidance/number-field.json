@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Bounded quantities like seats, items, or prices where the exact number matters.\n- Values people nudge with steppers, arrow keys, or by dragging the label with scrub.\n- Numbers with units, using a prefix or a pluralizing suffix function."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use slider when the approximate position matters more than the exact number.\n- Use input for numeric strings like phone numbers or codes."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowUp / ArrowDown | Steps by step; holding repeats and speeds up, and keeps pushing at a limit. |\n| Shift + Arrow / PageUp / PageDown | Steps by largeStep. |\n| Home / End | Jumps to min or max when not typing. |\n| Enter | Commits a typed draft, clamped to min and max, or selects the value. |\n| Escape | Reverts a typed draft to the value before editing. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The input has role=\"spinbutton\" with aria-valuenow, aria-valuemin, aria-valuemax, and aria-valuetext including prefix and suffix.\n- Stepper buttons are labelled \"Increase <label>\" and \"Decrease <label>\" and marked aria-disabled at a limit.\n- Changes are announced through a polite aria-live region, and a clamp says which limit it met (\"10 seats, maximum\"); rolling digits are aria-hidden.\n- A typed value past a limit sets aria-invalid and adds the limit note to aria-describedby until it commits. The warning also uses copy, never color alone.\n- Pointer focus draws no ring; keyboard focus shows Arc's shared focus ring. Focus darkens the shell border, and a focused stepper button takes its hover fill."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Digits roll on wheels in the direction of change (up rolls up, down rolls down) with tabular numerals, and affixes reword in place.\n- Holding a stepper repeats after 400ms and ramps from 150ms to 40ms per step.\n- At a limit the value strains a few pixels toward the press and springs home; pushes in a row strain a little further, capped like overscroll. The refused button shakes once and the limit note rises in beside the label.\n- A typed value past a limit tints the shell with the warning role; on Enter or blur it springs back to the limit with a digit roll.\n- Reduced motion changes the value at once and answers a press at a limit with a brief warning tint on the number instead of the strain and shake."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The control is min(100%, 196px) wide at md (164px at sm, 228px at lg), overridable with --number-field-width. The label row, with its limit note, follows the same width.\n- Stepper buttons are 28, 34, or 40px by size with touch-action manipulation, so fast taps do not zoom.\n- Scrubbing the label uses pointer capture with touch-action pan-y, so vertical scrolling still works on touch."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Holding a stepper repeats on timeouts that speed up, not a per-frame loop.\n- Two ResizeObservers handle digit layout and the helper row; fine for forms, not for large grids."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for bounded integers or decimals like quantities, seats, and prices. Use slider when the approximate position matters more than the exact number.\n- Controlled with value and onValueChange or uncontrolled with defaultValue. There is no name prop; add a hidden input for plain forms.\n- Set min below zero to allow negatives; the input then accepts a minus sign.\n- The limit note sits at the end of the label row, so keep labels short enough to share the control's width with it, or set limitHint={false}."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A short set of peer items where neighbouring slides hint at more.\n- Galleries browsed by drag, flick, trackpad swipe, or keys.\n- Rotating highlights with a visible pause control, via interval."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use cover-flow for a showpiece gallery and photo-grid to show everything at once.\n- Use card-stack for deciding on items one at a time."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight | Moves to the previous or next slide. |\n| Home / End | Jumps to the first or last slide. |\n| Tab | Moves between the slide area, play control, active indicator, and arrows. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The root is a section with aria-roledescription=\"carousel\"; slides are labelled tabpanels and the indicators a role=\"tablist\".\n- Inactive slides are inert, so their links are not focusable.\n- Slide changes are announced in a polite live region.\n- Rotation pauses on hover, keyboard focus, and drag, and has a visible pause control."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Slides follow the finger and settle with momentum; neighbors shrink and dim with distance.\n- The indicator stretches into a pill that tracks the slides, and drains to show rotation time.\n- Reduced motion jumps between slides and disables rotation."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Slides default to min(80cqw, 340px), so they size to the carousel's container rather than the viewport.\n- Controls tighten when the container is under 340px."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- All slides stay mounted; inactive ones are inert, so keep the set short.\n- Rotation pauses offscreen via IntersectionObserver and in hidden tabs via visibilitychange."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a short set of peer items where neighbors should hint at more. Use cover-flow for a showpiece gallery and photo-grid to show everything at once.\n- Give each slide a stable key if the list can change, and write a specific label.\n- Keep autoplay off unless rotation is essential."
+    }
+  ]
+}

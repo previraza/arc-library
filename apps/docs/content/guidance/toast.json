@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A single success confirmation, like Changes saved, controlled with local state.\n- Demos or small apps that do not need a toast queue."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use toast-stack for app-wide notifications with types, actions, updates, and stacking.\n- Use alert for persistent messages that should stay in the page flow."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab then Enter | Reaches and activates the dismiss button. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders role=\"status\" with aria-live=\"polite\" and aria-atomic, so new content is announced without stealing focus.\n- The dismiss button is labelled \"Dismiss notification\"; the check icon is aria-hidden.\n- Positioning is up to the caller; the auto-dismiss timer does not pause on hover, so keep messages short."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Enters rising 16px from 0.96 scale on a morph spring while the check draws in; a swipe past 80px or 480px/s throws it off with its release velocity.\n- Closing sinks it 8px and fades. Copy changes rise in while the height springs to fit.\n- Reduced motion uses opacity fades and disables dragging."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The toast is min(100%, 26rem) wide and the title ellipsizes on one line.\n- Positioning is up to you; fix it to the bottom center on phones so it clears the thumb zone edges.\n- It swipes horizontally on touch and mouse; drag is disabled under reduced motion."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Drag and throw run on motion values, and a ResizeObserver springs the height when copy changes.\n- The auto-dismiss timer does not pause on hover, so keep messages short."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a single success confirmation you control with local state. Use toast-stack for an app-wide queue with types, actions, updates, and stacking.\n- Import as a default export. Position it yourself, for example fixed to the bottom of the viewport."
+    }
+  ]
+}

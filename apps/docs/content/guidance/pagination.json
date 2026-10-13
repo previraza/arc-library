@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Paged server results and long tables.\n- Lists where the page should live in the URL or state and fetch on change."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use carousel for browsing slides.\n- Use timeline with maxHeight for a scrolling feed instead of pages."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves between the previous, page, and next buttons. |\n| Enter / Space | Goes to that page. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders a nav landmark with the label as its name.\n- Page buttons are labelled \"Page 3\" and the current one has aria-current=\"page\".\n- Previous and next are disabled at the ends and carry aria-labels."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The current page mark springs to the selected button.\n- When the window shifts, numbers slide like a belt by the number of slots moved.\n- Reduced motion jumps the mark and swaps numbers without sliding."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- It always shows a five page window plus arrows, so it stays the same width on any screen.\n- The row wraps if its container is narrower than the buttons, and the current mark re-measures on resize."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Only five page buttons render regardless of pageCount; one ResizeObserver repositions the current mark."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for paged server results and long tables. Use carousel for browsing slides.\n- It is fully controlled: keep page in state or the URL and fetch on onPageChange."
+    }
+  ]
+}

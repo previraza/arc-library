@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Comparing two tiers side by side with a feature matrix.\n- Pricing pages that switch between monthly and yearly prices.\n- Long feature lists where people want to see only the differences."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use usage-pricing when price depends on seats or volume.\n- Use segmented-control alone for a simple billing toggle.\n- Use cancel-flow for downgrade or cancellation decisions."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The matrix uses table, row, columnheader, rowheader, and cell roles.\n- Prices are aria-live with aria-atomic so the full value is read.\n- The chosen plan is announced in a role=\"status\" footer."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Prices count between billing periods and the selection highlight moves with layoutId.\n- Extra feature rows expand in height with a light blur.\n- Reduced motion jumps to the final values and disables height animation."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Below 640px the feature header column hides and each feature name spans the row above its two values.\n- Below 365px plan and value padding tighten so both plans still fit side by side."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Prices tween with a single animate call per value; the selection highlight uses one layoutId.\n- Showing extra rows animates height, so keep the matrix to a few dozen features."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use when people compare two tiers side by side.\n- Edit the pricing and features constants; there is no selection callback, so wire the Button onClick yourself.\n- Composes Arc Button, SegmentedControl, and Switch."
+    }
+  ]
+}

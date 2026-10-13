@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Quota against a fixed allowance, such as storage, seats, or API calls.\n- Billing pages that should show what takes the space and how close the plan is to full.\n- Plans that can go over the limit, where the overage should be clear without relying on color."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use progress for task completion.\n- Use bar-chart to compare categories without a limit.\n- Use gauge or stat-card for a single headline metric."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight / ArrowUp / ArrowDown | Moves between legend items (roving tab stop). |\n| Home / End | Jumps to the first or last legend item. |\n| Enter / Space | Pins or unpins the focused category. |\n| Escape | Clears the pinned category. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The meter is a role=\"group\" labelled by its title; the bar is role=\"img\" with a full text summary of every segment and the status.\n- Rolling numbers are aria-hidden with screen-reader-only text alongside.\n- Status changes (near limit, over limit, growing overage) are announced in a polite live region.\n- Legend items are buttons with aria-pressed and labels like \"Media, 14.2 GB\"."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Segments grow in left to right once scrolled into view, then re-flow on one spring each when values change; crossing the limit fades in a hatched overage and limit marker.\n- Digits roll like an odometer in the direction the number moved; the status badge springs to its new width.\n- Reduced motion jumps values and swaps text with short fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The legend is an auto-fit grid of 108px minimum columns, so it wraps to fewer columns on narrow cards.\n- Hovering the bar highlights a category on mouse; on touch a tap pins it instead.\n- The caption ellipsizes on one line, so long labels do not push the layout."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Segments animate in once via useInView at 40% visibility, then re-flow on springs when values change.\n- A ResizeObserver tracks the bar width; up to four segments read clearly."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for quota against a fixed allowance: storage, seats, API calls. Use progress for task completion and bar-chart for comparing categories without a limit.\n- Keep segment ids stable across renders so updates animate instead of remounting."
+    }
+  ]
+}

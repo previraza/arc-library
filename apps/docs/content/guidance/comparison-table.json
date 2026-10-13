@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Showing how your product stacks up against named alternatives.\n- Feature matrices with three to five columns and grouped rows."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use plan-comparison to compare your own pricing tiers.\n- Use a sortable data table for large datasets."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Moves to the differences switch, the phone competitor picker, and the call to action. |\n| Space | Flips the differences switch. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Built with table, row, columnheader, rowheader and cell roles, so screen readers navigate it as a table.\n- Marks have text alternatives: Included, Partial (with its note), Not included.\n- The switch is a real checkbox with role switch; a polite live region says when rows are filtered.\n- Meaning never relies on color: checks, half circles and dashes differ in shape, with a legend."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Checks in your column draw in once, staggered down the table, when they scroll into view.\n- Differences only collapses matching rows on the smooth spring and closes the gap.\n- Picking a competitor on phones swaps its header and marks with a small pop.\n- The call to action morphs its label to the done state.\n- Reduced motion shows every mark at once and swaps collapses for instant changes."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Below 640px (stackBelow) it shows your column beside one competitor with a picker above.\n- Column widths are fractions, so it never scrolls sideways."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- A width observer switches layouts; no per frame work while scrolling.\n- Row collapses animate height only on rows that change."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use this for a /compare or /alternatives page or under pricing.\n- Keep competitor names generic or factual; values should be verifiable.\n- Set stickyTop to your fixed header height; use maxHeight only when embedding the table in a panel."
+    }
+  ]
+}

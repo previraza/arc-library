@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A single async commit such as Save, Publish, or Submit where the result should appear on the button.\n- Call-to-action buttons where a trailing arrow invites the next step.\n- Flows where the button should reset to idle on its own after success, via resetAfterMs."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use button with loading for plain form submits that do not need a success state.\n- Use action-swap when the control toggles between lasting states.\n- Use hold-to-confirm when the action is destructive and needs a deliberate press."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Runs the action. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Native button; the visible label is aria-hidden and a visually hidden copy of label names it.\n- Pending sets aria-busy and aria-disabled instead of disabled, so keyboard focus stays through the save.\n- A role=\"status\" region announces the pending and success labels."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Changed letters rise from a soft blur while the width springs to fit; the arrow leaves forward and a check draws itself in.\n- Presses scale to about 0.97 on a snappy spring.\n- Reduced motion drops the press scale, width spring, and stroke draw, and swaps with an instant fade."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Width springs to fit pending and success labels, so keep them close in length inside tight toolbars.\n- Hover shadow applies only on hover-capable fine pointers; touch gets the press scale."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Every letter is a motion span with layout position animation plus a small blur; fine for a few buttons, not for dense tables.\n- A ResizeObserver drives the width spring."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a single async commit (save, publish, submit) where the result should show on the button itself.\n- Prefer button with loading for plain forms, and action-swap when the control toggles between lasting states.\n- Return the real promise from onAction; handle errors in onActionError since the button just resets."
+    }
+  ]
+}

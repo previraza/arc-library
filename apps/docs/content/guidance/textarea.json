@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Free-form multi-line text like bios, comments, or feedback.\n- Fields with a live character count, which rolls its digits in the helper row."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use input for single-line values.\n- Use inline-edit with multiline for a description edited in place on a page.\n- Use tag-input when the text is really a list of short values."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Native textarea with a real label.\n- Description and error ids are merged into aria-describedby; errors set aria-invalid and use role=\"alert\".\n- Animated copy is aria-hidden and mirrored in a visually hidden plain-text span."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Message rows open their height on a smooth spring; changed words rise in with a soft blur and counts roll only the digits that changed.\n- Reduced motion drops the roll, blur, and height spring for instant changes."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- It fills its column with a 110px minimum height and a vertical resize handle; it does not auto-grow with content.\n- Hover border styles apply only on hover-capable fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- One ResizeObserver per field measures the helper row for its height spring; cheap for a form, but avoid hundreds in a table.\n- Recomputing a character count on each keystroke only re-renders the helper row words that changed."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for free-form, multi-line text. Use input for single lines and inline-edit for text edited in place on a page.\n- A live character count in description gets the rolling-digit treatment for free."
+    }
+  ]
+}

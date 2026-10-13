@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Single-choice fields with long lists, such as time zones or countries.\n- Lists where people know the name and want to type, including aliases via keywords."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use select for a short list where typing adds nothing.\n- Use multi-select when several values can be chosen.\n- Use expanding-search when the search navigates instead of setting a value."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowDown / ArrowUp | Opens the list, then moves through enabled options, wrapping at the ends. |\n| Enter | Selects the active option. |\n| Escape | Closes the list and discards the query. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Input has role=\"combobox\" with aria-expanded, aria-controls, aria-autocomplete=\"list\", and aria-activedescendant.\n- Options use role=\"option\" with aria-selected and aria-disabled; the list is labelled \"<label> options\".\n- The empty state is a role=\"status\" row; the clear button is labelled \"Clear selection\"."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The popover springs in from slightly above and the listbox height follows filtering on a smooth spring.\n- A chosen label rises into the field with a soft blur; the clear button scales in.\n- Reduced motion keeps opacity-only fades and instant height changes."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The popover spans the field width and the listbox caps at min(300px, 40vh), scrolling with contained overscroll.\n- It closes on any pointerdown outside, so a tap elsewhere dismisses it on touch."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Filtering is memoized and runs on every keystroke across all options; results are not virtualized, so pre-filter very large lists.\n- A ResizeObserver drives the listbox height spring while filtering."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for long or searchable single-choice lists. Use select for short lists, multi-select for several values, and expanding-search for search that navigates.\n- Controlled with value and onValueChange, or uncontrolled with defaultValue. The input shows the label, not the value, so pair name with a hidden input if you post a form.\n- Add keywords to options for synonyms and aliases."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A single light and dark toggle in an app or marketing top bar.\n- Pages that want to run their own view transition from the button's position."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use user-menu when theme choice, including system, belongs inside an account menu.\n- Use theme-switch-rise for quiet product chrome, or theme-switch-eclipse for a dramatic showcase change."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Toggles the theme. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders the library Button with aria-pressed set when the theme is dark.\n- aria-label defaults to \"Switch to dark mode\" or \"Switch to light mode\"; pass label to override.\n- The icons are aria-hidden."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Sun and moon trade places with a shared rotation, scale, and blur on a snappy spring; the icon also nudges in the direction of the chosen variant.\n- A theme that arrives during hydration swaps without motion, so a dark page never spins its switch on load.\n- Reduced motion swaps the icon with an instant fade and removes the nudge; skip the page transition too when reduced."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The labelled button fits a desktop top bar; pass iconOnly for a fixed 38px square on narrow headers and mobile.\n- Hover styles apply only on hover-capable fine pointers, so touch taps do not leave a stuck hover state."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The button itself is tiny: one icon swap on a spring, and the first theme after hydration applies without animating.\n- The page transition is yours; a full-page view transition snapshots the whole document, so keep it short and skip it for reduced motion."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a single light/dark toggle in a top bar. For light, dark, and system inside an account menu use user-menu.\n- The component only reports the change. Apply the theme in onThemeChange, typically inside document.startViewTransition, and use trigger's rect as the transition origin.\n- variant is passed back to onThemeChange so one handler can run the matching page transition (reveal, eclipse, split, rise)."
+    }
+  ]
+}

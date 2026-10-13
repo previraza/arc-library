@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Project history, audit logs, and deploy streams where recency matters.\n- Live feeds where new updates slide in at the top.\n- Rows that expand in place to show logs or detail."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use sortable-data-table when people sort or compare.\n- Use stepper for progress through fixed steps."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowDown / ArrowUp | Moves between expandable rows. |\n| Home / End | Jumps to the first or last expandable row. |\n| Enter / Space | Expands or collapses the focused row. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The feed is a labelled role=\"region\"; day labels are headings at headingLevel with a hidden update count.\n- Expandable rows are buttons with aria-expanded and aria-controls; rows without detail are not interactive.\n- Times use a time element with the full date in hidden text, and new updates are announced in a status region.\n- Say the outcome in the title, since tone is color only."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The connecting line draws as rows come into view and markers pop in.\n- New updates slide in at the top while the rest glide down; details expand on a spring.\n- Reduced motion replaces travel with short fades and instant height changes."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Day labels stay pinned while updates scroll under them, inside maxHeight or the page.\n- Below 420px row padding tightens so text keeps its width."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Events are not virtualized; set maxHeight for long feeds and trim old events.\n- Pass a now that ticks about once a minute rather than every second, since it re-renders every row."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for project history, audit logs, and deploy streams where order and recency matter. Use sortable-data-table when people sort or compare.\n- Pass a ticking now (for example updated every minute) so relative times stay current, and a fixed timeZone to avoid hydration mismatches."
+    }
+  ]
+}

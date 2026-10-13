@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Documentation snippets and install commands with a copy button.\n- Long files that should collapse to a few lines with Show all, via maxLines."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use copy-button alone for a one-line value such as an API key.\n- Use text-stream for code arriving from an AI response in progress.\n- Use a full highlighter library when you need many languages."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Focuses the copy button, the scrollable source, and the expand toggle. |\n| Enter / Space | Copies the code or toggles the expanded state. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The block is a section labelled like \"hello.ts source code\"; the pre is focusable so keyboard users can scroll it.\n- The expand toggle uses aria-expanded and aria-controls pointing at the source.\n- Copy feedback comes from copy-button."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Expanding or collapsing springs the source height; new code fades up in place.\n- The toggle label rolls and its chevron rotates.\n- Reduced motion snaps height and swaps text without movement."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Long lines scroll horizontally inside the block, never the page.\n- Below 420px the padding and font shrink and the copy button becomes icon-only."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The built-in highlighter is a small regex pass with no language bundles.\n- ResizeObservers measure the source for the height spring; many blocks on one page each run their own."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for documentation snippets and install commands. The highlighter is lightweight; use a full highlighter for many languages.\n- Set maxLines for long files so pages stay scannable."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Analytics and reporting filters that need presets like Last 7 days or This quarter.\n- Booking or leave requests where a start and end day are picked together.\n- Toolbars where the picker must stay compact until opened."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use date-picker for a single date.\n- Use calendar when the month should stay visible on the page.\n- Use time-picker when the user chooses a time of day rather than days."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space | Opens the panel from the trigger; picks a start or end day in the grid. |\n| Arrow keys | Move by day or week in the grid, extending the range preview once a start is picked. |\n| Home / End | Jump to the start or end of the week. |\n| PageUp / PageDown | Move by month; add Shift to move by year. |\n| ArrowUp / ArrowDown | Move between presets in the rail; ArrowLeft and ArrowRight in the compact row. |\n| Escape | Closes without applying and returns focus to the trigger. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The trigger has aria-haspopup=\"dialog\", aria-expanded, and a label that includes the current range.\n- Each month is a role=\"grid\" labelled by its title, with columnheaders and gridcells using aria-selected for days in range and aria-current=\"date\" for today.\n- Days have full date labels and a roving tabindex; months that are leaving turn inert so focus only finds the current set.\n- A polite live region announces the start day, then the range and its length."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- The trigger surface grows into the panel on a physical spring and shrinks back on Apply while the formatted label flies into the trigger with a shared layoutId.\n- The range highlight is one bar per week that stretches as you hover, and the two ends glide between days.\n- Months slide in the direction of travel, and label words roll up or down with time's direction.\n- Reduced motion jumps the surface size, drops the shared layout and slide, and uses short opacity fades."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- months=\"auto\" shows two months beside a vertical preset rail when the boundary is at least 712px wide, otherwise one month under a scrolling preset row.\n- In compact mode the panel width is min(352px, available) and day cells size between 32 and 42px to fit.\n- The panel shifts horizontally to stay 8px inside the boundary, and recomputes on window resize."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- ResizeObservers on the trigger and panel feed the size springs; updates are batched through a microtask.\n- Each week's highlight and each end is a motion value animation, so hovering does not re-render the grid beyond the range change.\n- Intl.DateTimeFormat instances are memoized per locale."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use when a start and end date are chosen together: report filters, analytics periods, bookings.\n- Selection is draft until Apply; onChange fires only on Apply. Cancel, Escape, or an outside click discards the draft.\n- Pass custom presets as { label, range: today => ({ start, end }) }; today is the viewer's local date.\n- The trigger is disabled until hydration because today is unknown on the server.\n- For a single date use date-picker; for an always-visible month use calendar."
+    }
+  ]
+}

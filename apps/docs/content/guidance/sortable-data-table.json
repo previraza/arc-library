@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Tabular records people sort and select, such as projects, invoices, or users.\n- Tables that need Shift-click range selection and a count line with Clear."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use data-grid when people edit cells like a spreadsheet.\n- Use timeline for chronological activity.\n- Use reorderable-list when people set the order by hand."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| ArrowLeft / ArrowRight | Moves between sortable headers. |\n| ArrowUp / ArrowDown | Moves between row checkboxes; down from Select all enters the rows. |\n| Home / End | Jumps to the first or last header or row checkbox. |\n| Enter / Space | Sorts by a header or toggles a checkbox. |\n| Shift + click | Selects a range of rows. |\n| Escape | Clears the selection. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- A native table with caption, scoped headers, and aria-sort on sortable columns.\n- Sort buttons are labelled like \"Sort by Budget, currently ascending\"; the select all checkbox shows a mixed state.\n- Sort and selection changes are announced through a role=\"status\" region."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Rows glide to their new positions on a spring when the sort changes; the sort arrow flips.\n- The selection count rolls and Clear fades in with a short blur.\n- Reduced motion reorders instantly and fades the count."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Wider layouts scroll horizontally inside the table instead of the page.\n- Below 620px each row folds into two lines, and the header becomes a scrolling strip of sort buttons with Select all pinned.\n- Hover row fills apply only on hover-capable fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Rows are not virtualized and each uses position layout animation for re-sorts; paginate long lists with pagination.\n- Sorting runs client side over the rows you pass."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for tabular records people sort and select. Use timeline for chronological activity and a plain list for simple items.\n- Sorting is client side over the given rows; for server sorting, control defaultSort per fetch and page with pagination.\n- Use render for badges, avatars, or formatted numbers inside cells."
+    }
+  ]
+}

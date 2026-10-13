@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Short statuses next to titles or in table cells, such as Live, Draft, or Failed.\n- Counts or states that change in place and should morph instead of jump.\n- Tagging a row with one tone plus an optional icon."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use alert or toast when the message needs a full sentence.\n- Use chip-group when people toggle the values.\n- Use stat-card for a headline number with a trend."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Renders a plain span, so it is read inline with surrounding text.\n- The icon is aria-hidden; the label must state the status on its own, not rely on tone color.\n- Outgoing labels are hidden from assistive tech while they fade, so only the current text is read.\n- It does not announce changes. Put it inside a live region if a status update must be spoken."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- A new label rises in with a short blur while the old one lifts away, and the pill width springs to fit.\n- Passive reflows such as font swaps resize instantly; only a content change springs.\n- Reduced motion swaps the label with a quick fade and snaps the width."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The pill sizes to its label and never wraps, so keep labels to a word or two in narrow cells.\n- Hover styles apply only on hover-capable fine pointers."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- Each badge has a ResizeObserver for the width spring; fine per row, but avoid thousands in one table.\n- Font swaps and passive reflows resize instantly; only content changes animate."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for short statuses and counts next to titles or in table cells. Use alert or toast for messages with sentences.\n- Keep the badge mounted and change its children to get the morph; remounting with a new key loses it."
+    }
+  ]
+}

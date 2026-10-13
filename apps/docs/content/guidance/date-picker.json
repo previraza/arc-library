@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- A date field in a form, such as a start or due date.\n- Dates with limits or blocked days, shown in a locale format."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use calendar inline when the grid should stay visible.\n- Use time-picker for times, and pair it with this for a full timestamp."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Enter / Space / ArrowDown | Opens the calendar and focuses the selected or current day. |\n| Escape | Closes the popover and returns focus to the trigger. |\n| Calendar keys | Arrows, Home, End, PageUp, and PageDown navigate days as in Calendar. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- Trigger has aria-haspopup=\"dialog\" and aria-expanded; the popover is role=\"dialog\" labelled \"<label> calendar\".\n- The formatted value lives in a visually hidden span; the rolling text is aria-hidden.\n- Tabbing out or clicking outside closes it, and focus returns to the trigger when it was inside."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- Changed date parts roll up for a later date and down for an earlier one; the popover springs in and closes about 240 ms after a pick so the highlight can land.\n- Reduced motion crossfades the value and closes immediately after a pick."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- The popover is min(320px, 100vw minus 32px) wide, left-aligned to the field.\n- Below 360px of viewport the popover stretches to both field edges.\n- It closes on any pointerdown outside, so a tap elsewhere dismisses it."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- The calendar mounts only while open, and changed date parts roll with layout position animation."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Use for a date field in forms. Use calendar inline when the grid should stay visible, and time-picker for times.\n- value is controlled only. There is no name prop; serialize the Date into a hidden input for plain forms."
+    }
+  ]
+}

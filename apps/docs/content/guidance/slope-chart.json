@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "when-to-use",
+      "title": "When to use",
+      "markdown": "- Showing which items rose, which fell, and how the order changed between two periods.\n- Replacing a grouped bar chart when the change is the story."
+    },
+    {
+      "id": "when-not-to-use",
+      "title": "When not to use",
+      "markdown": "- Use line-chart for three or more moments.\n- Use bar-chart when only the latest values matter.\n- Avoid more than about ten items; labels start to crowd."
+    },
+    {
+      "id": "keyboard",
+      "title": "Keyboard interactions",
+      "markdown": "| Keys | Action |\n| --- | --- |\n| Tab | Focuses the chart and reads the top item by end value. |\n| ArrowDown / ArrowRight | Next item in end order. |\n| ArrowUp / ArrowLeft | Previous item. |\n| Home / End | First or last item. |\n| Escape | Clears the reading. |"
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "markdown": "- The chart is a focusable group with a roledescription and instructions; lines and labels are aria-hidden.\n- A polite live region reads both values, the change, and the rank move for the item in focus.\n- A visually hidden summary and a table list every item in end order.\n- Rank moves use an arrow glyph and a number, never colour alone."
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "markdown": "- On first view each line draws from start to end with a small stagger, and the end dots and labels arrive as it lands.\n- Switching datasets moves lines, dots, labels, and leader hairlines on the shared morph spring; rank numbers roll in the direction they moved.\n- The item in focus comes forward while the others fade; the tooltip glides to the middle of its line.\n- Reduced motion shows every line drawn and moves it immediately."
+    },
+    {
+      "id": "responsive",
+      "title": "Responsive behavior",
+      "markdown": "- Label columns narrow below 440px and names truncate with an ellipsis; the full name stays in the tooltip and table.\n- Overlapping labels spread apart with a hairline to their point instead of colliding.\n- Touch reads the nearest line with a press and drag."
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "markdown": "- SVG lines and HTML labels animated with springs; around ten items render in a few dozen nodes.\n- One ResizeObserver measures the container."
+    },
+    {
+      "id": "notes",
+      "title": "Notes for AI",
+      "markdown": "- Choose it for exactly two moments and three to ten items: before and after a launch, quarter over quarter, last year against this year.\n- Use highlightKey for the item the story is about.\n- Give the columns short headings; names sit on the left only, values on both sides.\n- For more than two moments use line-chart."
+    }
+  ]
+}
