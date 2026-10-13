@@ -15,7 +15,7 @@ export type CodeBlockProps = {
   maxHeight?: number;
 };
 
-/** A formatted, copyable code area: header with `file name · language badge · … · copy`, then the highlighted body. */
+/** A formatted, copyable code area: header with `file name ·········· language badge · copy`, then the highlighted body. */
 export function CodeBlock({ label, lang, html, code, maxHeight }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
@@ -40,13 +40,12 @@ export function CodeBlock({ label, lang, html, code, maxHeight }: CodeBlockProps
   return (
     <div className="arc-code overflow-hidden rounded-[var(--radius-surface)] border border-fd-border bg-fd-background">
       <div className="flex items-center gap-2 border-b border-fd-border bg-fd-card px-3 py-1.5">
-        {label && <span className="min-w-0 truncate font-mono text-[11px] text-fd-foreground">{label}</span>}
+        <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-fd-foreground">{label}</span>
         {lang && (
           <span className="shrink-0 rounded-[var(--radius-pill)] border border-fd-border px-2 py-0.5 text-[10px] uppercase tracking-wide text-fd-muted-foreground">
             {lang}
           </span>
         )}
-        <span className="flex-1" />
         <button
           type="button"
           onClick={copy}
