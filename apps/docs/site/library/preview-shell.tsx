@@ -123,7 +123,7 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
       <div hidden={Boolean(showCode)} className={full ? "min-h-0 flex-1" : undefined}>
         <div
           className={`relative flex items-center justify-center overflow-auto rounded-[var(--radius-surface)] border border-fd-border bg-fd-background p-6 sm:p-10 ${
-            full ? "h-full" : "min-h-56"
+            full ? "h-full" : size === "mobile" ? "min-h-[700px]" : "min-h-56"
           }`}
           style={
             bare
@@ -135,15 +135,11 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
                 }
           }
         >
-          <div
-            className={
-              size === "mobile"
-                ? "relative z-10 flex w-[390px] max-w-full items-center justify-center self-center rounded-[var(--radius-surface)] border border-fd-border bg-fd-background p-5 shadow-sm"
-                : "relative z-10 flex w-full max-w-2xl items-center justify-center"
-            }
-          >
-            {children}
-          </div>
+          {size === "mobile" ? (
+            <PhoneFrame full={full}>{children}</PhoneFrame>
+          ) : (
+            <div className="relative z-10 flex w-full max-w-2xl items-center justify-center">{children}</div>
+          )}
         </div>
       </div>
       {code && (
@@ -151,6 +147,29 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
           {code}
         </div>
       )}
+    </div>
+  );
+}
+
+/** A phone: bezel, dynamic island and home indicator around a screen that centres the example both ways. */
+function PhoneFrame({ children, full }: { children: ReactNode; full: boolean }) {
+  return (
+    <div
+      className="relative z-10 shrink-0 rounded-[3rem] border border-fd-border bg-fd-foreground/90 p-2.5 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.35)]"
+      style={{ width: 340, height: full ? "min(720px, 100%)" : 640 }}
+    >
+      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[2.4rem] bg-fd-background">
+        <span aria-hidden className="absolute left-1/2 top-2.5 z-20 h-6 w-24 -translate-x-1/2 rounded-full bg-fd-foreground/90" />
+        <div className="flex h-12 shrink-0 items-end justify-between px-7 pb-1 text-[11px] font-medium text-fd-foreground" aria-hidden>
+          <span>9:41</span>
+          <span className="tracking-widest">●●●</span>
+        </div>
+        {/* container-type lets the example size itself to the screen, not the page. */}
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto p-4 [container-type:inline-size]">
+          <div className="flex w-full items-center justify-center">{children}</div>
+        </div>
+        <span aria-hidden className="mx-auto mb-2 mt-1 h-1 w-28 shrink-0 rounded-full bg-fd-foreground/80" />
+      </div>
     </div>
   );
 }
