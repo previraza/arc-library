@@ -4,6 +4,6 @@ import ExpandableCard from "@/components/manicat/expandable-card/expandable-card
 
 <template>
   <ExpandableCard title="Quarterly plan" description="Three tracks, reviewed every Friday.">
-    <ul><li>Design system</li><li>Docs</li><li>Registry ports</li></ul>
+    <p style="font-size: 14px; color: var(--text-muted)">The card grows into a larger view in place, so the page around it never moves.</p>
   </ExpandableCard>
 </template>

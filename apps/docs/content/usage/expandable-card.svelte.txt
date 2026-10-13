@@ -2,6 +2,6 @@
   import ExpandableCard from "@/components/manicat/expandable-card/expandable-card.svelte";
 </script>
 
-<div style="width: min(420px, 100%)">
-  <ExpandableCard title="Billing" description="Plan and invoices">Your plan renews on the 1st of each month.</ExpandableCard>
-</div>
+<ExpandableCard title="Quarterly plan" description="Three tracks, reviewed every Friday.">
+  <p style="font-size: 14px; color: var(--text-muted)">The card grows into a larger view in place, so the page around it never moves.</p>
+</ExpandableCard>
