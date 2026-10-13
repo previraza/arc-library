@@ -1,0 +1,19 @@
+import { View } from "react-native";
+import { Button } from "@/components/manicat/button/button.rn";
+import { Dialog } from "@/components/manicat/dialog/dialog.rn";
+
+export function DeleteWorkspace() {
+  return (
+    <Dialog
+      trigger={<Button variant="danger">Delete workspace</Button>}
+      title="Delete Acme workspace?"
+      description="14 projects and 3 members will lose access immediately."
+      onOpenChange={(open) => console.log("dialog open:", open)}
+    >
+      <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
+        <Button variant="secondary">Keep workspace</Button>
+        <Button variant="danger">Delete</Button>
+      </View>
+    </Dialog>
+  );
+}

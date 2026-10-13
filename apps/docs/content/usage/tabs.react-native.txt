@@ -1,0 +1,15 @@
+import { Text } from "react-native";
+import { Tabs } from "@/components/manicat/tabs/tabs.rn";
+
+export function ProjectTabs() {
+  return (
+    <Tabs
+      defaultValue="deployments"
+      items={[
+        { value: "deployments", label: "Deployments", content: <Text>3 deployments this week, 1 rollback on Tuesday.</Text> },
+        { value: "domains", label: "Domains", content: <Text>acme.com and www.acme.com, both verified.</Text> },
+        { value: "env", label: "Environment", content: <Text>12 variables across Production and Preview.</Text> },
+      ]}
+    />
+  );
+}

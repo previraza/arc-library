@@ -1,0 +1,14 @@
+import { Accordion } from "@/components/manicat/accordion/accordion.rn";
+
+export function Faq() {
+  return (
+    <Accordion
+      defaultOpen={0}
+      items={[
+        { title: "Can I cancel any time?", content: "Yes. Your plan stays active until the end of the billing period." },
+        { title: "Do you offer refunds?", content: "Within 14 days of a purchase, no questions asked." },
+        { title: "Is there a team discount?", content: "Teams of ten or more get 20% off." },
+      ]}
+    />
+  );
+}

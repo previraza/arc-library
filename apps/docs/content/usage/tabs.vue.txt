@@ -1,0 +1,19 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Tabs from "@/components/manicat/tabs/tabs.vue";
+
+const tab = ref("deployments");
+const items = [
+  { value: "deployments", label: "Deployments" },
+  { value: "domains", label: "Domains" },
+  { value: "env", label: "Environment" },
+];
+</script>
+
+<template>
+  <Tabs v-model="tab" :items="items">
+    <template #deployments>3 deployments this week, 1 rollback on Tuesday.</template>
+    <template #domains>acme.com and www.acme.com, both verified.</template>
+    <template #env>12 variables across Production and Preview.</template>
+  </Tabs>
+</template>

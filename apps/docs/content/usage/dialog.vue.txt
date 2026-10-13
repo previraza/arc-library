@@ -1,0 +1,19 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
+import Dialog from "@/components/manicat/dialog/dialog.vue";
+
+const open = ref(false);
+</script>
+
+<template>
+  <Dialog v-model:open="open" title="Delete Acme workspace?" description="14 projects and 3 members will lose access immediately.">
+    <template #trigger="{ open: show }">
+      <Button variant="danger" @click="show">Delete workspace</Button>
+    </template>
+    <div class="flex justify-end gap-2">
+      <Button variant="secondary" @click="open = false">Keep workspace</Button>
+      <Button variant="danger" @click="open = false">Delete</Button>
+    </div>
+  </Dialog>
+</template>
