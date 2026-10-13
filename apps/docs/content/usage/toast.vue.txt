@@ -3,10 +3,12 @@ import { ref } from "vue";
 import Button from "@/components/manicat/button/button.vue";
 import Toast from "@/components/manicat/toast/toast.vue";
 
-const open = ref(false);
+const open = ref(true);
 </script>
 
 <template>
-  <Button @click="open = true">Copy link</Button>
-  <Toast v-model:open="open" title="Link copied" description="Anyone with the link can view." />
+  <div style="display: grid; justify-items: center; gap: 12px">
+    <Button variant="secondary" @click="open = !open">{{ open ? "Hide toast" : "Show toast" }}</Button>
+    <Toast v-model:open="open" title="Copied to clipboard" description="The install command is on your clipboard." />
+  </div>
 </template>
