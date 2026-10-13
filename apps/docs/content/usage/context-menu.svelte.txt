@@ -1,8 +1,16 @@
 <script lang="ts">
+  import { Copy, Trash2 } from "@lucide/svelte";
   import ContextMenu from "@/components/manicat/context-menu/context-menu.svelte";
-  let last = $state("");
+
+  const items = [
+    { id: "copy", label: "Copy link", icon: Copy },
+    { id: "delete", label: "Delete project", icon: Trash2, destructive: true },
+  ];
 </script>
 
-<ContextMenu onselect={(id) => (last = id)} items={[{ id: "copy", label: "Copy" }, { id: "paste", label: "Paste" }, { id: "grid", label: "Show grid", checked: true }, { id: "delete", label: "Delete", destructive: true }]}>
-  <div style="display: grid; place-items: center; width: min(320px, 100%); height: 120px; border: 1px dashed var(--border); border-radius: 16px">Right-click here {last && `· ${last}`}</div>
+<ContextMenu {items} label="File actions">
+  <div style="display: flex; width: 100%; flex-direction: column; gap: 8px; border: 1px solid var(--border); border-radius: 12px; padding: 16px; font-size: 14px; line-height: 20px">
+    <span style="font-weight: 500">report-q3.pdf</span>
+    <span style="color: var(--text-muted)">Right click, or press the menu key.</span>
+  </div>
 </ContextMenu>
