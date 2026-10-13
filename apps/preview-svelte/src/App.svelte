@@ -10,6 +10,7 @@ const fromHash = () => decodeURIComponent(location.hash.slice(1)) || entries[0]?
   let dark = $state(matchMedia("(prefers-color-scheme: dark)").matches);
   let compare = $state(true);
   let demo = $state<Component | undefined>();
+  let loading = $state(true);
 
   $effect(() => {
     const onHash = () => (current = fromHash());
@@ -23,8 +24,12 @@ const fromHash = () => decodeURIComponent(location.hash.slice(1)) || entries[0]?
   $effect(() => {
     const name = current;
     demo = undefined;
+    loading = true;
     void loadDemo(name).then((loaded) => {
-      if (name === current) demo = loaded;
+      if (name === current) {
+        demo = loaded;
+        loading = false;
+      }
     });
   });
 
@@ -53,6 +58,8 @@ const fromHash = () => decodeURIComponent(location.hash.slice(1)) || entries[0]?
           {#if demo}
             {@const Demo = demo}
             <div class="viewer__demo"><Demo /></div>
+          {:else if loading}
+            <div class="viewer__loading" aria-label="Loading"><span></span><span></span></div>
           {:else}
             <p class="viewer__empty">No demo yet: add <code>apps/docs/content/usage/{current}.svelte.txt</code>.</p>
           {/if}

@@ -70,7 +70,7 @@ export function App() {
             <div className="viewer__stage viewer__stage--phone">
               <div className="phone">
                 <div className="phone__screen">
-                  {Demo ? <Demo.component /> : <p className="phone__empty">No demo yet: add apps/docs/content/usage/{current}.react-native.txt</p>}
+                  {Demo ? <Demo.component /> : loaded?.name !== current ? <div className="viewer__loading" aria-label="Loading"><span /><span /></div> : <p className="phone__empty">No demo yet: add apps/docs/content/usage/{current}.react-native.txt</p>}
                 </div>
               </div>
             </div>

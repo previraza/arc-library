@@ -29,3 +29,12 @@ body { margin: 0; background: var(--background); color: var(--foreground); font-
 
 .viewer__demo { display: contents; }
 .embed .viewer__demo { display: flex; }
+
+/* Shown by index.html until the app mounts, and by the viewers while a demo loads. */
+.boot { display: grid; place-content: center; gap: 12px; min-height: 100vh; width: min(20rem, 100%); margin: 0 auto; padding: 0 24px; }
+.boot span { display: block; height: 36px; border-radius: 999px; background: var(--surface-muted, #f1f1f1); animation: boot-pulse 1.4s ease-in-out infinite; }
+.boot span:nth-child(1) { width: 66%; } .boot span:nth-child(3) { height: 12px; width: 50%; animation-delay: .24s; } .boot span:nth-child(2) { animation-delay: .12s; }
+.viewer__loading { display: grid; place-content: center; gap: 12px; width: min(18rem, 100%); }
+.viewer__loading span { display: block; height: 36px; border-radius: 999px; background: var(--surface-muted); animation: boot-pulse 1.4s ease-in-out infinite; }
+@keyframes boot-pulse { 50% { opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .boot span, .viewer__loading span { animation: none; } }

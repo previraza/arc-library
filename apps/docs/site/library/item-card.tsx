@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { RegistryItem } from "@/lib/registry";
 import { getDemoNames } from "@/site/demos/registry";
+import { CardPreview } from "@/site/library/card-preview";
 
 const demoNames = new Set(getDemoNames());
 
@@ -24,14 +25,7 @@ export function ItemCard({ item, base }: { item: ItemSummary; base: "/components
         style={{ backgroundImage: "radial-gradient(color-mix(in oklab, var(--color-fd-foreground) 7%, transparent) 1px, transparent 1px)", backgroundSize: "14px 14px" }}
       >
         {hasDemo ? (
-          <iframe
-            src={`/frame/demo/${item.name}`}
-            title=""
-            tabIndex={-1}
-            scrolling="no"
-            loading="lazy"
-            className="pointer-events-none absolute left-0 top-0 h-[160%] w-[160%] origin-top-left scale-[0.625] border-0 transition-opacity duration-300 group-hover:opacity-100"
-          />
+          <CardPreview name={item.name} />
         ) : (
           <span className="absolute inset-0 grid place-items-center text-xs text-fd-muted-foreground">Preview coming</span>
         )}

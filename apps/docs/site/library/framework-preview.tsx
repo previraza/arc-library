@@ -6,6 +6,7 @@ import type { FrameworkId } from "@/lib/frameworks";
 import { useState } from "react";
 import { CodeBlock } from "@/site/library/code-block";
 import { FrameworkSwitch } from "@/site/library/framework-switch";
+import { PreviewSkeleton } from "@/site/library/preview-skeleton";
 import type { UsagePanel } from "@/site/library/usage-panels";
 import { useFramework } from "@/site/library/use-framework";
 
@@ -26,6 +27,7 @@ const viewers: Record<string, { label: string; url: string; height: number }> = 
 export function FrameworkPreview({ name, options, codes, children }: { name: string; options: { id: FrameworkId; label: string }[]; codes?: UsagePanel[]; children: ReactNode }) {
   const [framework] = useFramework(options);
   const [tab, setTab] = useState<"preview" | "code">("preview");
+  const [loadedKey, setLoadedKey] = useState("");
   const panel = codes?.find((entry) => entry.id === framework);
   if (framework === "react" || options.length < 2) return <div className="grid gap-3">{options.length > 1 && <Bar options={options} />}{children}</div>;
 
@@ -38,9 +40,12 @@ export function FrameworkPreview({ name, options, codes, children }: { name: str
       {panel && tab === "code" ? (
         <CodeBlock label={panel.fileName} lang={panel.lang} html={panel.html} code={panel.code} maxHeight={520} />
       ) : (
-      <div className="overflow-hidden rounded-[var(--radius-surface)] border border-fd-border bg-fd-background">
+      <div className="relative overflow-hidden rounded-[var(--radius-surface)] border border-fd-border bg-fd-background">
         {viewer?.url ? (
-          <iframe key={`${framework}-${name}`} title={`${name} in ${label}`} src={`${viewer.url}/?embed#${name}`} loading="lazy" className="w-full border-0" style={{ height: name.startsWith("example:") ? viewer.height + 100 : viewer.height }} />
+          <>
+            {loadedKey !== `${framework}-${name}` && <PreviewSkeleton />}
+            <iframe key={`${framework}-${name}`} title={`${name} in ${label}`} src={`${viewer.url}/?embed#${name}`} loading="lazy" onLoad={() => setLoadedKey(`${framework}-${name}`)} className={`relative w-full border-0 transition-opacity duration-300 ${loadedKey === `${framework}-${name}` ? "opacity-100" : "opacity-0"}`} style={{ height: name.startsWith("example:") ? viewer.height + 100 : viewer.height }} />
+          </>
         ) : (
           <p className="p-8 text-sm text-fd-muted-foreground">
             {framework === "swift"

@@ -11,6 +11,7 @@ const current = ref(fromHash());
 const dark = ref(matchMedia("(prefers-color-scheme: dark)").matches);
 const compare = ref(true);
 const demo = shallowRef<Component | undefined>();
+const loading = ref(true);
 
 const onHash = () => (current.value = fromHash());
 onMounted(() => addEventListener("hashchange", onHash));
@@ -28,8 +29,12 @@ watch(
   current,
   async (name) => {
     demo.value = undefined;
+    loading.value = true;
     const loaded = await loadDemo(name);
-    if (name === current.value) demo.value = loaded;
+    if (name === current.value) {
+      demo.value = loaded;
+      loading.value = false;
+    }
   },
   { immediate: true },
 );
@@ -56,6 +61,7 @@ const groups = computed(() => ["components", "blocks"].map((kind) => ({ kind, it
           <span>Vue</span>
           <div class="viewer__stage">
             <div v-if="demo" class="viewer__demo"><component :is="demo" /></div>
+            <div v-else-if="loading" class="viewer__loading" aria-label="Loading"><span /><span /></div>
             <p v-else class="viewer__empty">No demo yet: add <code>apps/docs/content/usage/{{ current }}.vue.txt</code>.</p>
           </div>
         </section>

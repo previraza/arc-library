@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { cn } from "manicat/lib/cn";
+import { PreviewSkeleton } from "@/site/library/preview-skeleton";
 import { Code2, Eye, Maximize2, Minimize2, RotateCw, Scan, Smartphone } from "lucide-react";
 
 type Size = "fit" | "mobile";
@@ -298,6 +299,8 @@ function Device({
             style={content}
           >
             {framed ? (
+              <>
+              {!loaded && <PreviewSkeleton />}
               <iframe
                 src={frameSrc}
                 title={title}
@@ -305,6 +308,7 @@ function Device({
                 onLoad={() => setLoaded(true)}
                 className={`h-full w-full border-0 bg-transparent transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
               />
+              </>
             ) : (
               <div className="flex w-full items-center justify-center">{children}</div>
             )}
