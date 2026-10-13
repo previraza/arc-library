@@ -1,7 +1,15 @@
 <script lang="ts">
   import ChipGroup from "@/components/manicat/chip-group/chip-group.svelte";
-  let value = $state(["design"]);
-  const options = ["Design", "Code", "Docs", "Tests", "Release"].map((label) => ({ value: label.toLowerCase(), label }));
+
+  let value = $state(["react", "charts"]);
+  const options = [
+    { value: "react", label: "React" },
+    { value: "motion", label: "Motion" },
+    { value: "charts", label: "Charts" },
+    { value: "forms", label: "Forms" },
+    { value: "tables", label: "Tables" },
+    { value: "text", label: "Text effects" },
+  ];
 </script>
 
-<ChipGroup label="Topics" {options} maxVisible={4} bind:value />
+<ChipGroup bind:value label="Topics" multiple {options} maxVisible={3} />
