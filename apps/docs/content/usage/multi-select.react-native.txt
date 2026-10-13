@@ -1,0 +1,19 @@
+import { useState } from "react";
+import { MultiSelect } from "@/components/manicat/multi-select/multi-select.rn";
+
+export function Skills() {
+  const [value, setValue] = useState(["design", "motion"]);
+  return (
+    <MultiSelect
+      label="Skills"
+      value={value}
+      onValueChange={setValue}
+      options={[
+        { value: "design", label: "Design" },
+        { value: "motion", label: "Motion" },
+        { value: "data", label: "Data visualisation" },
+        { value: "a11y", label: "Accessibility" },
+      ]}
+    />
+  );
+}

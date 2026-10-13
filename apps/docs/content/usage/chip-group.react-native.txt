@@ -1,0 +1,20 @@
+import { useState } from "react";
+import { ChipGroup } from "@/components/manicat/chip-group/chip-group.rn";
+
+export function Topics() {
+  const [value, setValue] = useState(["react", "charts"]);
+  return (
+    <ChipGroup
+      label="Topics"
+      value={value}
+      onValueChange={setValue}
+      maxVisible={3}
+      options={[
+        { value: "react", label: "React" },
+        { value: "motion", label: "Motion" },
+        { value: "charts", label: "Charts" },
+        { value: "forms", label: "Forms" },
+      ]}
+    />
+  );
+}

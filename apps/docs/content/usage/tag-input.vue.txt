@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import TagInput from "@/components/manicat/tag-input/tag-input.vue";
+
+const tags = ref(["design", "motion"]);
+</script>
+
+<template>
+  <TagInput v-model="tags" label="Topics" placeholder="Add a topic" />
+</template>

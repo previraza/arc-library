@@ -1,0 +1,16 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import MultiSelect from "@/components/manicat/multi-select/multi-select.vue";
+
+const value = ref(["design", "motion"]);
+const options = [
+  { value: "design", label: "Design" },
+  { value: "motion", label: "Motion" },
+  { value: "data", label: "Data visualisation" },
+  { value: "a11y", label: "Accessibility" },
+];
+</script>
+
+<template>
+  <MultiSelect v-model="value" label="Skills" :options="options" />
+</template>

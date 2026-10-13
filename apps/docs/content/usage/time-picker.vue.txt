@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import TimePicker from "@/components/manicat/time-picker/time-picker.vue";
+
+const time = ref("09:30");
+</script>
+
+<template>
+  <TimePicker v-model="time" label="Daily standup" />
+</template>

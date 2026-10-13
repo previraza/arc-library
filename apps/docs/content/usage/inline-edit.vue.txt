@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import InlineEdit from "@/components/manicat/inline-edit/inline-edit.vue";
+
+const title = ref("Q4 launch plan");
+</script>
+
+<template>
+  <InlineEdit v-model="title" label="Title" />
+</template>

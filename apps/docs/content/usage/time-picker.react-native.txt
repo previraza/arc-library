@@ -1,0 +1,5 @@
+import { TimePicker } from "@/components/manicat/time-picker/time-picker.rn";
+
+export function Standup() {
+  return <TimePicker label="Daily standup" defaultValue="09:30" onChange={(time) => console.log(time)} />;
+}

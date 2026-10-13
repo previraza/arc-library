@@ -1,0 +1,12 @@
+import { AnnouncementBar } from "@/components/manicat/announcement-bar/announcement-bar.rn";
+
+export function Banner() {
+  return (
+    <AnnouncementBar
+      messages={[
+        { id: "pro", message: "Manicat Pro adds 43 motion components.", action: { label: "See Pro", onClick: () => console.log("pro") } },
+        { id: "cli", message: "Every item installs with the shadcn CLI." },
+      ]}
+    />
+  );
+}

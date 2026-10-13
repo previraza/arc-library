@@ -1,0 +1,7 @@
+import { useState } from "react";
+import { InlineEdit } from "@/components/manicat/inline-edit/inline-edit.rn";
+
+export function DocumentTitle() {
+  const [title, setTitle] = useState("Q4 launch plan");
+  return <InlineEdit label="Title" value={title} onSave={setTitle} validate={(next) => (next.length > 60 ? "Keep it under 60 characters." : null)} />;
+}

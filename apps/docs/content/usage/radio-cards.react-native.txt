@@ -1,0 +1,16 @@
+import { useState } from "react";
+import { RadioCards } from "@/components/manicat/radio-cards/radio-cards.rn";
+
+export function Plans() {
+  const [plan, setPlan] = useState<string | null>("pro");
+  return (
+    <RadioCards
+      value={plan}
+      onValueChange={setPlan}
+      options={[
+        { value: "free", label: "Free", description: "The whole core library." },
+        { value: "pro", label: "Pro", description: "Motion components and larger blocks.", meta: "$19" },
+      ]}
+    />
+  );
+}

@@ -1,0 +1,13 @@
+import { useState } from "react";
+import { View } from "react-native";
+import { BillingPrice, BillingToggle } from "@/components/manicat/billing-toggle/billing-toggle.rn";
+
+export function Pricing() {
+  const [period, setPeriod] = useState("yearly");
+  return (
+    <View style={{ alignItems: "center", gap: 12 }}>
+      <BillingToggle value={period} onValueChange={setPeriod} />
+      <BillingPrice amount={period === "yearly" ? 190 : 19} period={period === "yearly" ? "per year" : "per month"} was={period === "yearly" ? 228 : undefined} />
+    </View>
+  );
+}

@@ -1,0 +1,16 @@
+import { UsageMeter } from "@/components/manicat/usage-meter/usage-meter.rn";
+
+export function Storage() {
+  return (
+    <UsageMeter
+      label="Workspace storage"
+      limit={100}
+      unit="GB"
+      segments={[
+        { id: "db", label: "Database", value: 32 },
+        { id: "media", label: "Media", value: 26 },
+        { id: "logs", label: "Logs", value: 6 },
+      ]}
+    />
+  );
+}

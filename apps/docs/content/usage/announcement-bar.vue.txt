@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import AnnouncementBar from "@/components/manicat/announcement-bar/announcement-bar.vue";
+
+const messages = [
+  { id: "pro", message: "Manicat Pro adds 43 motion components.", action: { label: "See Pro", href: "/pro" } },
+  { id: "cli", message: "Every item installs with the shadcn CLI." },
+];
+</script>
+
+<template>
+  <AnnouncementBar :messages="messages" />
+</template>

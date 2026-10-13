@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import UsageMeter from "@/components/manicat/usage-meter/usage-meter.vue";
+
+const segments = [
+  { id: "db", label: "Database", value: 32 },
+  { id: "media", label: "Media", value: 26 },
+  { id: "logs", label: "Logs", value: 6 },
+];
+</script>
+
+<template>
+  <UsageMeter label="Workspace storage" :limit="100" unit="GB" :segments="segments" />
+</template>

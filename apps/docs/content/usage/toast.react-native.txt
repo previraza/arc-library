@@ -1,0 +1,14 @@
+import { useState } from "react";
+import { View } from "react-native";
+import { Button } from "@/components/manicat/button/button.rn";
+import { Toast } from "@/components/manicat/toast/toast.rn";
+
+export function CopyLink() {
+  const [open, setOpen] = useState(false);
+  return (
+    <View style={{ flex: 1 }}>
+      <Button onPress={() => setOpen(true)}>Copy link</Button>
+      <Toast title="Link copied" description="Anyone with the link can view." open={open} onOpenChange={setOpen} />
+    </View>
+  );
+}

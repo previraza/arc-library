@@ -1,0 +1,5 @@
+import { ActionButton } from "@/components/manicat/action-button/action-button.rn";
+
+export function Publish() {
+  return <ActionButton label="Publish" successLabel="Published" onAction={() => new Promise<void>((done) => setTimeout(done, 900))} />;
+}

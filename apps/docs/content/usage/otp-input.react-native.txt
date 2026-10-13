@@ -1,0 +1,7 @@
+import { useState } from "react";
+import { OtpInput } from "@/components/manicat/otp-input/otp-input.rn";
+
+export function Verify() {
+  const [code, setCode] = useState("");
+  return <OtpInput label="Verification code" length={6} value={code} onChange={setCode} description="We sent it by SMS." />;
+}

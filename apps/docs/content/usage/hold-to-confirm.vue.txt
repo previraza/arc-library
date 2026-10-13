@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import HoldToConfirm from "@/components/manicat/hold-to-confirm/hold-to-confirm.vue";
+
+const deleted = ref(false);
+</script>
+
+<template>
+  <HoldToConfirm label="Hold to delete" tone="danger" @confirm="deleted = true" />
+  <p v-if="deleted">Account scheduled for deletion.</p>
+</template>

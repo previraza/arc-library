@@ -1,0 +1,17 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
+import Stepper from "@/components/manicat/stepper/stepper.vue";
+
+const current = ref(1);
+const steps = [
+  { id: "plan", label: "Plan", description: "Choose a template and a plan." },
+  { id: "connect", label: "Connect", description: "Link your GitHub repository." },
+  { id: "deploy", label: "Deploy", description: "Ship the first version." },
+];
+</script>
+
+<template>
+  <Stepper :steps="steps" :current="current" selectable @select="current = $event" />
+  <Button @click="current = Math.min(steps.length, current + 1)">Next</Button>
+</template>

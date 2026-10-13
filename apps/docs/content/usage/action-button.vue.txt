@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import ActionButton from "@/components/manicat/action-button/action-button.vue";
+
+const publish = () => new Promise<void>((done) => setTimeout(done, 900));
+</script>
+
+<template>
+  <ActionButton label="Publish" success-label="Published" :on-action="publish" />
+</template>

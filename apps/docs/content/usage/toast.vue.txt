@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
+import Toast from "@/components/manicat/toast/toast.vue";
+
+const open = ref(false);
+</script>
+
+<template>
+  <Button @click="open = true">Copy link</Button>
+  <Toast v-model:open="open" title="Link copied" description="Anyone with the link can view." />
+</template>
