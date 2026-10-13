@@ -58,6 +58,9 @@ variables of `foundation.css`, so they declare `manicat-foundation` as a depende
 - **Compound components.** React's `Tabs`, `TabsList` and `TabsTrigger` are Radix parts. The ports take the same
   information as data instead: `items` (plus a slot per tab in Vue, a `content` field in React Native). `Dialog`
   takes a `trigger` (a `#trigger` slot in Vue) and `open`/`onOpenChange` (`v-model:open`).
+- **Floating layers.** On the web the select, combobox and menu open as a popover under their trigger. On React Native
+  they open as a sheet (`Modal`) or inline list, which is where a thumb reaches, and the tooltip shows on a long press
+  because a phone has no hover.
 - **Motion.** Ports start with CSS transitions (Vue) or `Animated` (React Native). The spring-based morphs of the
   React version are not ported yet.
 - **Focus and pointers.** Web ports keep the quiet focus treatment; React Native follows the platform and uses

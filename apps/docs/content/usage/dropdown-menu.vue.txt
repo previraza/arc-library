@@ -1,0 +1,19 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import DropdownMenu from "@/components/manicat/dropdown-menu/dropdown-menu.vue";
+
+const last = ref<string>();
+const items = [
+  { label: "Rename", onSelect: () => (last.value = "Rename") },
+  { label: "Duplicate" },
+  { label: "Move to archive", separatorBefore: true },
+  { label: "Delete", destructive: true, onSelect: () => (last.value = "Delete") },
+];
+</script>
+
+<template>
+  <DropdownMenu label="Row actions" :items="items">
+    <template #icon>⋯</template>
+  </DropdownMenu>
+  <span v-if="last">Selected: {{ last }}</span>
+</template>

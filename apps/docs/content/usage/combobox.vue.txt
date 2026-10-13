@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Combobox from "@/components/manicat/combobox/combobox.vue";
+
+const framework = ref("");
+const options = [
+  { value: "next", label: "Next.js", keywords: ["react", "app router"] },
+  { value: "vite", label: "Vite", keywords: ["react", "bundler"] },
+  { value: "astro", label: "Astro", keywords: ["islands"] },
+];
+</script>
+
+<template>
+  <Combobox v-model="framework" label="Framework" placeholder="Choose a framework" :options="options" />
+</template>

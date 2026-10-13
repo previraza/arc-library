@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import Button from "@/components/manicat/button/button.vue";
+import Tooltip from "@/components/manicat/tooltip/tooltip.vue";
+</script>
+
+<template>
+  <div class="flex items-center gap-2">
+    <Tooltip content="Copy the install command">
+      <Button variant="secondary">Copy</Button>
+    </Tooltip>
+    <Tooltip content="Pinned to the top right" side="bottom">
+      <Button variant="ghost" size="sm">Details</Button>
+    </Tooltip>
+  </div>
+</template>

@@ -1,0 +1,23 @@
+import { useState } from "react";
+import { View } from "react-native";
+import { Combobox } from "@/components/manicat/combobox/combobox.rn";
+
+export function FrameworkPicker() {
+  const [value, setValue] = useState("");
+
+  return (
+    <View style={{ padding: 16 }}>
+      <Combobox
+        label="Framework"
+        placeholder="Choose a framework"
+        value={value}
+        onValueChange={setValue}
+        options={[
+          { value: "next", label: "Next.js", keywords: ["react", "app router"] },
+          { value: "vite", label: "Vite", keywords: ["react", "bundler"] },
+          { value: "astro", label: "Astro", keywords: ["islands"] },
+        ]}
+      />
+    </View>
+  );
+}

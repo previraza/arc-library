@@ -1,0 +1,17 @@
+import { Text } from "react-native";
+import { DropdownMenu } from "@/components/manicat/dropdown-menu/dropdown-menu.rn";
+
+export function RowActions({ onRename, onDelete }: { onRename: () => void; onDelete: () => void }) {
+  return (
+    <DropdownMenu
+      label="Row actions"
+      icon={<Text style={{ fontSize: 18 }}>⋯</Text>}
+      items={[
+        { label: "Rename", onSelect: onRename },
+        { label: "Duplicate" },
+        { label: "Move to archive", separatorBefore: true },
+        { label: "Delete", destructive: true, onSelect: onDelete },
+      ]}
+    />
+  );
+}
