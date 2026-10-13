@@ -1,0 +1,12 @@
+import { Text } from "react-native";
+import { Button } from "@/components/manicat/button/button.rn";
+import { Popover } from "@/components/manicat/popover/popover.rn";
+
+export function ColumnSettings() {
+  return (
+    <Popover trigger={<Button variant="secondary">Columns</Button>}>
+      <Text style={{ fontWeight: "500" }}>Visible columns</Text>
+      <Text>Choose which columns appear in the table.</Text>
+    </Popover>
+  );
+}

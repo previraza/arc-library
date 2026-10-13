@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import SearchField from "@/components/manicat/search-field/search-field.vue";
+
+const query = ref("");
+</script>
+
+<template>
+  <SearchField v-model="query" label="Search" placeholder="Find a component" />
+</template>

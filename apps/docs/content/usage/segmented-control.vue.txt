@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import SegmentedControl from "@/components/manicat/segmented-control/segmented-control.vue";
+
+const view = ref("board");
+const options = [
+  { value: "list", label: "List" },
+  { value: "board", label: "Board" },
+  { value: "calendar", label: "Calendar" },
+];
+</script>
+
+<template>
+  <SegmentedControl v-model="view" label="Layout" :options="options" />
+</template>

@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import RadioGroup from "@/components/manicat/radio-group/radio-group.vue";
+
+const period = ref("monthly");
+const options = [
+  { value: "monthly", label: "Monthly", description: "Cancel any time." },
+  { value: "yearly", label: "Yearly", description: "Two months free." },
+];
+</script>
+
+<template>
+  <RadioGroup v-model="period" label="Billing period" :options="options" />
+</template>

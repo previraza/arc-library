@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import MetricCard from "@/components/manicat/metric-card/metric-card.vue";
+</script>
+
+<template>
+  <MetricCard label="Monthly revenue" :value="48250" suffix=" USD" change="+15.2%" context="vs 41,900 last month" />
+</template>

@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import AvatarGroup from "@/components/manicat/avatar-group/avatar-group.vue";
+
+const members = [
+  { name: "Ada Lovelace", src: "https://i.pravatar.cc/96?img=47" },
+  { name: "Grace Hopper" },
+  { name: "Alan Turing", status: "online" as const },
+  { name: "Katherine Johnson" },
+  { name: "Barbara Liskov" },
+];
+</script>
+
+<template>
+  <AvatarGroup :members="members" :max="3" />
+</template>

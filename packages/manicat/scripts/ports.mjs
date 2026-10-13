@@ -36,6 +36,16 @@ export const portName = (item, framework) => `${item.name}-${framework.id}`;
 /** The shadcn registry item published for one port. `content` turns a source path into the payload embedded for it. */
 export async function portPayload(item, { framework, files }, content) {
   const paths = [...files, ...(framework.shared ?? [])];
+  // A port that imports another component's port (`@/registry/components/avatar/avatar.vue`) depends on that port's item.
+  const siblings = new Set();
+  for (const file of files) {
+    const source = await readFile(file, "utf8");
+    for (const match of source.matchAll(/["']@\/registry\/components\/([a-z0-9-]+)\//g)) if (match[1] !== item.name) siblings.add(match[1]);
+  }
+  const registryDependencies = [
+    ...(framework.registryDependencies ?? []),
+    ...[...siblings].sort().map(name => `https://manicat.dev/r/${name}-${framework.id}.json`),
+  ];
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: portName(item, framework),
@@ -43,7 +53,7 @@ export async function portPayload(item, { framework, files }, content) {
     title: `${item.title} (${framework.label})`,
     description: item.description,
     dependencies: framework.dependencies ?? [],
-    ...(framework.registryDependencies ? { registryDependencies: framework.registryDependencies } : {}),
+    ...(registryDependencies.length ? { registryDependencies } : {}),
     files: await Promise.all(paths.map(async file => ({ path: file, type: installType(file), target: installTarget(file), content: await content(file) }))),
     ...(item.meta ? { meta: { ...item.meta, framework: framework.id, port: item.name } } : {}),
   };

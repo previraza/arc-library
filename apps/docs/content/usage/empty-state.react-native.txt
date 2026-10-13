@@ -1,0 +1,12 @@
+import { Button } from "@/components/manicat/button/button.rn";
+import { EmptyState } from "@/components/manicat/empty-state/empty-state.rn";
+
+export function NoProjects() {
+  return (
+    <EmptyState
+      title="No projects yet"
+      description="Create your first project to see deployments, domains and usage here."
+      action={<Button>Create project</Button>}
+    />
+  );
+}

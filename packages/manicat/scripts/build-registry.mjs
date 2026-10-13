@@ -31,7 +31,7 @@ const resolveFrom = file => specifier => {
 /** The payload a registry item embeds for `file`: the source, with imports rewritten for the install layout. */
 async function expected(file) {
   const source = await readFile(file, "utf8");
-  return /\.(?:tsx?|css)$/.test(file) ? withRelativeImports(file, source, importSpecifiers(file, source), resolveFrom(file)) : source;
+  return /\.(?:tsx?|css|vue)$/.test(file) ? withRelativeImports(file, source, importSpecifiers(file, source), resolveFrom(file)) : source;
 }
 
 let ports = 0;

@@ -20,6 +20,11 @@ import ts from "typescript";
  * never become dependencies. CSS contributes its `@import` rules and CSS module `composes: … from` references.
  */
 export function importSpecifiers(file, content) {
+  // A Vue single file component imports from its script blocks; read those as TypeScript.
+  if (file.endsWith(".vue")) {
+    content = [...content.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(match => match[1]).join("\n");
+    file = "script.ts";
+  }
   if (file.endsWith(".css")) {
     return [...content.matchAll(/@import\s+(?:url\(\s*)?["']([^"']+)["']|\bcomposes\s*:[^;]*?\bfrom\s+["']([^"']+)["']/g)].map(match => match[1] ?? match[2]);
   }

@@ -1,0 +1,16 @@
+import { AvatarGroup } from "@/components/manicat/avatar-group/avatar-group.rn";
+
+export function Members() {
+  return (
+    <AvatarGroup
+      max={3}
+      members={[
+        { name: "Ada Lovelace", src: "https://i.pravatar.cc/96?img=47" },
+        { name: "Grace Hopper" },
+        { name: "Alan Turing", status: "online" },
+        { name: "Katherine Johnson" },
+        { name: "Barbara Liskov" },
+      ]}
+    />
+  );
+}

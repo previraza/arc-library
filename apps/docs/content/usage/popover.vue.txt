@@ -1,0 +1,17 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
+import Popover from "@/components/manicat/popover/popover.vue";
+
+const open = ref(false);
+</script>
+
+<template>
+  <Popover v-model:open="open">
+    <template #trigger="{ toggle }"><Button variant="secondary" @click="toggle">Columns</Button></template>
+    <template #default="{ close }">
+      <p>Choose which columns appear in the table.</p>
+      <Button size="sm" @click="close">Done</Button>
+    </template>
+  </Popover>
+</template>

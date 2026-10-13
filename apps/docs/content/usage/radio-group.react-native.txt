@@ -1,0 +1,17 @@
+import { useState } from "react";
+import { RadioGroup } from "@/components/manicat/radio-group/radio-group.rn";
+
+export function Billing() {
+  const [period, setPeriod] = useState("monthly");
+  return (
+    <RadioGroup
+      label="Billing period"
+      value={period}
+      onValueChange={setPeriod}
+      options={[
+        { value: "monthly", label: "Monthly", description: "Cancel any time." },
+        { value: "yearly", label: "Yearly", description: "Two months free." },
+      ]}
+    />
+  );
+}

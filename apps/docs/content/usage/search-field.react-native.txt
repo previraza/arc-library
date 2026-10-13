@@ -1,0 +1,7 @@
+import { useState } from "react";
+import { SearchField } from "@/components/manicat/search-field/search-field.rn";
+
+export function ComponentSearch() {
+  const [query, setQuery] = useState("");
+  return <SearchField label="Search" value={query} onValueChange={setQuery} placeholder="Find a component" />;
+}
