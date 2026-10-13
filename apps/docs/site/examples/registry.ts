@@ -5,6 +5,12 @@ import * as actions from "./actions";
 import * as feedback from "./feedback";
 import * as disclosure from "./disclosure";
 import * as data from "./data";
+import * as forms from "./forms";
+import * as chartsText from "./charts-text";
+import * as blocksEx from "./blocks";
+import * as mediaCollab from "./media-collab";
+import * as feedbackMore from "./feedback-more";
+import * as actionsMore from "./actions-more";
 
 const modules = [
   { file: "examples/inputs.tsx", exports: inputs },
@@ -12,6 +18,12 @@ const modules = [
   { file: "examples/feedback.tsx", exports: feedback },
   { file: "examples/disclosure.tsx", exports: disclosure },
   { file: "examples/data.tsx", exports: data },
+  { file: "examples/forms.tsx", exports: forms },
+  { file: "examples/charts-text.tsx", exports: chartsText },
+  { file: "examples/blocks.tsx", exports: blocksEx },
+  { file: "examples/media-collab.tsx", exports: mediaCollab },
+  { file: "examples/feedback-more.tsx", exports: feedbackMore },
+  { file: "examples/actions-more.tsx", exports: actionsMore },
 ];
 
 export type ExampleEntry = { file: string; exportName: string; Component: ComponentType };
