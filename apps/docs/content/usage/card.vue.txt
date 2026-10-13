@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import Avatar from "@/components/manicat/avatar/avatar.vue";
-import Button from "@/components/manicat/button/button.vue";
 import Card from "@/components/manicat/card/card.vue";
 </script>
 
 <template>
-  <Card title="Quiet motion" description="Springs for anything that moves on screen." status="Updated 2 hours ago">
-    <template #avatar><Avatar name="Ada Lovelace" size="sm" /></template>
-    <template #meta>Ada Lovelace</template>
-    <template #action><Button size="sm" variant="secondary">Open</Button></template>
-  </Card>
+  <div style="display: grid; width: 100%; max-width: 28rem; gap: 16px">
+    <Card title="Quiet motion" description="Springs for anything that moves on screen." status="Updated 2 hours ago">
+      <p style="font-size: 14px; line-height: 20px; color: var(--text-muted)">
+        Cards carry a title, an optional status and any content. With details set, the card opens into a larger view in
+        place.
+      </p>
+    </Card>
+  </div>
 </template>

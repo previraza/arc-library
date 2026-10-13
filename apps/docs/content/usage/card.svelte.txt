@@ -1,11 +1,12 @@
 <script lang="ts">
   import Card from "@/components/manicat/card/card.svelte";
-  import Button from "@/components/manicat/button/button.svelte";
 </script>
 
-<div style="width: min(340px, 100%)">
-  <Card title="Quarterly review" description="Slides and notes for the Q3 planning session." status="Draft">
-    {#snippet meta()}Updated 2h ago{/snippet}
-    {#snippet action()}<Button size="sm" variant="secondary">Open</Button>{/snippet}
+<div style="display: grid; width: 100%; max-width: 28rem; gap: 16px">
+  <Card title="Quiet motion" description="Springs for anything that moves on screen." status="Updated 2 hours ago">
+    <p style="font-size: 14px; line-height: 20px; color: var(--text-muted)">
+      Cards carry a title, an optional status and any content. With details set, the card opens into a larger view in
+      place.
+    </p>
   </Card>
 </div>
