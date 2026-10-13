@@ -1,14 +1,30 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { FileText, Folder } from "lucide-vue-next";
 import TreeView from "@/components/manicat/tree-view/tree-view.vue";
 
-const expanded = ref(["src"]);
 const nodes = [
-  { id: "src", label: "src", children: [{ id: "app", label: "app" }, { id: "lib", label: "lib", children: [{ id: "cn", label: "cn.ts" }] }] },
-  { id: "readme", label: "README.md" },
+  {
+    id: "src",
+    label: "src",
+    icon: Folder,
+    children: [
+      { id: "app", label: "app", icon: Folder },
+      {
+        id: "lib",
+        label: "lib",
+        icon: Folder,
+        children: [
+          { id: "cn", label: "cn.ts", icon: FileText },
+          { id: "registry", label: "registry.ts", icon: FileText },
+        ],
+      },
+      { id: "site", label: "site", icon: Folder },
+    ],
+  },
+  { id: "packages", label: "packages", icon: Folder, children: [{ id: "manicat", label: "manicat", icon: Folder }] },
 ];
 </script>
 
 <template>
-  <TreeView v-model:expanded="expanded" :nodes="nodes" aria-label="Project files" />
+  <TreeView :nodes="nodes" :default-expanded-ids="['src', 'lib']" aria-label="Project files" />
 </template>

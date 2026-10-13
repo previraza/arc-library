@@ -40,7 +40,7 @@ export const tabsKey = Symbol("manicat-tabs");
 export const createPanelMemory = (): PanelMemory => ({ height: null, leaving: null });
 
 /** The highlight: one box that travels between triggers on the morph spring and sits in the active trigger. */
-export function createSelectionGlide(list: HTMLElement, { selectionClass, reduced }: { selectionClass: string; reduced: boolean }) {
+export function createSelectionGlide(list: HTMLElement, { selectionClass, reduced, selector = '[role="tab"][data-state="active"]' }: { selectionClass: string; reduced: boolean; /** Finds the element that holds the highlight. Tabs by default. */ selector?: string }) {
   const selection = document.createElement("span");
   selection.className = selectionClass;
   selection.setAttribute("aria-hidden", "true");
@@ -54,8 +54,14 @@ export function createSelectionGlide(list: HTMLElement, { selectionClass, reduce
   };
   return {
     update() {
-      const tab = list.querySelector<HTMLElement>('[role="tab"][data-state="active"]');
-      if (!tab || tab === current) return;
+      const tab = list.querySelector<HTMLElement>(selector);
+      if (!tab) {
+        // The row that held the highlight is gone or unselected: the highlight leaves with it.
+        if (current) selection.remove();
+        current = undefined;
+        return;
+      }
+      if (tab === current) return;
       const from = current ? selection.getBoundingClientRect() : undefined;
       clear();
       tab.prepend(selection);

@@ -1,12 +1,28 @@
 <script lang="ts">
+  import { FileText, Folder } from "@lucide/svelte";
   import TreeView from "@/components/manicat/tree-view/tree-view.svelte";
-  let expanded = $state(["src"]);
+
   const nodes = [
-    { id: "src", label: "src", children: [{ id: "app", label: "app.ts" }, { id: "lib", label: "lib", children: [{ id: "chart", label: "chart.ts" }] }] },
-    { id: "pkg", label: "package.json" },
+    {
+      id: "src",
+      label: "src",
+      icon: Folder,
+      children: [
+        { id: "app", label: "app", icon: Folder },
+        {
+          id: "lib",
+          label: "lib",
+          icon: Folder,
+          children: [
+            { id: "cn", label: "cn.ts", icon: FileText },
+            { id: "registry", label: "registry.ts", icon: FileText },
+          ],
+        },
+        { id: "site", label: "site", icon: Folder },
+      ],
+    },
+    { id: "packages", label: "packages", icon: Folder, children: [{ id: "manicat", label: "manicat", icon: Folder }] },
   ];
 </script>
 
-<div style="width: min(280px, 100%)">
-  <TreeView {nodes} bind:expanded />
-</div>
+<TreeView {nodes} defaultExpandedIds={["src", "lib"]} aria-label="Project files" />

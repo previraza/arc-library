@@ -9,6 +9,7 @@
 .disclosure, .icon, .label { position: relative; z-index: 1; }
 .disclosure { display: grid; width: 14px; height: 16px; flex: 0 0 14px; place-items: center; color: var(--text-muted); }
 .icon { display: grid; width: 16px; height: 16px; flex: 0 0 16px; place-items: center; color: var(--text-muted); transition: color var(--duration-fast) var(--ease-standard); }
+.icon > svg { width: 16px; height: 16px; }
 .folder { color: var(--text-secondary); }
 .item[aria-expanded="true"] .folder, .item[aria-selected="true"] .folder { color: var(--foreground); }
 .folderGlyph { position: absolute; inset: 0; display: grid; place-items: center; }
