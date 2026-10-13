@@ -6,5 +6,5 @@ const time = ref("09:30");
 </script>
 
 <template>
-  <TimePicker v-model="time" label="Daily standup" />
+  <TimePicker v-model="time" label="Standup" />
 </template>
