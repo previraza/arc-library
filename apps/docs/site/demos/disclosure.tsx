@@ -83,7 +83,7 @@ export function ResizablePanelsDemo() {
 export function DialogDemo() {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button>Open dialog</Button>
       </DialogTrigger>
       <DialogContent title="Rename project" description="The slug updates everywhere it is linked.">
@@ -109,7 +109,7 @@ export function DialogDemo() {
 export function DrawerDemo() {
   return (
     <Drawer>
-      <DrawerTrigger>
+      <DrawerTrigger asChild>
         <Button variant="secondary">Open drawer</Button>
       </DrawerTrigger>
       <DrawerContent title="Filters" description="Narrow the list without leaving the page.">
@@ -145,7 +145,7 @@ export function BottomSheetDemo() {
 export function PopoverDemo() {
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="secondary">Column settings</Button>
       </PopoverTrigger>
       <PopoverContent className="w-64 rounded-[var(--radius-panel)] border border-fd-border bg-fd-popover p-4 text-sm shadow-lg">
@@ -195,7 +195,7 @@ export function SettingsDemo() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="ghost" size="sm">
           <Settings2 size={16} /> Settings
         </Button>

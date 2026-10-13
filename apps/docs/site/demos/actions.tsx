@@ -152,6 +152,7 @@ export function SwipeActionsDemo() {
   return (
     <SwipeActions label="Message actions">
       <SwipeActionsRow
+        key="ada"
         label="Ada Lovelace"
         leading={[{ label: "Pin", icon: <Star size={16} />, onSelect: () => {}, keepRow: true }]}
         trailing={[
@@ -165,6 +166,7 @@ export function SwipeActionsDemo() {
         </div>
       </SwipeActionsRow>
       <SwipeActionsRow
+        key="grace"
         label="Grace Hopper"
         trailing={[{ label: "Delete", icon: <Trash2 size={16} />, tone: "danger", onSelect: () => {} }]}
       >

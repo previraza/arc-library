@@ -15,7 +15,7 @@ export function DialogRenameExample() {
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button variant="secondary">Rename project</Button>
       </DialogTrigger>
       <DialogContent title="Rename project" description="The slug updates everywhere it is linked.">
@@ -49,7 +49,7 @@ export function DialogRenameExample() {
 export function DialogConfirmExample() {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button variant="danger">Delete workspace</Button>
       </DialogTrigger>
       <DialogContent title="Delete Acme workspace?" description="14 projects and 3 members will lose access immediately.">

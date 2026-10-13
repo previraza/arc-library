@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteUrl } from "@/lib/registry";
 import { Geist, Inter } from "next/font/google";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import { site } from "@/lib/layout.shared";
@@ -8,7 +9,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "sw
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: `${site.name} · ${site.description}`,
     template: `%s · ${site.name}`,

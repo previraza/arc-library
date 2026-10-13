@@ -31,8 +31,12 @@ export type BlockGroup = { title: string; items: RegistryItem[] };
 
 const items = registry.items as RegistryItem[];
 
-/** The origin this site publishes, used for install commands and copy buttons. */
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+/**
+ * The origin this site publishes, used for install commands and copy buttons. Set NEXT_PUBLIC_SITE_URL (in .env.local for a dev
+ * server behind a domain, in the host's settings for a deploy); without it a production build says manicat.dev and `next dev`
+ * says localhost.
+ */
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.NODE_ENV === "production" ? "https://manicat.dev" : "http://localhost:3000");
 
 const byName = new Map(items.map((item) => [item.name, item]));
 const componentItems = items.filter((item) => item.type === "registry:ui");

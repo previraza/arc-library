@@ -313,7 +313,7 @@ export function ResizablePanelsEditorExample() {
 export function DrawerFiltersExample() {
   return (
     <Drawer>
-      <DrawerTrigger>
+      <DrawerTrigger asChild>
         <Button variant="secondary">Filters</Button>
       </DrawerTrigger>
       <DrawerContent title="Filters" description="Narrow the list without leaving the page.">
@@ -357,7 +357,7 @@ export function BottomSheetShareExample() {
 export function PopoverColumnsExample() {
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="secondary">
           <Settings2 size={16} /> Columns
         </Button>
