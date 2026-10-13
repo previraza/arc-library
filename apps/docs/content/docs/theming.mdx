@@ -63,16 +63,7 @@ are set as CSS variables, so `next/font` can swap them without touching a compon
 Charts read `--series-1` through `--series-4`. The palette rotates from `--accent`, so every accent gets a
 chart series that is distinct from its neighbours. Override the four variables on any element to rebrand a
 chart.
-## Customising parts with `classNames`
 
-Every component takes `className` for its root and a `classNames` object for its named inner parts (`trigger`, `option`, `meta`…). The part names are listed in each component's API tab.
+## Customising parts
 
-```tsx
-<MorphSelect
-  label="Status"
-  items={items}
-  classNames={{ trigger: "min-w-48", option: "text-sm" }}
-/>
-```
-
-Native ports follow the same idea under the platform's own name: a React Native component takes `styles={{ trigger: {...} }}` with the same part names.
+For per-component changes, use `className`, `classNames` (or `styles` on native). See [Customization](/docs/customization).

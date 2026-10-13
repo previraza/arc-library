@@ -1,0 +1,77 @@
+---
+title: Frameworks
+description: One library, several formats. React is the source of truth; React Native and Vue ports sit beside it and install the same way.
+---
+
+Manicat UI is written in React, and every component can have a **port** for another framework. A port is the same
+component, in the idiom of the target: React Native styles instead of CSS, a Vue single file component instead of
+JSX. Ports are separate registry items, so installing one never pulls React code into a Vue project.
+
+## Formats
+
+The registry of formats lives in `packages/manicat/frameworks.json`. A file belongs to a framework by its suffix.
+
+| Framework | File | Customise parts with | Installs |
+| --- | --- | --- | --- |
+| React | `button.tsx` | `classNames` | `@manicat/button` |
+| React Native | `button.rn.tsx` | `styles` | `@manicat/button-react-native` |
+| Vue | `button.vue` | `classNames` | `@manicat/button-vue` |
+| Svelte | `button.svelte` | `classNames` | planned |
+| Swift | `button.swift` | `styles` | planned |
+
+Only the ports that exist for an item are offered. The framework switcher on every component page lists the
+formats found for that item, and the choice is remembered in your browser: pick Vue once and every page opens on Vue
+when it has it.
+
+## Installing a port
+
+A port installs exactly like any other item, under its own name:
+
+```bash
+# React
+npx shadcn@latest add @manicat/button
+
+# React Native
+npx shadcn@latest add @manicat/button-react-native
+
+# Vue
+npx shadcn@latest add @manicat/button-vue
+```
+
+React Native ports also install `lib/rn-tokens.ts`, the design tokens as plain values. Vue ports read the CSS
+variables of `foundation.css`, so they declare `manicat-foundation` as a dependency and the CLI adds it for you.
+
+## What stays the same
+
+- **Names.** Props, variants and sizes keep their React names: `variant="danger"`, `size="sm"`, `loading`.
+- **Tokens.** Colors, radii, control heights and spacing come from the same token set, in both themes.
+- **Part names.** The parts you can style (`track`, `thumb`, `label`…) are the same in every format.
+
+## What differs
+
+- **Motion.** Ports start with CSS transitions (Vue) or `Animated` (React Native). The spring-based morphs of the
+  React version are not ported yet.
+- **Focus and pointers.** Web ports keep the quiet focus treatment; React Native follows the platform and uses
+  `accessibilityRole`, `accessibilityState` and press feedback instead.
+- **Previews.** The live previews on this site render the React version. Choose another framework to read its
+  install command, source, API table and usage snippet.
+
+## Adding a port
+
+You do not register a port anywhere. Put the file next to the React source and rebuild:
+
+```text
+registry/components/button/
+  button.tsx
+  button.module.css
+  button.rn.tsx     ← React Native
+  button.vue        ← Vue
+  button.swift      ← a new framework, found on the next build
+```
+
+```bash
+pnpm --filter manicat build:registry
+```
+
+The build publishes `public/r/button-swift.json`, `check:registry` verifies it, and the site adds Swift to the
+switcher. See [Contributing](/docs/contributing) for the full checklist, including the optional usage snippet.

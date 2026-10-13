@@ -1,0 +1,82 @@
+---
+title: React Native
+description: Install Manicat UI components in an Expo or bare React Native app, with tokens, themes and styles.* overrides.
+---
+
+React Native ports are `*.rn.tsx` files built on `Pressable`, `Animated` and `StyleSheet`. They have no web
+dependencies and read their colors from a small token module instead of CSS variables.
+
+## Requirements
+
+- **React Native 0.76 or newer**, with Expo or a bare project
+- **TypeScript** and the `@/*` import alias that `shadcn` set up (the CLI rewrites Manicat imports to relative
+  paths, so any alias layout works)
+
+## Install
+
+```bash
+npx shadcn@latest add @manicat/button-react-native
+```
+
+The first install also adds `manicat/lib/rn-tokens.ts`. Every other port reuses it.
+
+## Use it
+
+```tsx
+import { View } from "react-native";
+import { Button } from "@/components/manicat/button/button.rn";
+
+export function SaveBar() {
+  return (
+    <View style={{ flexDirection: "row", gap: 12 }}>
+      <Button onPress={() => console.log("saved")}>Save changes</Button>
+      <Button variant="secondary">Cancel</Button>
+      <Button variant="danger">Delete project</Button>
+    </View>
+  );
+}
+```
+
+Props match the React version. Handlers use the native names: `onPress` instead of `onClick`, and `checked` with
+`onCheckedChange` on a switch.
+
+## Tokens and themes
+
+`lib/rn-tokens.ts` exports `lightTokens`, `darkTokens`, `metrics` and the `useTokens()` hook, which picks the set
+for the device's current color scheme.
+
+```tsx
+import { useTokens } from "@/components/manicat/lib/rn-tokens";
+
+function Card({ children }: { children: React.ReactNode }) {
+  const tokens = useTokens();
+  return <View style={{ backgroundColor: tokens.surface, borderColor: tokens.border, borderWidth: 1 }}>{children}</View>;
+}
+```
+
+To change a color, edit the value in `lightTokens` and `darkTokens`. If your app manages its own theme, replace the
+body of `useTokens` with a read from your provider; nothing else depends on `useColorScheme`.
+
+## Customising parts with `styles`
+
+Where the web takes class names, React Native takes style objects, keyed by the same part names.
+
+```tsx
+<Switch
+  label="Push notifications"
+  checked={on}
+  onCheckedChange={setOn}
+  styles={{
+    track: { width: 52 },
+    label: { fontWeight: "600" },
+  }}
+/>
+```
+
+`style` still styles the outer pressable. The parts a component exposes are listed in its API tab.
+
+## Accessibility
+
+Ports set `accessibilityRole` (`button`, `switch`), `accessibilityState` (`disabled`, `busy`, `checked`) and an
+`accessibilityLabel` from the visible label. A loading button stays focusable and swallows presses, so screen reader
+focus is not lost mid-action.

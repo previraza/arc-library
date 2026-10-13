@@ -1,0 +1,64 @@
+---
+title: Customization
+description: Four levels of control, from a single class to editing the source, and which one to reach for.
+---
+
+Manicat UI ships as source in your repository, so nothing is locked. Still, most changes do not need an edit to
+the component. Reach for the lightest tool that does the job.
+
+## 1. Tokens
+
+Change how everything looks at once by editing `foundation.css`: colors, radii, shadows, fonts. Scope a change to
+one area by overriding the variable on a wrapper.
+
+```css
+.billing-page {
+  --radius-control: 0.75rem;
+  --accent: oklch(55% 0.2 280);
+}
+```
+
+## 2. `className`
+
+Every component accepts `className` on its root, merged with its own classes.
+
+```tsx
+<Button className="w-full">Continue</Button>
+```
+
+## 3. `classNames` (and `styles`)
+
+Components made of several parts take a `classNames` object whose keys are the part names. Use it to restyle one
+part without touching the rest. The part names are listed in each component's **API** tab, and in the JSDoc of the
+props interface.
+
+```tsx
+<MorphSelect
+  label="Status"
+  items={items}
+  classNames={{ trigger: "min-w-48", option: "text-sm" }}
+/>
+```
+
+The same parts, under the platform's own name, exist elsewhere:
+
+| Format | Prop | Value |
+| --- | --- | --- |
+| React, Vue, Svelte | `classNames` | `{ part: "class string" }` |
+| React Native, Swift | `styles` | `{ part: style object }` |
+
+Classes passed this way are appended after the component's own, so Tailwind utilities and your own CSS win ties
+only when they are more specific. If an override does not apply, raise its specificity or use `!` in Tailwind.
+
+## 4. Edit the source
+
+The files live in your project. Rename a prop, remove a variant, replace a primitive. Keep two habits so you can
+still take upstream improvements:
+
+- keep your edits small and in the component file, rather than forking its helpers;
+- keep `motion-tokens.ts` and `foundation.css` as the single place for timing and color.
+
+<Callout>
+  Re-running `npx shadcn@latest add @manicat/button --overwrite` replaces your edits. Commit before updating, then
+  re-apply your changes from the diff.
+</Callout>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { cn } from "manicat/lib/cn";
 import { Code2, Eye, Maximize2, Minimize2, RotateCw, Scan, Smartphone } from "lucide-react";
 
 type Size = "fit" | "mobile";
@@ -288,7 +289,7 @@ function Device({
       style={shell}
     >
       <div
-        className={`relative h-full w-full py-10 bg-fd-background transition-[border-radius] ${slow}`}
+        className={cn(`relative h-full w-full bg-fd-background transition-[border-radius] ${slow}`, !mobile && "py-10")}
         style={{ borderRadius: mobile ? 24 : 0 }}
       >
         <div className={`relative transition-[width,height,transform] ${slow}`} style={scaler}>

@@ -1,0 +1,46 @@
+---
+title: FAQ
+description: Short answers to the questions that come up most when adopting Manicat UI.
+---
+
+## Do I need Tailwind?
+
+No. Components are styled with CSS modules (React) or plain CSS (Vue) that read CSS variables. The docs examples use
+Tailwind utilities for layout around the components, and you can use whatever you like.
+
+## Is there a package to install?
+
+No. There is no runtime package to keep in sync. The CLI copies source files into your repository and you own them.
+
+## How do I update a component?
+
+Re-run the install with `--overwrite`, then re-apply your changes from the diff. Commit first. See
+[Customization](/docs/customization) for keeping edits small.
+
+## Can I use a component without the foundation file?
+
+The tokens are required: components read `--surface`, `--foreground` and friends. `manicat-foundation` is added
+automatically by the CLI, and you import `foundation.css` once.
+
+## How do I change the accent color?
+
+Set `data-accent` on `<html>`, or override `--accent` and its companions. See [Theming](/docs/theming).
+
+## Does it work with React Server Components?
+
+Interactive components are client components and carry `"use client"`. Import them from server files normally; only
+the components that need state cross the boundary.
+
+## Which frameworks are supported?
+
+React is complete. React Native and Vue ports exist for a growing set of components, and Svelte and Swift are
+planned. See [Frameworks](/docs/frameworks) for the current list.
+
+## Why no focus rings?
+
+Focus is shown by the component's surface instead of an outline. See [Accessibility](/docs/accessibility) for how to
+keep it visible when you restyle.
+
+## Where do I report a bug?
+
+On the repository's issue tracker, with the item id, framework, browser and the smallest steps that reproduce it.

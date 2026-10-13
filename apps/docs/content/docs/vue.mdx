@@ -1,0 +1,76 @@
+---
+title: Vue
+description: Install Manicat UI components as Vue single file components that read the same CSS tokens as the React library.
+---
+
+Vue ports are `*.vue` single file components with `<script setup lang="ts">`. Their styles are plain CSS that
+reads the variables of `foundation.css`, so a Vue app and a React app share one design token file.
+
+## Requirements
+
+- **Vue 3.4 or newer** (the switch uses `defineModel`)
+- **TypeScript** with `vue-tsc` if you typecheck
+- Any bundler that handles `.vue` files: Vite, Nuxt or Vue CLI
+
+## Install
+
+```bash
+npx shadcn@latest add @manicat/button-vue
+```
+
+The CLI also adds `manicat-foundation`. Import the tokens once at the root of your app:
+
+```ts title="src/main.ts"
+import "@/components/manicat/foundation.css";
+```
+
+Then switch the theme with the same attribute as the React library:
+
+```html
+<html data-theme="dark" data-accent="violet">
+```
+
+## Use it
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
+
+const saving = ref(false);
+
+async function save() {
+  saving.value = true;
+  await new Promise((done) => setTimeout(done, 1200));
+  saving.value = false;
+}
+</script>
+
+<template>
+  <Button :loading="saving" @click="save">Save changes</Button>
+  <Button variant="secondary">Cancel</Button>
+</template>
+```
+
+Content goes in the default slot. Components with an icon expose an `icon` slot, and controlled inputs use
+`v-model`:
+
+```vue
+<Switch v-model="push" label="Push notifications" />
+```
+
+## Customising parts with `classNames`
+
+The `classNames` prop works as in React: an object of class strings keyed by part name, added to the part.
+
+```vue
+<Button :class-names="{ label: 'font-semibold' }">Delete project</Button>
+```
+
+For anything else, `class` and the usual attributes fall through to the root element.
+
+## Styles
+
+Component styles are global rules with a `mc-` prefix (`.mc-button`, `.mc-button--primary`), not scoped CSS, so they
+can be overridden from your own stylesheet without `:deep()`. Edit the component's `<style>` block to change a
+component for good; the file is yours.

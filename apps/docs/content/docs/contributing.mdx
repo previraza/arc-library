@@ -1,0 +1,79 @@
+---
+title: Contributing
+description: How components, blocks and framework ports are structured in the repository, and the checklist for adding one.
+---
+
+This page is the working guide for changing the library. For reporting bugs and requesting components, see the
+repository's `CONTRIBUTING.md`.
+
+## Layout
+
+```text
+packages/manicat/
+  frameworks.json        registry of formats (react, react-native, vue…)
+  registry.json          the item list: names, files, dependencies
+  registry/
+    foundation.css       design tokens
+    components/<id>/     one folder per component
+    blocks/<id>/         one folder per block
+  lib/                   cn, motion tokens, rn-tokens
+  public/r/              built shadcn payloads (generated)
+apps/docs/               this site
+```
+
+## Adding a component
+
+1. Create `registry/components/<id>/<id>.tsx` and a `.module.css` next to it. Style with the tokens only.
+2. Add an entry to `registry.json` with the files, npm dependencies and `registryDependencies`.
+3. Give it a `classNames` prop for its named parts, documented in the props JSDoc.
+4. Run `pnpm --filter manicat build:registry`, then `pnpm check`.
+5. Add the item to the tables in `README.md` and run `pnpm --filter @manicat/docs groups`.
+6. Add a demo and examples (below).
+
+## Demos and examples
+
+A **demo** is the main preview. In `apps/docs/site/demos/*.tsx`, export `<ItemName>Demo`:
+
+```tsx
+export function ButtonDemo() {
+  return <Button>Save changes</Button>;
+}
+```
+
+**Examples** are real scenarios, in `apps/docs/site/examples/*.tsx`, exported as `<ItemName><Scenario>Example` with
+a JSDoc `@title` and a sentence of description. The page picks them up by name. Their code, with imports rewritten to
+the install path, is what the **Code** tab shows, so write them as code someone would paste into an app.
+
+```tsx
+/**
+ * @title Issue properties
+ * Compact pickers in a ticket header.
+ */
+export function MorphSelectIssueExample() {
+  /* … */
+}
+```
+
+Use real content (a billing screen, a ticket header), not `Item 1, Item 2`.
+
+## Adding a framework port
+
+1. Put the file next to the React source with the suffix from `frameworks.json`: `<id>.rn.tsx`, `<id>.vue`.
+2. Keep prop and part names identical to the React version. Use `styles` on native, `classNames` on the web.
+3. React Native: import tokens from `@/lib/rn-tokens`. Vue: read the CSS variables, prefix classes with `mc-`.
+4. Optionally add `apps/docs/content/usage/<id>.<framework>.txt`, the snippet shown in the Usage section.
+5. Run `pnpm --filter manicat build:registry` and `pnpm check`. Typechecking covers `.rn.tsx` with the real
+   `react-native` types and `.vue` with `vue-tsc`.
+
+To support a whole new framework, add an entry to `frameworks.json` with its `id`, `label`, `suffix` and `lang`, and
+a Shiki mapping in `apps/docs/lib/highlight.ts` if the extension is new.
+
+## Checks
+
+```bash
+pnpm check            # typecheck + lint + registry
+pnpm dev              # docs on :3000
+```
+
+Run them once at the end of a batch of edits. `check:registry` fails if a built payload is out of date, so rebuild the
+registry after changing any source file.

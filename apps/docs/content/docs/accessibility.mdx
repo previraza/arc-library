@@ -1,0 +1,51 @@
+---
+title: Accessibility
+description: What every Manicat UI component guarantees, how focus and motion work, and how to test your own screens.
+---
+
+Accessibility is part of each component's contract, not an add-on. This page lists what you can rely on and what
+stays your job.
+
+## What each component does
+
+- **Keyboard first.** Every interactive component works without a pointer. Menus and listboxes follow the
+  WAI-ARIA keyboard model: arrows to move, Enter or Space to choose, Escape to close, Home and End to jump.
+- **Roles and state.** Controls expose `role`, `aria-expanded`, `aria-selected`, `aria-checked` or `aria-busy` as
+  their state changes, and overlays label themselves with a `title`/`label` you must provide.
+- **Focus is managed.** Dialogs, drawers and sheets trap focus while open and return it to the trigger on close.
+  A loading button stays focusable, so keyboard users do not lose their place.
+- **Names are required.** Inputs take a `label` prop, and icon-only controls take an accessible name. Components
+  whose visible label would be redundant accept `aria-label` instead.
+- **Status is not color alone.** Success, warning and danger always come with text or an icon.
+
+## Focus without rings
+
+Manicat UI does not draw an outline on focus. Focus is answered by the surface and the label: a field's border and
+background change, a button's fill shifts. This keeps screens quiet, but it makes contrast your responsibility if
+you restyle a component. When you override colors, keep a visible difference between the resting and focused
+states.
+
+## Motion
+
+Every animation has a reduced motion branch. With `prefers-reduced-motion: reduce`, movement and blur are replaced
+by short fades, and nothing important is communicated by motion alone. See [Motion](/docs/motion).
+
+## Contrast
+
+Text tokens are tuned for contrast in both themes: `--foreground` and `--text-secondary` meet WCAG AA on
+`--background` and `--surface`. `--text-muted` is for hints and captions at 12px or larger only. If you change a
+token, check the pair again.
+
+## Touch targets
+
+Controls are at least 36px tall (`--control-height-sm`) and default to 44px. Keep that when you build your own
+layouts around them, and leave 8px between adjacent targets on touch devices.
+
+## Testing your screens
+
+1. Unplug the mouse and complete the main flow with Tab, arrows, Enter and Escape.
+2. Turn on a screen reader (VoiceOver, NVDA) and listen to one dialog and one form.
+3. Enable *Reduce motion* in your operating system and reload.
+4. Switch to dark mode and to 200% zoom.
+
+If a component fails any of these, that is a bug. Open an issue with the item id and the steps.
