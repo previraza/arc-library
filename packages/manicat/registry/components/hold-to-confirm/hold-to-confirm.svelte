@@ -1,90 +1,152 @@
 <script lang="ts">
+  // @manicat-dependencies motion @lucide/svelte
+  import { onMount } from "svelte";
+  import type { Component } from "svelte";
+  import { Trash2 } from "@lucide/svelte";
+  import HoldFace from "@/registry/components/hold-to-confirm/hold-to-confirm-face.svelte";
+  import { createHold, createLabelWidth } from "@/lib/hold-to-confirm";
+
   interface Props {
+    /** The instruction and the action, for example “Hold to delete project”. */
     label: string;
+    /** Shown once the hold completes, for example “Deleted”. */
     confirmedLabel?: string;
-    /** Milliseconds the press must last. */
+    /** Called once when the hold completes. */
+    onConfirm: () => void;
+    /** Hold length in milliseconds. */
     duration?: number;
+    icon?: Component;
+    /** `accent` (default) fills with the selected accent; `danger` is for an irreversible action; `neutral` fills with the foreground. */
     tone?: "accent" | "danger" | "neutral";
+    /** Controls the done state. Set it back to false to reset the button; leave it undefined to let the button keep its own state. */
     confirmed?: boolean;
+    /** Reports when a hold starts and ends, for surrounding hints such as “Keep holding”. */
+    onHoldChange?: (holding: boolean) => void;
     disabled?: boolean;
-    onconfirm?: () => void;
-    onholdchange?: (holding: boolean) => void;
-    /** Extend the inner, named parts of the button: fill or label. */
-    classNames?: { fill?: string; label?: string };
+    class?: string;
+    /** Extend the inner, named parts of the button: face, iconSlot, iconPhase, labelFrame, label or fill. */
+    classNames?: { face?: string; iconSlot?: string; iconPhase?: string; labelFrame?: string; label?: string; fill?: string };
+    [key: string]: unknown;
   }
 
-  let { label, confirmedLabel = "Done", duration = 1200, tone = "accent", confirmed, disabled = false, onconfirm, onholdchange, classNames }: Props = $props();
+  let { label, confirmedLabel = "Done", onConfirm, duration = 1200, icon = Trash2, tone = "accent", confirmed, onHoldChange, disabled, class: className, classNames, ...rest }: Props = $props();
 
-  let progress = $state(0);
-  let done = $state(false);
-  const finished = $derived(confirmed ?? done);
-  let frame = 0;
-  let started = 0;
-  let holding = false;
+  const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const hintId = $props.id();
+  let ownDone = $state(false);
+  let completions = $state(0);
+  let holding = $state(false);
+  const done = $derived(confirmed ?? ownDone);
+  let button: HTMLElement;
+  let fill: HTMLElement;
+  let source: "pointer" | "key" | null = null;
+  let pointerType = "mouse";
+  let hold: ReturnType<typeof createHold> | undefined;
+  let width: ReturnType<typeof createLabelWidth> | undefined;
+  const text = $derived(done ? confirmedLabel : label);
+  const seconds = $derived((duration / 1000).toLocaleString("en-US", { maximumFractionDigits: 1 }));
 
-  function tick(now: number) {
-    progress = Math.min(1, (now - started) / duration);
-    if (progress >= 1) {
-      holding = false;
-      done = true;
-      onholdchange?.(false);
-      onconfirm?.();
-    } else frame = requestAnimationFrame(tick);
-  }
-
-  function start() {
-    if (disabled || finished || holding) return;
-    holding = true;
-    onholdchange?.(true);
-    started = performance.now() - progress * duration;
-    frame = requestAnimationFrame(tick);
-  }
-
-  function cancel() {
-    if (!holding) return;
+  function stopHolding() {
+    source = null;
     holding = false;
-    cancelAnimationFrame(frame);
-    onholdchange?.(false);
-    progress = 0;
+    onHoldChange?.(false);
+    hold?.press(false);
+  }
+  function complete() {
+    if (!source) return;
+    stopHolding();
+    if (pointerType === "touch") navigator.vibrate?.(12);
+    ownDone = true;
+    completions += 1;
+    onConfirm();
+  }
+  /** Starts or resumes the fill from wherever it is, so a quick re-press after letting go carries on instead of starting over. */
+  function begin(from: "pointer" | "key") {
+    if (done || disabled || source) return;
+    source = from;
+    holding = true;
+    onHoldChange?.(true);
+    hold?.press(true);
+    hold?.start(duration);
+  }
+  function release() {
+    if (!source) return;
+    stopHolding();
+    hold?.rewind();
   }
 
-  // Holding Space or Enter works like a press, so the control is not pointer-only.
-  function onKeydown(event: KeyboardEvent) {
-    if ((event.key === " " || event.key === "Enter") && !event.repeat) {
-      event.preventDefault();
-      start();
-    }
-  }
+  onMount(() => {
+    hold = createHold(button, fill, { duration, reduced, onComplete: complete });
+    width = createLabelWidth(button.querySelector<HTMLElement>("[data-measure]")!, () => [...button.querySelectorAll<HTMLElement>("[data-label-frame]")], reduced);
+    if (done) hold.progress.jump(1);
+    return () => {
+      hold?.destroy();
+      width?.destroy();
+    };
+  });
+  // A reset rewinds the fill as the label morphs back; a confirmation the parent declined rewinds too.
+  $effect(() => {
+    done;
+    completions;
+    if (!hold) return;
+    if (done && hold.progress.get() < 1 && !source) hold.fillTo(1);
+    if (!done && hold.progress.get() > 0 && !source) hold.rewind();
+  });
 
-  $effect(() => () => cancelAnimationFrame(frame));
+  function onpointerdown(event: PointerEvent) {
+    if (!event.isPrimary || event.button !== 0) return;
+    pointerType = event.pointerType;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    begin("pointer");
+  }
+  function onpointermove(event: PointerEvent) {
+    if (source !== "pointer") return;
+    // Sliding well off the button cancels, the way a native press does.
+    const box = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const slack = 24;
+    if (event.clientX < box.left - slack || event.clientX > box.right + slack || event.clientY < box.top - slack || event.clientY > box.bottom + slack) release();
+  }
+  function onkeydown(event: KeyboardEvent) {
+    if (event.key !== " " && event.key !== "Enter") return;
+    event.preventDefault();
+    if (!event.repeat) begin("key");
+  }
+  function onkeyup(event: KeyboardEvent) {
+    if (event.key !== " " && event.key !== "Enter") return;
+    event.preventDefault();
+    if (source === "key") release();
+  }
 </script>
 
-<button
-  type="button"
-  class={["mc-hold", `mc-hold--${tone}`]}
-  {disabled}
-  data-done={finished || undefined}
-  aria-label={finished ? confirmedLabel : `${label}, press and hold`}
-  onpointerdown={start}
-  onpointerup={cancel}
-  onpointerleave={cancel}
-  onpointercancel={cancel}
-  onkeydown={onKeydown}
-  onkeyup={cancel}
-  onblur={cancel}
->
-  <span class={["mc-hold__fill", classNames?.fill]} style="transform: scaleX({finished ? 1 : progress})" aria-hidden="true"></span>
-  <span class={["mc-hold__label", classNames?.label]}>{finished ? confirmedLabel : label}</span>
+<button {...rest} bind:this={button} type="button" class={["mc-hold-to-confirm__button", className]} data-tone={tone} data-state={done ? "done" : holding ? "holding" : "idle"} {disabled} aria-disabled={done || undefined} aria-label={text} aria-describedby={done ? undefined : hintId} {onpointerdown} {onpointermove} onpointerup={release} onpointercancel={release} onlostpointercapture={release} {onkeydown} {onkeyup} onblur={release} oncontextmenu={(event) => event.preventDefault()}>
+  <HoldFace {icon} {text} {done} measure {classNames} />
+  <span bind:this={fill} class={["mc-hold-to-confirm__fill", classNames?.fill]} aria-hidden="true"><HoldFace {icon} {text} {done} {classNames} /></span>
 </button>
+<span id={hintId} class="mc-hold-to-confirm__srOnly">{`Press and hold for ${seconds} seconds to confirm. With a keyboard, hold Space or Enter.`}</span>
+<span class="mc-hold-to-confirm__srOnly" role="status">{done ? confirmedLabel : ""}</span>
 
 <style>
 :global {
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-hold { --mc-tone: var(--accent); position: relative; display: inline-flex; align-items: center; justify-content: center; min-height: var(--control-height-md); padding: 0 var(--space-4); overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--text-sm); font-weight: 500; cursor: pointer; user-select: none; touch-action: none; -webkit-tap-highlight-color: transparent; }
-.mc-hold--danger { --mc-tone: var(--danger); } .mc-hold--neutral { --mc-tone: var(--text-secondary); }
-.mc-hold__fill { position: absolute; inset: 0; background: color-mix(in oklab, var(--mc-tone) 15%, transparent); transform: scaleX(0); transform-origin: left; }
-.mc-hold__label { position: relative; }
-.mc-hold[data-done] { border-color: var(--mc-tone); color: var(--mc-tone); cursor: default; }
-.mc-hold:disabled { opacity: .52; cursor: not-allowed; }
+/* The button hugs its label; the fill is a second, inverted copy of the face revealed by clip-path, so the text flips colour exactly at the edge. */
+/* The default tone follows the selected accent; danger stays available for a truly irreversible action. */
+.mc-hold-to-confirm__button { --hold-ink: var(--foreground); --hold-fill: var(--accent); --hold-on-fill: var(--accent-foreground); --hold-border: var(--border-strong); position: relative; display: inline-flex; min-height: var(--control-height-md); align-items: center; justify-content: center; padding: 0 var(--space-5); border: 1px solid var(--hold-border); border-radius: var(--radius-control); background: var(--surface); color: var(--hold-ink); font: inherit; font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
+.mc-hold-to-confirm__button[data-tone="danger"] { --hold-ink: var(--danger); --hold-fill: var(--danger); --hold-on-fill: var(--background); --hold-border: color-mix(in oklab, var(--danger) 32%, var(--border)); }
+.mc-hold-to-confirm__button[data-tone="neutral"] { --hold-ink: var(--foreground); --hold-fill: var(--foreground); --hold-on-fill: var(--background); --hold-border: var(--border-strong); }
+@media (hover: hover) and (pointer: fine) { .mc-hold-to-confirm__button:not(:disabled):not([aria-disabled="true"]):hover { background: color-mix(in oklab, var(--hold-fill) 6%, var(--surface)); } }
+.mc-hold-to-confirm__button[aria-disabled="true"] { cursor: default; }
+.mc-hold-to-confirm__button:disabled { cursor: not-allowed; opacity: .5; }
+.mc-hold-to-confirm__face { display: inline-flex; align-items: center; gap: var(--space-2); white-space: nowrap; }
+/* Covers the border too, and keeps its own rounded corners; the clip only ever cuts a straight leading edge. */
+.mc-hold-to-confirm__fill { position: absolute; inset: -1px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-control); background: var(--hold-fill); color: var(--hold-on-fill); pointer-events: none; }
+.mc-hold-to-confirm__iconSlot { display: grid; width: 18px; height: 18px; flex: none; place-items: center; }
+.mc-hold-to-confirm__iconPhase { display: grid; grid-area: 1 / 1; place-items: center; }
+.mc-hold-to-confirm__iconPhase svg { width: 18px; height: 18px; }
+/* Clips the outgoing label while the frame narrows, with room for the rise and the soft blur. */
+.mc-hold-to-confirm__labelFrame { position: relative; display: inline-flex; min-width: 0; clip-path: inset(-.6em -3px); }
+.mc-hold-to-confirm__label { display: block; white-space: nowrap; }
+.mc-hold-to-confirm__measure { position: absolute; top: 0; left: 0; visibility: hidden; white-space: nowrap; pointer-events: none; }
+.mc-hold-to-confirm__srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .mc-hold-to-confirm__button { transition: none; } }
 }
 </style>

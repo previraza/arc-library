@@ -5,6 +5,6 @@
 </script>
 
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
-  <HoldToConfirm label="Hold to delete" onconfirm={() => (confirmed = true)} />
-  {#if confirmed}<span>Deleted.</span>{/if}
+  <HoldToConfirm label="Hold to delete" onConfirm={() => (confirmed = true)} />
+  {#if confirmed}<span style="font-size: 14px; line-height: 20px; color: var(--text-muted)">Deleted.</span>{/if}
 </div>

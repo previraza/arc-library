@@ -8,6 +8,6 @@ const confirmed = ref(false);
 <template>
   <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
     <HoldToConfirm label="Hold to delete" @confirm="confirmed = true" />
-    <span v-if="confirmed">Deleted.</span>
+    <span v-if="confirmed" style="font-size: 14px; line-height: 20px; color: var(--text-muted)">Deleted.</span>
   </div>
 </template>
