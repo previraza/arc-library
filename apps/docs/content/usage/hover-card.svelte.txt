@@ -1,13 +1,12 @@
 <script lang="ts">
   import HoverCard from "@/components/manicat/hover-card/hover-card.svelte";
+  import HoverCardProfile from "@/components/manicat/hover-card/hover-card-profile.svelte";
+  const stats = [{ label: "Components", value: "106" }, { label: "Blocks", value: "22" }];
 </script>
 
 <HoverCard>
-  <a href="#profile">@manicat</a>
+  <button style="border: 1px solid var(--border); border-radius: var(--radius-control); padding: 8px 12px; font-size: 14px; line-height: 20px">@elia</button>
   {#snippet content()}
-    <div style="display: grid; gap: 4px; width: 220px">
-      <strong>Manicat UI</strong>
-      <span>Components you own, for every framework.</span>
-    </div>
+    <HoverCardProfile name="Elia Kuratli" role="Design engineering" bio="Builds Manicat UI, and writes the motion presets behind it." {stats} meta="Berlin" />
   {/snippet}
 </HoverCard>
