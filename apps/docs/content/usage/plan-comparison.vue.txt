@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import PlanComparison from "@/components/manicat/blocks/plan-comparison/plan-comparison.vue";
+</script>
+
+<template>
+  <PlanComparison />
+</template>

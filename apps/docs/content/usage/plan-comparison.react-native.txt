@@ -1,0 +1,5 @@
+import { PlanComparison } from "@/components/manicat/blocks/plan-comparison/plan-comparison.rn";
+
+export function Pricing() {
+  return <PlanComparison />;
+}

@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import ComparisonTable from "@/components/manicat/blocks/comparison-table/comparison-table.vue";
+
+const differencesOnly = ref(false);
+</script>
+
+<template>
+  <ComparisonTable v-model="differencesOnly" :cta="{ label: 'Start free trial', doneLabel: 'Trial started' }" />
+</template>

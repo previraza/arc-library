@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import FaqSection from "@/components/manicat/blocks/faq-section/faq-section.vue";
+</script>
+
+<template>
+  <FaqSection variant="columns" @contact="$router.push('/support')" />
+</template>

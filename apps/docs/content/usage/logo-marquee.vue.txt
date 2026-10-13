@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import LogoMarquee from "@/components/manicat/blocks/logo-marquee/logo-marquee.vue";
+
+const brands = [{ name: "Figma", icon: "/logos/figma.svg" }, { name: "Linear", icon: "/logos/linear.svg" }];
+</script>
+
+<template>
+  <LogoMarquee :brands="brands" />
+</template>

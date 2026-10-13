@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import CtaSection from "@/components/manicat/blocks/cta-section/cta-section.vue";
+</script>
+
+<template>
+  <CtaSection variant="split" :primary-action="{ label: 'Create a workspace', href: '/signup' }" :secondary-action="{ label: 'Book a demo', href: '/demo' }">
+    <template #visual><img src="/product.png" alt="The workspace" /></template>
+  </CtaSection>
+</template>

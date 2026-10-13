@@ -1,0 +1,5 @@
+import { ComparisonTable } from "@/components/manicat/blocks/comparison-table/comparison-table.rn";
+
+export function Versus() {
+  return <ComparisonTable cta={{ label: "Start free trial", doneLabel: "Trial started" }} />;
+}

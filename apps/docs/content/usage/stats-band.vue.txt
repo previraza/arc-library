@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import StatsBand from "@/components/manicat/blocks/stats-band/stats-band.vue";
+
+const stats = [
+  { value: 99.99, decimals: 2, suffix: "%", label: "API uptime over 90 days", detail: "Measured every 30 seconds" },
+  { value: 38, suffix: "ms", label: "Median response time", detail: "At the edge, worldwide" },
+];
+</script>
+
+<template>
+  <StatsBand layout="divided" title="Fast, steady, and close to everyone" :stats="stats" />
+</template>

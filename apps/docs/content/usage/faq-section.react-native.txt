@@ -1,0 +1,5 @@
+import { FaqSection } from "@/components/manicat/blocks/faq-section/faq-section.rn";
+
+export function Questions() {
+  return <FaqSection variant="search" contact={{ label: "Still have a question?", onPress: () => console.log("contact") }} />;
+}

@@ -1,0 +1,5 @@
+import { LogoMarquee } from "@/components/manicat/blocks/logo-marquee/logo-marquee.rn";
+
+export function Trusted() {
+  return <LogoMarquee brands={[{ name: "Figma", source: require("./logos/figma.png") }, { name: "Linear", source: require("./logos/linear.png") }]} />;
+}

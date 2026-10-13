@@ -1,0 +1,5 @@
+import { CtaSection } from "@/components/manicat/blocks/cta-section/cta-section.rn";
+
+export function Closing() {
+  return <CtaSection variant="centered" primaryAction={{ label: "Start free trial", onPress: () => console.log("trial") }} secondaryAction={{ label: "Talk to sales", href: "https://example.com/sales" }} />;
+}
