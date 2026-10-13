@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import FloatingButtonGroup from "@/components/manicat/floating-button-group/floating-button-group.vue";
+
+const items = [
+  { id: "select", label: "Select", pressed: true },
+  { id: "draw", label: "Draw" },
+  { type: "separator" as const },
+  { id: "undo", label: "Undo", shortcut: "⌘Z" },
+];
+</script>
+
+<template>
+  <FloatingButtonGroup label="Board actions" variant="floating" :items="items" @action="console.log($event)" />
+</template>

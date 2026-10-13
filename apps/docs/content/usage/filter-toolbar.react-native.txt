@@ -1,0 +1,19 @@
+import { useState } from "react";
+import { FilterToolbar, type FilterChip } from "@/components/manicat/filter-toolbar/filter-toolbar.rn";
+
+const fields = [
+  { id: "status", label: "Status", options: ["Trialing", "Active", "Paused"] },
+  { id: "assignee", label: "Assignee", options: ["Elia", "Mara", "Denis"] },
+];
+
+export function CustomerFilters() {
+  const [filters, setFilters] = useState<FilterChip[]>([{ id: "status", label: "Trialing" }]);
+  return (
+    <FilterToolbar
+      filters={filters}
+      onRemove={(id) => setFilters((current) => current.filter((filter) => filter.id !== id))}
+      onClearAll={() => setFilters([])}
+      addFilter={{ fields, onAdd: (filter) => setFilters((current) => [...current.filter((entry) => entry.id !== filter.id), filter]) }}
+    />
+  );
+}

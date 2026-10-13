@@ -1,0 +1,11 @@
+import { ExpandingSearch } from "@/components/manicat/expanding-search/expanding-search.rn";
+
+const items = [
+  { id: "button", title: "Button", meta: "component", keywords: ["cta"] },
+  { id: "dialog", title: "Dialog", meta: "component" },
+  { id: "hero", title: "Hero section", meta: "block" },
+];
+
+export function Search() {
+  return <ExpandingSearch label="Search the library" placeholder="Search components" items={items} suggestions={items.slice(0, 2)} onSelect={(item) => console.log(item.id)} />;
+}

@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import ButtonGroup from "@/components/manicat/button-group/button-group.vue";
+
+const items = [
+  { id: "copy", label: "Copy link" },
+  { id: "star", label: "Star" },
+];
+const menu = { label: "More actions", items: [{ id: "move", label: "Move to folder" }, { id: "archive", label: "Archive" }] };
+</script>
+
+<template>
+  <ButtonGroup label="Document actions" :items="items" :menu="menu" @select="console.log($event)" />
+</template>

@@ -1,0 +1,14 @@
+import { ButtonGroup } from "@/components/manicat/button-group/button-group.rn";
+
+export function DocumentActions() {
+  return (
+    <ButtonGroup
+      label="Document actions"
+      items={[
+        { id: "copy", label: "Copy link", onSelect: () => console.log("copy") },
+        { id: "star", label: "Star", onSelect: () => console.log("star") },
+      ]}
+      menu={{ label: "More actions", items: [{ id: "move", label: "Move to folder" }, { id: "archive", label: "Archive" }] }}
+    />
+  );
+}

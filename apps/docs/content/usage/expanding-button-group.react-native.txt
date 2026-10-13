@@ -1,0 +1,14 @@
+import { Text } from "react-native";
+import { ExpandingButtonGroup } from "@/components/manicat/expanding-button-group/expanding-button-group.rn";
+
+export function MessageActions() {
+  return (
+    <ExpandingButtonGroup
+      label="Message actions"
+      items={[
+        { id: "archive", label: "Archive", icon: <Text>▣</Text>, doneLabel: "Archived" },
+        { id: "delete", label: "Delete", icon: <Text>🗑</Text>, tone: "danger" },
+      ]}
+    />
+  );
+}

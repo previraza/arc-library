@@ -1,0 +1,24 @@
+import { View } from "react-native";
+import { Button } from "@/components/manicat/button/button.rn";
+import { ToastStack, ToastStackProvider, useToastStack } from "@/components/manicat/toast-stack/toast-stack.rn";
+
+function Triggers() {
+  const { toast, dismiss } = useToastStack();
+  return (
+    <View style={{ gap: 8, padding: 16 }}>
+      <Button onPress={() => toast({ title: "Changes saved", type: "success" })}>Save</Button>
+      <Button variant="secondary" onPress={() => toast({ title: "Deleted", type: "info", action: { label: "Undo", onClick: () => dismiss() } })}>
+        Delete with undo
+      </Button>
+    </View>
+  );
+}
+
+export function Screen() {
+  return (
+    <ToastStackProvider>
+      <Triggers />
+      <ToastStack />
+    </ToastStackProvider>
+  );
+}

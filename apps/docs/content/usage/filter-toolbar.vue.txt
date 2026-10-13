@@ -1,0 +1,16 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import FilterToolbar, { type FilterChip } from "@/components/manicat/filter-toolbar/filter-toolbar.vue";
+
+const filters = ref<FilterChip[]>([{ id: "status", label: "Trialing" }]);
+const fields = [
+  { id: "status", label: "Status", options: ["Trialing", "Active", "Paused"] },
+  { id: "assignee", label: "Assignee", options: ["Elia", "Mara", "Denis"] },
+];
+</script>
+
+<template>
+  <FilterToolbar v-model="filters" :fields="fields">
+    <input placeholder="Search customers" class="rounded-lg border px-3 py-1.5 text-sm" />
+  </FilterToolbar>
+</template>

@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import Button from "@/components/manicat/button/button.vue";
+import ToastStack, { dismissToast, toast } from "@/components/manicat/toast-stack/toast-stack.vue";
+</script>
+
+<template>
+  <Button @click="toast({ title: 'Changes saved', type: 'success' })">Save</Button>
+  <Button variant="secondary" @click="toast({ title: 'Deleted', action: { label: 'Undo', onClick: () => dismissToast() } })">Delete with undo</Button>
+  <ToastStack position="bottom-right" />
+</template>

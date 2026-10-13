@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import ExpandingButtonGroup from "@/components/manicat/expanding-button-group/expanding-button-group.vue";
+
+const items = [
+  { id: "archive", label: "Archive", doneLabel: "Archived" },
+  { id: "delete", label: "Delete", tone: "danger" as const },
+];
+</script>
+
+<template>
+  <ExpandingButtonGroup label="Message actions" :items="items">
+    <template #icon-archive>▣</template>
+    <template #icon-delete>🗑</template>
+  </ExpandingButtonGroup>
+</template>
