@@ -1,0 +1,20 @@
+import SwiftUI
+
+struct FileDropzoneExample: View {
+    @State private var items: [ManicatDropzoneItem] = []
+
+    var body: some View {
+        ManicatFileDropzone(items: $items, maxSize: 5 * 1_048_576, label: "Add files", description: "Images up to 5 MB",
+            onPick: {
+                // Open your picker here (fileImporter, PhotosPicker…) and return what was chosen.
+                [ManicatPickedFile(name: "cover.png", size: 2_400_000), ManicatPickedFile(name: "notes.pdf", size: 800_000)]
+            },
+            onUpload: { _, progress in
+                for step in 1...10 {
+                    try await Task.sleep(nanoseconds: 120_000_000)
+                    progress(Double(step * 10))
+                }
+            })
+        .frame(maxWidth: 420)
+    }
+}

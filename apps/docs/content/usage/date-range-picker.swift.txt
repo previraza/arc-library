@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct DateRangePickerExample: View {
+    @State private var range: ManicatDateRange?
+
+    var body: some View {
+        ManicatDateRangePicker(range: $range)
+            .frame(maxWidth: 320)
+    }
+}

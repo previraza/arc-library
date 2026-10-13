@@ -1,0 +1,15 @@
+import SwiftUI
+
+struct LineChartExample: View {
+    private let data = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"].enumerated().map { index, month in
+        ManicatLineDatum(key: month, label: month, axisLabel: month, values: ["users": Double(120 + index * 40 + (index % 2) * 25), "trials": Double(60 + index * 12)])
+    }
+
+    var body: some View {
+        ManicatLineChart(data: data, series: [
+            ManicatLineSeries(key: "users", label: "Users", area: true),
+            ManicatLineSeries(key: "trials", label: "Trials", dashed: true),
+        ], label: "Growth")
+        .frame(maxWidth: 520)
+    }
+}

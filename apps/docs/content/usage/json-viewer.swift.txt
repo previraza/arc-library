@@ -1,0 +1,16 @@
+import SwiftUI
+
+struct JsonViewerExample: View {
+    private let data: [String: Any] = [
+        "name": "manicat",
+        "version": "2.0.0",
+        "private": false,
+        "tags": ["ui", "registry"],
+        "author": ["name": "Ada", "links": ["site": "https://example.com"]],
+    ]
+
+    var body: some View {
+        ManicatJsonViewer(data, defaultExpandDepth: 2)
+            .frame(maxWidth: 420)
+    }
+}

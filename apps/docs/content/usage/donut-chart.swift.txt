@@ -1,0 +1,12 @@
+import SwiftUI
+
+struct DonutChartExample: View {
+    var body: some View {
+        ManicatDonutChart(data: [
+            ManicatDonutDatum(key: "free", label: "Free", value: 120),
+            ManicatDonutDatum(key: "pro", label: "Pro", value: 640),
+            ManicatDonutDatum(key: "scale", label: "Scale", value: 410),
+            ManicatDonutDatum(key: "ent", label: "Enterprise", value: 230),
+        ], label: "Revenue by plan", unit: "$")
+    }
+}

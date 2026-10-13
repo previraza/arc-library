@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct CardStackExample: View {
+    private struct Place: Identifiable { let id: Int; let name: String }
+    private let places = [Place(id: 1, name: "Lisbon"), Place(id: 2, name: "Kyoto"), Place(id: 3, name: "Oslo")]
+
+    var body: some View {
+        ManicatCardStack(places, title: { $0.name }, label: "Destinations") { place in
+            Text(place.name).font(.title2.weight(.semibold)).padding(.vertical, 48)
+        }
+        .frame(maxWidth: 320)
+    }
+}

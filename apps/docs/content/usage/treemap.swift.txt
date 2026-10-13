@@ -1,0 +1,18 @@
+import SwiftUI
+
+struct TreemapExample: View {
+    private let portfolio = ManicatTreemapNode(id: "root", label: "Portfolio", children: [
+        ManicatTreemapNode(id: "tech", label: "Tech", color: 24, children: [
+            ManicatTreemapNode(id: "a", label: "Alpha", value: 400, color: 40),
+            ManicatTreemapNode(id: "b", label: "Beta", value: 220, color: -12),
+        ]),
+        ManicatTreemapNode(id: "energy", label: "Energy", value: 300, color: -8),
+        ManicatTreemapNode(id: "health", label: "Health", value: 260, color: 18),
+        ManicatTreemapNode(id: "retail", label: "Retail", value: 140, color: 3),
+    ])
+
+    var body: some View {
+        ManicatTreemap(portfolio, label: "Portfolio")
+            .frame(maxWidth: 520)
+    }
+}

@@ -1,0 +1,18 @@
+import SwiftUI
+
+struct TreeViewExample: View {
+    @State private var expanded: Set<String> = ["src"]
+
+    private let nodes = [
+        ManicatTreeNode(id: "src", label: "src", children: [
+            ManicatTreeNode(id: "app", label: "app.swift"),
+            ManicatTreeNode(id: "lib", label: "lib", children: [ManicatTreeNode(id: "chart", label: "chart.swift")]),
+        ]),
+        ManicatTreeNode(id: "pkg", label: "Package.swift"),
+    ]
+
+    var body: some View {
+        ManicatTreeView(nodes, expanded: $expanded)
+            .frame(maxWidth: 280)
+    }
+}

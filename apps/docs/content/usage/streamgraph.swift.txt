@@ -1,0 +1,16 @@
+import SwiftUI
+
+struct StreamgraphExample: View {
+    private let data = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"].enumerated().map { index, month in
+        ManicatStreamDatum(key: month, label: month, axisLabel: month, values: ["web": Double(20 + index * 4), "ios": Double(12 + (index % 3) * 5), "api": Double(8 + index * 2)])
+    }
+
+    var body: some View {
+        ManicatStreamgraph(data: data, series: [
+            ManicatStreamSeries(key: "web", label: "Web"),
+            ManicatStreamSeries(key: "ios", label: "iOS"),
+            ManicatStreamSeries(key: "api", label: "API"),
+        ], label: "Requests by client")
+        .frame(maxWidth: 480)
+    }
+}

@@ -1,0 +1,15 @@
+import SwiftUI
+
+struct CommentThreadExample: View {
+    private let me = ManicatCommentAuthor(id: "me", name: "You")
+    @State private var comments: [ManicatComment] = [
+        ManicatComment(id: "1", author: ManicatCommentAuthor(id: "ada", name: "Ada"), body: "Should we ship the Swift ports this week?", createdAt: "2h ago",
+                       reactions: [ManicatCommentReaction(emoji: "👍", users: ["lin"])],
+                       replies: [ManicatComment(id: "2", author: ManicatCommentAuthor(id: "me", name: "You"), body: "Yes, the viewer is green.", createdAt: "1h ago")]),
+    ]
+
+    var body: some View {
+        ManicatCommentThread(comments: $comments, currentUser: me)
+            .frame(maxWidth: 460)
+    }
+}

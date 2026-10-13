@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct HoldToConfirmExample: View {
+    @State private var message = ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ManicatHoldToConfirm("Hold to delete", confirmedLabel: "Deleted", tone: .danger) { message = "Confirmed" }
+            Text(message).font(.caption)
+        }
+        .frame(maxWidth: 260)
+    }
+}

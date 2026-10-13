@@ -87,7 +87,8 @@ export function LoginCenteredDemo() {
 }
 
 export function SiteHeaderDemo() {
-  return <SiteHeader />;
+  // The header is its own size container, which has no width of its own: give it the whole row.
+  return <div className="w-full"><SiteHeader /></div>;
 }
 
 export function SiteFooterDemo() {

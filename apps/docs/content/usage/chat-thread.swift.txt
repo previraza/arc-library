@@ -1,0 +1,16 @@
+import SwiftUI
+
+struct ChatThreadExample: View {
+    @State private var messages = [
+        ManicatChatMessage(id: "1", authorId: "ada", text: "Did the build pass?", createdAt: Date().addingTimeInterval(-600)),
+        ManicatChatMessage(id: "2", authorId: "me", text: "Yes, shipping now.", createdAt: Date().addingTimeInterval(-300), status: .read),
+    ]
+
+    var body: some View {
+        ManicatChatThread(
+            participants: [ManicatChatParticipant(id: "me", name: "You"), ManicatChatParticipant(id: "ada", name: "Ada")],
+            currentUserId: "me", messages: $messages, typing: ["ada"], readBy: ["ada": "2"], height: 240
+        )
+        .frame(maxWidth: 420)
+    }
+}

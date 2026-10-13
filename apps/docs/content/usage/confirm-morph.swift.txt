@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct ConfirmMorphExample: View {
+    @State private var state: ManicatConfirmState = .idle
+
+    var body: some View {
+        ManicatConfirmMorph("Delete account", state: $state, prompt: "Delete for good?", tone: .danger, onUndo: { try await Task.sleep(nanoseconds: 600_000_000) }) {
+            try await Task.sleep(nanoseconds: 900_000_000)
+        }
+    }
+}

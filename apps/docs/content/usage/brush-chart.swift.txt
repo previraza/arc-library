@@ -1,0 +1,15 @@
+import SwiftUI
+
+struct BrushChartExample: View {
+    private var data: [ManicatBrushDatum] {
+        let start = DateComponents(calendar: .init(identifier: .gregorian), year: 2026, month: 1, day: 1).date ?? Date()
+        return (0..<60).map { day in
+            ManicatBrushDatum(date: start.addingTimeInterval(Double(day) * 86_400), value: Double(40 + Int(30 * sin(Double(day) / 6)) + (day % 7) * 3))
+        }
+    }
+
+    var body: some View {
+        ManicatBrushChart(data: data, label: "Daily active users")
+            .frame(maxWidth: 520)
+    }
+}

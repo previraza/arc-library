@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct FilterToolbarExample: View {
+    @State private var filters = [ManicatFilterChip(id: "status", label: "Open", value: "open")]
+
+    var body: some View {
+        ManicatFilterToolbar(filters: $filters, fields: [
+            ManicatFilterField(id: "status", label: "Status", options: [ManicatFilterOption("open", label: "Open"), ManicatFilterOption("closed", label: "Closed")]),
+            ManicatFilterField(id: "owner", label: "Owner", options: [ManicatFilterOption("ada", label: "Ada", hint: "4"), ManicatFilterOption("lin", label: "Lin", hint: "2")]),
+        ])
+        .frame(maxWidth: 460)
+    }
+}
