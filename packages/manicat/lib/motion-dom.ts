@@ -467,3 +467,28 @@ export function sizeTransition(axis: "width" | "height", timing: Timing, from: P
     };
   };
 }
+
+let eyes = 0;
+
+/**
+ * The eye of a password field: one eye that a slash draws across, cutting the outline beneath it, instead of swapping two icons.
+ * The counterpart of `EyeMorph` in password-field.tsx.
+ */
+export function createEyeMorph(host: HTMLElement, { slashed, reduced }: { slashed: boolean; reduced: boolean }) {
+  const mask = `eye-${++eyes}`;
+  host.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <mask id="${mask}" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="white" stroke="none" /><path class="cut" d="M2 2l20 20" stroke="black" stroke-width="5" /></mask>
+    <g mask="url(#${mask})"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></g>
+    <path class="slash" d="M2 2l20 20" />
+  </svg>`;
+  const paths = [...host.querySelectorAll<SVGPathElement>(".cut, .slash")];
+  const apply = (on: boolean, animated: boolean) => {
+    for (const path of paths) {
+      const target = { pathLength: on ? 1 : 0, opacity: on ? 1 : 0 };
+      if (!animated || reduced) animate(path, target, { duration: 0 });
+      else animate(path, target, { pathLength: { duration: motionTokens.duration.standard, ease: ease("standard") }, opacity: { duration: motionTokens.duration.instant } } as never);
+    }
+  };
+  apply(slashed, false);
+  return { set: (next: boolean) => apply(next, true) };
+}

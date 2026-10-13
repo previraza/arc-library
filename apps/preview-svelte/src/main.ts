@@ -6,4 +6,7 @@ import "@/registry/foundation.css";
 import "../../viewer-shared/viewer.css";
 import App from "./App.svelte";
 
-mount(App, { target: document.getElementById("app")! });
+// index.html holds a loading skeleton in #app; Svelte appends instead of replacing, so clear it first.
+const target = document.getElementById("app")!;
+target.replaceChildren();
+mount(App, { target });
