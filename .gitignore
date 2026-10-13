@@ -21,3 +21,4 @@ dist/
 apps/preview-*/src/demos/
 apps/preview-swift/Sources/ManicatPreview/Demos/
 apps/preview-swift/Sources/ManicatPreview/DemoRegistry.generated.swift
+.turbo/

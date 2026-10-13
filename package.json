@@ -23,12 +23,14 @@
     "dev:docs": "pnpm --filter @manicat/docs dev",
     "build": "pnpm --filter @manicat/docs build",
     "start": "pnpm --filter @manicat/docs start",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "turbo run typecheck",
     "lint": "eslint .",
+    "biome": "biome lint .",
     "check:registry": "pnpm --filter manicat check:registry",
-    "check": "pnpm typecheck && pnpm lint && pnpm check:registry"
+    "check": "turbo run typecheck //#lint //#biome //#check:registry"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.15",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.5",
     "turbo": "^2.11.7",

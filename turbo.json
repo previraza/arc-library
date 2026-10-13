@@ -1,6 +1,10 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "tasks": {
-    "dev": { "cache": false, "persistent": true }
+    "dev": { "cache": false, "persistent": true },
+    "typecheck": { "outputs": [] },
+    "//#lint": { "inputs": ["$TURBO_DEFAULT$", "eslint.config.mjs"], "outputs": [] },
+    "//#biome": { "inputs": ["$TURBO_DEFAULT$", "biome.json"], "outputs": [] },
+    "//#check:registry": { "inputs": ["packages/manicat/**"], "outputs": [] }
   }
 }
