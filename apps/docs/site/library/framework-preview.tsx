@@ -7,13 +7,13 @@ import { FrameworkSwitch } from "@/site/library/framework-switch";
 import { useFramework } from "@/site/library/use-framework";
 
 /**
- * Where each viewer runs. Set `NEXT_PUBLIC_VIEWER_URL_<ID>` (for example `NEXT_PUBLIC_VIEWER_URL_VUE=https://vue.ds.viraza.net`)
- * on a deploy; in development the viewers of `pnpm dev` are used. Swift has no web viewer: it is a native app.
+ * Where each viewer is framed from: this site's own /preview/<framework> (a rewrite in next.config.ts to the viewer's server),
+ * so visitors never need to reach the viewers' ports. Swift has no web viewer: it is a native app.
  */
-const viewers: Record<string, { label: string; url: string | undefined; height: number }> = {
-  vue: { label: "Vue", url: process.env.NEXT_PUBLIC_VIEWER_URL_VUE ?? (process.env.NODE_ENV === "development" ? "http://localhost:3002" : undefined), height: 420 },
-  svelte: { label: "Svelte", url: process.env.NEXT_PUBLIC_VIEWER_URL_SVELTE ?? (process.env.NODE_ENV === "development" ? "http://localhost:3001" : undefined), height: 420 },
-  "react-native": { label: "React Native", url: process.env.NEXT_PUBLIC_VIEWER_URL_REACT_NATIVE ?? (process.env.NODE_ENV === "development" ? "http://localhost:3003" : undefined), height: 820 },
+const viewers: Record<string, { label: string; url: string; height: number }> = {
+  vue: { label: "Vue", url: "/preview/vue", height: 420 },
+  svelte: { label: "Svelte", url: "/preview/svelte", height: 420 },
+  "react-native": { label: "React Native", url: "/preview/react-native", height: 820 },
 };
 
 /**
@@ -37,7 +37,7 @@ export function FrameworkPreview({ name, options, children }: { name: string; op
           <p className="p-8 text-sm text-fd-muted-foreground">
             {framework === "swift"
               ? "Swift runs as a native app: open apps/preview-swift in Xcode (or `swift run`) and pick this item. The Usage tab has the code."
-              : `The ${label} viewer is not configured on this site. Run it with pnpm dev, or set NEXT_PUBLIC_VIEWER_URL_${framework.toUpperCase().replace("-", "_")}.`}
+              : `No preview for ${label}.`}
           </p>
         )}
       </div>

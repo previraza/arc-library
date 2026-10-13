@@ -87,19 +87,20 @@ demos are the Usage snippets of the docs, so what you copy is what you see.
 
 | Framework | Command | Port |
 | --- | --- | --- |
-| Svelte | `pnpm --filter @manicat/preview-svelte dev` | 3001 |
-| Vue | `pnpm --filter @manicat/preview-vue dev` | 3002 |
-| React Native | `pnpm --filter @manicat/preview-rn dev` | 3003 (react-native-web, in a phone frame) |
+| Svelte | `pnpm --filter @manicat/preview-svelte dev` | 3001, at `/preview/svelte/` |
+| Vue | `pnpm --filter @manicat/preview-vue dev` | 3002, at `/preview/vue/` |
+| React Native | `pnpm --filter @manicat/preview-rn dev` | 3003, at `/preview/react-native/` (react-native-web, in a phone frame) |
 | Swift | `cd apps/preview-swift && swift run` | a native app, on a Mac |
 
 `apps/viewer-shared/smoke.mjs <url>` opens every demo of a running viewer in a headless browser and fails on a runtime error.
 The Swift viewer is a SwiftUI app whose demo list is generated from the same snippets.
 
-On a component page, pick Vue, Svelte or React Native in the Preview switcher to see that port running: the page frames
-its viewer (`?embed` shows only the demo). Run `pnpm dev` and the three viewers are found on ports 3001 to 3003. On a deploy,
-host each viewer (`pnpm --filter @manicat/preview-vue build` makes a static `dist`) and set `NEXT_PUBLIC_VIEWER_URL_VUE`,
-`NEXT_PUBLIC_VIEWER_URL_SVELTE` and `NEXT_PUBLIC_VIEWER_URL_REACT_NATIVE`. Without them the preview says so instead of
-showing a blank frame.
+On a component page, pick Vue, Svelte or React Native in the Preview switcher to see that port running. The page frames
+its viewer from its own address, `/preview/vue`, `/preview/svelte` or `/preview/react-native` (`?embed` shows only the
+demo), through a rewrite in `next.config.ts`. Visitors therefore only need the docs site to be reachable, never the viewers'
+ports. `pnpm dev` starts all three; on a deploy, run each viewer (`pnpm --filter @manicat/preview-vue build`, then
+`vite preview --port 3002`) and, if they are not on 3001 to 3003 of the same machine, set `VIEWER_ORIGIN_VUE`,
+`VIEWER_ORIGIN_SVELTE` and `VIEWER_ORIGIN_REACT_NATIVE`.
 
 ## Checks
 
