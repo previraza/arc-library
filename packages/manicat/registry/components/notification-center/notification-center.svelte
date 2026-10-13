@@ -6,109 +6,312 @@
     time: string;
     read?: boolean;
     tone?: "info" | "success" | "warning";
+    /** A local portrait asset for person-generated updates. */
+    actor?: { name: string; photo: string };
   }
 </script>
 
 <script lang="ts">
+  // @manicat-dependencies motion @lucide/svelte bits-ui
+  import { animate } from "motion";
+  import { onMount } from "svelte";
+  import { Popover } from "bits-ui";
+  import { Bell, Check, CheckCheck, CircleCheck, CircleDot, MessageCircle, TriangleAlert, X } from "@lucide/svelte";
+  import Avatar from "@/registry/components/avatar/avatar.svelte";
+  import NotificationCount from "@/registry/components/notification-center/notification-center-count.svelte";
+  import NotificationMorph from "@/registry/components/notification-center/notification-center-morph.svelte";
+  import NotificationText from "@/registry/components/notification-center/notification-center-text.svelte";
+  import { curveOf, poseTransition } from "@/lib/motion-dom";
+  import { createSelectionGlide } from "@/lib/tabs-motion";
+  import { motionTokens } from "@/lib/motion-tokens";
+
   interface Props {
+    notifications: NotificationItem[];
     label?: string;
-    /** The list; reading and dismissing update it. Bind it with `bind:items`. */
-    items?: NotificationItem[];
-    onreadchange?: (notification: NotificationItem, read: boolean) => void;
-    ondismiss?: (notification: NotificationItem) => void;
-    /** Extend the inner, named parts of the center: trigger, badge, panel, item, title or description. */
-    classNames?: { trigger?: string; badge?: string; panel?: string; item?: string; title?: string; description?: string };
+    onReadChange?: (notification: NotificationItem, read: boolean) => void;
+    onDismiss?: (notification: NotificationItem) => void;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    avoidCollisions?: boolean;
+    classNames?: {
+      /** Slot for the notification panel */
+      panel?: string;
+    };
   }
 
-  let { label = "Notifications", items = $bindable([]), onreadchange, ondismiss, classNames }: Props = $props();
+  let { notifications, label = "Notifications", onReadChange, onDismiss, open = $bindable(), onOpenChange, avoidCollisions = true, classNames }: Props = $props();
 
-  let open = $state(false);
-  let root = $state<HTMLElement>();
-  const id = $props.id();
-  const unread = $derived(items.filter((item) => !item.read).length);
+  const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const { duration, blur, stagger, spring } = motionTokens;
+  /** Bulk actions cascade down the list, capped so the whole sweep stays under a quarter second. */
+  const cascade = (index: number) => Math.min(index * stagger.item, 0.2);
 
-  function setRead(item: NotificationItem, read: boolean) {
-    items = items.map((entry) => (entry.id === item.id ? { ...entry, read } : entry));
-    onreadchange?.(item, read);
+  let internalOpen = $state(false);
+  let items = $state<NotificationItem[]>(notifications.map((item) => ({ ...item })));
+  let view = $state<"all" | "unread">("all");
+  let expandedId = $state<string | null>(null);
+  let bulk = false;
+  let bell = $state<HTMLElement>();
+  let viewSwitch = $state<HTMLElement>();
+  let list = $state<HTMLElement>();
+  let glide: ReturnType<typeof createSelectionGlide> | undefined;
+
+  const isOpen = $derived(open ?? internalOpen);
+  const unreadCount = $derived(items.filter((item) => !item.read).length);
+  const readCount = $derived(items.length - unreadCount);
+  const visible = $derived(view === "unread" ? items.filter((item) => !item.read) : items);
+  const summary = $derived(unreadCount ? `${unreadCount} update${unreadCount === 1 ? "" : "s"} waiting for you` : "You’re all caught up");
+
+  function setOpen(next: boolean) {
+    internalOpen = next;
+    open = next;
+    onOpenChange?.(next);
   }
-
+  const itemEl = (id: string) => list?.querySelector<HTMLElement>(`[data-item="${CSS.escape(id)}"]`);
+  const tabEl = (name: "all" | "unread") => viewSwitch?.querySelector<HTMLElement>(`[data-view="${name}"]`);
+  function focusNext(item: NotificationItem) {
+    const index = visible.findIndex((entry) => entry.id === item.id);
+    const nextId = visible[index + 1]?.id ?? visible[index - 1]?.id;
+    requestAnimationFrame(() => (nextId ? itemEl(nextId)?.focus() : tabEl("unread")?.focus()));
+  }
+  function toggleRead(item: NotificationItem) {
+    const next = !item.read;
+    if (next && view === "unread") focusNext(item);
+    bulk = false;
+    items = items.map((entry) => (entry.id === item.id ? { ...entry, read: next } : entry));
+    if (next && view === "unread") expandedId = null;
+    onReadChange?.(item, next);
+  }
+  function markAllRead() {
+    items.filter((item) => !item.read).forEach((item) => onReadChange?.(item, true));
+    bulk = true;
+    items = items.map((item) => ({ ...item, read: true }));
+    expandedId = null;
+    requestAnimationFrame(() => tabEl(view)?.focus());
+  }
   function dismiss(item: NotificationItem) {
+    focusNext(item);
+    bulk = false;
     items = items.filter((entry) => entry.id !== item.id);
-    ondismiss?.(item);
+    if (expandedId === item.id) expandedId = null;
+    onDismiss?.(item);
+  }
+  function clearRead() {
+    items.filter((item) => item.read).forEach((item) => onDismiss?.(item));
+    bulk = true;
+    items = items.filter((item) => !item.read);
+    requestAnimationFrame(() => tabEl("all")?.focus());
+  }
+  function setView(next: "all" | "unread") {
+    bulk = false;
+    view = next;
+    expandedId = null;
   }
 
-  function onOutside(event: PointerEvent) {
-    if (open && root && !root.contains(event.target as Node)) open = false;
-  }
+  // The bell tilts while the panel is open; the view switch's highlight glides between its two buttons.
+  $effect(() => {
+    const now = isOpen;
+    if (bell) animate(bell, { rotate: now && !reduced ? -12 : 0 } as never, (reduced ? { duration: 0 } : spring.snappy) as never);
+  });
+  $effect(() => {
+    const el = viewSwitch;
+    if (!el) return;
+    glide = createSelectionGlide(el, { selectionClass: "mc-notification-center__viewHighlight", reduced, selector: '[aria-pressed="true"]' });
+    glide.update();
+    return () => glide?.destroy();
+  });
+  $effect(() => {
+    view;
+    queueMicrotask(() => glide?.update());
+  });
+  onMount(() => () => glide?.destroy());
 
-  function onKeydown(event: KeyboardEvent) {
-    if (event.key === "Escape" && open) {
-      open = false;
-      root?.querySelector<HTMLElement>("button")?.focus();
-    }
+  // Rows, details and frames open and close their own height on a spring, so the list and the panel move together.
+  const heightCss = (natural: number, t: number, fade: number) => `height: ${natural * t}px; overflow: hidden; opacity: ${Math.min(1, t * fade)};`;
+  function grow(node: HTMLElement, { delay = 0, fade = 3 }: { delay?: number; fade?: number } = {}) {
+    if (reduced) return { duration: duration.instant * 1000 };
+    const natural = node.offsetHeight;
+    const { duration: length, easing } = curveOf({ spring: "smooth" });
+    return { duration: length, delay: delay * 1000, easing, css: (t: number) => heightCss(natural, t, fade) };
   }
+  function shrink(node: HTMLElement, { delay = 0 }: { delay?: number } = {}) {
+    if (reduced) return { duration: duration.instant * 1000 };
+    const natural = node.offsetHeight;
+    const { duration: length, easing } = curveOf({ spring: "smooth" });
+    return { duration: length, delay: delay * 1000, easing, css: (t: number) => heightCss(natural, t, 6) };
+  }
+  const rowIn = (node: HTMLElement) => grow(node);
+  const rowOut = (node: HTMLElement) => shrink(node, { delay: bulk ? cascade(Number(node.dataset.index ?? 0)) : 0 });
+  const dotIn = poseTransition(reduced ? { opacity: 0 } : { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1 }, reduced ? { duration: duration.instant } : { spring: "snappy", fade: duration.fast });
+  const dotOut = (node: HTMLElement) => poseTransition(reduced ? { opacity: 0 } : { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1 }, reduced ? { duration: duration.instant } : { duration: duration.fast, ease: "standard", delay: bulk ? cascade(Number(node.dataset.index ?? 0)) : 0 })(node);
+  const badgeIn = poseTransition(reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1 }, reduced ? { duration: duration.instant } : { spring: "snappy", fade: duration.fast });
+  const badgeOut = poseTransition(reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1 }, reduced ? { duration: duration.instant } : { duration: duration.fast, ease: "standard" });
+  const fadeIn = poseTransition(reduced ? { opacity: 0 } : { opacity: 0, blur: blur.subtle }, { opacity: 1, blur: 0 }, reduced ? { duration: 0 } : { duration: duration.standard, ease: "enter" });
+  const fadeOut = poseTransition(reduced ? { opacity: 0 } : { opacity: 0, blur: blur.subtle }, { opacity: 1, blur: 0 }, reduced ? { duration: duration.instant } : { duration: duration.fast, ease: "standard" });
+  const glyphIn = poseTransition(reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6, blur: blur.subtle }, { opacity: 1, scale: 1, blur: 0 }, reduced ? { duration: duration.instant } : { spring: "snappy", fade: duration.fast });
+  const glyphOut = (node: HTMLElement) => poseTransition(reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6, blur: blur.subtle }, { opacity: 1, scale: 1, blur: 0 }, reduced ? { duration: duration.instant } : { duration: duration.fast, ease: "standard" }, { pop: true })(node);
+  // The empty state opens its height on the same spring the rows close on; after a bulk action it waits for the cascade to get going.
+  const emptyIn = (node: HTMLElement) => grow(node, { delay: bulk ? cascade(3) : 0, fade: 2 });
 </script>
 
-<svelte:document onpointerdown={onOutside} />
+<Popover.Root open={isOpen} onOpenChange={setOpen}>
+  <!-- The trigger anchors the panel, so it gives press feedback with color only; scaling it would shift the panel. -->
+  <Popover.Trigger class="mc-notification-center__trigger" type="button" aria-label={`${label}${unreadCount ? `, ${unreadCount} unread` : ""}`}>
+    <span bind:this={bell} style="display: inline-block"><Bell size={19} strokeWidth={1.75} aria-hidden="true" /></span>
+    {#if unreadCount > 0}<span class="mc-notification-center__badge" aria-hidden="true" in:badgeIn out:badgeOut><NotificationCount value={unreadCount} display={unreadCount > 9 ? "9+" : String(unreadCount)} /></span>{/if}
+  </Popover.Trigger>
+  <Popover.Portal>
+    <Popover.Content class={["mc-notification-center__panel", classNames?.panel]} align="center" side="bottom" sideOffset={12} collisionPadding={12} {avoidCollisions} aria-label={label}>
+      <div class="mc-notification-center__header">
+        <div>
+          <div class="mc-notification-center__heading"><h2>{label}</h2><span class="mc-notification-center__count"><NotificationCount value={unreadCount} /></span></div>
+          <p aria-live="polite"><NotificationText text={summary} /></p>
+        </div>
+        <Popover.Close class="mc-notification-center__close" aria-label="Close notifications"><X size={17} strokeWidth={1.75} aria-hidden="true" /></Popover.Close>
+      </div>
 
-<div bind:this={root} class="mc-notify" role="presentation" onkeydown={onKeydown}>
-  <button type="button" class={["mc-notify__trigger", classNames?.trigger]} aria-label="{label}{unread ? `, ${unread} unread` : ''}" aria-haspopup="dialog" aria-expanded={open} aria-controls={id} onclick={() => (open = !open)}>
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
-    {#if unread}<span class={["mc-notify__badge", classNames?.badge]}>{unread}</span>{/if}
-  </button>
-  {#if open}
-    <div {id} role="dialog" aria-label={label} class={["mc-notify__panel", classNames?.panel]}>
-      <header class="mc-notify__head">
-        <h3>{label}</h3>
-        <button type="button" onclick={() => items.filter((item) => !item.read).forEach((item) => setRead(item, true))}>Mark all read</button>
-      </header>
-      {#if items.length === 0}<p class="mc-notify__empty">You're all caught up.</p>{/if}
-      <ul class="mc-notify__list">
-        {#each items as item (item.id)}
-          <li class={["mc-notify__item", classNames?.item]} data-read={item.read || undefined} data-tone={item.tone ?? "info"}>
-            <button type="button" class="mc-notify__body" aria-label="{item.title}, {item.read ? 'read' : 'unread'}" onclick={() => setRead(item, !item.read)}>
-              <span class="mc-notify__dot" aria-hidden="true"></span>
-              <span class="mc-notify__copy">
-                <span class={["mc-notify__title", classNames?.title]}>{item.title}</span>
-                {#if item.description}<span class={["mc-notify__description", classNames?.description]}>{item.description}</span>{/if}
-                <span class="mc-notify__time">{item.time}</span>
-              </span>
-            </button>
-            <button type="button" class="mc-notify__dismiss" aria-label="Dismiss {item.title}" onclick={() => dismiss(item)}>
-              <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8" /></svg>
-            </button>
-          </li>
+      <div class="mc-notification-center__toolbar">
+        <div bind:this={viewSwitch} class="mc-notification-center__viewSwitch" role="group" aria-label="Show notifications">
+          {#each ["all", "unread"] as const as next (next)}
+            <button type="button" data-view={next} class={view === next ? "mc-notification-center__viewActive" : undefined} aria-pressed={view === next} onclick={() => setView(next)}><span>{next === "all" ? "All" : "Unread"}</span></button>
+          {/each}
+        </div>
+        {#if unreadCount > 0}<button type="button" class="mc-notification-center__markAll" onclick={markAllRead} in:fadeIn out:fadeOut><CheckCheck size={15} strokeWidth={1.75} aria-hidden="true" /><span>Mark all read</span></button>{/if}
+      </div>
+
+      <!-- Rows collapse their own height on the way out, so the list and the panel close the gap together. -->
+      <div bind:this={list} class="mc-notification-center__list" role="list" aria-label={view === "all" ? "All notifications" : "Unread notifications"}>
+        {#each visible as item, index (item.id)}
+          <div role="listitem" class="mc-notification-center__row" data-index={index} in:rowIn out:rowOut>
+            <article class={["mc-notification-center__item", item.read && "mc-notification-center__itemRead", expandedId === item.id && "mc-notification-center__itemExpanded"]} style={`--index: ${Math.min(index, 7)}`}>
+              <div class="mc-notification-center__itemMain">
+                {#if item.actor}
+                  <Avatar name={item.actor.name} src={item.actor.photo} size="md" />
+                {:else}
+                  <span class={["mc-notification-center__eventIcon", `mc-notification-center__${item.tone ?? "info"}`]} aria-hidden="true">
+                    {#if item.tone === "warning"}<TriangleAlert size={18} strokeWidth={1.7} />{:else if item.tone === "success"}<CircleCheck size={18} strokeWidth={1.7} />{:else}<MessageCircle size={18} strokeWidth={1.7} />{/if}
+                  </span>
+                {/if}
+                <button data-item={item.id} type="button" class="mc-notification-center__itemToggle" aria-expanded={expandedId === item.id} aria-label={`${item.title}${item.read ? "" : ", unread"}. ${expandedId === item.id ? "Hide details" : "Show details"}`} onclick={() => (expandedId = expandedId === item.id ? null : item.id)}>
+                  <span class="mc-notification-center__itemTitle"><strong>{item.title}</strong>
+                    {#if !item.read}<span class="mc-notification-center__unreadDot" aria-hidden="true" data-index={index} in:dotIn out:dotOut></span>{/if}
+                  </span>
+                  <span class="mc-notification-center__itemPreview">{item.description ?? (item.actor ? `From ${item.actor.name}` : "View update details")}</span>
+                </button>
+                <time class="mc-notification-center__time">{item.time}</time>
+              </div>
+              {#if expandedId === item.id}
+                <div class="mc-notification-center__details" in:rowIn out:rowOut>
+                  <p>{item.description ?? (item.actor ? `${item.actor.name} shared an update with you.` : "This update is ready to review.")}</p>
+                  <div class="mc-notification-center__itemActions">
+                    <button type="button" onclick={() => toggleRead(item)}><NotificationMorph morphKey={item.read ? "read" : "unread"}>
+                      <span class="mc-notification-center__actionIcon">{#key item.read}<span class="mc-notification-center__actionGlyph" in:glyphIn out:glyphOut>{#if item.read}<CircleDot size={14} strokeWidth={1.75} aria-hidden="true" />{:else}<Check size={14} strokeWidth={1.75} aria-hidden="true" />{/if}</span>{/key}</span>
+                      <NotificationText text={item.read ? "Mark unread" : "Mark read"} />
+                    </NotificationMorph></button>
+                    <button type="button" onclick={() => dismiss(item)}><X size={14} strokeWidth={1.75} aria-hidden="true" />Dismiss</button>
+                  </div>
+                </div>
+              {/if}
+            </article>
+          </div>
         {/each}
-      </ul>
-    </div>
-  {/if}
-</div>
+        {#if visible.length === 0}
+          <div class="mc-notification-center__emptyFrame" in:emptyIn out:rowOut>
+            <div class="mc-notification-center__empty"><CircleCheck size={24} strokeWidth={1.5} aria-hidden="true" /><strong><NotificationText text={view === "unread" ? "Nothing unread" : "All clear"} /></strong><p><NotificationText text={view === "unread" ? "You’ve seen every update." : "New updates will appear here."} /></p>{#if view === "unread" && items.length > 0}<button type="button" onclick={() => setView("all")}>View all updates</button>{/if}</div>
+          </div>
+        {/if}
+      </div>
+
+      {#if readCount > 0}
+        <div class="mc-notification-center__footerFrame" in:rowIn out:rowOut>
+          <div class="mc-notification-center__footer"><span><NotificationCount value={readCount} /> read</span><button type="button" onclick={clearRead}>Clear read</button></div>
+        </div>
+      {/if}
+    </Popover.Content>
+  </Popover.Portal>
+</Popover.Root>
 
 <style>
 :global {
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-notify { position: relative; display: inline-block; }
-.mc-notify__trigger { position: relative; display: grid; place-items: center; width: var(--control-height-md); height: var(--control-height-md); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--foreground); cursor: pointer; }
-@media (hover: hover) and (pointer: fine) { .mc-notify__trigger:hover { background: var(--surface-muted); } }
-.mc-notify__badge { position: absolute; top: -4px; right: -4px; display: grid; place-items: center; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; }
-.mc-notify__panel { position: absolute; z-index: 60; top: calc(100% + 8px); right: 0; width: min(22rem, calc(100vw - 2rem)); max-height: 26rem; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface-raised); box-shadow: var(--shadow-floating); animation: mc-notify-in .18s var(--ease-enter) both; transform-origin: top right; }
-.mc-notify__head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4); border-bottom: 1px solid var(--border); }
-.mc-notify__head h3 { margin: 0; font-size: var(--text-base); font-weight: 500; }
-.mc-notify__head button { border: 0; background: transparent; color: var(--text-secondary); font: inherit; font-size: var(--text-xs); cursor: pointer; }
-.mc-notify__empty { margin: 0; padding: var(--space-5); color: var(--text-muted); font-size: var(--text-sm); text-align: center; }
-.mc-notify__list { margin: 0; padding: 0; list-style: none; }
-.mc-notify__item { display: flex; align-items: flex-start; }
-.mc-notify__body { display: flex; flex: 1; gap: var(--space-3); padding: var(--space-4); border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-@media (hover: hover) and (pointer: fine) { .mc-notify__body:hover { background: var(--surface-muted); } }
-.mc-notify__dot { width: 8px; height: 8px; margin-top: 6px; flex: 0 0 auto; border-radius: 50%; background: var(--accent); }
-.mc-notify__item[data-tone="success"] .mc-notify__dot { background: var(--success); } .mc-notify__item[data-tone="warning"] .mc-notify__dot { background: var(--warning); }
-.mc-notify__item[data-read] .mc-notify__dot { background: transparent; }
-.mc-notify__copy { display: grid; gap: 2px; }
-.mc-notify__title { font-size: var(--text-sm); font-weight: 600; } .mc-notify__item[data-read] .mc-notify__title { font-weight: 400; }
-.mc-notify__description { color: var(--text-secondary); font-size: var(--text-xs); }
-.mc-notify__time { color: var(--text-muted); font-size: var(--text-xs); }
-.mc-notify__dismiss { display: grid; place-items: center; width: 28px; height: 28px; margin: var(--space-3) var(--space-3) 0 0; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--text-muted); cursor: pointer; }
-@keyframes mc-notify-in { from { opacity: 0; transform: translateY(-4px) scale(.98); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .mc-notify__panel { animation: none; } }
+.mc-notification-center__trigger { position: relative; display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); cursor: pointer; transition: border-color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard); }
+.mc-notification-center__trigger[data-state="open"], .mc-notification-center__trigger:active { border-color: var(--border-strong); background: var(--surface-muted); }
+@media (hover: hover) and (pointer: fine) { .mc-notification-center__trigger:hover { border-color: var(--border-strong); background: var(--surface-muted); } }
+.mc-notification-center__trigger > span:first-child { display: grid; place-items: center; }
+.mc-notification-center__badge { position: absolute; top: -6px; right: -6px; display: grid; min-width: 20px; height: 20px; padding: 0 5px; place-items: center; overflow: hidden; border: 2px solid var(--surface); border-radius: var(--radius-pill); background: var(--foreground); color: var(--background); font-size: var(--text-xs); font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
+.mc-notification-center__panel { z-index: 90; display: flex; flex-direction: column; width: min(424px, calc(100vw - 24px)); max-height: min(590px, calc(100vh - 24px)); overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface-raised); color: var(--foreground); box-shadow: var(--shadow-floating); font-family: var(--font-body); letter-spacing: var(--tracking-body); transform-origin: var(--bits-popover-content-transform-origin); }
+/* The panel grows out of the bell: it starts a few pixels toward the trigger on whichever side Radix placed it, and leaves faster than it arrives. */
+.mc-notification-center__panel { --panel-x: 0px; --panel-y: -6px; }
+.mc-notification-center__panel[data-side="top"] { --panel-y: 6px; }
+.mc-notification-center__panel[data-side="left"] { --panel-x: 6px; --panel-y: 0px; }
+.mc-notification-center__panel[data-side="right"] { --panel-x: -6px; --panel-y: 0px; }
+.mc-notification-center__panel[data-state="open"] { animation: mc-notification-center-panel-open var(--duration-standard) var(--ease-enter) both; }
+.mc-notification-center__panel[data-state="closed"] { animation: mc-notification-center-panel-close var(--duration-instant) var(--ease-standard) both; }
+.mc-notification-center__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 23px 24px 18px; }
+.mc-notification-center__heading { display: flex; align-items: center; gap: var(--space-2); }
+.mc-notification-center__heading h2 { margin: 0; font-size: var(--text-xl); font-weight: 500; letter-spacing: var(--tracking-body); line-height: 1.2; }
+.mc-notification-center__count { display: grid; min-width: 21px; height: 21px; padding: 0 5px; place-items: center; overflow: hidden; border-radius: 7px; background: var(--surface-muted); color: var(--text-secondary); font-size: var(--text-xs); line-height: 1; font-variant-numeric: tabular-nums; }
+.mc-notification-center__header p { position: relative; margin: 4px 0 0; color: var(--text-secondary); font-size: var(--text-xs); line-height: var(--leading-body); }
+.mc-notification-center__close { display: grid; width: 30px; height: 30px; flex: none; place-items: center; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer; transition: transform var(--duration-spring) var(--ease-spring), color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard); }
+.mc-notification-center__close:active { transform: scale(.96); }
+.mc-notification-center__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 17px 13px 20px; border-bottom: 1px solid var(--border-subtle); }
+.mc-notification-center__viewSwitch { display: inline-flex; align-items: center; gap: 3px; }
+.mc-notification-center__viewSwitch button { position: relative; isolation: isolate; min-width: 61px; height: 31px; padding: 0 10px; border: 0; border-radius: 9px; background: transparent; color: var(--text-secondary); font: inherit; font-size: var(--text-xs); cursor: pointer; transition: color var(--duration-fast) var(--ease-standard); }
+.mc-notification-center__viewSwitch .mc-notification-center__viewActive { color: var(--foreground); }
+.mc-notification-center__viewSwitch button > span:last-child { position: relative; z-index: 1; }
+.mc-notification-center__viewHighlight { position: absolute; z-index: -1; inset: 0; border-radius: 9px; background: var(--surface-muted); }
+.mc-notification-center__markAll { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; border: 0; background: transparent; color: var(--text-secondary); font: inherit; font-size: var(--text-xs); white-space: nowrap; cursor: pointer; transition: transform var(--duration-spring) var(--ease-spring), color var(--duration-fast) var(--ease-standard); }
+.mc-notification-center__markAll:active { transform: scale(.97); }
+.mc-notification-center__list { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 9px 11px 10px; scrollbar-width: none; }
+.mc-notification-center__list::-webkit-scrollbar { display: none; }
+.mc-notification-center__row { overflow: hidden; }
+/* Rows settle in with a short cascade when the panel opens or a view adds them. */
+.mc-notification-center__item { position: relative; padding: 10px; border-radius: calc(var(--radius-panel) - 12px); transition: background var(--duration-fast) var(--ease-standard); animation: mc-notification-center-item-in var(--duration-standard) var(--ease-enter) calc(var(--index, 0) * 35ms) both; }
+.mc-notification-center__itemExpanded { background: var(--surface-muted); }
+.mc-notification-center__itemRead .mc-notification-center__itemTitle strong { color: var(--text-secondary); }
+.mc-notification-center__itemMain { display: flex; align-items: flex-start; gap: 11px; min-width: 0; }
+.mc-notification-center__eventIcon { display: grid; width: 36px; height: 36px; flex: none; place-items: center; color: var(--accent); }
+.mc-notification-center__eventIcon.mc-notification-center__success { color: var(--success); }
+.mc-notification-center__eventIcon.mc-notification-center__warning { color: var(--warning); }
+.mc-notification-center__itemToggle { display: grid; min-width: 0; flex: 1; gap: 4px; padding: 2px 0 0; border: 0; background: transparent; color: var(--foreground); text-align: left; font: inherit; cursor: pointer; }
+.mc-notification-center__itemTitle { display: flex; align-items: center; gap: 6px; min-width: 0; min-height: 20px; }
+.mc-notification-center__itemTitle strong { overflow: hidden; font-size: var(--text-sm); font-weight: 500; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
+.mc-notification-center__unreadDot { display: block; width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--foreground); }
+.mc-notification-center__itemPreview { overflow: hidden; color: var(--text-secondary); font-size: var(--text-xs); line-height: var(--leading-body); text-overflow: ellipsis; white-space: nowrap; }
+.mc-notification-center__time { flex: none; padding-top: 4px; color: var(--text-muted); font-size: var(--text-xs); line-height: var(--leading-body); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mc-notification-center__details { overflow: hidden; padding-left: 47px; }
+.mc-notification-center__details p { margin: 12px 0; color: var(--text-secondary); font-size: var(--text-xs); line-height: var(--leading-body); }
+.mc-notification-center__itemActions { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 5px; }
+.mc-notification-center__itemActions button { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px; overflow: clip; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-xs); line-height: 1; white-space: nowrap; cursor: pointer; transition: transform var(--duration-spring) var(--ease-spring), border-color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard); }
+.mc-notification-center__itemActions button:active { transform: scale(.97); }
+/* Quick press, spring release: the resting transition above carries the spring back. */
+.mc-notification-center__close:active, .mc-notification-center__markAll:active, .mc-notification-center__itemActions button:active, .mc-notification-center__footer button:active { transition-duration: var(--duration-instant); transition-timing-function: var(--ease-standard); }
+.mc-notification-center__morph { display: inline-flex; align-items: center; }
+.mc-notification-center__morphContent { position: relative; display: inline-flex; width: max-content; align-items: center; gap: 5px; }
+.mc-notification-center__actionIcon, .mc-notification-center__actionGlyph { position: relative; display: grid; place-items: center; }
+.mc-notification-center__swap { position: relative; display: inline-block; max-width: 100%; vertical-align: top; }
+.mc-notification-center__swapLine { display: block; }
+.mc-notification-center__roll { position: relative; display: inline-grid; vertical-align: top; }
+.mc-notification-center__rollValue { display: block; }
+.mc-notification-center__emptyFrame { overflow: hidden; }
+.mc-notification-center__empty { display: grid; justify-items: center; align-content: center; min-height: 190px; padding: 22px 12px; text-align: center; }
+.mc-notification-center__empty > svg { margin-bottom: 13px; color: var(--text-muted); }
+.mc-notification-center__empty strong { font-size: var(--text-sm); font-weight: 500; }
+.mc-notification-center__empty p { margin: 4px 0 0; color: var(--text-secondary); font-size: var(--text-xs); }
+.mc-notification-center__empty button { margin-top: 16px; padding: 0; border: 0; background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-xs); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.mc-notification-center__footerFrame { flex: none; overflow: hidden; }
+.mc-notification-center__footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 46px; padding: 8px 22px; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: var(--text-xs); }
+.mc-notification-center__footer button { padding: 4px 0; border: 0; background: transparent; color: var(--text-secondary); font: inherit; font-size: var(--text-xs); cursor: pointer; transition: transform var(--duration-spring) var(--ease-spring), color var(--duration-fast) var(--ease-standard); }
+.mc-notification-center__footer button:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) {
+  .mc-notification-center__close:hover, .mc-notification-center__item:hover { background: var(--surface-muted); }
+  .mc-notification-center__close:hover, .mc-notification-center__viewSwitch button:hover, .mc-notification-center__markAll:hover, .mc-notification-center__footer button:hover { color: var(--foreground); }
+  .mc-notification-center__itemActions button:hover { border-color: var(--border-strong); background: var(--surface); }
+}
+@keyframes mc-notification-center-panel-open { from { opacity: 0; transform: translate(var(--panel-x), var(--panel-y)) scale(.97); } }
+@keyframes mc-notification-center-panel-close { to { opacity: 0; transform: translate(calc(var(--panel-x) / 2), calc(var(--panel-y) / 2)) scale(.98); } }
+@keyframes mc-notification-center-item-in { from { opacity: 0; transform: translateY(4px); } }
+@media (max-width: 380px) { .mc-notification-center__header { padding: 20px 16px 16px; } .mc-notification-center__heading h2 { font-size: var(--text-lg); } .mc-notification-center__toolbar { align-items: flex-start; padding: 0 12px 12px; } .mc-notification-center__list { padding: 8px 5px; } .mc-notification-center__item { padding-inline: 7px; } .mc-notification-center__itemMain { gap: 7px; } .mc-notification-center__details { padding-left: 43px; } .mc-notification-center__itemActions { gap: 5px; } .mc-notification-center__itemActions button { padding-inline: 7px; } .mc-notification-center__markAll span { display: none; } .mc-notification-center__footer { padding-inline: 16px; } }
+@media (prefers-reduced-motion: reduce) { .mc-notification-center__panel[data-state], .mc-notification-center__trigger, .mc-notification-center__close, .mc-notification-center__viewSwitch button, .mc-notification-center__markAll, .mc-notification-center__item, .mc-notification-center__itemActions button, .mc-notification-center__footer button { animation: none; transition-duration: 0ms; } .mc-notification-center__close:active, .mc-notification-center__markAll:active, .mc-notification-center__itemActions button:active, .mc-notification-center__footer button:active { transform: none; } }
 }
 </style>
