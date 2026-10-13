@@ -1,5 +1,8 @@
 <script lang="ts">
-  import { untrack } from "svelte";
+  // @manicat-dependencies motion
+  import { onMount } from "svelte";
+  import { createLabelSwap } from "@/lib/motion-dom";
+  import { createCounter } from "@/lib/counter";
 
   interface Props {
     value: number;
@@ -7,73 +10,69 @@
     prefix?: string;
     suffix?: string;
     decimals?: number;
-    locale?: string;
-    /** Count up when the counter scrolls into view instead of on mount. */
+    /** Roll every digit up from zero the first time the counter scrolls into view. */
     animateOnView?: boolean;
-    /** Extend the inner, named parts of the counter: label or value. */
-    classNames?: { label?: string; value?: string };
+    /** Formatting locale. Fixed by default so server and client render the same digits. */
+    locale?: string;
+    /** Extend the inner, named parts of the counter: label, labelSwap, labelText, value, symbol, column or glyph. */
+    classNames?: { label?: string; labelSwap?: string; labelText?: string; value?: string; symbol?: string; column?: string; glyph?: string };
   }
 
-  let { value, label, prefix = "", suffix = "", decimals = 0, locale = "en-US", animateOnView = false, classNames }: Props = $props();
+  let { value, label, prefix = "", suffix = "", decimals = 0, animateOnView = false, locale = "en-US", classNames }: Props = $props();
 
-  let shown = $state(0);
-  let seen = $state(false);
-  let frame = 0;
+  const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let host: HTMLElement;
+  let sr: HTMLElement;
+  let labelText: HTMLElement | undefined = $state();
+  let counter: ReturnType<typeof createCounter> | undefined;
 
-  function format(n: number) {
-    return `${prefix}${n.toLocaleString(locale, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}${suffix}`;
-  }
-
-  function run(to: number) {
-    cancelAnimationFrame(frame);
-    const from = untrack(() => shown);
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      shown = to;
-      return;
-    }
-    const start = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / 900);
-      shown = from + (to - from) * (1 - Math.pow(1 - t, 3));
-      if (t < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-  }
-
-  // Counts on mount, or once the counter is seen, and again whenever the value changes.
-  $effect(() => {
-    const to = value;
-    if (animateOnView && !seen) return;
-    run(to);
-    return () => cancelAnimationFrame(frame);
+  const cn = (base: string, extra?: string) => (extra ? `${base} ${extra}` : base);
+  const options = () => ({
+    value,
+    prefix,
+    suffix,
+    decimals,
+    locale,
+    animateOnView,
+    reduced,
+    classes: { value: "", symbol: cn("mc-animated-counter__symbol", classNames?.symbol), column: cn("mc-animated-counter__column", classNames?.column), glyph: cn("mc-animated-counter__glyph", classNames?.glyph), sizer: "mc-animated-counter__sizer" },
   });
 
-  function watch(node: HTMLElement) {
-    if (!animateOnView || typeof IntersectionObserver === "undefined") {
-      seen = true;
-      return;
-    }
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        seen = true;
-        observer.disconnect();
-      }
-    });
-    observer.observe(node);
-    return () => observer.disconnect();
-  }
+  onMount(() => {
+    counter = createCounter(host, sr, options());
+    const box = labelText?.parentElement;
+    const swap = labelText && box ? createLabelSwap(box, box, labelText, { reduced, width: false, variant: "badge" }) : undefined;
+    return () => {
+      counter?.destroy();
+      swap?.destroy();
+    };
+  });
+  $effect(() => {
+    void [value, prefix, suffix, decimals, locale];
+    counter?.update(options());
+  });
 </script>
 
-<div {@attach watch} class="mc-counter" role="group" aria-label="{label ? `${label}: ` : ''}{format(value)}">
-  {#if label}<span class={["mc-counter__label", classNames?.label]}>{label}</span>{/if}
-  <span class={["mc-counter__value", classNames?.value]} aria-hidden="true">{format(shown)}</span>
-</div>
+<span class="mc-animated-counter__counter">
+  {#if label}<span class={["mc-animated-counter__label", classNames?.label]}><span class={["mc-animated-counter__labelSwap", classNames?.labelSwap]}><span bind:this={labelText} class={["mc-animated-counter__labelText", classNames?.labelText]}>{label}</span></span></span>{/if}
+  <span bind:this={sr} class="mc-animated-counter__srOnly"></span>
+  <span bind:this={host} class={["mc-animated-counter__value", classNames?.value]} aria-hidden="true"></span>
+</span>
 
 <style>
 :global {
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-counter { display: grid; gap: 4px; }
-.mc-counter__label { color: var(--text-secondary); font-size: var(--text-sm); }
-.mc-counter__value { font-size: var(--text-3xl); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: var(--tracking-display); }
+.mc-animated-counter__counter { position: relative; display: inline-flex; flex-direction: column; color: var(--foreground); font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 500; letter-spacing: var(--tracking-display); line-height: 1; font-variant-numeric: tabular-nums; }
+.mc-animated-counter__label { margin-bottom: var(--space-2); color: var(--text-muted); font-family: var(--font-body); font-size: var(--text-xs); font-weight: 400; letter-spacing: var(--tracking-body); line-height: var(--leading-body); }
+/* Each digit is a clipped wheel; separators clip sideways only so a comma keeps its tail. */
+.mc-animated-counter__value { display: inline-flex; align-items: flex-start; white-space: nowrap; user-select: none; }
+/* The wheel's window reaches a little past the line box and feathers out, so a turning digit fades at the edge instead of being cut. */
+.mc-animated-counter__column { --feather: .16em; position: relative; display: inline-block; overflow: hidden; margin-block: calc(var(--feather) * -1); padding-block: var(--feather); mask-image: linear-gradient(to bottom, transparent, #000 calc(var(--feather) * 1.5), #000 calc(100% - var(--feather) * 1.5), transparent); }
+.mc-animated-counter__sizer { visibility: hidden; }
+.mc-animated-counter__glyph { position: absolute; inset: var(--feather) 0; text-align: center; }
+.mc-animated-counter__labelText { display: inline-block; }
+.mc-animated-counter__labelSwap { position: relative; display: block; }
+.mc-animated-counter__symbol { display: inline-block; overflow-x: clip; }
+.mc-animated-counter__srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
 </style>

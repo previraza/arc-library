@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct AnimatedCounterExample: View {
-    @State private var revenue = 12480.0
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            ManicatAnimatedCounter(value: revenue, label: "Revenue", prefix: "$")
-            ManicatButton("Add $2,500", variant: .secondary, size: .sm) { revenue += 2500 }
+        VStack(alignment: .leading, spacing: 24) {
+            ManicatAnimatedCounter(value: 121_408, label: "Downloads")
+            ManicatAnimatedCounter(value: 32_768, label: "Premium seats")
+            ManicatAnimatedCounter(value: 1.8, label: "Median render", suffix: " ms", decimals: 1)
         }
+        .frame(maxWidth: 448)
     }
 }

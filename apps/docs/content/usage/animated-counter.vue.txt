@@ -3,8 +3,9 @@ import AnimatedCounter from "@/components/manicat/animated-counter/animated-coun
 </script>
 
 <template>
-  <div class="grid gap-6">
-    <AnimatedCounter :value="121408" label="Downloads this month" animate-on-view />
-    <AnimatedCounter :value="99.98" :decimals="2" suffix="%" label="Uptime" animate-on-view />
+  <div style="display: flex; width: 100%; max-width: 28rem; flex-direction: column; gap: 24px">
+    <AnimatedCounter :value="121408" label="Downloads" />
+    <AnimatedCounter :value="32768" label="Premium seats" />
+    <AnimatedCounter :value="1.8" :decimals="1" suffix=" ms" label="Median render" />
   </div>
 </template>

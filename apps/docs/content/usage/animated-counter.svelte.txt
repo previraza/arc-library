@@ -1,9 +1,9 @@
 <script lang="ts">
   import AnimatedCounter from "@/components/manicat/animated-counter/animated-counter.svelte";
-  let revenue = $state(12480);
 </script>
 
-<div style="display: grid; gap: 12px; justify-items: start">
-  <AnimatedCounter label="Revenue" prefix="$" value={revenue} />
-  <button type="button" onclick={() => (revenue += 2500)}>Add $2,500</button>
+<div style="display: flex; width: 100%; max-width: 28rem; flex-direction: column; gap: 24px">
+  <AnimatedCounter value={121408} label="Downloads" />
+  <AnimatedCounter value={32768} label="Premium seats" />
+  <AnimatedCounter value={1.8} decimals={1} suffix=" ms" label="Median render" />
 </div>
