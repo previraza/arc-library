@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useId, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Code2, Eye, Maximize2, Minimize2, RotateCw, Scan, Smartphone } from "lucide-react";
 
 type Size = "fit" | "mobile";
 
-/** 1 is portrait, 0 landscape, -1 portrait turned upside down. */
-type Orientation = 1 | 0 | -1;
-const nextOrientation: Record<Orientation, Orientation> = { 1: 0, 0: -1, [-1]: 1 };
-const orientationName: Record<Orientation, string> = { 1: "portrait", 0: "landscape", [-1]: "upside down" };
+/** 1 is portrait, 0 landscape. */
+type Orientation = 1 | 0;
+const nextOrientation: Record<Orientation, Orientation> = { 1: 0, 0: 1 };
+const orientationName: Record<Orientation, string> = { 1: "portrait", 0: "landscape" };
 
 const sizes: { id: Size; label: string; Icon: typeof Scan }[] = [
   { id: "fit", label: "Fit", Icon: Scan },
@@ -36,6 +36,16 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
   const [full, setFull] = useState(false);
   const [orientation, setOrientation] = useState<Orientation>(1);
   const titleId = useId();
+  const [stageWidth, setStageWidth] = useState(0);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = stageRef.current;
+    if (!node) return;
+    const observer = new ResizeObserver(([entry]) => setStageWidth(entry.contentRect.width));
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!full) return;
@@ -139,6 +149,7 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
       {/* Both panes stay mounted: switching tabs or size must not reset the example's state. */}
       <div hidden={Boolean(showCode)} className={full ? "arc-fade-in min-h-0 flex-1" : "arc-fade-in"}>
         <div
+          ref={stageRef}
           className={`relative flex items-center justify-center overflow-auto rounded-[var(--radius-surface)] border border-fd-border bg-fd-background p-6 transition-[min-height] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none sm:p-10 ${
             full ? "h-full" : size === "mobile" ? "min-h-[720px]" : "min-h-56"
           }`}
@@ -152,7 +163,7 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
                 }
           }
         >
-          <Device mobile={size === "mobile"} full={full} orientation={orientation}>
+          <Device mobile={size === "mobile"} full={full} orientation={orientation} stageWidth={stageWidth}>
             {children}
           </Device>
         </div>
@@ -170,20 +181,37 @@ const ease = "ease-[var(--ease-standard)]";
 
 /**
  * One element that is either the plain preview column or a phone. The phone is sized from the real screen in pixels
- * (1170 × 2532) divided by `--mobile-ratio`, and `--mobile-orientation` turns it: 1 portrait, 0 landscape, -1 upside down.
+ * (1170 × 2532) divided by `--mobile-ratio`, and `--mobile-orientation` turns it: 1 portrait, 0 landscape.
  * Width, height and the bezel are transitions, so the phone grows around the example and turns when rotated.
  */
-function Device({ mobile, full, orientation, children }: { mobile: boolean; full: boolean; orientation: Orientation; children: ReactNode }) {
+function Device({
+  mobile,
+  full,
+  orientation,
+  stageWidth,
+  children,
+}: {
+  mobile: boolean;
+  full: boolean;
+  orientation: Orientation;
+  stageWidth: number;
+  children: ReactNode;
+}) {
   const angle = "var(--mobile-angle)";
   const turned = (portrait: string, landscape: string) =>
     `calc(${portrait} * abs(cos(${angle})) + ${landscape} * abs(sin(${angle})))`;
   // How much of the 44px island side and 20px home-bar side each edge of the screen gives up, for any angle.
-  const edge = (island: string, home: string) => `calc(44px * max(${island}, 0) + 20px * max(${home}, 0))`;
+  const edge = (island: string, home: string) => `calc(16px + 52px * max(${island}, 0) + 24px * max(${home}, 0))`;
   const c = `cos(${angle})`;
   const sn = `sin(${angle})`;
 
+  // Turned on its side the phone is 2532/ratio wide: shrink the ratio's scale until it fits the stage (stage padding is 48px a side).
+  const base = full ? 3.4 : 3.6;
+  const fits = stageWidth > 0 ? 2532 / Math.max(stageWidth - 96, 320) : 0;
+  const ratio = orientation === 0 ? Math.max(base, fits) : base;
+
   const frame = {
-    "--mobile-ratio": full ? 3.4 : 3.6,
+    "--mobile-ratio": ratio,
     "--mobile-orientation": orientation,
     "--mobile-angle": "calc((var(--mobile-orientation) - 1) * 90deg)",
     "--device-width": "calc(1170px / var(--mobile-ratio))",
@@ -191,7 +219,7 @@ function Device({ mobile, full, orientation, children }: { mobile: boolean; full
     interpolateSize: "allow-keywords",
     width: mobile ? turned("var(--device-width)", "var(--device-height)") : "min(100%, 42rem)",
     height: mobile ? turned("var(--device-height)", "var(--device-width)") : "auto",
-    padding: mobile ? 7 : 0,
+    padding: mobile ? 9 : 0,
     borderRadius: mobile ? "2.75rem" : "0rem",
     backgroundColor: mobile ? "color-mix(in oklab, var(--color-fd-foreground) 90%, transparent)" : "transparent",
     boxShadow: mobile
@@ -200,10 +228,10 @@ function Device({ mobile, full, orientation, children }: { mobile: boolean; full
   } as CSSProperties;
 
   const content = {
-    paddingTop: mobile ? `calc(${edge(c, `-1 * ${c}`)} + 0px)` : 0,
-    paddingBottom: mobile ? `calc(${edge(`-1 * ${c}`, c)} + 0px)` : 0,
-    paddingLeft: mobile ? `calc(${edge(`-1 * ${sn}`, sn)} + 0px)` : 0,
-    paddingRight: mobile ? `calc(${edge(sn, `-1 * ${sn}`)} + 0px)` : 0,
+    paddingTop: mobile ? edge(c, `-1 * ${c}`) : 0,
+    paddingBottom: mobile ? edge(`-1 * ${c}`, c) : 0,
+    paddingLeft: mobile ? edge(`-1 * ${sn}`, sn) : 0,
+    paddingRight: mobile ? edge(sn, `-1 * ${sn}`) : 0,
   } as CSSProperties;
 
   // The chrome keeps the portrait proportions and turns around the centre of the screen.
@@ -233,8 +261,8 @@ function Device({ mobile, full, orientation, children }: { mobile: boolean; full
 
         <div aria-hidden className={`pointer-events-none absolute left-1/2 top-1/2 transition-transform duration-500 ${ease} motion-reduce:transition-none ${fade}`} style={chrome}>
           <span className="absolute left-1/2 top-2 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-fd-foreground/90" />
-          <span className="absolute left-7 top-3 text-[11px] font-medium leading-none text-fd-foreground">9:41</span>
-          <span className="absolute right-7 top-3 text-[11px] leading-none tracking-widest text-fd-foreground">●●●</span>
+          <span className="absolute left-7 top-2 flex h-[22px] items-center text-[11px] font-medium leading-none text-fd-foreground">9:41</span>
+          <span className="absolute right-7 top-2 flex h-[22px] items-center text-[11px] leading-none tracking-widest text-fd-foreground">●●●</span>
           <span className="absolute bottom-2 left-1/2 h-1 w-28 -translate-x-1/2 rounded-full bg-fd-foreground/80" />
         </div>
       </div>
