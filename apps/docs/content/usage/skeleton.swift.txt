@@ -2,7 +2,10 @@ import SwiftUI
 
 struct SkeletonExample: View {
     var body: some View {
-        ManicatSkeleton(label: "Loading profile", lines: 3, avatar: true)
-            .frame(maxWidth: 360)
+        VStack(spacing: 12) {
+            ManicatSkeleton(label: "Loading profile", lines: 3, avatar: true)
+            ManicatSkeleton(lines: 2)
+        }
+        .frame(maxWidth: 448)
     }
 }

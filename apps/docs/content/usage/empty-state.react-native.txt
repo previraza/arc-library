@@ -1,11 +1,13 @@
+import { Badge } from "@/components/manicat/badge/badge.rn";
 import { Button } from "@/components/manicat/button/button.rn";
 import { EmptyState } from "@/components/manicat/empty-state/empty-state.rn";
 
-export function NoProjects() {
+export function EmptyStateDemo() {
   return (
     <EmptyState
       title="No projects yet"
       description="Create your first project to see deployments, domains and usage here."
+      icon={<Badge tone="info">New</Badge>}
       action={<Button>Create project</Button>}
     />
   );

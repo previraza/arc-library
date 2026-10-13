@@ -272,7 +272,7 @@ export function createLabelSwap(
   slot: HTMLElement,
   content: HTMLElement,
   phase: HTMLElement,
-  { reduced, follower: shared, icon: alwaysIcon = false, pop = true, width = true }: { reduced: boolean; /** Follow the width of the content on a spring. Off for a label whose box is set by its container. */ width?: boolean; /** A width follower the caller owns, when the slot has other content that changes too. */ follower?: WidthFollower; /** The content is an icon, so it scales instead of rising. */ icon?: boolean; /** Take the old content out of the flow (a label); an icon stacked in a grid cell leaves in place. */ pop?: boolean },
+  { reduced, follower: shared, icon: alwaysIcon = false, pop = true, width = true, variant = "label", direction }: { reduced: boolean; /** How the text moves: `label` (buttons), `badge` (badges, progress, empty states) or `rise` (it enters from the side the value moved toward, see `direction`). */ variant?: "label" | "badge" | "rise"; /** For `rise`: 1 when the new content is larger than the old, -1 when smaller. */ direction?: (next: string, previous: string) => number; /** Follow the width of the content on a spring. Off for a label whose box is set by its container. */ width?: boolean; /** A width follower the caller owns, when the slot has other content that changes too. */ follower?: WidthFollower; /** The content is an icon, so it scales instead of rising. */ icon?: boolean; /** Take the old content out of the flow (a label); an icon stacked in a grid cell leaves in place. */ pop?: boolean },
 ): LabelSwap {
   const follower = shared ?? (width ? followWidth(slot, content, reduced) : { arm: () => undefined, destroy: () => undefined });
   let key = labelKey(phase);
@@ -299,10 +299,14 @@ export function createLabelSwap(
       animate(leaving, { opacity: 0 }, { duration: motionTokens.duration.instant }).finished.then(() => leaving.remove());
       animate(phase, { opacity: [0, 1] }, { duration: motionTokens.duration.instant });
     } else {
-      const out = icon ? { opacity: 0, scale: 0.6, filter: blur(motionTokens.blur.subtle) } : { opacity: 0, y: -3, filter: blur(motionTokens.blur.soft) };
+      const em = (amount: number) => amount * parseFloat(getComputedStyle(phase).fontSize);
+      const sign = direction ? direction(phase.textContent ?? "", leaving.textContent ?? "") : 1;
+      const textIn = variant === "label" ? { y: 4, blur: motionTokens.blur.soft } : { y: em(variant === "rise" ? 0.3 * sign : 0.3), blur: motionTokens.blur.soft };
+      const textOut = variant === "label" ? { y: -3, blur: motionTokens.blur.soft } : { y: em(variant === "rise" ? -0.3 * sign : -0.3), blur: motionTokens.blur.subtle };
+      const out = icon ? { opacity: 0, scale: 0.6, filter: blur(motionTokens.blur.subtle) } : { opacity: 0, y: textOut.y, filter: blur(textOut.blur) };
       animate(leaving, out, { duration: motionTokens.duration.fast, ease: ease("standard") }).finished.then(() => leaving.remove());
       if (icon) animate(phase, { opacity: [0, 1], scale: [0.6, 1], filter: [blur(motionTokens.blur.subtle), blur(0)] }, { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: ease("enter") }, filter: { duration: motionTokens.duration.fast, ease: ease("enter") } });
-      else animate(phase, { opacity: [0, 1], y: [4, 0], filter: [blur(motionTokens.blur.soft), blur(0)] }, { duration: motionTokens.duration.standard, ease: ease("enter") });
+      else animate(phase, { opacity: [0, 1], y: [textIn.y, 0], filter: [blur(textIn.blur), blur(0)] }, { duration: motionTokens.duration.standard, ease: ease("enter") });
     }
     before = snapshot();
   });
@@ -666,5 +670,51 @@ export function createRadioGroup(list: HTMLElement, highlight: HTMLElement, { re
       list.setAttribute("data-ready", "");
     },
     destroy: () => observer.disconnect(),
+  };
+}
+
+/**
+ * Keeps an element as wide (or as tall) as its content, and springs it to the new size when the content has just changed (`changed()`),
+ * pinning the old size first so nothing snaps. Resizes nobody asked for, such as a font swap or a hidden parent, are followed at once.
+ * The counterpart of the `HeightFrame` and the badge's width in the React components.
+ */
+export function createAutoSize(frame: HTMLElement, content: HTMLElement, { axis, reduced }: { axis: "width" | "height"; reduced: boolean }) {
+  let changedAt = 0;
+  let last: number | undefined;
+  let running: AnimationPlaybackControls | undefined;
+  let pinned: number | undefined;
+  const settle = () => {
+    pinned = undefined;
+    frame.style[axis] = "auto";
+    if (axis === "height") frame.style.overflow = "";
+  };
+  const observer = new ResizeObserver(([entry]) => {
+    const size = entry.borderBoxSize?.[0];
+    const next = axis === "width" ? (size?.inlineSize ?? content.offsetWidth) : (size?.blockSize ?? content.offsetHeight);
+    const from = pinned ?? last;
+    last = next;
+    running?.stop();
+    if (reduced || from === undefined || from === next || performance.now() - changedAt > 120) return settle();
+    // Pin the old size before this frame paints, then spring to the new one.
+    frame.style[axis] = `${from}px`;
+    if (axis === "height") frame.style.overflow = "hidden";
+    running = animate(from, next, {
+      ...(axis === "width" ? motionTokens.spring.morph : motionTokens.spring.smooth),
+      onUpdate: (value: number) => {
+        pinned = value;
+        frame.style[axis] = `${value}px`;
+      },
+      onComplete: settle,
+    });
+  });
+  observer.observe(content);
+  return {
+    changed() {
+      changedAt = performance.now();
+    },
+    destroy() {
+      observer.disconnect();
+      running?.stop();
+    },
   };
 }

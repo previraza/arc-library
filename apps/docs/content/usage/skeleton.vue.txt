@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import Skeleton from "@/components/manicat/skeleton/skeleton.vue";
-
-const loading = ref(true);
 </script>
 
 <template>
-  <button @click="loading = !loading">{{ loading ? "Finish loading" : "Load again" }}</button>
-  <Skeleton :loading="loading" avatar :lines="3" label="Loading profile">
-    <p>Ada Lovelace wrote the first program.</p>
-  </Skeleton>
+  <div style="display: grid; width: 100%; max-width: 28rem; gap: 12px">
+    <Skeleton avatar :lines="3" label="Loading profile" />
+    <Skeleton :lines="2" />
+  </div>
 </template>

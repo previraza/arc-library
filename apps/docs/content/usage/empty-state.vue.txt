@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import Badge from "@/components/manicat/badge/badge.vue";
 import Button from "@/components/manicat/button/button.vue";
 import EmptyState from "@/components/manicat/empty-state/empty-state.vue";
 </script>
 
 <template>
   <EmptyState title="No projects yet" description="Create your first project to see deployments, domains and usage here.">
-    <template #action><Button>Create project</Button></template>
+    <template #icon><Badge tone="info">New</Badge></template>
+    <Button>Create project</Button>
   </EmptyState>
 </template>

@@ -1,8 +1,10 @@
 <script lang="ts">
-  import EmptyState from "@/components/manicat/empty-state/empty-state.svelte";
+  import Badge from "@/components/manicat/badge/badge.svelte";
   import Button from "@/components/manicat/button/button.svelte";
+  import EmptyState from "@/components/manicat/empty-state/empty-state.svelte";
 </script>
 
-<EmptyState title="No projects yet" description="Create a project to start collaborating with your team.">
-  {#snippet action()}<Button>New project</Button>{/snippet}
+<EmptyState title="No projects yet" description="Create your first project to see deployments, domains and usage here.">
+  {#snippet icon()}<Badge tone="info">New</Badge>{/snippet}
+  <Button>Create project</Button>
 </EmptyState>

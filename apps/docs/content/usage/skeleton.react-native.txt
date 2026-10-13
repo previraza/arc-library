@@ -1,12 +1,11 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { Skeleton } from "@/components/manicat/skeleton/skeleton.rn";
 
-export function Profile({ loading, bio }: { loading: boolean; bio?: string }) {
+export function SkeletonDemo() {
   return (
-    <View style={{ padding: 16 }}>
-      <Skeleton loading={loading} avatar lines={3} label="Loading profile">
-        <Text>{bio}</Text>
-      </Skeleton>
+    <View style={{ width: "100%", maxWidth: 448, gap: 12 }}>
+      <Skeleton avatar lines={3} label="Loading profile" />
+      <Skeleton lines={2} />
     </View>
   );
 }
