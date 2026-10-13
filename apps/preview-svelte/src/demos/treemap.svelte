@@ -1,0 +1,17 @@
+<script lang="ts">
+  import Treemap from "@/registry/components/treemap/treemap.svelte";
+  const data = {
+    id: "root",
+    label: "Portfolio",
+    children: [
+      { id: "tech", label: "Tech", color: 24, children: [{ id: "a", label: "Alpha", value: 400, color: 40 }, { id: "b", label: "Beta", value: 220, color: -12 }] },
+      { id: "energy", label: "Energy", value: 300, color: -8 },
+      { id: "health", label: "Health", value: 260, color: 18 },
+      { id: "retail", label: "Retail", value: 140, color: 3 },
+    ],
+  };
+</script>
+
+<div style="width: min(520px, 100%)">
+  <Treemap label="Portfolio" {data} />
+</div>
