@@ -81,7 +81,8 @@ const heatmapDays: ActivityDay[] = Array.from({ length: 140 }, (_, index) => {
 });
 
 export function ActivityHeatmapDemo() {
-  return <ActivityHeatmap days={heatmapDays} label="Commits" period="May to August 2026" unit={{ one: "commit", other: "commits" }} />;
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><ActivityHeatmap days={heatmapDays} label="Commits" period="May to August 2026" unit={{ one: "commit", other: "commits" }} /></div>;
 }
 
 const lineSeries: LineChartSeries[] = [
@@ -123,7 +124,8 @@ const donutData: DonutChartDatum[] = [
 ];
 
 export function DonutChartDemo() {
-  return <DonutChart data={donutData} label="Visits by source" unit="visits" totalLabel="Visits" legend />;
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><DonutChart data={donutData} label="Visits by source" unit="visits" totalLabel="Visits" legend /></div>;
 }
 
 const streamSeries: StreamgraphSeries[] = [
@@ -233,7 +235,8 @@ const waffleData: WaffleCategory[] = [
 ];
 
 export function WaffleChartDemo() {
-  return <WaffleChart data={waffleData} label="Electricity generation, 2025" unit="TWh" legend />;
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><WaffleChart data={waffleData} label="Electricity generation, 2025" unit="TWh" legend /></div>;
 }
 
 const slopeData: SlopeItem[] = [
@@ -245,7 +248,6 @@ const slopeData: SlopeItem[] = [
 ];
 
 export function SlopeChartDemo() {
-  return (
-    <SlopeChart data={slopeData} label="Conversion rate by channel" startLabel="Q1" endLabel="Q2" ranks highlightKey="social" />
-  );
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><SlopeChart data={slopeData} label="Conversion rate by channel" startLabel="Q1" endLabel="Q2" ranks highlightKey="social" /></div>;
 }

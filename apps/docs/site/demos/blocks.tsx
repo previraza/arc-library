@@ -92,7 +92,8 @@ export function SiteHeaderDemo() {
 }
 
 export function SiteFooterDemo() {
-  return <SiteFooter />;
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><SiteFooter /></div>;
 }
 
 export function HeroSectionDemo() {
@@ -100,11 +101,13 @@ export function HeroSectionDemo() {
 }
 
 export function FaqSectionDemo() {
-  return <FaqSection />;
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><FaqSection /></div>;
 }
 
 export function ContactSectionDemo() {
-  return <ContactSection />;
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><ContactSection /></div>;
 }
 
 export function BlogGridDemo() {
@@ -116,13 +119,16 @@ export function ComparisonTableDemo() {
 }
 
 export function StatsBandDemo() {
-  return <StatsBand />;
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><StatsBand /></div>;
 }
 
 export function CtaSectionDemo() {
-  return <CtaSection />;
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><CtaSection /></div>;
 }
 
 export function NewsletterSignupDemo() {
-  return <NewsletterSignup />;
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><NewsletterSignup /></div>;
 }

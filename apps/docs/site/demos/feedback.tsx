@@ -90,14 +90,13 @@ function ToastStackDemoInner() {
 }
 
 export function AnnouncementBarDemo() {
-  return (
-    <AnnouncementBar
+  // Size containers have no width of their own: give the demo the whole row.
+  return <div className="w-full"><AnnouncementBar
       messages={[
         { id: "pro", message: "Manicat Pro adds 43 motion components and the larger blocks.", action: { label: "See Pro", onClick: () => {} } },
         { id: "registry", message: "Every item installs with the shadcn CLI.", action: { label: "Installation", onClick: () => {} } },
       ]}
-    />
-  );
+    /></div>;
 }
 
 export function ProgressDemo() {
