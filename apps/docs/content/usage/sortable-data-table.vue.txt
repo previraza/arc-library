@@ -1,0 +1,22 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import SortableDataTable from "@/components/manicat/sortable-data-table/sortable-data-table.vue";
+
+const selected = ref<string[]>([]);
+const rows = [
+  { id: "inv-1", customer: "Acme Corp", status: "Paid", amount: 4200 },
+  { id: "inv-2", customer: "Globex", status: "Pending", amount: 1850 },
+  { id: "inv-3", customer: "Umbrella", status: "Paid", amount: 12400 },
+];
+const columns = [
+  { key: "customer", label: "Customer", sortable: true },
+  { key: "status", label: "Status", sortable: true },
+  { key: "amount", label: "Amount (USD)", sortable: true, numeric: true },
+];
+</script>
+
+<template>
+  <SortableDataTable v-model:selected="selected" :rows="rows" :columns="columns" row-key="id" caption="Invoices" selectable :default-sort="{ key: 'amount', direction: 'desc' }" :item-name="{ one: 'invoice', other: 'invoices' }">
+    <template #cell-amount="{ value }">${{ (value as number).toLocaleString() }}</template>
+  </SortableDataTable>
+</template>

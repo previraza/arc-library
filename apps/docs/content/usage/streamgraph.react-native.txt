@@ -1,0 +1,13 @@
+import { Streamgraph } from "@/components/manicat/streamgraph/streamgraph.rn";
+
+const series = [{ key: "billing", label: "Billing" }, { key: "access", label: "Access" }, { key: "perf", label: "Performance" }];
+const data = Array.from({ length: 10 }, (_, index) => ({
+  key: String(index),
+  label: `Week ${27 + index}`,
+  axisLabel: index % 3 === 0 ? `W${27 + index}` : undefined,
+  values: { billing: 40 + Math.round(30 * Math.sin(index / 1.6)), access: 55 + Math.round(22 * Math.sin(index / 1.9 + 1)), perf: 30 + Math.round(26 * Math.sin(index / 1.4 + 2)) },
+}));
+
+export function Tickets() {
+  return <Streamgraph data={data} series={series} label="Support tickets by topic" unit="tickets" />;
+}

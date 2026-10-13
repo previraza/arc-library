@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import BarChart from "@/components/manicat/bar-chart/bar-chart.vue";
+
+const data = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, index) => ({ key: day, label: day, value: [38, 52, 47, 61, 55, 24, 19][index] }));
+</script>
+
+<template>
+  <BarChart :data="data" label="Active minutes" period="Sep 14–20, 2026" unit="min" show-average />
+</template>

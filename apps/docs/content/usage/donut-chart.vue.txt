@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import DonutChart from "@/components/manicat/donut-chart/donut-chart.vue";
+
+const data = [
+  { key: "search", label: "Search", value: 42134 },
+  { key: "direct", label: "Direct", value: 21809 },
+  { key: "social", label: "Social", value: 15006 },
+  { key: "referral", label: "Referral", value: 9210 },
+];
+</script>
+
+<template>
+  <DonutChart :data="data" label="Visits by source" unit="visits" total-label="Visits" />
+</template>

@@ -1,0 +1,12 @@
+import { WaffleChart } from "@/components/manicat/waffle-chart/waffle-chart.rn";
+
+const data = [
+  { key: "solar", label: "Solar", value: 350 },
+  { key: "wind", label: "Wind", value: 490 },
+  { key: "gas", label: "Gas", value: 520 },
+  { key: "coal", label: "Coal", value: 610 },
+];
+
+export function Energy() {
+  return <WaffleChart data={data} label="Electricity generation, 2025" unit="TWh" />;
+}

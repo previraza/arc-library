@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import LineChart from "@/components/manicat/line-chart/line-chart.vue";
+
+const series = [{ key: "now", label: "This year", area: true }, { key: "before", label: "Last year", dashed: true }];
+const data = Array.from({ length: 14 }, (_, index) => ({
+  key: String(index),
+  label: `Day ${index + 1}`,
+  axisLabel: index % 4 === 0 ? `D${index + 1}` : undefined,
+  values: { now: 900 + index * 30 + (index % 3) * 40, before: 700 + index * 22 },
+}));
+</script>
+
+<template>
+  <LineChart :data="data" :series="series" label="Signups per day" unit="signups" />
+</template>

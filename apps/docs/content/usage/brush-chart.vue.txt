@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import BrushChart from "@/components/manicat/brush-chart/brush-chart.vue";
+
+const DAY = 86_400_000;
+const start = Date.UTC(2026, 6, 1, 12);
+const data = Array.from({ length: 60 }, (_, index) => ({ date: start + index * DAY, value: 1200 + Math.round(260 * Math.sin(index / 5.5) + index * 7) }));
+const range = ref<[number, number] | undefined>();
+</script>
+
+<template>
+  <BrushChart v-model:range="range" :data="data" label="Daily active users" unit="users" :annotations="[{ date: data[20].date, label: 'v2 launch' }]" />
+</template>

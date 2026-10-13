@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import Sparkline from "@/components/manicat/sparkline/sparkline.vue";
+</script>
+
+<template>
+  <div class="flex gap-3">
+    <Sparkline :data="[12, 16, 14, 21, 18, 24, 29, 26, 33, 31, 38]" label="Signups" value="3,812" change="+12.4%" />
+    <Sparkline :data="[30, 28, 31, 26, 27, 24, 22, 19, 15]" label="Churn" value="1.5%" change="−8.2%" tone="danger" />
+  </div>
+</template>

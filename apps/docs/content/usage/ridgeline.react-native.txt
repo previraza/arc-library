@@ -1,0 +1,7 @@
+import { Ridgeline } from "@/components/manicat/ridgeline/ridgeline.rn";
+
+const wave = (mean: number, spread: number) => Array.from({ length: 48 }, (_, index) => mean + Math.round(spread * Math.sin(index * 1.7)));
+
+export function Temperatures() {
+  return <Ridgeline label="Daily highs in Zurich" unit="°C" tint series={[{ id: "jul", label: "July", values: wave(24, 4) }, { id: "aug", label: "August", values: wave(27, 3) }, { id: "sep", label: "September", values: wave(21, 5) }]} />;
+}

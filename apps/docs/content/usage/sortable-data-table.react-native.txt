@@ -1,0 +1,25 @@
+import { SortableDataTable } from "@/components/manicat/sortable-data-table/sortable-data-table.rn";
+
+const rows = [
+  { id: "inv-1", customer: "Acme Corp", status: "Paid", amount: 4200 },
+  { id: "inv-2", customer: "Globex", status: "Pending", amount: 1850 },
+  { id: "inv-3", customer: "Umbrella", status: "Paid", amount: 12400 },
+];
+
+export function Invoices() {
+  return (
+    <SortableDataTable
+      rows={rows}
+      rowKey="id"
+      caption="Invoices"
+      selectable
+      defaultSort={{ key: "amount", direction: "desc" }}
+      itemName={{ one: "invoice", other: "invoices" }}
+      columns={[
+        { key: "customer", label: "Customer", sortable: true },
+        { key: "status", label: "Status", sortable: true },
+        { key: "amount", label: "Amount (USD)", sortable: true, numeric: true, width: 130 },
+      ]}
+    />
+  );
+}

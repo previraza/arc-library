@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import JsonViewer from "@/components/manicat/json-viewer/json-viewer.vue";
+
+const data = { id: "a1b2c3", name: "Ada Lovelace", teams: ["Analytics", "Platform"], plan: { tier: "scale", seats: 24 }, flags: { beta: true, legacy: false }, meta: null };
+</script>
+
+<template>
+  <JsonViewer :data="data" label="GET /v1/accounts/a1b2c3" :default-expand-depth="2" />
+</template>

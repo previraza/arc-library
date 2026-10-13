@@ -1,0 +1,7 @@
+import { BarChart } from "@/components/manicat/bar-chart/bar-chart.rn";
+
+const data = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, index) => ({ key: day, label: day, value: [38, 52, 47, 61, 55, 24, 19][index] }));
+
+export function Activity() {
+  return <BarChart data={data} label="Active minutes" period="Sep 14–20, 2026" unit="min" showAverage />;
+}

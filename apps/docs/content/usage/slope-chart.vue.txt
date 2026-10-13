@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import SlopeChart from "@/components/manicat/slope-chart/slope-chart.vue";
+
+const data = [
+  { key: "search", label: "Search", start: 38, end: 29 },
+  { key: "direct", label: "Direct", start: 24, end: 27 },
+  { key: "social", label: "Social", start: 16, end: 21 },
+];
+</script>
+
+<template>
+  <SlopeChart :data="data" label="Conversion rate by channel" start-label="Q1" end-label="Q2" highlight-key="social" ranks />
+</template>

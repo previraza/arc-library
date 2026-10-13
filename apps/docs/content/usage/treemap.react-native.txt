@@ -1,0 +1,14 @@
+import { Treemap } from "@/components/manicat/treemap/treemap.rn";
+
+const data = {
+  id: "revenue",
+  label: "Revenue",
+  children: [
+    { id: "storage", label: "Storage", children: [{ id: "objects", label: "Objects", value: 84, color: 22 }, { id: "sql", label: "Managed SQL", value: 47, color: 8 }] },
+    { id: "compute", label: "Compute", children: [{ id: "instances", label: "Instances", value: 102, color: -12 }, { id: "functions", label: "Functions", value: 23, color: 64 }] },
+  ],
+};
+
+export function RevenueMap() {
+  return <Treemap data={data} label="Revenue by product" colorLabel="Growth" />;
+}

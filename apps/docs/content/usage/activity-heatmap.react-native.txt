@@ -1,0 +1,10 @@
+import { ActivityHeatmap } from "@/components/manicat/activity-heatmap/activity-heatmap.rn";
+
+const days = Array.from({ length: 140 }, (_, index) => ({
+  date: new Date(Date.UTC(2026, 4, 4 + index, 12)).toISOString().slice(0, 10),
+  count: Math.min(26, Math.floor(((index * 37) % 31) * (index % 5 === 0 ? 1.4 : 0.6))),
+}));
+
+export function Commits() {
+  return <ActivityHeatmap days={days} label="Commits" period="May to August 2026" unit={{ one: "commit", other: "commits" }} />;
+}

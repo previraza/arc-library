@@ -1,0 +1,11 @@
+import { JsonViewer } from "@/components/manicat/json-viewer/json-viewer.rn";
+
+export function Response() {
+  return (
+    <JsonViewer
+      label="GET /v1/accounts/a1b2c3"
+      defaultExpandDepth={2}
+      data={{ id: "a1b2c3", name: "Ada Lovelace", teams: ["Analytics", "Platform"], plan: { tier: "scale", seats: 24 }, flags: { beta: true, legacy: false }, meta: null }}
+    />
+  );
+}

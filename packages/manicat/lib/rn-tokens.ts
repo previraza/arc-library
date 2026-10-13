@@ -20,6 +20,8 @@ export interface ManicatTokens {
   controlTrack: string;
   controlThumb: string;
   controlThumbOn: string;
+  /** Four distinguishable colours for chart series, the counterpart of --series-1 to --series-4. */
+  series: [string, string, string, string];
 }
 
 export const lightTokens: ManicatTokens = {
@@ -41,6 +43,7 @@ export const lightTokens: ManicatTokens = {
   controlTrack: "#e2e2e2",
   controlThumb: "#ffffff",
   controlThumbOn: "#ffffff",
+  series: ["#1f7dcf", "#7128a5", "#e58f00", "#009e84"],
 };
 
 export const darkTokens: ManicatTokens = {
@@ -62,6 +65,7 @@ export const darkTokens: ManicatTokens = {
   controlTrack: "#515151",
   controlThumb: "#f4f4f4",
   controlThumbOn: "#2b2b2b",
+  series: ["#55adff", "#9c37be", "#e66e00", "#00a861"],
 };
 
 /** Shape and rhythm shared by every component, in density-independent pixels. */
