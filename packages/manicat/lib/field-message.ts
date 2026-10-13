@@ -38,7 +38,7 @@ export interface FieldMessage {
 }
 
 /** A count in the copy: each character is a column; a changed digit rolls, a gained or lost one opens or closes its width. */
-function rolling(host: HTMLElement, word: string, classes: FieldMessageClasses, reduced: boolean) {
+export function rolling(host: HTMLElement, word: string, classes: Pick<FieldMessageClasses, "column">, reduced: boolean) {
   type Column = { char: string; column: HTMLElement; glyph: HTMLElement };
   let columns: Column[] = [];
   let shown = word;

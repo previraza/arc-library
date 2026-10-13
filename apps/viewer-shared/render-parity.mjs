@@ -9,6 +9,7 @@
  *
  * --wait <ms> waits longer before looking, for components that count or fill when they appear (default 1000).
  * --act click|focus|hover opens the first trigger of each demo before comparing, so menus, dialogs and tooltips are compared open.
+ * --type <text> types into the first field of each demo before comparing.
  * --nth <n> acts on the n-th trigger instead of the first (0-based), e.g. the second tab.
  * --max-diff sets how much of the picture may differ, in percent (default 2.5). --save <dir> writes the React and port
  * screenshots of every render that differs. Exit code 1 when something differs. Swift has no web viewer, so it is checked by the token and naming checks instead.
@@ -36,6 +37,7 @@ const wantExamples = !args.includes("--demos-only");
 const maxDiff = Number(flag("--max-diff") ?? 2.5);
 const act = flag("--act");
 const settle = Number(flag("--wait") ?? 1000);
+const typeText = flag("--type");
 const saveDir = flag("--save");
 if (saveDir) mkdirSync(saveDir, { recursive: true });
 
@@ -111,6 +113,11 @@ async function look(url, wait) {
   if (act) {
     await send("Runtime.evaluate", { expression: trigger });
     await sleep(800);
+  }
+  if (typeText) {
+    await send("Runtime.evaluate", { expression: `(document.querySelector(".viewer__demo input, main input, .phone__screen input") || document.querySelector("input"))?.focus()` });
+    await send("Input.insertText", { text: typeText });
+    await sleep(1200);
   }
   // The Next.js dev badge floats over the React frame; it is not part of the example.
   await send("Runtime.evaluate", { expression: `document.querySelectorAll("nextjs-portal").forEach((node) => node.remove())` });
