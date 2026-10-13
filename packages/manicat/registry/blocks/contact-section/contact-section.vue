@@ -1,3 +1,22 @@
+<script lang="ts">
+const exampleChannels: ContactChannel[] = [
+  { value: "chat", label: "Chat with support", meta: "Replies in about 4 minutes", detail: "Hannah and Jordan are online now. Chat is best for quick questions about installing, theming, or a component that misbehaves.", action: { label: "Start a chat", doneLabel: "Chat started" } },
+  { value: "email", label: "Email support", meta: "Replies within a business day", detail: "Send screenshots, links, or a reproduction. Every message gets a reply from a person within one business day.", copyValue: "support@example.com" },
+  { value: "sales", label: "Talk to sales", meta: "Weekdays, 9am to 6pm PT", detail: "Licensing for a larger team, invoicing, or a security review. Tyler will walk you through it on a 20 minute call.", copyValue: "+1 (415) 555-0132", action: { label: "Request a call", doneLabel: "Call requested" } },
+  { value: "community", label: "Ask the community", meta: "4,200 members", detail: "Designers and engineers who ship with Manicat UI answer questions about components, theming, and motion, usually within the hour.", action: { label: "Open the forum", doneLabel: "Forum opened" } },
+];
+const exampleOffices: ContactOffice[] = [
+  { city: "San Francisco", timeZone: "America/Los_Angeles", address: ["100 Example Street, Floor 4", "San Francisco, CA 94000"], email: "sf@example.com" },
+  { city: "New York", timeZone: "America/New_York", address: ["200 Sample Avenue, Suite 12", "New York, NY 10000"], email: "nyc@example.com" },
+  { city: "Lisbon", timeZone: "Europe/Lisbon", address: ["Rua do Exemplo 10, 3º", "1000-000 Lisboa, Portugal"], email: "lisbon@example.com" },
+];
+const copy = {
+  form: { title: "Talk to our team", description: "Questions about licensing, a bug you can't pin down, or a component you wish existed. A person reads every message." },
+  channels: { title: "Get help your way", description: "Pick whatever suits the question. Every channel reaches the same small team." },
+  offices: { title: "Visit us", description: "We work across three time zones, so someone is usually awake. Drop by for coffee, just let us know first." },
+};
+</script>
+
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import Button from "@/registry/components/button/button.vue";
@@ -28,23 +47,6 @@ export interface ContactOffice {
   /** Opening hours in local 24 hour time. Defaults to 9 to 18. */
   hours?: [number, number];
 }
-
-const exampleChannels: ContactChannel[] = [
-  { value: "chat", label: "Chat with support", meta: "Replies in about 4 minutes", detail: "Hannah and Jordan are online now. Chat is best for quick questions about installing, theming, or a component that misbehaves.", action: { label: "Start a chat", doneLabel: "Chat started" } },
-  { value: "email", label: "Email support", meta: "Replies within a business day", detail: "Send screenshots, links, or a reproduction. Every message gets a reply from a person within one business day.", copyValue: "support@example.com" },
-  { value: "sales", label: "Talk to sales", meta: "Weekdays, 9am to 6pm PT", detail: "Licensing for a larger team, invoicing, or a security review. Tyler will walk you through it on a 20 minute call.", copyValue: "+1 (415) 555-0132", action: { label: "Request a call", doneLabel: "Call requested" } },
-  { value: "community", label: "Ask the community", meta: "4,200 members", detail: "Designers and engineers who ship with Manicat UI answer questions about components, theming, and motion, usually within the hour.", action: { label: "Open the forum", doneLabel: "Forum opened" } },
-];
-const exampleOffices: ContactOffice[] = [
-  { city: "San Francisco", timeZone: "America/Los_Angeles", address: ["100 Example Street, Floor 4", "San Francisco, CA 94000"], email: "sf@example.com" },
-  { city: "New York", timeZone: "America/New_York", address: ["200 Sample Avenue, Suite 12", "New York, NY 10000"], email: "nyc@example.com" },
-  { city: "Lisbon", timeZone: "Europe/Lisbon", address: ["Rua do Exemplo 10, 3º", "1000-000 Lisboa, Portugal"], email: "lisbon@example.com" },
-];
-const copy = {
-  form: { title: "Talk to our team", description: "Questions about licensing, a bug you can't pin down, or a component you wish existed. A person reads every message." },
-  channels: { title: "Get help your way", description: "Pick whatever suits the question. Every channel reaches the same small team." },
-  offices: { title: "Visit us", description: "We work across three time zones, so someone is usually awake. Drop by for coffee, just let us know first." },
-};
 
 const props = withDefaults(
   defineProps<{

@@ -8,6 +8,8 @@ export default defineConfig([
     "**/.next/**",
     "**/.source/**",
     "packages/manicat/public/**",
+    "apps/preview-*/src/demos/**",
+    "apps/preview-*/dist/**",
   ]),
   ...nextVitals,
   ...nextTs,

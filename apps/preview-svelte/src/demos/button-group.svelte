@@ -1,9 +1,0 @@
-<script lang="ts">
-  import ButtonGroup from "@/registry/components/button-group/button-group.svelte";
-  let last = $state("");
-</script>
-
-<div style="display: grid; gap: 8px; justify-items: start">
-  <ButtonGroup label="View" onselect={(id) => (last = id)} items={[{ id: "day", label: "Day" }, { id: "week", label: "Week" }, { id: "month", label: "Month" }]} menu={{ label: "More views", items: [{ id: "year", label: "Year" }, { id: "agenda", label: "Agenda" }] }} />
-  <small>{last}</small>
-</div>

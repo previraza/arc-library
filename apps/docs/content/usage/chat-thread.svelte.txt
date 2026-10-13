@@ -1,0 +1,12 @@
+<script lang="ts">
+  import ChatThread, { type ChatMessage } from "@/components/manicat/chat-thread/chat-thread.svelte";
+  const now = Date.now();
+  let messages = $state<ChatMessage[]>([
+    { id: "1", authorId: "ada", text: "Did the build pass?", createdAt: now - 600_000 },
+    { id: "2", authorId: "me", text: "Yes, shipping now.", createdAt: now - 300_000, status: "read" },
+  ]);
+</script>
+
+<div style="width: min(420px, 100%)">
+  <ChatThread bind:messages currentUserId="me" participants={[{ id: "me", name: "You" }, { id: "ada", name: "Ada" }]} readBy={{ ada: "2" }} typing={["ada"]} height="16rem" />
+</div>

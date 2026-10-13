@@ -1,3 +1,13 @@
+<script lang="ts">
+const uptimeDays = Array.from({ length: 90 }, (_, day) => (day === 51 ? 99.24 : day === 23 ? 99.93 : 100));
+const exampleStats: Stat[] = [
+  { value: 2_334_000, notation: "compact", decimals: 1, label: "Deploys in the last 12 months", detail: "Across 12,400 teams", context: "Up from 1.4M the year before", visual: { kind: "trend", values: [141, 148, 139, 162, 171, 184, 196, 203, 221, 238, 257, 274] } },
+  { value: 99.99, decimals: 2, suffix: "%", label: "API uptime over 90 days", detail: "Measured every 30 seconds", context: "12 minutes down, 11 of them on July 14", visual: { kind: "uptime", days: uptimeDays } },
+  { value: 38, suffix: "ms", label: "Median response time", detail: "At the edge, worldwide", context: "p95 is 96 ms, down from 141 ms", visual: { kind: "distribution", bins: [2, 8, 18, 26, 15, 10, 7, 5, 3, 2, 1.5, 1, 0.8, 0.7, 0.5, 0.3], max: 160, marker: 38 } },
+  { value: 35, label: "Edge regions on six continents", detail: "Most people are under 20 ms away", context: "Eight added this year, including Lagos" },
+];
+</script>
+
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
 
@@ -18,14 +28,6 @@ export interface Stat {
   context?: string;
   visual?: StatVisual;
 }
-
-const uptimeDays = Array.from({ length: 90 }, (_, day) => (day === 51 ? 99.24 : day === 23 ? 99.93 : 100));
-const exampleStats: Stat[] = [
-  { value: 2_334_000, notation: "compact", decimals: 1, label: "Deploys in the last 12 months", detail: "Across 12,400 teams", context: "Up from 1.4M the year before", visual: { kind: "trend", values: [141, 148, 139, 162, 171, 184, 196, 203, 221, 238, 257, 274] } },
-  { value: 99.99, decimals: 2, suffix: "%", label: "API uptime over 90 days", detail: "Measured every 30 seconds", context: "12 minutes down, 11 of them on July 14", visual: { kind: "uptime", days: uptimeDays } },
-  { value: 38, suffix: "ms", label: "Median response time", detail: "At the edge, worldwide", context: "p95 is 96 ms, down from 141 ms", visual: { kind: "distribution", bins: [2, 8, 18, 26, 15, 10, 7, 5, 3, 2, 1.5, 1, 0.8, 0.7, 0.5, 0.3], max: 160, marker: 38 } },
-  { value: 35, label: "Edge regions on six continents", detail: "Most people are under 20 ms away", context: "Eight added this year, including Lagos" },
-];
 
 const props = withDefaults(
   defineProps<{

@@ -1,9 +1,0 @@
-<script lang="ts">
-  import Breadcrumb from "@/registry/components/breadcrumb/breadcrumb.svelte";
-  let last = $state("");
-</script>
-
-<div style="display: grid; gap: 8px">
-  <Breadcrumb items={[{ label: "Home", href: "#" }, { label: "Projects" }, { label: "Manicat" }]} onselect={(index) => (last = `Selected crumb ${index}`)} />
-  <small>{last}</small>
-</div>

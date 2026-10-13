@@ -1,9 +1,0 @@
-<script lang="ts">
-  import TextShimmer from "@/registry/components/text-shimmer/text-shimmer.svelte";
-  let active = $state(true);
-</script>
-
-<div style="display: grid; gap: 12px; justify-items: start">
-  <TextShimmer {active}>Thinking through your question…</TextShimmer>
-  <button type="button" onclick={() => (active = !active)}>{active ? "Stop" : "Start"}</button>
-</div>

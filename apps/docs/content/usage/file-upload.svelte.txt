@@ -1,0 +1,8 @@
+<script lang="ts">
+  import FileUpload, { type FileUploadItem } from "@/components/manicat/file-upload/file-upload.svelte";
+  let files = $state<FileUploadItem[]>([]);
+</script>
+
+<div style="width: min(380px, 100%)">
+  <FileUpload multiple maxSize={2_000_000} description="PNG or JPG up to 2 MB." bind:files />
+</div>

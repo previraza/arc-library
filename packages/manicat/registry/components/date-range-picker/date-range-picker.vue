@@ -1,7 +1,16 @@
+<script lang="ts">
+import { addDays, startOfDay, startOfMonth } from "@/lib/calendar";
+
+const defaultPresets: DateRangePreset[] = [
+  { label: "Last 7 days", range: (today) => ({ start: addDays(startOfDay(today), -6), end: startOfDay(today) }) },
+  { label: "Last 30 days", range: (today) => ({ start: addDays(startOfDay(today), -29), end: startOfDay(today) }) },
+  { label: "This month", range: (today) => ({ start: startOfMonth(today), end: startOfDay(today) }) },
+];
+</script>
+
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, useId } from "vue";
 import Calendar from "@/registry/components/calendar/calendar.vue";
-import { addDays, startOfDay, startOfMonth } from "@/lib/calendar";
 
 export interface DateRange {
   start: Date;
@@ -12,12 +21,6 @@ export interface DateRangePreset {
   label: string;
   range: (today: Date) => DateRange;
 }
-
-const defaultPresets: DateRangePreset[] = [
-  { label: "Last 7 days", range: (today) => ({ start: addDays(startOfDay(today), -6), end: startOfDay(today) }) },
-  { label: "Last 30 days", range: (today) => ({ start: addDays(startOfDay(today), -29), end: startOfDay(today) }) },
-  { label: "This month", range: (today) => ({ start: startOfMonth(today), end: startOfDay(today) }) },
-];
 
 const props = withDefaults(
   defineProps<{

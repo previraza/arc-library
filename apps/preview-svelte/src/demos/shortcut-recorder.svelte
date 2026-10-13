@@ -1,8 +1,0 @@
-<script lang="ts">
-  import ShortcutRecorder from "@/registry/components/shortcut-recorder/shortcut-recorder.svelte";
-  let shortcut = $state<string | null>("mod+k");
-</script>
-
-<div style="width: min(320px, 100%)">
-  <ShortcutRecorder label="Open command palette" resetValue="mod+k" description="Click, then press the keys." bind:value={shortcut} />
-</div>

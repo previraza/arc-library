@@ -1,7 +1,0 @@
-<script lang="ts">
-  import ExpandableCard from "@/registry/components/expandable-card/expandable-card.svelte";
-</script>
-
-<div style="width: min(420px, 100%)">
-  <ExpandableCard title="Billing" description="Plan and invoices">Your plan renews on the 1st of each month.</ExpandableCard>
-</div>

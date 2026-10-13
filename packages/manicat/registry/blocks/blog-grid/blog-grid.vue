@@ -1,23 +1,4 @@
-<script setup lang="ts">
-import { computed, ref } from "vue";
-
-export type BlogAuthor = { name: string; avatar?: string; role?: string };
-export type BlogPost = {
-  id: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  /** ISO date, used for sorting and the visible date. */
-  date: string;
-  /** Minutes to read. */
-  readTime: number;
-  author: BlogAuthor;
-  image?: { src: string; alt: string };
-  /** Paragraphs for the in-place reader. */
-  body?: string[];
-  featured?: boolean;
-};
-
+<script lang="ts">
 const authors: Record<string, BlogAuthor> = {
   emma: { name: "Emma Collins", role: "Product designer", avatar: "/media/people/emma-collins.jpg" },
   marcus: { name: "Marcus Johnson", role: "Frontend engineer", avatar: "/media/people/marcus-johnson.jpg" },
@@ -43,6 +24,27 @@ const blogPosts: BlogPost[] = [
   { id: "keyboard-first", category: "Product", date: "2026-06-30", readTime: 5, author: authors.marcus, title: "A keyboard shortcut for everything", excerpt: "Press question mark anywhere to see every shortcut, then make your own.", image: { src: "/media/photos/reading-chair.jpg", alt: "A grey armchair and ottoman with a knit throw in a dark green room" } },
   { id: "color-tokens", category: "Design", date: "2026-06-24", readTime: 6, author: authors.jasmine, title: "Naming color tokens by job, not by hue", excerpt: "Why surface and border beat gray-100 and gray-200, and how we migrated four hundred files.", image: { src: "/media/photos/pool-house.jpg", alt: "A modern glass house beside a long pool under a clear sky" } },
 ];
+</script>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+
+export type BlogAuthor = { name: string; avatar?: string; role?: string };
+export type BlogPost = {
+  id: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  /** ISO date, used for sorting and the visible date. */
+  date: string;
+  /** Minutes to read. */
+  readTime: number;
+  author: BlogAuthor;
+  image?: { src: string; alt: string };
+  /** Paragraphs for the in-place reader. */
+  body?: string[];
+  featured?: boolean;
+};
 
 const props = withDefaults(
   defineProps<{

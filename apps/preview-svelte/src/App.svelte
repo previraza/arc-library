@@ -53,7 +53,7 @@
             {@const Demo = demo}
             <Demo />
           {:else}
-            <p class="viewer__empty">No demo yet: add <code>src/demos/{current}.svelte</code>.</p>
+            <p class="viewer__empty">No demo yet: add <code>apps/docs/content/usage/{current}.svelte.txt</code>.</p>
           {/if}
         </div>
       </section>

@@ -1,13 +1,4 @@
-<script setup lang="ts">
-import { computed, ref } from "vue";
-
-export type ChangelogKind = "new" | "improved" | "fixed";
-export type ChangelogMedia =
-  | { type: "photo"; src: string; alt: string; caption: string }
-  | { type: "code"; file: string; code: string };
-export type ChangelogEntry = { id: string; month: string; date: string; iso: string; version: string; kind: ChangelogKind; title: string; summary: string; details: string[]; media?: ChangelogMedia };
-export type ChangelogMonth = { key: string; label: string; short: string };
-
+<script lang="ts">
 const kinds: { id: ChangelogKind; label: string }[] = [
   { id: "new", label: "New" },
   { id: "improved", label: "Improved" },
@@ -48,6 +39,17 @@ const exampleEntries: ChangelogEntry[] = [
   { id: "csv", month: "2026-06", date: "Jun 12", iso: "2026-06-12", version: "4.5.2", kind: "fixed", title: "CSV exports keep accented names", summary: "Names like Zoë and Håkon now open correctly in every spreadsheet app.", details: ["Exports are written as UTF-8 with a byte order mark.", "Re-export any file created since 4.5.0."] },
   { id: "search", month: "2026-06", date: "Jun 3", iso: "2026-06-03", version: "4.5.0", kind: "improved", title: "Media search understands subject and colour", summary: "Type what is in the picture and the library finds it.", details: ["Search works across 40,000 images in under 200 ms.", "Results group near-duplicates so each shot appears once."], media: { type: "photo", src: "/media/photos/sea-at-dusk.jpg", alt: "A calm sea at dusk with a low island on the horizon", caption: "Result for “sea at dusk” in the media library" } },
 ];
+</script>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+
+export type ChangelogKind = "new" | "improved" | "fixed";
+export type ChangelogMedia =
+  | { type: "photo"; src: string; alt: string; caption: string }
+  | { type: "code"; file: string; code: string };
+export type ChangelogEntry = { id: string; month: string; date: string; iso: string; version: string; kind: ChangelogKind; title: string; summary: string; details: string[]; media?: ChangelogMedia };
+export type ChangelogMonth = { key: string; label: string; short: string };
 
 const props = withDefaults(
   defineProps<{

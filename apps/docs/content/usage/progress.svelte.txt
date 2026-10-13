@@ -1,0 +1,8 @@
+<script lang="ts">
+  import Progress from "@/components/manicat/progress/progress.svelte";
+</script>
+
+<div style="display: grid; gap: 16px; width: min(320px, 100%)">
+  <Progress value={42} label="Uploading" showValue />
+  <Progress value={100} label="Complete" showValue />
+</div>

@@ -1,0 +1,11 @@
+{
+  "extends": "../../packages/manicat/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "verbatimModuleSyntax": true,
+    "types": ["vite/client"],
+    "paths": { "@/*": ["../../packages/manicat/*"] }
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "../../packages/manicat/registry/**/*.vue", "../../packages/manicat/types/**/*.d.ts"],
+  "exclude": ["node_modules"]
+}

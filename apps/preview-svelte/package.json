@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Viewer for the Svelte ports of Manicat UI. Loads every *.svelte port next to its React source and shows it beside the React demo.",
+  "description": "Viewer for the Svelte ports of Manicat UI. Loads every *.svelte port next to its React source and shows it beside the React demo. The demos are the Usage snippets of the docs.",
   "scripts": {
-    "dev": "vite --port 3001",
-    "build": "vite build",
-    "typecheck": "svelte-check --tsconfig ./tsconfig.json"
+    "sync": "node ../../packages/manicat/scripts/sync-usage-demos.mjs svelte src/demos",
+    "dev": "pnpm sync && vite --port 3001",
+    "build": "pnpm sync && vite build",
+    "typecheck": "pnpm sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "manicat": "workspace:*"

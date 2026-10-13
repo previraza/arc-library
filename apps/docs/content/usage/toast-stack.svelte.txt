@@ -1,0 +1,10 @@
+<script lang="ts">
+  import ToastStack, { toast, dismissToast } from "@/components/manicat/toast-stack/toast-stack.svelte";
+  import Button from "@/components/manicat/button/button.svelte";
+</script>
+
+<div style="display: flex; gap: 8px">
+  <Button variant="secondary" onclick={() => toast({ type: "success", title: "Saved", description: "Your changes are live." })}>Success</Button>
+  <Button variant="secondary" onclick={() => toast({ type: "error", title: "Upload failed", action: { label: "Retry", onClick: (id) => dismissToast(id) } })}>Error</Button>
+</div>
+<ToastStack />

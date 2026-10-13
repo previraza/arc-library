@@ -1,0 +1,13 @@
+<script lang="ts">
+  import HoverCard from "@/components/manicat/hover-card/hover-card.svelte";
+</script>
+
+<HoverCard>
+  <a href="#profile">@manicat</a>
+  {#snippet content()}
+    <div style="display: grid; gap: 4px; width: 220px">
+      <strong>Manicat UI</strong>
+      <span>Components you own, for every framework.</span>
+    </div>
+  {/snippet}
+</HoverCard>

@@ -15,3 +15,6 @@ out/
 build/
 *.log
 dist/
+
+# demos generated from the docs Usage snippets (pnpm sync in each viewer)
+apps/preview-*/src/demos/

@@ -1,8 +1,0 @@
-<script lang="ts">
-  import Select from "@/registry/components/select/select.svelte";
-  let role = $state<string | undefined>("editor");
-</script>
-
-<div style="width: min(280px, 100%)">
-  <Select label="Role" description="What they can change." bind:value={role} options={[{ value: "viewer", label: "Viewer" }, { value: "editor", label: "Editor" }, { value: "admin", label: "Admin" }, { value: "owner", label: "Owner", disabled: true }]} />
-</div>

@@ -1,7 +1,0 @@
-<script lang="ts">
-  import ContactSection from "@/registry/blocks/contact-section/contact-section.svelte";
-</script>
-
-<div style="width: min(720px, 100%)">
-  <ContactSection onSubmit={() => new Promise((resolve) => setTimeout(resolve, 800))} />
-</div>

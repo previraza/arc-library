@@ -8,5 +8,5 @@ const root = fileURLToPath(new URL("../../packages/manicat", import.meta.url));
 export default defineConfig({
   plugins: [svelte()],
   resolve: { alias: { "@": root } },
-  server: { fs: { allow: [root, fileURLToPath(new URL(".", import.meta.url))] } },
+  server: { fs: { allow: [root, fileURLToPath(new URL("..", import.meta.url))] } },
 });

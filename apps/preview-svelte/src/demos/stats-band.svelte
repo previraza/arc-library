@@ -1,7 +1,0 @@
-<script lang="ts">
-  import StatsBand from "@/registry/blocks/stats-band/stats-band.svelte";
-</script>
-
-<div style="width: min(920px, 100%)">
-  <StatsBand title="Numbers that hold up" description="Measured over the last twelve months." layout="divided" />
-</div>

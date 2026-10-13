@@ -1,0 +1,5 @@
+<script lang="ts">
+  import ActionButton from "@/components/manicat/action-button/action-button.svelte";
+</script>
+
+<ActionButton label="Save changes" pendingLabel="Saving…" successLabel="Saved" onAction={() => new Promise((resolve) => setTimeout(resolve, 1200))} />

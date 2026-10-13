@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit && vue-tsc --noEmit -p tsconfig.vue.json",
-    "check:registry": "node scripts/check-registry.mjs && node scripts/check-parity.mjs",
+    "check:registry": "node scripts/check-registry.mjs && node scripts/check-parity.mjs && node scripts/check-compile.mjs",
     "build:registry": "node scripts/build-registry.mjs"
   },
   "devDependencies": {

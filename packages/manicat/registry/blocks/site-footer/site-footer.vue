@@ -1,3 +1,12 @@
+<script lang="ts">
+const exampleColumns: SiteFooterColumn[] = [
+  { title: "Product", links: [{ label: "Components" }, { label: "Blocks" }, { label: "Templates" }, { label: "Pricing" }] },
+  { title: "Resources", links: [{ label: "Documentation" }, { label: "Changelog" }, { label: "Guides" }, { label: "Figma kit", external: true }] },
+  { title: "Company", links: [{ label: "About" }, { label: "Customers" }, { label: "Careers" }, { label: "Contact" }] },
+];
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+</script>
+
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import Button from "@/registry/components/button/button.vue";
@@ -16,13 +25,6 @@ export interface SiteFooterNewsletter {
   description?: string;
   placeholder?: string;
 }
-
-const exampleColumns: SiteFooterColumn[] = [
-  { title: "Product", links: [{ label: "Components" }, { label: "Blocks" }, { label: "Templates" }, { label: "Pricing" }] },
-  { title: "Resources", links: [{ label: "Documentation" }, { label: "Changelog" }, { label: "Guides" }, { label: "Figma kit", external: true }] },
-  { title: "Company", links: [{ label: "About" }, { label: "Customers" }, { label: "Careers" }, { label: "Contact" }] },
-];
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const props = withDefaults(
   defineProps<{

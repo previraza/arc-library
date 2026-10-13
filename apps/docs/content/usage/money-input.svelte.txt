@@ -1,0 +1,9 @@
+<script lang="ts">
+  import MoneyInput from "@/components/manicat/money-input/money-input.svelte";
+  let amount = $state<number | null>(49.5);
+  let currency = $state("USD");
+</script>
+
+<div style="width: min(320px, 100%)">
+  <MoneyInput label="Amount" description="Charged once." bind:value={amount} bind:currency />
+</div>

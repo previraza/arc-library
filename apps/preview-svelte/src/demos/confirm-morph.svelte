@@ -1,5 +1,0 @@
-<script lang="ts">
-  import ConfirmMorph from "@/registry/components/confirm-morph/confirm-morph.svelte";
-</script>
-
-<ConfirmMorph label="Delete account" tone="danger" prompt="Delete for good?" onConfirm={() => new Promise((resolve) => setTimeout(resolve, 900))} onUndo={() => new Promise((resolve) => setTimeout(resolve, 600))} />

@@ -1,13 +1,4 @@
-<script setup lang="ts">
-import { computed, ref } from "vue";
-import Button from "@/registry/components/button/button.vue";
-import Switch from "@/registry/components/switch/switch.vue";
-
-export type ComparisonValue = boolean | "partial" | string | { value: boolean | "partial" | string; note?: string };
-export type ComparisonColumn = { id: string; name: string; caption?: string; highlight?: boolean };
-export type ComparisonRow = { id: string; feature: string; hint?: string; values: Record<string, ComparisonValue> };
-export type ComparisonSection = { id: string; title: string; rows: ComparisonRow[] };
-
+<script lang="ts">
 const comparisonColumns: ComparisonColumn[] = [
   { id: "relay", name: "Relay", caption: "$10 per seat", highlight: true },
   { id: "suite", name: "Legacy suite", caption: "$24 per seat" },
@@ -47,6 +38,17 @@ const comparisonSections: ComparisonSection[] = [
     ],
   },
 ];
+</script>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import Button from "@/registry/components/button/button.vue";
+import Switch from "@/registry/components/switch/switch.vue";
+
+export type ComparisonValue = boolean | "partial" | string | { value: boolean | "partial" | string; note?: string };
+export type ComparisonColumn = { id: string; name: string; caption?: string; highlight?: boolean };
+export type ComparisonRow = { id: string; feature: string; hint?: string; values: Record<string, ComparisonValue> };
+export type ComparisonSection = { id: string; title: string; rows: ComparisonRow[] };
 
 const props = withDefaults(
   defineProps<{

@@ -1,0 +1,23 @@
+{
+  "name": "@manicat/preview-vue",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Viewer for the Vue ports of Manicat UI. Loads every *.vue port next to its React source and shows it beside the React demo. The demos are the Usage snippets of the docs.",
+  "scripts": {
+    "sync": "node ../../packages/manicat/scripts/sync-usage-demos.mjs vue src/demos",
+    "dev": "pnpm sync && vite --port 3002",
+    "build": "pnpm sync && vite build",
+    "typecheck": "pnpm sync && vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "manicat": "workspace:*",
+    "vue": "^3.5.43"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.0",
+    "typescript": "^6.0.3",
+    "vite": "^7.0.0",
+    "vue-tsc": "^3.3.13"
+  }
+}

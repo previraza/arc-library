@@ -33,7 +33,9 @@ function initial(): string[] {
 }
 
 /** `v-model:expanded` binds the open paths ("$", "$.plan", …). */
-const expanded = defineModel<string[]>("expanded", { default: initial });
+const model = defineModel<string[]>("expanded");
+// Until the parent binds it, the paths open at first come from `defaultExpandDepth`.
+const expanded = computed(() => model.value ?? initial());
 
 interface Row {
   name: string;
@@ -59,7 +61,7 @@ const rows = computed(() => {
 });
 
 function activate(row: Row) {
-  if (row.branch) expanded.value = expanded.value.includes(row.path) ? expanded.value.filter((path) => path !== row.path) : [...expanded.value, row.path];
+  if (row.branch) model.value = expanded.value.includes(row.path) ? expanded.value.filter((path) => path !== row.path) : [...expanded.value, row.path];
   emit("select", { path: row.path, value: row.value, type: row.type });
 }
 

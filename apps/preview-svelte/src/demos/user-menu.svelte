@@ -1,6 +1,0 @@
-<script lang="ts">
-  import UserMenu, { type UserStatus } from "@/registry/components/user-menu/user-menu.svelte";
-  let status = $state<UserStatus>("available");
-</script>
-
-<UserMenu user={{ name: "Ada Lovelace", email: "ada@example.com", plan: "Pro" }} showStatus bind:status items={[{ label: "Profile" }, { label: "Billing" }, { label: "Settings" }]} />

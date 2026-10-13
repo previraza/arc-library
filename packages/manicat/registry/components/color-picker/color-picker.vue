@@ -1,3 +1,7 @@
+<script lang="ts">
+const defaultSwatches: ColorSwatch[] = ["#7747ff", "#2563eb", "#0ea5e9", "#22c55e", "#f59e0b", "#ef4444", "#ec4899", "#111111"].map((color) => ({ id: color, color }));
+</script>
+
 <script setup lang="ts">
 import { ref, useId } from "vue";
 
@@ -5,8 +9,6 @@ export interface ColorSwatch {
   id: string;
   color: string;
 }
-
-const defaultSwatches: ColorSwatch[] = ["#7747ff", "#2563eb", "#0ea5e9", "#22c55e", "#f59e0b", "#ef4444", "#ec4899", "#111111"].map((color) => ({ id: color, color }));
 
 withDefaults(
   defineProps<{

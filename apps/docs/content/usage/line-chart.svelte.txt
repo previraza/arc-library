@@ -1,0 +1,9 @@
+<script lang="ts">
+  import LineChart from "@/components/manicat/line-chart/line-chart.svelte";
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+  const data = months.map((label, i) => ({ key: label, label, axisLabel: label, values: { users: 120 + i * 40 + (i % 2) * 25, trials: 60 + i * 12 } }));
+</script>
+
+<div style="width: min(520px, 100%)">
+  <LineChart label="Growth" {data} series={[{ key: "users", label: "Users", area: true }, { key: "trials", label: "Trials", dashed: true }]} />
+</div>

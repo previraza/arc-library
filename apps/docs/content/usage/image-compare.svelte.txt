@@ -1,0 +1,10 @@
+<script lang="ts">
+  import ImageCompare from "@/components/manicat/image-compare/image-compare.svelte";
+</script>
+
+<div style="width: min(460px, 100%)">
+  <ImageCompare>
+    {#snippet before()}<div style="height: 100%; background: linear-gradient(135deg, #7747ff, #2563eb)"></div>{/snippet}
+    {#snippet after()}<div style="height: 100%; background: linear-gradient(135deg, #f59e0b, #ef4444)"></div>{/snippet}
+  </ImageCompare>
+</div>

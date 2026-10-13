@@ -1,9 +1,0 @@
-<script lang="ts">
-  import MentionInput, { type MentionValue } from "@/registry/components/mention-input/mention-input.svelte";
-  let message = $state<MentionValue>({ text: "", mentions: [] });
-</script>
-
-<div style="width: min(420px, 100%); display: grid; gap: 8px">
-  <MentionInput bind:value={message} people={[{ id: "1", name: "Ada", role: "Engineer" }, { id: "2", name: "Lin", role: "Design" }]} channels={[{ id: "c1", name: "general", members: 42 }, { id: "c2", name: "releases", members: 9 }]} />
-  <small>{message.mentions.length} mention{message.mentions.length === 1 ? "" : "s"}</small>
-</div>

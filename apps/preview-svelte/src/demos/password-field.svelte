@@ -1,5 +1,0 @@
-<script lang="ts">
-  import PasswordField from "@/registry/components/password-field/password-field.svelte";
-</script>
-
-<div style="width: min(320px, 100%)"><PasswordField label="Password" description="Use 8 or more characters" /></div>

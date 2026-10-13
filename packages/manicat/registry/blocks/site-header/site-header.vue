@@ -1,22 +1,4 @@
-<script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
-import Button from "@/registry/components/button/button.vue";
-
-export type SiteHeaderVariant = "simple" | "centered" | "mega";
-export interface SiteHeaderLink { label: string; description?: string; href?: string }
-export interface SiteHeaderFeature { title: string; description?: string; href?: string }
-export interface SiteHeaderItem {
-  /** Stable id, used for the current section. */
-  value: string;
-  label: string;
-  href?: string;
-  /** Links in the dropdown panel. */
-  links?: SiteHeaderLink[];
-  feature?: SiteHeaderFeature;
-}
-export interface SiteHeaderAction { label: string; href?: string }
-export interface SiteHeaderDestination { label: string; href?: string; section?: string }
-
+<script lang="ts">
 export const siteHeaderExampleItems: SiteHeaderItem[] = [
   {
     value: "product", label: "Product",
@@ -40,6 +22,26 @@ export const siteHeaderExampleItems: SiteHeaderItem[] = [
   { value: "pricing", label: "Pricing" },
   { value: "customers", label: "Customers" },
 ];
+</script>
+
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import Button from "@/registry/components/button/button.vue";
+
+export type SiteHeaderVariant = "simple" | "centered" | "mega";
+export interface SiteHeaderLink { label: string; description?: string; href?: string }
+export interface SiteHeaderFeature { title: string; description?: string; href?: string }
+export interface SiteHeaderItem {
+  /** Stable id, used for the current section. */
+  value: string;
+  label: string;
+  href?: string;
+  /** Links in the dropdown panel. */
+  links?: SiteHeaderLink[];
+  feature?: SiteHeaderFeature;
+}
+export interface SiteHeaderAction { label: string; href?: string }
+export interface SiteHeaderDestination { label: string; href?: string; section?: string }
 
 withDefaults(
   defineProps<{

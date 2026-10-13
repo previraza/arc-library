@@ -1,8 +1,0 @@
-<script lang="ts">
-  import TimePicker from "@/registry/components/time-picker/time-picker.svelte";
-  let time = $state("09:30");
-</script>
-
-<div style="width: min(260px, 100%)">
-  <TimePicker label="Start time" description="Local time." bind:value={time} />
-</div>

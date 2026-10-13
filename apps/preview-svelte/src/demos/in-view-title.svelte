@@ -1,8 +1,0 @@
-<script lang="ts">
-  import InViewTitle from "@/registry/components/in-view-title/in-view-title.svelte";
-</script>
-
-<div style="display: grid; gap: 16px">
-  <InViewTitle text="Blur into focus" variant="blur" />
-  <InViewTitle text="One word at a time" variant="word" />
-</div>
