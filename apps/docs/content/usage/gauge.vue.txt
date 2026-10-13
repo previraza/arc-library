@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import Gauge from "@/components/manicat/gauge/gauge.vue";
-
-const thresholds = [
-  { from: 0, tone: "success" as const, label: "Healthy" },
-  { from: 80, tone: "danger" as const, label: "Almost full" },
-];
 </script>
 
 <template>
-  <div class="flex gap-6">
-    <Gauge :value="72" label="CPU" detail="of 8 cores" />
-    <Gauge :value="91" label="Memory" :thresholds="thresholds" />
+  <div style="display: flex; width: 100%; max-width: 28rem; align-items: center; justify-content: space-around; gap: 24px">
+    <Gauge :value="72" label="Disk" detail="of 512 GB" />
+    <Gauge :value="64" label="Queue" detail="of 200 tasks" tone="success" />
+    <Gauge :value="18" label="Errors" detail="per hour" tone="danger" />
   </div>
 </template>

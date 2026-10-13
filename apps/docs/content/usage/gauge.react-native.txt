@@ -1,11 +1,12 @@
 import { View } from "react-native";
 import { Gauge } from "@/components/manicat/gauge/gauge.rn";
 
-export function Resources() {
+export function GaugeDemo() {
   return (
-    <View style={{ gap: 20 }}>
-      <Gauge value={72} label="CPU" detail="of 8 cores" />
-      <Gauge value={91} label="Memory" thresholds={[{ from: 0, tone: "success", label: "Healthy" }, { from: 80, tone: "danger", label: "Almost full" }]} />
+    <View style={{ flexDirection: "row", width: "100%", maxWidth: 448, alignItems: "center", justifyContent: "space-around", gap: 24 }}>
+      <Gauge value={72} label="Disk" detail="of 512 GB" />
+      <Gauge value={64} label="Queue" detail="of 200 tasks" tone="success" />
+      <Gauge value={18} label="Errors" detail="per hour" tone="danger" />
     </View>
   );
 }

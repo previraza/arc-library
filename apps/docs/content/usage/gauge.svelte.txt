@@ -1,9 +1,9 @@
 <script lang="ts">
   import Gauge from "@/components/manicat/gauge/gauge.svelte";
-  let value = $state(64);
 </script>
 
-<div style="display: grid; gap: 12px; justify-items: start">
-  <Gauge {value} label="CPU" thresholds={[{ from: 0, tone: "success", label: "Healthy" }, { from: 60, tone: "warning", label: "Busy" }, { from: 85, tone: "danger", label: "Overloaded" }]} />
-  <input type="range" min="0" max="100" bind:value aria-label="Value" />
+<div style="display: flex; width: 100%; max-width: 28rem; align-items: center; justify-content: space-around; gap: 24px">
+  <Gauge value={72} label="Disk" detail="of 512 GB" />
+  <Gauge value={64} label="Queue" detail="of 200 tasks" tone="success" />
+  <Gauge value={18} label="Errors" detail="per hour" tone="danger" />
 </div>

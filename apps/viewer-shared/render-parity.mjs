@@ -7,6 +7,7 @@
  *   pnpm dev                                  # the docs (3000) and the viewers (3001 to 3003)
  *   node apps/viewer-shared/render-parity.mjs [--fw vue,svelte,react-native] [--only button,badge] [--examples]
  *
+ * --wait <ms> waits longer before looking, for components that count or fill when they appear (default 1000).
  * --act click|focus|hover opens the first trigger of each demo before comparing, so menus, dialogs and tooltips are compared open.
  * --max-diff sets how much of the picture may differ, in percent (default 2.5). --save <dir> writes the React and port
  * screenshots of every render that differs. Exit code 1 when something differs. Swift has no web viewer, so it is checked by the token and naming checks instead.
@@ -33,6 +34,7 @@ const only = flag("--only")?.split(",");
 const wantExamples = !args.includes("--demos-only");
 const maxDiff = Number(flag("--max-diff") ?? 2.5);
 const act = flag("--act");
+const settle = Number(flag("--wait") ?? 1000);
 const saveDir = flag("--save");
 if (saveDir) mkdirSync(saveDir, { recursive: true });
 
@@ -137,9 +139,9 @@ async function pictureDiff(a, b) {
 const reactCache = new Map();
 let differing = 0;
 for (const job of jobs) {
-  if (!reactCache.has(job.react)) reactCache.set(job.react, await look(job.react, 1000));
+  if (!reactCache.has(job.react)) reactCache.set(job.react, await look(job.react, settle));
   const react = reactCache.get(job.react);
-  const port = await look(job.port, 1000);
+  const port = await look(job.port, settle);
   if (!react || !port) {
     differing += 1;
     console.log(`${job.label} [${job.fw}] could not be read (${react ? "viewer" : "React frame"})`);
