@@ -1,0 +1,27 @@
+{
+  "extends": "../../packages/manicat/tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "@/*": [
+        "../../packages/manicat/*"
+      ],
+      "expo-clipboard": [
+        "./src/stubs/expo-clipboard.ts"
+      ],
+      "expo-document-picker": [
+        "./src/stubs/expo-document-picker.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "../../packages/manicat/types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -13,7 +13,7 @@ export interface CodeBlockProps extends Omit<ViewProps, "children"> {
    * Writes text to the clipboard when the copy button is pressed. React Native has no built-in clipboard, so pass the one
    * your app uses, for example `(text) => Clipboard.setStringAsync(text)` from expo-clipboard. Without it there is no copy button.
    */
-  copy?: (text: string) => void | Promise<void>;
+  copy?: (text: string) => void | Promise<unknown>;
   /** Extend the inner, named parts of the block: header, filename, language, code or copy. The React Native counterpart of `classNames`. */
   styles?: {
     header?: StyleProp<ViewStyle>;

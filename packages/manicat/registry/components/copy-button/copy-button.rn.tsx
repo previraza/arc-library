@@ -10,7 +10,7 @@ export interface CopyButtonProps extends Omit<PressableProps, "style" | "childre
    * Writes the text to the clipboard. React Native has no built-in clipboard, so pass the one your app uses, for example
    * `(text) => Clipboard.setStringAsync(text)` from expo-clipboard.
    */
-  copy: (value: string) => void | Promise<void>;
+  copy: (value: string) => void | Promise<unknown>;
   iconOnly?: boolean;
   variant?: "outline" | "plain";
   onCopied?: () => void;

@@ -6,7 +6,8 @@
  *   node scripts/sync-usage-demos.mjs <framework-id> <out-dir>
  *
  * Imports are pointed at the registry sources: `@/components/manicat/button/button.vue` becomes
- * `@/registry/components/button/button.vue`, and blocks live under `@/registry/blocks/`.
+ * `@/registry/components/button/button.vue`, and blocks live under `@/registry/blocks/`. Metro's `require("./logo.png")`, which a
+ * browser bundle cannot resolve, becomes an empty image source.
  */
 import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -29,7 +30,8 @@ let count = 0;
 for (const file of (await readdir(usage)).filter(name => name.endsWith(suffix))) {
   const source = (await readFile(path.join(usage, file), "utf8"))
     .replaceAll("@/components/manicat/blocks/", "@/registry/blocks/")
-    .replaceAll("@/components/manicat/", "@/registry/components/");
+    .replaceAll("@/components/manicat/", "@/registry/components/")
+    .replace(/require\((["'`])[^"'`]+\1\)/g, '{ uri: "" }');
   await writeFile(path.join(out, file.slice(0, -suffix.length) + extensions[framework]), source);
   count += 1;
 }

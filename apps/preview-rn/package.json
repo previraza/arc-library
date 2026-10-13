@@ -1,0 +1,28 @@
+{
+  "name": "@manicat/preview-rn",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Viewer for the React Native ports of Manicat UI. Runs them in the browser with react-native-web, inside a phone frame. The demos are the Usage snippets of the docs.",
+  "scripts": {
+    "sync": "node ../../packages/manicat/scripts/sync-usage-demos.mjs react-native src/demos",
+    "dev": "pnpm sync && vite --port 3003",
+    "build": "pnpm sync && vite build",
+    "typecheck": "pnpm sync && tsc --noEmit"
+  },
+  "dependencies": {
+    "manicat": "workspace:*",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-native-svg": "^15.15.5",
+    "react-native-web": "^0.21.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "react-native": "~0.79.7",
+    "typescript": "^6.0.3",
+    "vite": "^7.0.0"
+  }
+}
