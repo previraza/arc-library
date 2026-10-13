@@ -259,7 +259,7 @@ function Device({
           <div className="flex w-full items-center justify-center">{children}</div>
         </div>
 
-        <div aria-hidden className={`pointer-events-none absolute left-1/2 top-1/2 transition-transform duration-500 ${ease} motion-reduce:transition-none ${fade}`} style={chrome}>
+        <div aria-hidden className={`pointer-events-none absolute left-1/2 top-1/2 transition-[transform,opacity] duration-500 ${ease} motion-reduce:transition-none ${mobile ? "opacity-100" : "opacity-0"}`} style={chrome}>
           <span className="absolute left-1/2 top-2 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-fd-foreground/90" />
           <span className="absolute left-7 top-2 flex h-[22px] items-center text-[11px] font-medium leading-none text-fd-foreground">9:41</span>
           <span className="absolute right-7 top-2 flex h-[22px] items-center text-[11px] leading-none tracking-widest text-fd-foreground">●●●</span>
