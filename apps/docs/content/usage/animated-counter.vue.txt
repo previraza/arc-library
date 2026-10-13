@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import AnimatedCounter from "@/components/manicat/animated-counter/animated-counter.vue";
+</script>
+
+<template>
+  <div class="grid gap-6">
+    <AnimatedCounter :value="121408" label="Downloads this month" animate-on-view />
+    <AnimatedCounter :value="99.98" :decimals="2" suffix="%" label="Uptime" animate-on-view />
+  </div>
+</template>

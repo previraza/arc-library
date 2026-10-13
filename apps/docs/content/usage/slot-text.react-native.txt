@@ -1,0 +1,14 @@
+import { useEffect, useState } from "react";
+import { SlotText } from "@/components/manicat/slot-text/slot-text.rn";
+
+const prices = [1024, 12480, 99200, 736000];
+
+export function RollingPrice() {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setIndex((current) => (current + 1) % prices.length), 2000);
+    return () => clearInterval(id);
+  }, []);
+
+  return <SlotText value={prices[index]} style={{ alignSelf: "flex-start" }} styles={{ text: { fontSize: 32, fontWeight: "600" } }} />;
+}

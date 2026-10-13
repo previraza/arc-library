@@ -1,0 +1,6 @@
+import * as Clipboard from "expo-clipboard";
+import { CopyButton } from "@/components/manicat/copy-button/copy-button.rn";
+
+export function InstallCommand() {
+  return <CopyButton value="npx shadcn@latest add @manicat/button" label="Copy command" copy={(text) => Clipboard.setStringAsync(text)} />;
+}

@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import SplitButton from "@/components/manicat/split-button/split-button.vue";
+
+const actions = [
+  { label: "Publish now", onSelect: () => console.log("now") },
+  { label: "Schedule for later", onSelect: () => console.log("later") },
+  { label: "Publish to a copy" },
+];
+</script>
+
+<template>
+  <SplitButton label="Publish" :actions="actions" @click="console.log('publish now')" />
+</template>

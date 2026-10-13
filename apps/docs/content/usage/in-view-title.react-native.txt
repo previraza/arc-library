@@ -1,0 +1,5 @@
+import { InViewTitle } from "@/components/manicat/in-view-title/in-view-title.rn";
+
+export function Section() {
+  return <InViewTitle text="Designed in the open, shipped weekly." lines={["Designed in the open,", "shipped weekly."]} variant="line" />;
+}

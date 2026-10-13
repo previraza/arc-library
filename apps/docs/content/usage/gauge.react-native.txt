@@ -1,0 +1,11 @@
+import { View } from "react-native";
+import { Gauge } from "@/components/manicat/gauge/gauge.rn";
+
+export function Resources() {
+  return (
+    <View style={{ gap: 20 }}>
+      <Gauge value={72} label="CPU" detail="of 8 cores" />
+      <Gauge value={91} label="Memory" thresholds={[{ from: 0, tone: "success", label: "Healthy" }, { from: 80, tone: "danger", label: "Almost full" }]} />
+    </View>
+  );
+}

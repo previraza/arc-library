@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import TextReveal from "@/components/manicat/text-reveal/text-reveal.vue";
+</script>
+
+<template>
+  <TextReveal text="Every word rises as it enters the viewport." as="h2" />
+</template>

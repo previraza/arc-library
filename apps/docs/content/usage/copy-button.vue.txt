@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import CopyButton from "@/components/manicat/copy-button/copy-button.vue";
+</script>
+
+<template>
+  <CopyButton value="npx shadcn@latest add @manicat/button" label="Copy command" />
+</template>

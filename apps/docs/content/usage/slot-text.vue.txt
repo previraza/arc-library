@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import SlotText from "@/components/manicat/slot-text/slot-text.vue";
+
+const prices = [1024, 12480, 99200, 736000];
+const index = ref(0);
+let timer: ReturnType<typeof setInterval>;
+onMounted(() => (timer = setInterval(() => (index.value = (index.value + 1) % prices.length), 2000)));
+onBeforeUnmount(() => clearInterval(timer));
+</script>
+
+<template>
+  <p class="text-3xl font-semibold">$<SlotText :value="prices[index]" /></p>
+</template>

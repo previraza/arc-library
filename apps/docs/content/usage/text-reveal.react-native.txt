@@ -1,0 +1,5 @@
+import { TextReveal } from "@/components/manicat/text-reveal/text-reveal.rn";
+
+export function Headline() {
+  return <TextReveal text="Every word rises as it enters the screen." />;
+}

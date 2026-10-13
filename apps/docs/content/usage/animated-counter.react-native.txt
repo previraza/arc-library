@@ -1,0 +1,11 @@
+import { View } from "react-native";
+import { AnimatedCounter } from "@/components/manicat/animated-counter/animated-counter.rn";
+
+export function Stats() {
+  return (
+    <View style={{ gap: 24 }}>
+      <AnimatedCounter value={121408} label="Downloads this month" />
+      <AnimatedCounter value={99.98} decimals={2} suffix="%" label="Uptime" />
+    </View>
+  );
+}

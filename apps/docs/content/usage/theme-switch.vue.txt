@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import ThemeSwitch, { type Theme } from "@/components/manicat/theme-switch/theme-switch.vue";
+
+const theme = ref<Theme>("light");
+</script>
+
+<template>
+  <ThemeSwitch v-model:theme="theme" />
+</template>

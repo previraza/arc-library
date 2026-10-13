@@ -1,0 +1,7 @@
+import { useState } from "react";
+import { ThemeSwitch, type Theme } from "@/components/manicat/theme-switch/theme-switch.rn";
+
+export function Header() {
+  const [theme, setTheme] = useState<Theme>("light");
+  return <ThemeSwitch theme={theme} onThemeChange={setTheme} />;
+}

@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import TextMorph from "@/components/manicat/text-morph/text-morph.vue";
+
+const words = ["spacing", "grid", "rhythm", "order"];
+const index = ref(0);
+let timer: ReturnType<typeof setInterval>;
+onMounted(() => (timer = setInterval(() => (index.value = (index.value + 1) % words.length), 2400)));
+onBeforeUnmount(() => clearInterval(timer));
+</script>
+
+<template>
+  <p>Good interfaces are built on <TextMorph as="strong" :text="words[index]" />.</p>
+</template>

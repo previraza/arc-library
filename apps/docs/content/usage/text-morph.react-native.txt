@@ -1,0 +1,19 @@
+import { useEffect, useState } from "react";
+import { Text } from "react-native";
+import { TextMorph } from "@/components/manicat/text-morph/text-morph.rn";
+
+const words = ["spacing", "grid", "rhythm", "order"];
+
+export function Rotating() {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setIndex((current) => (current + 1) % words.length), 2400);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <Text>
+      Good interfaces are built on <TextMorph>{words[index]}</TextMorph>.
+    </Text>
+  );
+}

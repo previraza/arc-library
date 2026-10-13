@@ -1,0 +1,15 @@
+import { SplitButton } from "@/components/manicat/split-button/split-button.rn";
+
+export function Publish() {
+  return (
+    <SplitButton
+      label="Publish"
+      onClick={() => console.log("publish now")}
+      actions={[
+        { label: "Publish now", onSelect: () => console.log("now") },
+        { label: "Schedule for later", onSelect: () => console.log("later") },
+        { label: "Publish to a copy" },
+      ]}
+    />
+  );
+}
