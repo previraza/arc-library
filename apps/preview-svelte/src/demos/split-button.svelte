@@ -1,0 +1,9 @@
+<script lang="ts">
+  import SplitButton from "@/registry/components/split-button/split-button.svelte";
+  let message = $state("");
+</script>
+
+<div style="display: grid; gap: 8px; justify-items: start">
+  <SplitButton label="Publish" onclick={() => (message = "Published")} actions={[{ label: "Schedule…", onSelect: () => (message = "Scheduled") }, { label: "Save draft", onSelect: () => (message = "Draft saved") }, { label: "Discard", destructive: true, onSelect: () => (message = "Discarded") }]} />
+  <small>{message}</small>
+</div>
