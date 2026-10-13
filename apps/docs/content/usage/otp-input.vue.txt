@@ -2,9 +2,9 @@
 import { ref } from "vue";
 import OtpInput from "@/components/manicat/otp-input/otp-input.vue";
 
-const code = ref("");
+const value = ref("");
 </script>
 
 <template>
-  <OtpInput v-model="code" label="Verification code" :length="6" description="We sent it by email." />
+  <OtpInput v-model="value" label="Verification code" :length="6" />
 </template>
