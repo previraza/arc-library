@@ -26,6 +26,7 @@ export function ExampleCard({ id, title, description, fileName, code, html, chil
       <PreviewShell
         label={`${title} preview`}
         bare={bare}
+        frameSrc={`/frame/example/${id}`}
         code={<CodeBlock label={fileName} lang="tsx" html={html} code={code} maxHeight={520} />}
       >
         {children}

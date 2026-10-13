@@ -12,7 +12,7 @@ export function ItemPreview({ item }: { item: RegistryItem }) {
   if (!Demo) return null;
 
   return (
-    <PreviewShell label={`${item.title} preview`}>
+    <PreviewShell label={`${item.title} preview`} frameSrc={`/frame/demo/${item.name}`}>
       <Demo />
     </PreviewShell>
   );

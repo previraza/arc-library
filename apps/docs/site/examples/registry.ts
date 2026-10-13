@@ -54,3 +54,11 @@ export function getExamples(itemName: string): ExampleEntry[] {
 
   return entries;
 }
+
+/** An example by its export name, e.g. `MorphSelectTimezoneExample`, for the framed phone preview. */
+export function findExample(exportName: string): ComponentType | undefined {
+  for (const entry of modules) {
+    const value = (entry.exports as Record<string, unknown>)[exportName];
+    if (exportName.endsWith("Example") && typeof value === "function") return value as ComponentType;
+  }
+}

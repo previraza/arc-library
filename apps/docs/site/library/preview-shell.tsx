@@ -24,25 +24,27 @@ export type PreviewShellProps = {
   label: string;
   /** Plain surface without the dot grid, for examples that draw their own background. */
   bare?: boolean;
+  /** A page that renders only this example. The phone loads it in an iframe so the example sees the phone's real width. */
+  frameSrc?: string;
 };
 
 /**
  * The viewer around a live example: Preview/Code tabs, a Fit/Mobile width switch and a fullscreen toggle.
  * The preview stays mounted in every mode (fullscreen only re-positions it), so the example never loses its state.
  */
-export function PreviewShell({ children, code, label, bare }: PreviewShellProps) {
+export function PreviewShell({ children, code, label, bare, frameSrc }: PreviewShellProps) {
   const [tab, setTab] = useState<"preview" | "code">("preview");
   const [size, setSize] = useState<Size>("fit");
   const [full, setFull] = useState(false);
   const [orientation, setOrientation] = useState<Orientation>(1);
   const titleId = useId();
-  const [stageWidth, setStageWidth] = useState(0);
+  const [stage, setStage] = useState({ width: 0, height: 0 });
   const stageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const node = stageRef.current;
     if (!node) return;
-    const observer = new ResizeObserver(([entry]) => setStageWidth(entry.contentRect.width));
+    const observer = new ResizeObserver(([entry]) => setStage({ width: entry.contentRect.width, height: entry.contentRect.height }));
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
@@ -150,8 +152,8 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
       <div hidden={Boolean(showCode)} className={full ? "arc-fade-in min-h-0 flex-1" : "arc-fade-in"}>
         <div
           ref={stageRef}
-          className={`relative flex items-center justify-center overflow-auto rounded-[var(--radius-surface)] border border-fd-border bg-fd-background p-6 transition-[min-height] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none sm:p-10 ${
-            full ? "h-full" : size === "mobile" ? "min-h-[720px]" : "min-h-56"
+          className={`relative flex items-center justify-center rounded-[var(--radius-surface)] border border-fd-border bg-fd-background p-6 transition-[min-height] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none sm:p-10 ${size === "mobile" ? "overflow-hidden" : "overflow-auto"} ${
+            full ? "h-full" : size === "mobile" ? "min-h-[800px]" : "min-h-56"
           }`}
           style={
             bare
@@ -163,7 +165,7 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
                 }
           }
         >
-          <Device mobile={size === "mobile"} full={full} orientation={orientation} stageWidth={stageWidth}>
+          <Device mobile={size === "mobile"} full={full} orientation={orientation} stage={stage} frameSrc={frameSrc} title={label}>
             {children}
           </Device>
         </div>
@@ -188,27 +190,35 @@ function Device({
   mobile,
   full,
   orientation,
-  stageWidth,
+  stage,
+  frameSrc,
+  title,
   children,
 }: {
   mobile: boolean;
   full: boolean;
   orientation: Orientation;
-  stageWidth: number;
+  stage: { width: number; height: number };
+  frameSrc?: string;
+  title: string;
   children: ReactNode;
 }) {
+  const framed = mobile && Boolean(frameSrc);
+  const [loaded, setLoaded] = useState(false);
   const angle = "var(--mobile-angle)";
   const turned = (portrait: string, landscape: string) =>
     `calc(${portrait} * abs(cos(${angle})) + ${landscape} * abs(sin(${angle})))`;
   // How much of the 44px island side and 20px home-bar side each edge of the screen gives up, for any angle.
-  const edge = (island: string, home: string) => `calc(16px + 52px * max(${island}, 0) + 24px * max(${home}, 0))`;
+  const edge = (island: string, home: string) => `calc(${framed ? 0 : 16}px + 52px * max(${island}, 0) + 24px * max(${home}, 0))`;
   const c = `cos(${angle})`;
   const sn = `sin(${angle})`;
 
-  // Turned on its side the phone is 2532/ratio wide: shrink the ratio's scale until it fits the stage (stage padding is 48px a side).
+  // The phone must fit the stage in either orientation (the stage has 48px of padding a side). Portrait is 2532 tall and
+  // 1170 wide, landscape the other way round; the ratio only ever grows from its base so a small stage shrinks the device.
   const base = full ? 3.4 : 3.6;
-  const fits = stageWidth > 0 ? 2532 / Math.max(stageWidth - 96, 320) : 0;
-  const ratio = orientation === 0 ? Math.max(base, fits) : base;
+  const room = { width: Math.max(stage.width - 96, 320), height: Math.max(stage.height - 96, 320) };
+  const needed = stage.width > 0 ? (orientation === 0 ? Math.max(2532 / room.width, 1170 / room.height) : Math.max(2532 / room.height, 1170 / room.width)) : 0;
+  const ratio = full ? Math.max(2, needed) : Math.max(base, orientation === 0 ? 2532 / room.width : 0);
 
   const frame = {
     "--mobile-ratio": ratio,
@@ -253,10 +263,20 @@ function Device({
         style={{ borderRadius: mobile ? "2.3rem" : "0rem" }}
       >
         <div
-          className={`flex h-full w-full items-center justify-center transition-[padding] duration-500 ${ease} motion-reduce:transition-none ${mobile ? "overflow-auto p-4" : ""}`}
+          className={`flex h-full w-full items-center justify-center transition-[padding] duration-500 ${ease} motion-reduce:transition-none ${mobile && !framed ? "overflow-auto p-4" : ""}`}
           style={content}
         >
-          <div className="flex w-full items-center justify-center">{children}</div>
+          {framed ? (
+            <iframe
+              src={frameSrc}
+              title={title}
+              loading="lazy"
+              onLoad={() => setLoaded(true)}
+              className={`h-full w-full border-0 bg-transparent transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+            />
+          ) : (
+            <div className="flex w-full items-center justify-center">{children}</div>
+          )}
         </div>
 
         <div aria-hidden className={`pointer-events-none absolute left-1/2 top-1/2 transition-[transform,opacity] duration-500 ${ease} motion-reduce:transition-none ${mobile ? "opacity-100" : "opacity-0"}`} style={chrome}>
