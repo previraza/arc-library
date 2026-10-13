@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import HeroSection from "@/components/manicat/blocks/hero-section/hero-section.vue";
+</script>
+
+<template>
+  <HeroSection variant="split" title="Ship the product, not the polish" :install="[{ label: 'npm', command: 'npx shadcn add button' }]">
+    <template #media><img src="/dashboard.png" alt="The dashboard" /></template>
+  </HeroSection>
+</template>

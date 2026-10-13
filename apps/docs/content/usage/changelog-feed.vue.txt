@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import ChangelogFeed from "@/components/manicat/blocks/changelog-feed/changelog-feed.vue";
+</script>
+
+<template>
+  <ChangelogFeed title="Changelog" :default-open="['masonry']" />
+</template>

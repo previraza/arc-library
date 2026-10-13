@@ -1,0 +1,5 @@
+import { PageHeader } from "@/components/manicat/blocks/page-header/page-header.rn";
+
+export function Project() {
+  return <PageHeader title="Checkout redesign" breadcrumbs={["Projects", "Northline"]} onShare={() => console.log("share")} />;
+}

@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import SiteHeader from "@/components/manicat/blocks/site-header/site-header.vue";
+
+const current = ref("product");
+</script>
+
+<template>
+  <SiteHeader v-model="current" variant="mega" @navigate="(destination) => $router.push(destination.href ?? '/')" />
+</template>

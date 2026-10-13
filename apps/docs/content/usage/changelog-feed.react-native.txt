@@ -1,0 +1,5 @@
+import { ChangelogFeed } from "@/components/manicat/blocks/changelog-feed/changelog-feed.rn";
+
+export function Releases() {
+  return <ChangelogFeed title="Changelog" mediaBase="https://cdn.example.com" />;
+}

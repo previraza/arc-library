@@ -1,0 +1,12 @@
+import { HeroSection } from "@/components/manicat/blocks/hero-section/hero-section.rn";
+
+export function Landing() {
+  return (
+    <HeroSection
+      title="Ship the product, not the polish"
+      description="Springs, states and details already done."
+      primaryAction={{ label: "Get started", onPress: () => console.log("start") }}
+      install={[{ label: "npm", command: "npx shadcn add button" }]}
+    />
+  );
+}

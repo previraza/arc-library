@@ -1,0 +1,5 @@
+import { SiteHeader } from "@/components/manicat/blocks/site-header/site-header.rn";
+
+export function Top({ navigate }: { navigate: (href: string) => void }) {
+  return <SiteHeader onNavigate={(destination) => destination.href && navigate(destination.href)} primaryAction={{ label: "Get started", href: "/signup" }} />;
+}

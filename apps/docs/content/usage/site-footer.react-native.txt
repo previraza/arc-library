@@ -1,0 +1,5 @@
+import { SiteFooter } from "@/components/manicat/blocks/site-footer/site-footer.rn";
+
+export function Bottom() {
+  return <SiteFooter variant="columns" newsletter={{ title: "Monthly release notes", onSubscribe: async (email) => { await api.subscribe(email); } }} />;
+}

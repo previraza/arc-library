@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import PageHeader from "@/components/manicat/blocks/page-header/page-header.vue";
+</script>
+
+<template>
+  <PageHeader title="Checkout redesign" :breadcrumbs="['Projects', 'Northline']" @share="console.log('share')" />
+</template>
