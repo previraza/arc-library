@@ -4,4 +4,4 @@
   let tags = $state(["design", "motion"]);
 </script>
 
-<TagInput bind:tags label="Topics" placeholder="Add a topic" />
+<TagInput bind:value={tags} label="Topics" placeholder="Add a topic" />

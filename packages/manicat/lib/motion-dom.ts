@@ -927,3 +927,32 @@ export function createTextShimmer(label: HTMLElement, { active, duration, reduce
     },
   };
 }
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Layout glide
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+/**
+ * Nodes that glide to their new place when what is around them changes (`layout="position"` in React). Call `measure()` just
+ * before the DOM changes and `play()` just after: every node that moved starts from where it was and springs to where it is.
+ * The nodes are measured inside their positioned parent, so a node that is popped out to leave simply stays where it stands.
+ */
+export function createFlip(items: () => HTMLElement[], { reduced, spring: curve = "morph" }: { reduced: boolean; spring?: keyof typeof motionTokens.spring }) {
+  let before = new Map<HTMLElement, { x: number; y: number }>();
+  return {
+    measure() {
+      before = new Map(items().map((node) => [node, { x: node.offsetLeft, y: node.offsetTop }]));
+    },
+    play() {
+      if (reduced) return;
+      for (const node of items()) {
+        const from = before.get(node);
+        if (!from) continue;
+        const dx = from.x - node.offsetLeft;
+        const dy = from.y - node.offsetTop;
+        if (dx || dy) animate(node, { x: [dx, 0], y: [dy, 0] } as never, motionTokens.spring[curve] as never);
+      }
+      before = new Map();
+    },
+  };
+}
