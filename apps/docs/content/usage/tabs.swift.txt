@@ -1,0 +1,14 @@
+import SwiftUI
+
+struct TabsExample: View {
+    @State private var tab = "overview"
+
+    var body: some View {
+        ManicatTabs(items: [
+            ManicatTab(value: "overview", label: "Overview") { Text("A summary of the project.") },
+            ManicatTab(value: "activity", label: "Activity") { Text("Recent changes land here.") },
+            ManicatTab(value: "settings", label: "Settings") { Text("Tune the project.") },
+        ], value: $tab)
+        .frame(maxWidth: 420)
+    }
+}

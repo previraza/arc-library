@@ -1,0 +1,12 @@
+import SwiftUI
+
+struct SlopeChartExample: View {
+    var body: some View {
+        ManicatSlopeChart(data: [
+            ManicatSlopeItem(key: "free", label: "Free", start: 62, end: 54),
+            ManicatSlopeItem(key: "pro", label: "Pro", start: 28, end: 37),
+            ManicatSlopeItem(key: "scale", label: "Scale", start: 10, end: 9),
+        ], label: "Plan adoption", startLabel: "Q1", endLabel: "Q2", formatValue: { "\(Int($0))%" }, ranks: true)
+        .frame(maxWidth: 460)
+    }
+}

@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct WaffleChartExample: View {
+    var body: some View {
+        ManicatWaffleChart(data: [
+            ManicatWaffleCategory(key: "search", label: "Search", value: 52),
+            ManicatWaffleCategory(key: "direct", label: "Direct", value: 31),
+            ManicatWaffleCategory(key: "social", label: "Social", value: 17),
+        ], label: "Traffic by source", unit: "visits")
+    }
+}

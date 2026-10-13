@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct CalendarExample: View {
+    @State private var day: Date? = Date()
+    @State private var month = Date()
+
+    var body: some View {
+        ManicatCalendar(selection: $day, month: $month)
+            .frame(maxWidth: 320)
+    }
+}

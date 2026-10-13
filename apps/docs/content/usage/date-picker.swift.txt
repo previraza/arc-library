@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct DatePickerExample: View {
+    @State private var due: Date?
+
+    var body: some View {
+        ManicatDatePicker("Due date", date: $due, description: "Pick a day.")
+            .frame(maxWidth: 300)
+    }
+}

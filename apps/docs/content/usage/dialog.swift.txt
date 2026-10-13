@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct DialogExample: View {
+    @State private var confirming = false
+
+    var body: some View {
+        ManicatButton("Delete…", variant: .secondary) { confirming = true }
+            .frame(maxWidth: .infinity, minHeight: 260)
+            .manicatDialog(isPresented: $confirming, title: "Delete project", description: "This cannot be undone.") {
+                Text("All files and history will be removed for good.")
+            }
+    }
+}

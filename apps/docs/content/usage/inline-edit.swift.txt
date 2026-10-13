@@ -1,0 +1,9 @@
+import SwiftUI
+
+struct InlineEditExample: View {
+    @State private var title = "Quarterly report"
+
+    var body: some View {
+        ManicatInlineEdit("Title", value: $title, validate: { $0.count > 40 ? "Keep it under 40 characters" : nil })
+    }
+}

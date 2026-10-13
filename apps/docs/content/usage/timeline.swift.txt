@@ -1,0 +1,14 @@
+import SwiftUI
+
+struct TimelineExample: View {
+    private let now = Date()
+
+    var body: some View {
+        ManicatTimeline(events: [
+            ManicatTimelineEvent(id: "1", at: now.addingTimeInterval(-240), actor: "Ada", title: "merged the release", tone: .success),
+            ManicatTimelineEvent(id: "2", at: now.addingTimeInterval(-10_800), title: "Build failed", meta: "web · 2m 14s", tone: .danger),
+            ManicatTimelineEvent(id: "3", at: now.addingTimeInterval(-93_600), actor: "Lin", title: "opened the pull request"),
+        ], now: now, label: "Activity")
+        .frame(maxWidth: 420)
+    }
+}

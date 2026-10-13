@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct NumberFieldExample: View {
+    @State private var seats = 5.0
+
+    var body: some View {
+        ManicatNumberField("Seats", value: $seats, range: 1...50, suffix: { $0 == 1 ? "seat" : "seats" })
+            .frame(maxWidth: 260)
+    }
+}

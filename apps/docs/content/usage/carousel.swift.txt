@@ -1,0 +1,15 @@
+import SwiftUI
+
+struct CarouselExample: View {
+    private struct Slide: Identifiable { let id: Int; let color: Color }
+    private let slides = [Slide(id: 1, color: .indigo), Slide(id: 2, color: .blue), Slide(id: 3, color: .green), Slide(id: 4, color: .orange)]
+    @State private var index = 0
+
+    var body: some View {
+        ManicatCarousel(slides, label: "Highlights", index: $index) { slide in
+            RoundedRectangle(cornerRadius: 16).fill(slide.color).frame(height: 140)
+                .overlay(Text("Slide \(slide.id)").foregroundStyle(.white).fontWeight(.semibold))
+        }
+        .frame(maxWidth: 460, minHeight: 190)
+    }
+}

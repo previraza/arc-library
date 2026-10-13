@@ -1,0 +1,20 @@
+import SwiftUI
+
+struct ActivityHeatmapExample: View {
+    @State private var selected: String?
+
+    private var days: [ManicatActivityDay] {
+        let start = DateComponents(calendar: .init(identifier: .gregorian), year: 2026, month: 1, day: 4).date ?? Date()
+        let format = DateFormatter()
+        format.dateFormat = "yyyy-MM-dd"
+        return (0..<84).map { offset in
+            let date = start.addingTimeInterval(Double(offset) * 86_400)
+            return ManicatActivityDay(date: format.string(from: date), count: (offset * 7 + (offset % 5) * 3) % 19)
+        }
+    }
+
+    var body: some View {
+        ManicatActivityHeatmap(days: days, label: "Commits", period: "12 weeks", selected: $selected)
+            .frame(maxWidth: 520)
+    }
+}

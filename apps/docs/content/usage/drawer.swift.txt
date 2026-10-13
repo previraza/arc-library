@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct DrawerExample: View {
+    @State private var open = false
+
+    var body: some View {
+        ManicatButton("Open drawer", variant: .secondary) { open = true }
+            .frame(maxWidth: .infinity, minHeight: 300)
+            .manicatDrawer(isPresented: $open, title: "Notifications", description: "Your latest activity.") {
+                Text("Nothing new right now.")
+            }
+    }
+}

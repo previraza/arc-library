@@ -1,0 +1,12 @@
+import SwiftUI
+
+struct AccordionExample: View {
+    var body: some View {
+        ManicatAccordion(items: [
+            ManicatAccordionItem(title: "Is it accessible?", text: "Yes. It follows the platform's accessibility traits."),
+            ManicatAccordionItem(title: "Can I restyle it?", text: "Every part takes a style through Styles."),
+            ManicatAccordionItem(title: "Does it animate?", text: "It does, unless Reduce Motion is on."),
+        ], defaultOpen: 0)
+        .frame(maxWidth: 460)
+    }
+}

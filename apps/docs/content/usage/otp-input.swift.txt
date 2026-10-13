@@ -1,0 +1,12 @@
+import SwiftUI
+
+struct OtpInputExample: View {
+    @State private var code = ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ManicatOtpInput("Verification code", code: $code, description: "Sent by SMS.")
+            Text(code.count == 6 ? "Complete" : "\(code.count)/6").font(.caption)
+        }
+    }
+}

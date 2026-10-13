@@ -1,0 +1,20 @@
+import SwiftUI
+
+struct StepperExample: View {
+    @State private var current = 1
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            ManicatStepper(steps: [
+                ManicatStep(id: "account", label: "Account", description: "Create your login"),
+                ManicatStep(id: "plan", label: "Plan", description: "Choose a plan"),
+                ManicatStep(id: "pay", label: "Payment", description: "Add a card"),
+            ], current: current) { current = $0 }
+            HStack(spacing: 8) {
+                ManicatButton("Back", variant: .secondary, size: .sm) { current = max(0, current - 1) }
+                ManicatButton("Next", size: .sm) { current = min(3, current + 1) }
+            }
+        }
+        .frame(maxWidth: 360)
+    }
+}

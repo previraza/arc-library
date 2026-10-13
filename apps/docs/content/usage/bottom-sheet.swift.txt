@@ -1,0 +1,12 @@
+import SwiftUI
+
+struct BottomSheetExample: View {
+    @State private var open = false
+
+    var body: some View {
+        ManicatButton("Open sheet", variant: .secondary) { open = true }
+            .manicatBottomSheet(isPresented: $open, title: "Filters", description: "Narrow the list.") {
+                Text("Pick the filters to apply to the list.")
+            }
+    }
+}

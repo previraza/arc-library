@@ -1,0 +1,14 @@
+import SwiftUI
+
+struct RadioCardsExample: View {
+    @State private var plan: String? = "pro"
+
+    var body: some View {
+        ManicatRadioCards(options: [
+            ManicatRadioCard(value: "free", label: "Free", description: "For side projects", meta: "$0"),
+            ManicatRadioCard(value: "pro", label: "Pro", description: "For teams", meta: "$12"),
+            ManicatRadioCard(value: "scale", label: "Scale", description: "Custom", meta: "Talk to us", disabled: true),
+        ], value: $plan)
+        .frame(maxWidth: 400)
+    }
+}
