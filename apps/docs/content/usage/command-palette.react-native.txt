@@ -1,0 +1,11 @@
+import { CommandPalette } from "@/components/manicat/command-palette/command-palette.rn";
+
+const items = [
+  { id: "new", label: "New file", group: "General", shortcut: "⌘ N" },
+  { id: "search", label: "Search commands", group: "General" },
+  { id: "settings", label: "Open settings", group: "Preferences", keywords: ["options", "config"] },
+];
+
+export function Palette() {
+  return <CommandPalette items={items} onSelect={(item) => console.log(item.id)} />;
+}

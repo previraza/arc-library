@@ -1,0 +1,10 @@
+import { Button } from "@/components/manicat/button/button.rn";
+import { BottomSheet } from "@/components/manicat/bottom-sheet/bottom-sheet.rn";
+
+export function Share() {
+  return (
+    <BottomSheet trigger={<Button variant="secondary">Share</Button>} title="Share this project" description="Anyone with the link can view.">
+      <Button onPress={() => console.log("copied")}>Copy link</Button>
+    </BottomSheet>
+  );
+}

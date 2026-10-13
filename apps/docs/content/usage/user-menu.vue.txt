@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import UserMenu from "@/components/manicat/user-menu/user-menu.vue";
+
+const status = ref<"available" | "busy" | "away">("available");
+const items = [{ label: "Settings" }, { label: "Keyboard shortcuts" }];
+</script>
+
+<template>
+  <UserMenu v-model:status="status" show-status :user="{ name: 'Ada Lovelace', email: 'ada@example.com', plan: 'Pro' }" :items="items" @sign-out="console.log('signed out')" />
+</template>

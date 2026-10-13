@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import ContextMenu from "@/components/manicat/context-menu/context-menu.vue";
+
+const items = [
+  { id: "open", label: "Open" },
+  { id: "rename", label: "Rename" },
+  { id: "delete", label: "Delete", destructive: true, onSelect: () => console.log("deleted") },
+];
+</script>
+
+<template>
+  <ContextMenu :items="items">
+    <div class="rounded-xl border p-4">report-q3.pdf — right click, or press the menu key.</div>
+  </ContextMenu>
+</template>

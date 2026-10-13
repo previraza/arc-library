@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
+import BottomSheet from "@/components/manicat/bottom-sheet/bottom-sheet.vue";
+
+const open = ref(false);
+</script>
+
+<template>
+  <BottomSheet v-model:open="open" title="Share this project" description="Anyone with the link can view.">
+    <template #trigger="{ open: show }"><Button variant="secondary" @click="show">Share</Button></template>
+    <Button @click="open = false">Copy link</Button>
+  </BottomSheet>
+</template>

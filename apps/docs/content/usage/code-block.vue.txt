@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import CodeBlock from "@/components/manicat/code-block/code-block.vue";
+
+const code = `<script setup lang="ts">\nimport { ref } from "vue";\nconst count = ref(0);\n<\/script>`;
+</script>
+
+<template>
+  <CodeBlock filename="Counter.vue" language="vue" :code="code" />
+</template>

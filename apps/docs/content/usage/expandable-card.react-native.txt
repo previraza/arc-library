@@ -1,0 +1,10 @@
+import { Text } from "react-native";
+import { ExpandableCard } from "@/components/manicat/expandable-card/expandable-card.rn";
+
+export function Plan() {
+  return (
+    <ExpandableCard title="Quarterly plan" description="Three tracks, reviewed every Friday.">
+      <Text>Design system, docs and registry ports.</Text>
+    </ExpandableCard>
+  );
+}

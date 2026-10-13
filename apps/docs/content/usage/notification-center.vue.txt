@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import NotificationCenter from "@/components/manicat/notification-center/notification-center.vue";
+
+const notifications = ref([
+  { id: "1", title: "Elia commented on Accordion", description: "The panel inner should keep its radius.", time: "2m" },
+  { id: "2", title: "Deploy succeeded", description: "docs · production", time: "18m", tone: "success" as const },
+  { id: "3", title: "Usage over 90%", time: "1h", tone: "warning" as const, read: true },
+]);
+</script>
+
+<template>
+  <NotificationCenter v-model="notifications" />
+</template>

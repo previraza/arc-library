@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import CommandPalette from "@/components/manicat/command-palette/command-palette.vue";
+
+const items = [
+  { id: "new", label: "New file", group: "General", shortcut: "⌘ N" },
+  { id: "search", label: "Search commands", group: "General" },
+  { id: "settings", label: "Open settings", group: "Preferences", keywords: ["options", "config"] },
+];
+</script>
+
+<template>
+  <CommandPalette :items="items" auto-focus @select="console.log($event.id)" />
+</template>

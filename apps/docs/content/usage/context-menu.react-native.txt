@@ -1,0 +1,19 @@
+import { Text, View } from "react-native";
+import { ContextMenu } from "@/components/manicat/context-menu/context-menu.rn";
+
+export function FileCard() {
+  return (
+    <ContextMenu
+      items={[
+        { id: "open", label: "Open" },
+        { id: "rename", label: "Rename" },
+        { id: "delete", label: "Delete", destructive: true, onSelect: () => console.log("deleted") },
+      ]}
+    >
+      <View style={{ padding: 16 }}>
+        <Text>report-q3.pdf</Text>
+        <Text>Long press for actions.</Text>
+      </View>
+    </ContextMenu>
+  );
+}

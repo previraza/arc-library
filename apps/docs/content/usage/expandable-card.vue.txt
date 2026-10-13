@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import ExpandableCard from "@/components/manicat/expandable-card/expandable-card.vue";
+</script>
+
+<template>
+  <ExpandableCard title="Quarterly plan" description="Three tracks, reviewed every Friday.">
+    <ul><li>Design system</li><li>Docs</li><li>Registry ports</li></ul>
+  </ExpandableCard>
+</template>

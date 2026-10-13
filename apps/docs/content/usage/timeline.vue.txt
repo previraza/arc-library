@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import Timeline from "@/components/manicat/timeline/timeline.vue";
+
+const now = Date.UTC(2026, 8, 9, 12);
+const events = [
+  { id: "1", at: now - 2 * 3_600_000, actor: "Elia", title: "merged the redesign into main", meta: "PR #482" },
+  { id: "2", at: now - 5 * 3_600_000, actor: "Deploy bot", title: "deployed to staging", tone: "success" as const },
+  { id: "3", at: now - 26 * 3_600_000, actor: "CI", title: "failed on main", tone: "danger" as const },
+];
+</script>
+
+<template>
+  <Timeline :events="events" :now="now" label="Project activity" />
+</template>

@@ -1,0 +1,10 @@
+import { TreeView } from "@/components/manicat/tree-view/tree-view.rn";
+
+const nodes = [
+  { id: "src", label: "src", children: [{ id: "app", label: "app" }, { id: "lib", label: "lib", children: [{ id: "cn", label: "cn.ts" }] }] },
+  { id: "readme", label: "README.md" },
+];
+
+export function Files() {
+  return <TreeView nodes={nodes} defaultExpandedIds={["src"]} onSelect={(node) => console.log(node.id)} />;
+}

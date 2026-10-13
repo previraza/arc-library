@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
+import Drawer from "@/components/manicat/drawer/drawer.vue";
+
+const open = ref(false);
+</script>
+
+<template>
+  <Drawer v-model:open="open" title="Filters" description="Narrow the list without leaving the page." side="right">
+    <template #trigger="{ open: show }"><Button variant="secondary" @click="show">Filters</Button></template>
+    <p>Status, owner and date range go here.</p>
+    <Button @click="open = false">Show results</Button>
+  </Drawer>
+</template>

@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import HoverCard from "@/components/manicat/hover-card/hover-card.vue";
+</script>
+
+<template>
+  <HoverCard>
+    <button>@ada</button>
+    <template #content>
+      <strong>Ada Lovelace</strong>
+      <p>Writes the analytics pipeline and the motion presets behind it.</p>
+    </template>
+  </HoverCard>
+</template>

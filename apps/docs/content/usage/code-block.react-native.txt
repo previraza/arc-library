@@ -1,0 +1,14 @@
+import * as Clipboard from "expo-clipboard";
+import { CodeBlock } from "@/components/manicat/code-block/code-block.rn";
+
+export function Snippet() {
+  return (
+    <CodeBlock
+      filename="counter.tsx"
+      language="tsx"
+      maxLines={4}
+      copy={(text) => Clipboard.setStringAsync(text)}
+      code={`export function Counter() {\n  const [count, setCount] = useState(0);\n  return <Button onPress={() => setCount(count + 1)}>{count}</Button>;\n}\n`}
+    />
+  );
+}

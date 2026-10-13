@@ -1,0 +1,12 @@
+import { Text } from "react-native";
+import { ScrollArea } from "@/components/manicat/scroll-area/scroll-area.rn";
+
+export function Log() {
+  return (
+    <ScrollArea maxHeight={180} label="Activity log">
+      {Array.from({ length: 12 }, (_, index) => (
+        <Text key={index}>09:{10 + index * 3} · Deployment #{140 + index} finished</Text>
+      ))}
+    </ScrollArea>
+  );
+}

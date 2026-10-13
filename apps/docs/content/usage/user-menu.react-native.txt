@@ -1,0 +1,13 @@
+import { UserMenu } from "@/components/manicat/user-menu/user-menu.rn";
+
+export function Account() {
+  return (
+    <UserMenu
+      user={{ name: "Ada Lovelace", email: "ada@example.com", plan: "Pro" }}
+      defaultStatus="available"
+      onStatusChange={(status) => console.log(status)}
+      items={[{ label: "Settings", onSelect: () => console.log("settings") }, { label: "Keyboard shortcuts" }]}
+      onSignOut={() => console.log("signed out")}
+    />
+  );
+}

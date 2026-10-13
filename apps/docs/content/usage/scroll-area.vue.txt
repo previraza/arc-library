@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import ScrollArea from "@/components/manicat/scroll-area/scroll-area.vue";
+</script>
+
+<template>
+  <ScrollArea :max-height="180" label="Activity log">
+    <p v-for="n in 12" :key="n">09:{{ 10 + n * 3 }} · Deployment #{{ 140 + n }} finished</p>
+  </ScrollArea>
+</template>

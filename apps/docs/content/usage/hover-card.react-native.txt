@@ -1,0 +1,10 @@
+import { Text } from "react-native";
+import { HoverCard, HoverCardProfile } from "@/components/manicat/hover-card/hover-card.rn";
+
+export function Mention() {
+  return (
+    <HoverCard content={<HoverCardProfile name="Ada Lovelace" role="Engineering" bio="Writes the analytics pipeline." stats={[{ label: "Components", value: "106" }]} />}>
+      <Text>@ada</Text>
+    </HoverCard>
+  );
+}

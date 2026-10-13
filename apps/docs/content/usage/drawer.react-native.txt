@@ -1,0 +1,11 @@
+import { Text } from "react-native";
+import { Button } from "@/components/manicat/button/button.rn";
+import { Drawer } from "@/components/manicat/drawer/drawer.rn";
+
+export function Filters() {
+  return (
+    <Drawer trigger={<Button variant="secondary">Filters</Button>} title="Filters" description="Narrow the list without leaving the screen.">
+      <Text>Status, owner and date range go here.</Text>
+    </Drawer>
+  );
+}
