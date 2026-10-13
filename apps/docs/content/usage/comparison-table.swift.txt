@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct ComparisonTableExample: View {
+    var body: some View {
+        ManicatComparisonTable(cta: (label: "Start free", doneLabel: "Trial started", onPress: nil))
+            .frame(maxWidth: 480)
+    }
+}

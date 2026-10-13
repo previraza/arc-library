@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct FaqSectionExample: View {
+    var body: some View {
+        ManicatFaqSection(variant: .search)
+            .frame(maxWidth: 520)
+    }
+}

@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct ContactSectionExample: View {
+    var body: some View {
+        ManicatContactSection(variant: .form) { message in
+            try await Task.sleep(nanoseconds: 800_000_000)
+        }
+        .frame(maxWidth: 480)
+    }
+}

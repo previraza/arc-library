@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct LoginCenteredExample: View {
+    var body: some View {
+        ManicatLoginCentered { email, method, mode in
+            print(email, method, mode)
+        }
+        .frame(maxWidth: 380)
+    }
+}

@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct BlogGridExample: View {
+    var body: some View {
+        ManicatBlogGrid()
+            .frame(maxWidth: 520)
+    }
+}

@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct SiteHeaderExample: View {
+    var body: some View {
+        ManicatSiteHeader { destination in
+            print(destination.label)
+        }
+        .frame(maxWidth: 420)
+    }
+}

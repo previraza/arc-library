@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct EmptyStatesExample: View {
+    var body: some View {
+        ManicatEmptyStates()
+            .frame(maxWidth: 420)
+    }
+}

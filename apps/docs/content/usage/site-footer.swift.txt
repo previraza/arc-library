@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct SiteFooterExample: View {
+    var body: some View {
+        ManicatSiteFooter(variant: .columns, newsletter: ManicatFooterNewsletter(title: "Stay in the loop", description: "One short email a month."))
+            .frame(maxWidth: 420)
+    }
+}

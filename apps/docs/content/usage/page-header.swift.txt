@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct PageHeaderExample: View {
+    var body: some View {
+        ManicatPageHeader(title: "Checkout redesign", breadcrumbs: ["Projects", "Northline"])
+            .frame(maxWidth: 520)
+    }
+}

@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct PlanComparisonExample: View {
+    var body: some View {
+        ManicatPlanComparison()
+            .frame(maxWidth: 480)
+    }
+}

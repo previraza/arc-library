@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct ChangelogFeedExample: View {
+    var body: some View {
+        ManicatChangelogFeed()
+            .frame(maxWidth: 520)
+    }
+}

@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct NewsletterSignupExample: View {
+    var body: some View {
+        ManicatNewsletterSignup(variant: .card) { email in
+            try await Task.sleep(nanoseconds: 800_000_000)
+        }
+        .frame(maxWidth: 420)
+    }
+}

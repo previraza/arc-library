@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct SignInExample: View {
+    var body: some View {
+        ManicatSignIn { account, method in
+            print(account.email, method)
+        }
+        .frame(maxWidth: 380)
+    }
+}

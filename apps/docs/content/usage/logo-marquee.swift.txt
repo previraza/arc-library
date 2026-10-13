@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct LogoMarqueeExample: View {
+    var body: some View {
+        ManicatLogoMarquee()
+            .frame(maxWidth: 480)
+    }
+}

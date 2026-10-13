@@ -1,0 +1,7 @@
+import SwiftUI
+
+struct HeroSectionExample: View {
+    var body: some View {
+        ManicatHeroSection(install: [ManicatHeroInstall("pnpm", command: "pnpm dlx shadcn@latest add hero-section")], meta: ["v2.4", "MIT"])
+    }
+}

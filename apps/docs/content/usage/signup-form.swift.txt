@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct SignupFormExample: View {
+    var body: some View {
+        ManicatSignupForm(onSubmit: { details in
+            try await Task.sleep(nanoseconds: 800_000_000)
+        })
+        .frame(maxWidth: 380)
+    }
+}

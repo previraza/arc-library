@@ -1,0 +1,8 @@
+import SwiftUI
+
+struct StatsBandExample: View {
+    var body: some View {
+        ManicatStatsBand(layout: .divided, title: "Numbers that hold up")
+            .frame(maxWidth: 420)
+    }
+}
