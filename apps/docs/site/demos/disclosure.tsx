@@ -93,10 +93,10 @@ export function DialogDemo() {
             <input className="mt-1 w-full rounded-[var(--radius-control)] border border-fd-border bg-fd-background px-3 py-2" defaultValue="arc-library" />
           </label>
           <div className="flex justify-end gap-2">
-            <DialogClose>
+            <DialogClose asChild>
               <Button variant="secondary">Cancel</Button>
             </DialogClose>
-            <DialogClose>
+            <DialogClose asChild>
               <Button>Save</Button>
             </DialogClose>
           </div>
@@ -116,7 +116,7 @@ export function DrawerDemo() {
         <p className="text-sm text-fd-muted-foreground">
           A drag on the edge closes the panel, handing its velocity to the exit spring.
         </p>
-        <DrawerClose>
+        <DrawerClose asChild>
           <Button>Show results</Button>
         </DrawerClose>
       </DrawerContent>
@@ -135,7 +135,7 @@ export function BottomSheetDemo() {
         </Button>
       }
     >
-      <BottomSheetClose>
+      <BottomSheetClose asChild>
         <Button className="w-full">Copy link</Button>
       </BottomSheetClose>
     </BottomSheet>
@@ -151,7 +151,7 @@ export function PopoverDemo() {
       <PopoverContent className="w-64 rounded-[var(--radius-panel)] border border-fd-border bg-fd-popover p-4 text-sm shadow-lg">
         <p className="font-medium">Visible columns</p>
         <p className="mt-1 text-fd-muted-foreground">The panel stays anchored to the trigger while the trigger springs back.</p>
-        <PopoverClose>
+        <PopoverClose asChild>
           <Button size="sm" className="mt-4 w-full">Done</Button>
         </PopoverClose>
       </PopoverContent>

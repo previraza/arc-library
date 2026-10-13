@@ -29,10 +29,10 @@ export function DialogRenameExample() {
             />
           </label>
           <div className="flex justify-end gap-2">
-            <DialogClose>
+            <DialogClose asChild>
               <Button variant="secondary">Cancel</Button>
             </DialogClose>
-            <DialogClose>
+            <DialogClose asChild>
               <Button>Save</Button>
             </DialogClose>
           </div>
@@ -54,10 +54,10 @@ export function DialogConfirmExample() {
       </DialogTrigger>
       <DialogContent title="Delete Acme workspace?" description="14 projects and 3 members will lose access immediately.">
         <div className="flex justify-end gap-2">
-          <DialogClose>
+          <DialogClose asChild>
             <Button variant="secondary">Keep workspace</Button>
           </DialogClose>
-          <DialogClose>
+          <DialogClose asChild>
             <Button variant="danger">Delete</Button>
           </DialogClose>
         </div>

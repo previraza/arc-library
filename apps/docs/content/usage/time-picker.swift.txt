@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct TimePickerExample: View {
+    @State private var time = "09:30"
+
+    var body: some View {
+        ManicatTimePicker("Start time", time: $time, description: "Local time.")
+            .frame(maxWidth: 260)
+    }
+}

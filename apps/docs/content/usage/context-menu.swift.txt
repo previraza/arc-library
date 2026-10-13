@@ -1,0 +1,18 @@
+import SwiftUI
+
+struct ContextMenuExample: View {
+    @State private var last = ""
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4]))
+            .frame(width: 280, height: 120)
+            .overlay(Text(last.isEmpty ? "Right-click or long press" : last))
+            .manicatContextMenu([
+                ManicatContextMenuItem(id: "copy", "Copy") { last = "Copy" },
+                ManicatContextMenuItem(id: "paste", "Paste") { last = "Paste" },
+                ManicatContextMenuItem(id: "grid", "Show grid", checked: true) { last = "Grid" },
+                ManicatContextMenuItem(id: "delete", "Delete", destructive: true) { last = "Delete" },
+            ])
+    }
+}

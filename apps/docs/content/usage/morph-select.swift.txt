@@ -1,0 +1,18 @@
+import SwiftUI
+
+struct MorphSelectExample: View {
+    @State private var zone: String? = "paris"
+
+    var body: some View {
+        ManicatMorphSelect("Time zone", groups: [
+            ManicatMorphGroup("Europe", options: [
+                ManicatMorphOption(value: "paris", label: "Paris", meta: "UTC+1"),
+                ManicatMorphOption(value: "london", label: "London", meta: "UTC+0"),
+            ]),
+            ManicatMorphGroup("Americas", options: [
+                ManicatMorphOption(value: "ny", label: "New York", meta: "UTC-5"),
+                ManicatMorphOption(value: "sf", label: "San Francisco", meta: "UTC-8"),
+            ]),
+        ], value: $zone)
+    }
+}

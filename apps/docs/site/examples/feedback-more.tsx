@@ -318,7 +318,7 @@ export function DrawerFiltersExample() {
       </DrawerTrigger>
       <DrawerContent title="Filters" description="Narrow the list without leaving the page.">
         <p className="text-sm text-fd-muted-foreground">Status, owner and date range go here.</p>
-        <DrawerClose>
+        <DrawerClose asChild>
           <Button>Show results</Button>
         </DrawerClose>
       </DrawerContent>
@@ -342,7 +342,7 @@ export function BottomSheetShareExample() {
           </Button>
         }
       >
-        <BottomSheetClose>
+        <BottomSheetClose asChild>
           <Button className="w-full">Copy link</Button>
         </BottomSheetClose>
       </BottomSheet>
@@ -365,7 +365,7 @@ export function PopoverColumnsExample() {
       <PopoverContent className="w-64 rounded-[var(--radius-panel)] border border-fd-border bg-fd-popover p-4 text-sm shadow-lg">
         <p className="font-medium">Visible columns</p>
         <p className="mt-1 text-fd-muted-foreground">Choose which columns appear in the table.</p>
-        <PopoverClose>
+        <PopoverClose asChild>
           <Button size="sm" className="mt-4 w-full">
             Done
           </Button>

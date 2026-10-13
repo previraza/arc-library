@@ -1,0 +1,14 @@
+import SwiftUI
+
+struct UserMenuExample: View {
+    @State private var status: ManicatUserStatus = .available
+
+    var body: some View {
+        ManicatUserMenu(
+            user: ManicatUser(name: "Ada Lovelace", email: "ada@example.com", plan: "Pro"),
+            items: [ManicatMenuItem("Profile") {}, ManicatMenuItem("Billing") {}, ManicatMenuItem("Settings") {}],
+            status: $status,
+            onSignOut: {}
+        )
+    }
+}

@@ -1,0 +1,16 @@
+import SwiftUI
+
+struct DropdownMenuExample: View {
+    @State private var last = ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ManicatDropdownMenu("Actions", items: [
+                ManicatMenuItem("Rename") { last = "Rename" },
+                ManicatMenuItem("Duplicate") { last = "Duplicate" },
+                ManicatMenuItem("Delete", destructive: true, separatorBefore: true) { last = "Delete" },
+            ])
+            Text(last).font(.caption)
+        }
+    }
+}

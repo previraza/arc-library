@@ -1,0 +1,16 @@
+import SwiftUI
+
+struct SplitButtonExample: View {
+    @State private var message = ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ManicatSplitButton("Publish", actions: [
+                ManicatMenuItem("Schedule…") { message = "Scheduled" },
+                ManicatMenuItem("Save draft") { message = "Draft saved" },
+                ManicatMenuItem("Discard", destructive: true) { message = "Discarded" },
+            ]) { message = "Published" }
+            Text(message).font(.caption)
+        }
+    }
+}
