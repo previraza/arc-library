@@ -1,4 +1,5 @@
 import { demos } from "@/site/demos/registry";
+import { PreviewShell } from "@/site/library/preview-shell";
 import type { RegistryItem } from "@/lib/registry";
 
 /**
@@ -11,17 +12,8 @@ export function ItemPreview({ item }: { item: RegistryItem }) {
   if (!Demo) return null;
 
   return (
-    <div
-      className="relative flex min-h-64 items-center justify-center overflow-hidden rounded-[var(--radius-surface)] border border-fd-border bg-fd-background p-8"
-      style={{
-        backgroundImage:
-          "radial-gradient(color-mix(in oklab, var(--color-fd-foreground) 8%, transparent) 1px, transparent 1px)",
-        backgroundSize: "16px 16px",
-      }}
-    >
-      <div className="relative z-10 flex w-full max-w-2xl items-center justify-center">
-        <Demo />
-      </div>
-    </div>
+    <PreviewShell label={`${item.title} preview`}>
+      <Demo />
+    </PreviewShell>
   );
 }

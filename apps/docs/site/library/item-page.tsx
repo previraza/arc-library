@@ -2,8 +2,10 @@ import Link from "next/link";
 import { getItemReference } from "@/lib/item-reference";
 import { getItemPath, getRelated, getSiblings, type RegistryItem } from "@/lib/registry";
 import { ItemPreview } from "@/site/library/item-preview";
-import { ItemExamples, ItemUsage } from "@/site/library/item-examples";
+import { ItemExamples, ItemUsage, loadExamples } from "@/site/library/item-examples";
 import { ItemTabs } from "@/site/library/item-tabs";
+import { TableOfContents, type TocEntry } from "@/site/library/table-of-contents";
+import { demoLocations } from "@/site/demos/registry";
 import { ItemCard } from "@/site/library/item-card";
 import type { LibrarySection } from "@/site/library/library-sidebar";
 
@@ -15,9 +17,20 @@ export async function ItemPage({ item, section }: { item: RegistryItem; section:
   const { previous, next } = getSiblings(item.name);
   const related = getRelated(item.name);
   const base = `/${section}`;
+  const examples = await loadExamples(item);
+  const toc: TocEntry[] = [
+    ...(demoLocations[item.name] ? [{ id: "preview", title: "Preview" }] : []),
+    { id: "installation", title: "Installation" },
+    ...(demoLocations[item.name] ? [{ id: "usage", title: "Usage" }] : []),
+    ...(examples.length > 0
+      ? [{ id: "examples", title: "Examples" }, ...examples.map(({ source }) => ({ id: source.exportName, title: source.title, depth: 1 }))]
+      : []),
+    ...(related.length > 0 ? [{ id: "related", title: "Related" }] : []),
+  ];
 
   return (
-    <article className="grid gap-10">
+    <div className="flex gap-10">
+    <article className="grid min-w-0 flex-1 gap-10">
       <header className="grid gap-4">
         <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-fd-muted-foreground">
           <Link href={base} className="transition-colors hover:text-fd-foreground">
@@ -60,17 +73,19 @@ export async function ItemPage({ item, section }: { item: RegistryItem; section:
         )}
       </header>
 
-      <section aria-label="Live preview" className="grid gap-3">
+      <section id="preview" aria-label="Live preview" className="grid scroll-mt-24 gap-3">
         <ItemPreview item={item} />
       </section>
 
-      <ItemTabs {...(await getItemReference(item))} />
+      <section id="installation" className="scroll-mt-24">
+        <ItemTabs {...(await getItemReference(item))} />
+      </section>
 
       <ItemUsage item={item} />
-      <ItemExamples item={item} />
+      <ItemExamples examples={examples} />
 
       {related.length > 0 && (
-        <section className="grid gap-4">
+        <section id="related" className="grid scroll-mt-24 gap-4">
           <h2 className="text-lg font-medium tracking-(--tracking-display) text-fd-foreground">Related</h2>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {related.map((sibling) => (
@@ -107,5 +122,7 @@ export async function ItemPage({ item, section }: { item: RegistryItem; section:
         )}
       </nav>
     </article>
+    <TableOfContents entries={toc} />
+    </div>
   );
 }
