@@ -21,6 +21,6 @@ export const entries: PortEntry[] = Object.keys(ports)
 export async function loadDemo(name: string): Promise<ComponentType | undefined> {
   const load = demos[`./demos/${name}.tsx`];
   if (!load) return undefined;
-  const module = await load();
-  return Object.values(module).find((value): value is ComponentType => typeof value === "function");
+  const exports = await load();
+  return Object.values(exports).find((value): value is ComponentType => typeof value === "function");
 }

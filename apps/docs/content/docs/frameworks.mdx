@@ -1,6 +1,6 @@
 ---
 title: Frameworks
-description: One library, several formats. React is the source of truth; React Native and Vue ports sit beside it and install the same way.
+description: One library, several formats. React is the source of truth; React Native, Vue, Svelte and Swift ports sit beside it and install the same way.
 ---
 
 Manicat UI is written in React, and every component can have a **port** for another framework. A port is the same
@@ -16,8 +16,8 @@ The registry of formats lives in `packages/manicat/frameworks.json`. A file belo
 | React | `button.tsx` | `classNames` | `@manicat/button` |
 | React Native | `button.rn.tsx` | `styles` | `@manicat/button-react-native` |
 | Vue | `button.vue` | `classNames` | `@manicat/button-vue` |
-| Svelte | `button.svelte` | `classNames` | planned |
-| Swift | `button.swift` | `styles` | planned |
+| Svelte | `button.svelte` | `classNames` | `@manicat/button-svelte` |
+| Swift | `button.swift` | `styles` | `@manicat/button-swift` |
 
 Only the ports that exist for an item are offered. The framework switcher on every component page lists the
 formats found for that item, and the choice is remembered in your browser: pick Vue once and every page opens on Vue
@@ -42,10 +42,18 @@ npx shadcn@latest add @manicat/button-react-native
 
 # Vue
 npx shadcn@latest add @manicat/button-vue
+
+# Svelte
+npx shadcn@latest add @manicat/button-svelte
+
+# Swift (SwiftUI)
+npx shadcn@latest add @manicat/button-swift
 ```
 
 React Native ports also install `lib/rn-tokens.ts`, the design tokens as plain values. Vue ports read the CSS
-variables of `foundation.css`, so they declare `manicat-foundation` as a dependency and the CLI adds it for you.
+variables of `foundation.css`, so they declare `manicat-foundation` as a dependency and the CLI adds it for you. Svelte
+ports do the same. Swift ports install `lib/ManicatTokens.swift` (tokens, metrics and the `ManicatStyle` helper), plus the
+sibling ports and helpers they use, such as `ManicatChart.swift` or `ManicatPhone.swift`.
 
 ## What stays the same
 
@@ -61,12 +69,36 @@ variables of `foundation.css`, so they declare `manicat-foundation` as a depende
 - **Floating layers.** On the web the select, combobox and menu open as a popover under their trigger. On React Native
   they open as a sheet (`Modal`) or inline list, which is where a thumb reaches, and the tooltip shows on a long press
   because a phone has no hover.
-- **Motion.** Ports start with CSS transitions (Vue) or `Animated` (React Native). The spring-based morphs of the
-  React version are not ported yet.
+- **Motion.** Ports start with CSS transitions (Vue, Svelte), `Animated` (React Native) or SwiftUI animations. The
+  spring-based morphs of the React version are not ported yet.
 - **Focus and pointers.** Web ports keep the quiet focus treatment; React Native follows the platform and uses
   `accessibilityRole`, `accessibilityState` and press feedback instead.
 - **Previews.** The live previews on this site render the React version. Choose another framework to read its
-  install command, source, API table and usage snippet.
+  install command, source, API table and usage snippet, or run its viewer (below) to see it running.
+
+## Viewers
+
+Each port format has a small app that loads every port next to its React source and shows it beside the React demo. The
+demos are the Usage snippets of the docs, so what you copy is what you see.
+
+| Framework | Command | Port |
+| --- | --- | --- |
+| Svelte | `pnpm --filter @manicat/preview-svelte dev` | 3001 |
+| Vue | `pnpm --filter @manicat/preview-vue dev` | 3002 |
+| React Native | `pnpm --filter @manicat/preview-rn dev` | 3003 (react-native-web, in a phone frame) |
+| Swift | `cd apps/preview-swift && swift run` | a native app, on a Mac |
+
+`apps/viewer-shared/smoke.mjs <url>` opens every demo of a running viewer in a headless browser and fails on a runtime error.
+The Swift viewer is a SwiftUI app whose demo list is generated from the same snippets.
+
+## Checks
+
+`pnpm check:registry` keeps the formats from drifting apart:
+
+- every port file is published, and installs where it belongs;
+- the Svelte CSS equals the Vue CSS, and a `classNames` key exists in the same part of every web port;
+- every Swift token colour equals the React Native one in `lib/rn-tokens.ts`;
+- every Vue port compiles with `vue/compiler-sfc`.
 
 ## Adding a port
 

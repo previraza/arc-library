@@ -2,6 +2,20 @@
 
 New free components and blocks ship regularly. Every entry links to its live preview on uiarc.dev.
 
+## 2026-10-13
+
+### Added
+
+- Svelte 5 and SwiftUI ports for every component and block, installable as `@manicat/<name>-svelte` and `@manicat/<name>-swift`, with a Usage snippet in each format.
+- Viewers for Svelte, Vue, React Native (react-native-web) and Swift that run every Usage snippet next to the React demo.
+- `check:registry` now compares the Svelte and Vue CSS, the Swift and React Native tokens, and compiles every Vue port.
+
+### Fixed
+
+- The phone input's country button was invisible and unclickable.
+- Nested buttons inside Radix triggers and closes, duplicate keys in the swipe actions demo, and avatar images from pravatar.
+- Install commands print the real site origin (`NEXT_PUBLIC_SITE_URL`) instead of localhost.
+
 ## 2026-10-12
 
 ### Changed

@@ -1,0 +1,66 @@
+---
+title: Swift
+description: Install Manicat UI components as SwiftUI views that use the same tokens, names and parts as the other formats.
+---
+
+Swift ports are SwiftUI views named `Manicat<Name>`, such as `ManicatButton` or `ManicatDialog`. They read the design
+tokens from `lib/ManicatTokens.swift` through `@Environment(\.manicat)`, which follows the colour scheme, and use native
+controls where the platform has them: `Menu`, `popover`, `sheet`, `contextMenu`, `Toggle`.
+
+## Requirements
+
+- **Xcode 16 or newer**, targeting iOS 17, macOS 14 or newer
+- Swift 6 language mode is fine; the ports use no private API
+
+## Install
+
+```bash
+npx shadcn@latest add @manicat/button-swift
+```
+
+The CLI adds the files to your project folder. Drag them into your Xcode target. It also adds `ManicatTokens.swift`
+once, plus any sibling port or helper the component uses (`ManicatChart.swift`, `ManicatPhone.swift`).
+
+## Use it
+
+```swift
+import SwiftUI
+
+struct Settings: View {
+    @State private var push = true
+    @State private var saving = false
+
+    var body: some View {
+        VStack(spacing: 12) {
+            ManicatSwitch(isOn: $push, label: "Push notifications")
+            ManicatButton("Save changes", loading: saving) { saving = true }
+            ManicatButton("Cancel", variant: .secondary) {}
+        }
+    }
+}
+```
+
+Controlled values are `@Binding`s. Content slots are `@ViewBuilder` closures, or modifiers such as `.icon { }` and
+`.media { }` for components with several.
+
+## Customising parts with `styles`
+
+Every component has a `Styles` struct with one `ManicatStyle` per part. A style is a function from a view to a view, so it
+can add any modifier:
+
+```swift
+var styles = ManicatButton<Text>.Styles()
+styles.label = { $0.font(.title3) }
+```
+
+The part names are the same as the `styles` keys of the React Native version.
+
+## Not compiled here
+
+The ports are type-checked for consistency and `check:registry` compares their token colours with React Native, but they
+have not been compiled against the real SwiftUI SDK in this repository, so the first build needs Xcode. Open the viewer
+to build all of them at once:
+
+```bash
+cd apps/preview-swift && swift run   # on a Mac
+```

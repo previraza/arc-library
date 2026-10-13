@@ -10,7 +10,9 @@ export function App() {
   const [current, setCurrent] = useState(fromHash);
   const [dark, setDark] = useState(() => matchMedia("(prefers-color-scheme: dark)").matches);
   const [compare, setCompare] = useState(true);
-  const [Demo, setDemo] = useState<{ component: ComponentType } | undefined>();
+  const [loaded, setLoaded] = useState<{ name: string; component: ComponentType | undefined } | undefined>();
+  // Until the new demo has loaded, the previous one is not shown.
+  const Demo = loaded?.name === current && loaded.component ? { component: loaded.component } : undefined;
 
   useEffect(() => {
     const onHash = () => setCurrent(fromHash());
@@ -26,8 +28,7 @@ export function App() {
 
   useEffect(() => {
     let live = true;
-    setDemo(undefined);
-    void loadDemo(current).then((component) => live && setDemo(component ? { component } : undefined));
+    void loadDemo(current).then((component) => live && setLoaded({ name: current, component }));
     return () => {
       live = false;
     };

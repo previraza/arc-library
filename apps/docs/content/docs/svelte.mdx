@@ -1,0 +1,65 @@
+---
+title: Svelte
+description: Install Manicat UI components as Svelte 5 components that read the same CSS tokens as the React library.
+---
+
+Svelte ports are `*.svelte` components written with runes (`$props`, `$state`, `$derived`, `$bindable`) and snippets.
+Their styles are plain CSS that reads the variables of `foundation.css`, the same file the React and Vue versions use.
+
+## Requirements
+
+- **Svelte 5** (runes mode)
+- **TypeScript** with `svelte-check` if you typecheck
+- Vite with `@sveltejs/vite-plugin-svelte`, or SvelteKit
+
+## Install
+
+```bash
+npx shadcn@latest add @manicat/button-svelte
+```
+
+The CLI also adds `manicat-foundation`. Import the tokens once at the root of your app:
+
+```ts title="src/main.ts"
+import "$lib/components/manicat/foundation.css";
+```
+
+## Use it
+
+```svelte
+<script lang="ts">
+  import Button from "$lib/components/manicat/button/button.svelte";
+
+  let saving = $state(false);
+
+  async function save() {
+    saving = true;
+    await new Promise((done) => setTimeout(done, 1200));
+    saving = false;
+  }
+</script>
+
+<Button loading={saving} onclick={save}>Save changes</Button>
+<Button variant="secondary">Cancel</Button>
+```
+
+Content goes in the `children` snippet. Components with an icon take an `icon` snippet, and controlled inputs use
+`bind:`:
+
+```svelte
+<Switch bind:checked={push} label="Push notifications" />
+```
+
+## Customising parts with `classNames`
+
+```svelte
+<Button classNames={{ label: "font-semibold" }}>Delete project</Button>
+```
+
+Rest props fall through to the root element, so `class` and the usual attributes work as expected.
+
+## See it running
+
+```bash
+pnpm --filter @manicat/preview-svelte dev   # http://localhost:3001
+```
