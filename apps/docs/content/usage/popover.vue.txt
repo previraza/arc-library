@@ -11,7 +11,7 @@ import PopoverTrigger from "@/components/manicat/popover/popover-trigger.vue";
     <PopoverTrigger as-child>
       <Button variant="secondary">Column settings</Button>
     </PopoverTrigger>
-    <PopoverContent style="width: 256px; border-radius: var(--radius-panel); border: 1px solid var(--border); background: var(--surface-raised); padding: 16px; font-size: 14px; box-shadow: var(--shadow-floating)">
+    <PopoverContent style="width: 256px; border-radius: var(--radius-panel); border: 1px solid var(--border); background: var(--surface-raised); padding: 16px; font-size: 14px; line-height: 20px; box-shadow: var(--shadow-floating)">
       <p style="margin: 0; font-weight: 500">Visible columns</p>
       <p style="margin: 4px 0 0; opacity: 0.6">The panel stays anchored to the trigger while the trigger springs back.</p>
       <PopoverClose as-child>

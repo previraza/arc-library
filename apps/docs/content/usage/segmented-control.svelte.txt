@@ -1,6 +1,12 @@
 <script lang="ts">
   import SegmentedControl from "@/components/manicat/segmented-control/segmented-control.svelte";
-  let view = $state("list");
+
+  let value = $state("grid");
+  const options = [
+  { value: "grid", label: "Grid" },
+  { value: "list", label: "List" },
+  { value: "map", label: "Map" },
+];
 </script>
 
-<SegmentedControl label="View" bind:value={view} options={[{ value: "list", label: "List" }, { value: "board", label: "Board" }, { value: "calendar", label: "Calendar" }]} />
+<SegmentedControl bind:value label="Layout" {options} />

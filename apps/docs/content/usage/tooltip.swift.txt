@@ -2,9 +2,9 @@ import SwiftUI
 
 struct TooltipExample: View {
     var body: some View {
-        HStack(spacing: 16) {
-            ManicatTooltip("Save your changes") { ManicatButton("Save", variant: .secondary) {} }
-            ManicatTooltip("Below the button", side: .bottom) { ManicatButton("Bottom", variant: .secondary) {} }
+        HStack(spacing: 8) {
+            ManicatTooltip("Copy the install command") { ManicatButton("Copy", variant: .secondary) {} }
+            ManicatTooltip("Pinned to the top right", side: .bottom) { ManicatButton("Details", variant: .ghost, size: .sm) {} }
         }
         .padding(.top, 36)
     }

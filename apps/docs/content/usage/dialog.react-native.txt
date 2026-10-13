@@ -1,18 +1,17 @@
 import { View } from "react-native";
 import { Button } from "@/components/manicat/button/button.rn";
+import { Input } from "@/components/manicat/input/input.rn";
 import { Dialog } from "@/components/manicat/dialog/dialog.rn";
 
-export function DeleteWorkspace() {
+export function DialogDemo() {
   return (
-    <Dialog
-      trigger={<Button variant="danger">Delete workspace</Button>}
-      title="Delete Acme workspace?"
-      description="14 projects and 3 members will lose access immediately."
-      onOpenChange={(open) => console.log("dialog open:", open)}
-    >
-      <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
-        <Button variant="secondary">Keep workspace</Button>
-        <Button variant="danger">Delete</Button>
+    <Dialog trigger={<Button>Open dialog</Button>} title="Rename project" description="The slug updates everywhere it is linked.">
+      <View style={{ gap: 16 }}>
+        <Input label="Project name" defaultValue="arc-library" />
+        <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
+          <Button variant="secondary">Cancel</Button>
+          <Button>Save</Button>
+        </View>
       </View>
     </Dialog>
   );

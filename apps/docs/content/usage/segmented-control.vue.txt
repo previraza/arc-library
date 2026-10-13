@@ -2,14 +2,14 @@
 import { ref } from "vue";
 import SegmentedControl from "@/components/manicat/segmented-control/segmented-control.vue";
 
-const view = ref("board");
+const value = ref("grid");
 const options = [
+  { value: "grid", label: "Grid" },
   { value: "list", label: "List" },
-  { value: "board", label: "Board" },
-  { value: "calendar", label: "Calendar" },
+  { value: "map", label: "Map" },
 ];
 </script>
 
 <template>
-  <SegmentedControl v-model="view" label="Layout" :options="options" />
+  <SegmentedControl v-model="value" label="Layout" :options="options" />
 </template>

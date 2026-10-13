@@ -1,18 +1,14 @@
 import { useState } from "react";
 import { SegmentedControl } from "@/components/manicat/segmented-control/segmented-control.rn";
 
-export function ViewSwitcher() {
-  const [view, setView] = useState("board");
-  return (
-    <SegmentedControl
-      label="Layout"
-      value={view}
-      onValueChange={setView}
-      options={[
-        { value: "list", label: "List" },
-        { value: "board", label: "Board" },
-        { value: "calendar", label: "Calendar" },
-      ]}
-    />
-  );
+const options = [
+  { value: "grid", label: "Grid" },
+  { value: "list", label: "List" },
+  { value: "map", label: "Map" },
+];
+
+export function SegmentedControlDemo() {
+  const [value, setValue] = useState("grid");
+
+  return <SegmentedControl label="Layout" value={value} onValueChange={setValue} options={options} />;
 }

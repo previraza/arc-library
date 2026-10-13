@@ -718,3 +718,66 @@ export function createAutoSize(frame: HTMLElement, content: HTMLElement, { axis,
     },
   };
 }
+
+/**
+ * A segmented control's track: the selection travels between buttons on the morph spring (a shared layout in the React version),
+ * the track scrolls inside itself with fading edges when the options do not fit, and the chosen option is kept in view.
+ */
+export function createSegmentedControl(track: HTMLElement, { selectionClass, reduced }: { selectionClass: string; reduced: boolean }) {
+  const selection = document.createElement("span");
+  selection.className = selectionClass;
+  selection.setAttribute("aria-hidden", "true");
+  let current: HTMLElement | undefined;
+  let running: AnimationPlaybackControls[] = [];
+  let first = true;
+
+  const edges = () => {
+    const rest = track.scrollWidth - track.clientWidth - track.scrollLeft;
+    track.toggleAttribute("data-fade-start", track.scrollLeft > 1);
+    track.toggleAttribute("data-fade-end", rest > 1);
+  };
+  edges();
+  track.addEventListener("scroll", edges, { passive: true });
+  const observer = new ResizeObserver(edges);
+  observer.observe(track);
+
+  const clear = () => {
+    running.forEach((run) => run.stop());
+    running = [];
+    Object.assign(selection.style, { inset: "", left: "", top: "", width: "", height: "" });
+  };
+
+  return {
+    /** Moves the selection to the button that is pressed (`aria-pressed="true"`) and scrolls it into view. */
+    update() {
+      const button = track.querySelector<HTMLElement>('[aria-pressed="true"]');
+      if (!button) return;
+      if (button !== current) {
+        const from = current ? selection.getBoundingClientRect() : undefined;
+        clear();
+        button.prepend(selection);
+        if (from && !reduced) {
+          const to = button.getBoundingClientRect();
+          Object.assign(selection.style, { inset: "auto", left: `${from.left - to.left}px`, top: `${from.top - to.top}px`, width: `${from.width}px`, height: `${from.height}px` });
+          running = (["left", "top", "width", "height"] as const).map((key) => animate(selection, { [key]: key === "left" || key === "top" ? "0px" : `${key === "width" ? to.width : to.height}px` } as never, motionTokens.spring.morph));
+          Promise.all(running.map((run) => run.finished)).then(() => Object.assign(selection.style, { inset: "", left: "", top: "", width: "", height: "" })).catch(() => undefined);
+        }
+        current = button;
+      }
+      if (track.scrollWidth > track.clientWidth) {
+        const room = 20;
+        const start = button.offsetLeft - room;
+        const end = button.offsetLeft + button.offsetWidth + room - track.clientWidth;
+        const left = track.scrollLeft > start ? start : track.scrollLeft < end ? end : track.scrollLeft;
+        if (left !== track.scrollLeft) track.scrollTo({ left: Math.max(0, left), behavior: first || reduced ? "auto" : "smooth" });
+      }
+      first = false;
+    },
+    destroy() {
+      clear();
+      track.removeEventListener("scroll", edges);
+      observer.disconnect();
+      selection.remove();
+    },
+  };
+}

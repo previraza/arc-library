@@ -1,9 +1,13 @@
 <script lang="ts">
-  import Tooltip from "@/components/manicat/tooltip/tooltip.svelte";
   import Button from "@/components/manicat/button/button.svelte";
+  import Tooltip from "@/components/manicat/tooltip/tooltip.svelte";
 </script>
 
-<div style="display: flex; gap: 16px; padding-top: 32px">
-  <Tooltip content="Save your changes"><Button variant="secondary">Save</Button></Tooltip>
-  <Tooltip content="Below the button" side="bottom"><Button variant="secondary">Bottom</Button></Tooltip>
+<div style="display: flex; align-items: center; gap: 8px">
+  <Tooltip content="Copy the install command">
+    {#snippet trigger({ props })}<Button variant="secondary" {...props}>Copy</Button>{/snippet}
+  </Tooltip>
+  <Tooltip content="Pinned to the top right" side="bottom">
+    {#snippet trigger({ props })}<Button variant="ghost" size="sm" {...props}>Details</Button>{/snippet}
+  </Tooltip>
 </div>

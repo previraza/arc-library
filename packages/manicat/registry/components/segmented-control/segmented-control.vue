@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { useId } from "vue";
+// @manicat-dependencies motion
+import { nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from "vue";
+import { createSegmentedControl } from "@/lib/motion-dom";
 
 export interface Segment {
   value: string;
@@ -9,51 +11,84 @@ export interface Segment {
 const props = defineProps<{
   options: Segment[];
   label?: string;
-  /** Extend the inner, named parts of the segmented control: track, button or text. */
-  classNames?: { track?: string; button?: string; text?: string };
+  /** Extend the inner, named parts of the control: track, button, selection or label. */
+  classNames?: { track?: string; button?: string; selection?: string; label?: string };
 }>();
 
-/** `v-model` binds the selected segment's value. An `accessory-<value>` slot adds content after a label. */
-const model = defineModel<string>();
-const id = useId();
+const emit = defineEmits<{
+  /** The pointer or focus reached an option, before it is chosen. Use it to start loading what that option shows. */
+  optionIntent: [value: string];
+}>();
 
-function onKeydown(event: KeyboardEvent, index: number) {
-  const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
-  if (!step) return;
+const model = defineModel<string>({ required: true });
+const id = useId();
+const track = ref<HTMLElement>();
+const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+let controller: ReturnType<typeof createSegmentedControl> | undefined;
+
+const cn = (base: string, extra?: string) => (extra ? `${base} ${extra}` : base);
+const selectedIndex = () => Math.max(0, props.options.findIndex((option) => option.value === model.value));
+
+onMounted(() => {
+  controller = createSegmentedControl(track.value!, { selectionClass: cn("mc-segmented-control__selection", props.classNames?.selection), reduced });
+  controller.update();
+});
+watch([model, () => props.options.length], async () => {
+  await nextTick();
+  controller?.update();
+});
+onBeforeUnmount(() => controller?.destroy());
+
+// Arrow keys, Home and End move the selection like a tab list; only the selected option is a tab stop.
+function onKeyDown(event: KeyboardEvent) {
+  const last = props.options.length - 1;
+  const index = selectedIndex();
+  const target = event.key === "ArrowRight" || event.key === "ArrowDown" ? (index === last ? 0 : index + 1) : event.key === "ArrowLeft" || event.key === "ArrowUp" ? (index === 0 ? last : index - 1) : event.key === "Home" ? 0 : event.key === "End" ? last : -1;
+  if (target < 0 || !props.options[target]) return;
   event.preventDefault();
-  const next = (index + step + props.options.length) % props.options.length;
-  model.value = props.options[next].value;
-  document.getElementById(`${id}-${next}`)?.focus();
+  model.value = props.options[target].value;
+  track.value?.querySelector<HTMLElement>(`[data-value="${CSS.escape(props.options[target].value)}"]`)?.focus({ preventScroll: true });
 }
 </script>
 
 <template>
-  <div :class="['mc-segmented', classNames?.track]" role="radiogroup" :aria-label="label">
-    <button
-      v-for="(option, index) in options"
-      :id="`${id}-${index}`"
-      :key="option.value"
-      type="button"
-      role="radio"
-      :class="['mc-segmented__button', classNames?.button]"
-      :aria-checked="model === option.value"
-      :tabindex="model === option.value || (model === undefined && index === 0) ? 0 : -1"
-      :data-state="model === option.value ? 'checked' : 'unchecked'"
-      @click="model = option.value"
-      @keydown="onKeydown($event, index)"
-    >
-      <span :class="classNames?.text">{{ option.label }}</span>
-      <slot :name="`accessory-${option.value}`" />
-    </button>
+  <div class="mc-segmented-control__root" role="group" :aria-label="label">
+    <div ref="track" :class="cn('mc-segmented-control__track', classNames?.track)">
+      <button
+        v-for="(option, index) in options"
+        :id="`${id}-${option.value}`"
+        :key="option.value"
+        :class="cn('mc-segmented-control__button', classNames?.button)"
+        type="button"
+        :data-value="option.value"
+        :aria-pressed="model === option.value"
+        :tabindex="index === selectedIndex() ? 0 : -1"
+        @click="model = option.value"
+        @keydown="onKeyDown"
+        @pointerenter="emit('optionIntent', option.value)"
+        @focus="emit('optionIntent', option.value)"
+      >
+        <span :class="cn('mc-segmented-control__label', classNames?.label)">{{ option.label }}<slot name="accessory" :option="option" /></span>
+      </button>
+    </div>
   </div>
 </template>
 
 <style>
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-segmented { display: inline-flex; gap: var(--space-1); padding: var(--space-1); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface-muted); }
-.mc-segmented__button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: var(--control-height-sm); padding: 0 var(--space-3); border: 1px solid transparent; border-radius: calc(var(--radius-control) - 3px); background: transparent; color: var(--text-secondary); font: inherit; font-size: var(--text-sm); font-weight: 500; cursor: pointer; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
-@media (hover: hover) and (pointer: fine) { .mc-segmented__button:hover { color: var(--foreground); } }
-.mc-segmented__button[data-state="checked"] { border-color: var(--border); background: var(--surface); color: var(--accent-strong); box-shadow: var(--shadow-resting); }
-.mc-segmented__button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .mc-segmented__button { transition: none; } }
+/* The frame can shrink below its content inside flex and grid parents; the track then scrolls inside it. */
+.mc-segmented-control__root { display: inline-flex; min-width: 0; max-width: 100%; flex-shrink: 1; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface-muted); }
+/* The track owns the stacking context so the gliding highlight passes under every label, not over earlier ones. */
+.mc-segmented-control__track { --fade-start: 0px; --fade-end: 0px; isolation: isolate; display: flex; min-width: 0; gap: 2px; overflow-x: auto; overscroll-behavior-x: contain; padding: 3px; border-radius: inherit; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent); mask-image: linear-gradient(to right, transparent, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent); }
+.mc-segmented-control__track::-webkit-scrollbar { display: none; }
+.mc-segmented-control__track[data-fade-start] { --fade-start: 20px; }
+.mc-segmented-control__track[data-fade-end] { --fade-end: 20px; }
+/* Items never scale or change weight; only the highlight travels and the label color follows it. */
+.mc-segmented-control__button { position: relative; flex: 0 0 auto; min-height: var(--control-height-sm); border: 0; border-radius: calc(var(--radius-control) - 4px); padding: 0 12px; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--text-sm); font-weight: 500; white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard); }
+@media (hover: hover) and (pointer: fine) { .mc-segmented-control__button:hover { color: var(--foreground); } }
+.mc-segmented-control__button:active, .mc-segmented-control__button[aria-pressed="true"] { color: var(--foreground); }
+.mc-segmented-control__selection { position: absolute; z-index: -1; inset: 0; border: 1px solid var(--border); border-radius: inherit; background: var(--surface); box-shadow: var(--shadow-resting); }
+.mc-segmented-control__label { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; }
+@media (max-width: 380px) { .mc-segmented-control__button { padding: 0 10px; } }
+@media (prefers-reduced-motion: reduce) { .mc-segmented-control__button { transition: none; } }
 </style>

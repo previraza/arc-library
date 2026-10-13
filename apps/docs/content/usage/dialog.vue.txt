@@ -1,19 +1,27 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import Button from "@/components/manicat/button/button.vue";
 import Dialog from "@/components/manicat/dialog/dialog.vue";
-
-const open = ref(false);
+import DialogClose from "@/components/manicat/dialog/dialog-close.vue";
+import DialogContent from "@/components/manicat/dialog/dialog-content.vue";
+import DialogTrigger from "@/components/manicat/dialog/dialog-trigger.vue";
 </script>
 
 <template>
-  <Dialog v-model:open="open" title="Delete Acme workspace?" description="14 projects and 3 members will lose access immediately.">
-    <template #trigger="{ open: show }">
-      <Button variant="danger" @click="show">Delete workspace</Button>
-    </template>
-    <div class="flex justify-end gap-2">
-      <Button variant="secondary" @click="open = false">Keep workspace</Button>
-      <Button variant="danger" @click="open = false">Delete</Button>
-    </div>
+  <Dialog>
+    <DialogTrigger as-child>
+      <Button>Open dialog</Button>
+    </DialogTrigger>
+    <DialogContent title="Rename project" description="The slug updates everywhere it is linked.">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <label style="font-size: 14px">
+          Project name
+          <input style="margin-top: 4px; width: 100%; border-radius: var(--radius-control); border: 1px solid var(--border); background: var(--background); padding: 8px 12px" value="arc-library" />
+        </label>
+        <div style="display: flex; justify-content: flex-end; gap: 8px">
+          <DialogClose as-child><Button variant="secondary">Cancel</Button></DialogClose>
+          <DialogClose as-child><Button>Save</Button></DialogClose>
+        </div>
+      </div>
+    </DialogContent>
   </Dialog>
 </template>

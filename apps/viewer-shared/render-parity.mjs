@@ -7,6 +7,7 @@
  *   pnpm dev                                  # the docs (3000) and the viewers (3001 to 3003)
  *   node apps/viewer-shared/render-parity.mjs [--fw vue,svelte,react-native] [--only button,badge] [--examples]
  *
+ * --act click|focus|hover opens the first trigger of each demo before comparing, so menus, dialogs and tooltips are compared open.
  * --max-diff sets how much of the picture may differ, in percent (default 2.5). --save <dir> writes the React and port
  * screenshots of every render that differs. Exit code 1 when something differs. Swift has no web viewer, so it is checked by the token and naming checks instead.
  * Set DOCS, VUE, SVELTE and REACT_NATIVE to other origins when the servers are elsewhere.
@@ -31,6 +32,7 @@ const frameworks = (flag("--fw")?.split(",") ?? Object.keys(viewers)).filter((id
 const only = flag("--only")?.split(",");
 const wantExamples = !args.includes("--demos-only");
 const maxDiff = Number(flag("--max-diff") ?? 2.5);
+const act = flag("--act");
 const saveDir = flag("--save");
 if (saveDir) mkdirSync(saveDir, { recursive: true });
 
@@ -87,11 +89,25 @@ const probe = `(() => {
   return { buttons: count("button,[role=button],[role=tab],[role=switch],[role=checkbox],[role=radio]"), fields: count("input,textarea,select,[role=textbox],[role=combobox],[role=slider]"), words: words.sort() };
 })()`;
 
+const trigger = `(() => {
+  const root = document.querySelector(".viewer__demo") || document.querySelector(".phone__screen") || document.querySelector("main") || document.body;
+  const target = root.querySelector("[aria-haspopup],[data-state],button,[role=button],input") || root;
+  const mode = ${JSON.stringify(act ?? "")};
+  const fire = (type, init = {}) => target.dispatchEvent(new (type.startsWith("pointer") ? PointerEvent : MouseEvent)(type, { bubbles: true, cancelable: true, button: 0, isPrimary: true, pointerType: "mouse", ...init }));
+  if (mode === "click") { target.focus?.(); fire("pointerdown"); fire("mousedown"); fire("pointerup"); fire("mouseup"); fire("click"); }
+  if (mode === "focus") target.focus?.();
+  if (mode === "hover") { fire("pointerover"); fire("pointerenter"); fire("pointermove"); fire("mouseover"); fire("mousemove"); }
+})()`;
+
 async function look(url, wait) {
   // A hash-only change does not reload the page, so always come from a blank one.
   await send("Page.navigate", { url: "about:blank" });
   await send("Page.navigate", { url });
   await sleep(wait);
+  if (act) {
+    await send("Runtime.evaluate", { expression: trigger });
+    await sleep(800);
+  }
   // The Next.js dev badge floats over the React frame; it is not part of the example.
   await send("Runtime.evaluate", { expression: `document.querySelectorAll("nextjs-portal").forEach((node) => node.remove())` });
   const found = (await send("Runtime.evaluate", { expression: probe, returnByValue: true }))?.result?.value;

@@ -2,9 +2,9 @@ import { View } from "react-native";
 import { Button } from "@/components/manicat/button/button.rn";
 import { Tooltip } from "@/components/manicat/tooltip/tooltip.rn";
 
-export function Toolbar() {
+export function TooltipDemo() {
   return (
-    <View style={{ flexDirection: "row", gap: 8, padding: 16 }}>
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
       {/* Long press shows the tip on a phone: there is no hover. */}
       <Tooltip content="Copy the install command">
         <Button variant="secondary">Copy</Button>

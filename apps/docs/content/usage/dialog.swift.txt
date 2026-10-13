@@ -1,13 +1,20 @@
 import SwiftUI
 
 struct DialogExample: View {
-    @State private var confirming = false
+    @State private var open = false
+    @State private var name = "arc-library"
 
     var body: some View {
-        ManicatButton("Delete…", variant: .secondary) { confirming = true }
-            .frame(maxWidth: .infinity, minHeight: 260)
-            .manicatDialog(isPresented: $confirming, title: "Delete project", description: "This cannot be undone.") {
-                Text("All files and history will be removed for good.")
+        ManicatButton("Open dialog") { open = true }
+            .manicatDialog(isPresented: $open, title: "Rename project", description: "The slug updates everywhere it is linked.") {
+                VStack(alignment: .leading, spacing: 16) {
+                    ManicatInput("Project name", text: $name)
+                    HStack(spacing: 8) {
+                        Spacer(minLength: 0)
+                        ManicatButton("Cancel", variant: .secondary) { open = false }
+                        ManicatButton("Save") { open = false }
+                    }
+                }
             }
     }
 }

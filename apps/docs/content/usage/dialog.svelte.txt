@@ -1,9 +1,25 @@
 <script lang="ts">
-  import Dialog from "@/components/manicat/dialog/dialog.svelte";
   import Button from "@/components/manicat/button/button.svelte";
+  import Dialog from "@/components/manicat/dialog/dialog.svelte";
+  import DialogClose from "@/components/manicat/dialog/dialog-close.svelte";
+  import DialogContent from "@/components/manicat/dialog/dialog-content.svelte";
+  import DialogTrigger from "@/components/manicat/dialog/dialog-trigger.svelte";
 </script>
 
-<Dialog title="Delete project" description="This cannot be undone.">
-  {#snippet trigger({ open })}<Button variant="secondary" onclick={open}>Delete…</Button>{/snippet}
-  All files and history will be removed for good.
+<Dialog>
+  <DialogTrigger>
+    {#snippet child({ props })}<Button {...props}>Open dialog</Button>{/snippet}
+  </DialogTrigger>
+  <DialogContent title="Rename project" description="The slug updates everywhere it is linked.">
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <label style="font-size: 14px">
+        Project name
+        <input style="margin-top: 4px; width: 100%; border-radius: var(--radius-control); border: 1px solid var(--border); background: var(--background); padding: 8px 12px" value="arc-library" />
+      </label>
+      <div style="display: flex; justify-content: flex-end; gap: 8px">
+        <DialogClose>{#snippet child({ props })}<Button variant="secondary" {...props}>Cancel</Button>{/snippet}</DialogClose>
+        <DialogClose>{#snippet child({ props })}<Button {...props}>Save</Button>{/snippet}</DialogClose>
+      </div>
+    </div>
+  </DialogContent>
 </Dialog>
