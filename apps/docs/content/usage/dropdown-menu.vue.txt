@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { MoreHorizontal } from "lucide-vue-next";
 import DropdownMenu from "@/components/manicat/dropdown-menu/dropdown-menu.vue";
 
-const last = ref<string>();
+const opened = ref<string | null>(null);
 const items = [
-  { label: "Rename", onSelect: () => (last.value = "Rename") },
+  { label: "Rename", onSelect: () => (opened.value = "Rename") },
   { label: "Duplicate" },
   { label: "Move to archive", separatorBefore: true },
-  { label: "Delete", destructive: true, onSelect: () => (last.value = "Delete") },
+  { label: "Delete", destructive: true, onSelect: () => (opened.value = "Delete") },
 ];
 </script>
 
 <template>
-  <DropdownMenu label="Row actions" :items="items">
-    <template #icon>⋯</template>
-  </DropdownMenu>
-  <span v-if="last">Selected: {{ last }}</span>
+  <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px">
+    <DropdownMenu label="Row actions" :items="items">
+      <template #icon><MoreHorizontal :size="16" /></template>
+    </DropdownMenu>
+    <span v-if="opened" style="font-size: 14px; opacity: 0.6">Selected: {{ opened }}</span>
+  </div>
 </template>

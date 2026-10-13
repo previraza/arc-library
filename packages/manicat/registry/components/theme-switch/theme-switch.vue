@@ -1,42 +1,117 @@
 <script setup lang="ts">
+// @manicat-dependencies motion lucide-vue-next
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import { Moon, Sun } from "lucide-vue-next";
+import Button from "@/registry/components/button/button.vue";
+import { playPose } from "@/lib/motion-dom";
+import { motionTokens } from "@/lib/motion-tokens";
+
+export type ThemeSwitchVariant = "reveal" | "eclipse" | "split" | "rise";
 export type Theme = "light" | "dark";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
+    variant?: ThemeSwitchVariant;
     label?: string;
     iconOnly?: boolean;
-    /** Extend the inner, named parts of the theme switch: icon or label. */
-    classNames?: { icon?: string; label?: string };
+    /** Extend the inner, named parts of the theme switch: iconWrap, icon or label. */
+    classNames?: { iconWrap?: string; icon?: string; label?: string };
   }>(),
-  { iconOnly: true },
+  { variant: "reveal", iconOnly: false },
 );
 
-/** `v-model:theme` binds the current theme. The React version animates a reveal over the page; here the switch flips the value you own. */
-const theme = defineModel<Theme>("theme", { default: "light" });
+const theme = defineModel<Theme>("theme", { required: true });
+const emit = defineEmits<{
+  /** The next theme, the variant of the transition, and the button that was pressed. */
+  themeChange: [next: Theme, variant: ThemeSwitchVariant, trigger: HTMLElement];
+}>();
+
+const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+// A stored preference usually reaches the theme just after hydration. That correction swaps the icon in place;
+// only changes after the first painted frames animate, so a page that loads in dark mode never spins its switches.
+const settled = ref(false);
+let frames: number[] = [];
+onMounted(() => {
+  frames[0] = requestAnimationFrame(() => (frames[1] = requestAnimationFrame(() => (settled.value = true))));
+});
+onBeforeUnmount(() => frames.forEach(cancelAnimationFrame));
+
+const cn = (base: string, ...extra: (string | false | undefined)[]) => [base, ...extra].filter(Boolean).join(" ");
+const next = () => (theme.value === "light" ? "dark" : "light");
+
+// Both icons turn the same way (clockwise into dark, back out of it), so the swap reads as one rotation rather than two fades.
+const rest = { opacity: 1, scale: 1, rotate: 0, blur: 0 };
+const away = (el: Element) => ({ opacity: 0, scale: 0.7, rotate: (el as HTMLElement).dataset.theme === "light" ? 30 : -30, blur: motionTokens.blur.subtle });
+function enter(el: Element, done: () => void) {
+  if (!settled.value) return done();
+  if (reduced) playPose(el, { opacity: 0 }, rest, { duration: motionTokens.duration.instant }).finished.then(done);
+  else playPose(el, away(el), rest, { spring: "snappy" }).finished.then(done);
+}
+function leave(el: Element, done: () => void) {
+  if (!settled.value) return done();
+  playPose(el, rest, reduced ? { opacity: 0 } : away(el), { duration: reduced ? motionTokens.duration.instant : motionTokens.duration.fast, ease: "standard" }).finished.then(done);
+}
+
+function press(event: MouseEvent) {
+  emit("themeChange", next(), props.variant, event.currentTarget as HTMLElement);
+  theme.value = next();
+}
 </script>
 
 <template>
-  <button
+  <Button
     type="button"
-    role="switch"
-    class="mc-theme"
-    :aria-checked="theme === 'dark'"
-    :aria-label="`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`"
-    @click="theme = theme === 'dark' ? 'light' : 'dark'"
+    size="sm"
+    variant="secondary"
+    :class="cn('mc-theme-switch__themeSwitch', `mc-theme-switch__${variant}`, iconOnly && 'mc-theme-switch__iconOnly', settled && 'mc-theme-switch__settled')"
+    :data-theme="theme"
+    :aria-label="label ?? `Switch to ${next()} mode`"
+    :aria-pressed="theme === 'dark'"
+    @click="press"
   >
-    <span :class="['mc-theme__icon', classNames?.icon]" aria-hidden="true">
-      <svg v-if="theme === 'dark'" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
-      <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+    <span :class="cn('mc-theme-switch__iconWrap', classNames?.iconWrap)">
+      <Transition :css="false" @enter="enter" @leave="leave">
+        <span :key="theme" :data-theme="theme" :class="cn('mc-theme-switch__icon', classNames?.icon)" aria-hidden="true">
+          <Sun v-if="theme === 'light'" :size="16" :stroke-width="1.75" />
+          <Moon v-else :size="16" :stroke-width="1.75" />
+        </span>
+      </Transition>
     </span>
-    <span v-if="!iconOnly" :class="['mc-theme__label', classNames?.label]">{{ label ?? (theme === "dark" ? "Dark" : "Light") }}</span>
-  </button>
+    <span v-if="!iconOnly" :class="cn('mc-theme-switch__label', classNames?.label)">Switch theme</span>
+  </Button>
 </template>
 
 <style>
 /* Reads the Manicat UI tokens from foundation.css, so import that stylesheet once in your app. */
-.mc-theme { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: var(--control-height-sm); min-height: var(--control-height-sm); padding: 0 var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--text-sm); font-weight: 500; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard), transform var(--duration-instant) var(--ease-standard); }
-@media (hover: hover) and (pointer: fine) { .mc-theme:hover { background: var(--surface-muted); } }
-.mc-theme:active { transform: scale(.96); }
-.mc-theme__icon { display: grid; place-items: center; }
-@media (prefers-reduced-motion: reduce) { .mc-theme { transition: none; } .mc-theme:active { transform: none; } }
+/* Each transition uses the same library Button, which owns the press scale; this file only animates the icon in place. */
+.mc-theme-switch__themeSwitch {
+  position: relative;
+  width: auto;
+  padding-inline: var(--space-3);
+}
+.mc-theme-switch__iconOnly { width: 38px; min-width: 38px; height: 38px; min-height: 38px; border-radius: 12px; padding: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .mc-theme-switch__themeSwitch:hover:not(:disabled) { border-color: var(--border-strong); }
+  .mc-theme-switch__iconOnly:hover:not(:disabled) { background: var(--surface-muted); box-shadow: none; }
+}
+.mc-theme-switch__iconWrap {
+  position: relative;
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+}
+/* The nudge only eases once the switch has settled, so a theme that arrives during hydration lands without motion. */
+.mc-theme-switch__settled .mc-theme-switch__iconWrap { transition: transform var(--duration-spring) var(--ease-spring); }
+.mc-theme-switch__icon { position: absolute; display: grid; width: 18px; height: 18px; place-items: center; }
+.mc-theme-switch__label { white-space: nowrap; }
+/* Each variant nudges the icon the way its page transition travels, and eases back when the theme returns. */
+.mc-theme-switch__themeSwitch.mc-theme-switch__reveal[data-theme="dark"] .mc-theme-switch__iconWrap { transform: scale(1.08); }
+.mc-theme-switch__themeSwitch.mc-theme-switch__eclipse[data-theme="dark"] .mc-theme-switch__iconWrap { transform: translateX(-2px); }
+.mc-theme-switch__themeSwitch.mc-theme-switch__split[data-theme="dark"] .mc-theme-switch__iconWrap { transform: translateX(1px); }
+.mc-theme-switch__themeSwitch.mc-theme-switch__rise[data-theme="dark"] .mc-theme-switch__iconWrap { transform: translateY(-2px); }
+@media (prefers-reduced-motion: reduce) {
+  .mc-theme-switch__settled .mc-theme-switch__iconWrap { transition: none; }
+}
 </style>

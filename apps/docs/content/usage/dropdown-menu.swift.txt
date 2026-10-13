@@ -1,16 +1,17 @@
 import SwiftUI
 
 struct DropdownMenuExample: View {
-    @State private var last = ""
+    @State private var opened: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ManicatDropdownMenu("Actions", items: [
-                ManicatMenuItem("Rename") { last = "Rename" },
-                ManicatMenuItem("Duplicate") { last = "Duplicate" },
-                ManicatMenuItem("Delete", destructive: true, separatorBefore: true) { last = "Delete" },
+        VStack(alignment: .leading, spacing: 12) {
+            ManicatDropdownMenu("Row actions", items: [
+                ManicatMenuItem("Rename") { opened = "Rename" },
+                ManicatMenuItem("Duplicate") {},
+                ManicatMenuItem("Move to archive", separatorBefore: true) {},
+                ManicatMenuItem("Delete", destructive: true) { opened = "Delete" },
             ])
-            Text(last).font(.caption)
+            if let opened { Text("Selected: \(opened)").font(.callout).foregroundStyle(.secondary) }
         }
     }
 }

@@ -1,7 +1,13 @@
 import { useState } from "react";
+import { View } from "react-native";
 import { ThemeSwitch, type Theme } from "@/components/manicat/theme-switch/theme-switch.rn";
 
-export function Header() {
+export function ThemeSwitchDemo() {
   const [theme, setTheme] = useState<Theme>("light");
-  return <ThemeSwitch theme={theme} onThemeChange={setTheme} />;
+
+  return (
+    <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+      <ThemeSwitch theme={theme} onThemeChange={setTheme} />
+    </View>
+  );
 }

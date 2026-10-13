@@ -15,12 +15,13 @@
     variant?: ButtonVariant;
     size?: ButtonSize;
     loading?: boolean;
+    class?: string;
     children?: Snippet;
     /** Extend the inner, named parts of the button: loader, spinner, labelSlot, labelContent or labelPhase. */
     classNames?: { loader?: string; spinner?: string; labelSlot?: string; labelContent?: string; labelPhase?: string };
   }
 
-  let { variant = "primary", size = "md", loading = false, disabled = false, type = "button", onclick, children, classNames, ...rest }: Props = $props();
+  let { variant = "primary", size = "md", loading = false, disabled = false, type = "button", onclick, class: className, children, classNames, ...rest }: Props = $props();
 
   let button: HTMLButtonElement;
   let loaderHost: HTMLElement;
@@ -71,7 +72,7 @@
   }
 </script>
 
-<button bind:this={button} {...rest} class={["mc-button__button", `mc-button__${variant}`, `mc-button__${size}`]} {type} {disabled} aria-busy={loading || undefined} aria-disabled={loading || undefined} onclick={press}>
+<button bind:this={button} {...rest} class={["mc-button__button", `mc-button__${variant}`, `mc-button__${size}`, className]} {type} {disabled} aria-busy={loading || undefined} aria-disabled={loading || undefined} onclick={press}>
   <span bind:this={loaderHost} style="display: contents"></span>
   <span bind:this={labelSlot} class={["mc-button__labelSlot", loading && "mc-button__loadingLabel", classNames?.labelSlot]}>
     <span bind:this={labelContent} class={["mc-button__labelContent", classNames?.labelContent]}>

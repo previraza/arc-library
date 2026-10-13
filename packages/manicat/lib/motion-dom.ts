@@ -366,21 +366,23 @@ export const loaderMotion = (reduced: boolean) => ({
  * `in:` and `out:`) as for the helpers above. A pose is where a node rests or where it comes from and goes to.
  * ---------------------------------------------------------------------------------------------------------------- */
 
-export type Pose = { opacity?: number; x?: number; y?: number; scale?: number; blur?: number };
+export type Pose = { opacity?: number; x?: number; y?: number; scale?: number; rotate?: number; blur?: number };
 
 /** How a pose is reached: a tween with an ease, or a spring (with its own tween for opacity and blur, so blur never overshoots). */
-export type Timing = { duration: number; ease?: "enter" | "exit" | "standard" | "inOut"; delay?: number } | { spring: keyof typeof motionTokens.spring; fade?: number; delay?: number };
+export type Timing = { duration: number; ease?: "enter" | "exit" | "standard" | "inOut"; delay?: number } | { spring: keyof typeof motionTokens.spring | Record<string, unknown>; fade?: number; fadeDelay?: number; delay?: number };
 
 const keyframesOf = (from: Pose, to: Pose) => {
   const out: Record<string, unknown[]> = {};
-  for (const key of ["opacity", "x", "y", "scale"] as const) if (from[key] !== undefined || to[key] !== undefined) out[key] = [from[key] ?? (key === "scale" || key === "opacity" ? 1 : 0), to[key] ?? (key === "scale" || key === "opacity" ? 1 : 0)];
+  for (const key of ["opacity", "x", "y", "scale", "rotate"] as const) if (from[key] !== undefined || to[key] !== undefined) out[key] = [from[key] ?? (key === "scale" || key === "opacity" ? 1 : 0), to[key] ?? (key === "scale" || key === "opacity" ? 1 : 0)];
   if (from.blur !== undefined || to.blur !== undefined) out.filter = [blur(from.blur ?? 0), blur(to.blur ?? 0)];
   return out;
 };
 
+const springOf = (spring: keyof typeof motionTokens.spring | Record<string, unknown>) => (typeof spring === "string" ? motionTokens.spring[spring] : spring);
+
 const optionsOf = (timing: Timing) =>
   "spring" in timing
-    ? { ...motionTokens.spring[timing.spring], delay: timing.delay, opacity: { duration: timing.fade ?? motionTokens.duration.fast, ease: ease("enter") }, filter: { duration: timing.fade ?? motionTokens.duration.fast, ease: ease("enter") } }
+    ? { ...springOf(timing.spring), delay: timing.delay, opacity: { duration: timing.fade ?? motionTokens.duration.fast, ease: ease("enter"), delay: timing.fadeDelay }, filter: { duration: timing.fade ?? motionTokens.duration.fast, ease: ease("enter"), delay: timing.fadeDelay } }
     : { duration: timing.duration, delay: timing.delay, ease: ease(timing.ease ?? "standard") };
 
 /** Moves a node from one pose to another. */
@@ -391,7 +393,7 @@ export function playPose(node: Element, from: Pose, to: Pose, timing: Timing) {
 /** The curve of a timing as a function of progress, for engines that drive the animation themselves (Svelte transitions). */
 export function curveOf(timing: Timing): { duration: number; easing: (t: number) => number } {
   if ("spring" in timing) {
-    const generator = spring({ keyframes: [0, 1], ...(motionTokens.spring[timing.spring] as object) } as never);
+    const generator = spring({ keyframes: [0, 1], ...(springOf(timing.spring) as object) } as never);
     const samples: number[] = [];
     let ms = 0;
     for (;;) {
@@ -424,8 +426,9 @@ export function poseTransition(from: Pose, to: Pose, timing: Timing, { pop = fal
         const x = lerp(from.x, to.x, 0, t);
         const y = lerp(from.y, to.y, 0, t);
         const scale = lerp(from.scale, to.scale, 1, t);
+        const rotate = lerp(from.rotate, to.rotate, 0, t);
         const filter = lerp(from.blur, to.blur, 0, t);
-        return `opacity: ${opacity}; transform: translate(${x}px, ${y}px) scale(${scale});${from.blur !== undefined || to.blur !== undefined ? ` filter: blur(${filter}px);` : ""}`;
+        return `opacity: ${opacity}; transform: translate(${x}px, ${y}px) rotate(${rotate}deg) scale(${scale});${from.blur !== undefined || to.blur !== undefined ? ` filter: blur(${filter}px);` : ""}`;
       },
     };
   };
@@ -780,4 +783,54 @@ export function createSegmentedControl(track: HTMLElement, { selectionClass, red
       selection.remove();
     },
   };
+}
+
+/**
+ * The highlight of a menu: one box glides between the items for the pointer and jumps instantly for the keyboard. It follows focus,
+ * which is where Radix, Reka and Bits put the highlighted item. A short grace period keeps it gliding across separators and gaps.
+ */
+export function createMenuHighlight(content: HTMLElement, highlight: HTMLElement, { reduced }: { reduced: boolean }) {
+  let pointer = false;
+  let shown = false;
+  let timer = 0;
+  const hide = () => {
+    shown = false;
+    animate(highlight, { opacity: 0 }, { duration: reduced ? 0 : 0.08 });
+  };
+  const focus = (event: FocusEvent) => {
+    const item = event.target instanceof HTMLElement ? event.target.closest<HTMLElement>('[role="menuitem"]') : null;
+    window.clearTimeout(timer);
+    if (!item) {
+      timer = window.setTimeout(hide, pointer ? 70 : 0);
+      return;
+    }
+    highlight.dataset.tone = item.dataset.tone === "danger" ? "danger" : "";
+    if (!highlight.dataset.tone) delete highlight.dataset.tone;
+    const glide = pointer && shown;
+    shown = true;
+    animate(highlight, { y: item.offsetTop, height: item.offsetHeight, opacity: 1 }, glide && !reduced ? ({ ...motionTokens.spring.snappy, opacity: { duration: 0.08 } } as never) : { duration: 0 });
+  };
+  const move = () => {
+    pointer = true;
+  };
+  const key = () => {
+    pointer = false;
+  };
+  content.addEventListener("focusin", focus);
+  content.addEventListener("pointermove", move, true);
+  content.addEventListener("keydown", key, true);
+  return {
+    destroy() {
+      window.clearTimeout(timer);
+      content.removeEventListener("focusin", focus);
+      content.removeEventListener("pointermove", move, true);
+      content.removeEventListener("keydown", key, true);
+    },
+  };
+}
+
+/** Draws a check mark from its short stroke, the way a hand would write it. */
+export function drawPath(path: Element, { reduced, duration = motionTokens.duration.standard, ease: curve = "enter", delay = 0.05 }: { reduced: boolean; duration?: number; ease?: "enter" | "standard"; delay?: number }) {
+  if (reduced) return;
+  animate(path, { pathLength: [0, 1], opacity: [0, 1] }, { pathLength: { duration, ease: ease(curve), delay }, opacity: { duration: duration === motionTokens.duration.standard ? 0.05 : 0.01, delay } } as never);
 }

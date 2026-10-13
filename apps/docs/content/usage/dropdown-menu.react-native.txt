@@ -1,17 +1,24 @@
-import { Text } from "react-native";
+import { useState } from "react";
+import { Text, View } from "react-native";
+import { MoreHorizontal } from "lucide-react-native";
 import { DropdownMenu } from "@/components/manicat/dropdown-menu/dropdown-menu.rn";
 
-export function RowActions({ onRename, onDelete }: { onRename: () => void; onDelete: () => void }) {
+export function DropdownMenuDemo() {
+  const [opened, setOpened] = useState<string | null>(null);
+
   return (
-    <DropdownMenu
-      label="Row actions"
-      icon={<Text style={{ fontSize: 18 }}>⋯</Text>}
-      items={[
-        { label: "Rename", onSelect: onRename },
-        { label: "Duplicate" },
-        { label: "Move to archive", separatorBefore: true },
-        { label: "Delete", destructive: true, onSelect: onDelete },
-      ]}
-    />
+    <View style={{ alignItems: "flex-start", gap: 12 }}>
+      <DropdownMenu
+        label="Row actions"
+        icon={<MoreHorizontal size={16} color="#6e6e6e" />}
+        items={[
+          { label: "Rename", onSelect: () => setOpened("Rename") },
+          { label: "Duplicate" },
+          { label: "Move to archive", separatorBefore: true },
+          { label: "Delete", destructive: true, onSelect: () => setOpened("Delete") },
+        ]}
+      />
+      {opened ? <Text style={{ fontSize: 14, opacity: 0.6 }}>Selected: {opened}</Text> : null}
+    </View>
   );
 }

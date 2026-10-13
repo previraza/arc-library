@@ -6,5 +6,7 @@ const theme = ref<Theme>("light");
 </script>
 
 <template>
-  <ThemeSwitch v-model:theme="theme" />
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+    <ThemeSwitch v-model:theme="theme" />
+  </div>
 </template>

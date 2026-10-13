@@ -1,9 +1,21 @@
 <script lang="ts">
+  import { MoreHorizontal } from "@lucide/svelte";
   import DropdownMenu from "@/components/manicat/dropdown-menu/dropdown-menu.svelte";
-  let last = $state("");
+
+  let opened = $state<string | null>(null);
 </script>
 
-<div style="display: grid; gap: 8px; justify-items: start">
-  <DropdownMenu label="Actions" items={[{ label: "Rename", onSelect: () => (last = "Rename") }, { label: "Duplicate", onSelect: () => (last = "Duplicate") }, { label: "Delete", destructive: true, separatorBefore: true, onSelect: () => (last = "Delete") }]} />
-  <small>{last}</small>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px">
+  <DropdownMenu
+    label="Row actions"
+    items={[
+      { label: "Rename", onSelect: () => (opened = "Rename") },
+      { label: "Duplicate" },
+      { label: "Move to archive", separatorBefore: true },
+      { label: "Delete", destructive: true, onSelect: () => (opened = "Delete") },
+    ]}
+  >
+    {#snippet icon()}<MoreHorizontal size={16} />{/snippet}
+  </DropdownMenu>
+  {#if opened}<span style="font-size: 14px; opacity: 0.6">Selected: {opened}</span>{/if}
 </div>
