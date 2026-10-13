@@ -23,6 +23,10 @@ Only the ports that exist for an item are offered. The framework switcher on eve
 formats found for that item, and the choice is remembered in your browser: pick Vue once and every page opens on Vue
 when it has it.
 
+A link can carry the choice too: `/components/button?framework=vue` opens on Vue for anyone, and the server renders the
+Vue tab and code, so `curl` sees them. `#vue` works in a browser as well, but a `#` fragment is never sent to a server,
+so use `?framework=` when something other than a browser reads the page. Picking a tab updates the address to match.
+
 ## Coverage
 
 This table is built from the files on disk, so it is always current.
