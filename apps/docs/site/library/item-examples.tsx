@@ -20,7 +20,7 @@ export async function ItemUsage({ item }: { item: RegistryItem }) {
     <section id="usage" className="grid scroll-mt-24 gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-medium tracking-(--tracking-display) text-fd-foreground">Usage</h2>
-        <FrameworkSwitch options={options} value={options[0].id} />
+        <FrameworkSwitch options={options} />
       </div>
       <p className="text-sm text-fd-muted-foreground">
         Install the component, then copy this into your app. Every class and value below works as is; change the content and

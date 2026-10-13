@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Terminal } from "lucide-react";
 import { CopyCommand } from "@/site/library/install-command";
 import { CodeBlock } from "@/site/library/code-block";
-import { FrameworkSwitch } from "@/site/library/framework-switch";
 import type { FrameworkId } from "@/lib/frameworks";
+import { FrameworkSwitch } from "@/site/library/framework-switch";
 import type { ApiTable, PropRow } from "@/lib/props";
 
 /** A file of the item, already highlighted on the server. */
@@ -108,7 +108,6 @@ function InstallPane({ command, dependencies, registryJson, registryHtml }: Omit
 }
 
 function SourcePane({ files, frameworks }: { files: SourceFile[]; frameworks: ItemTabsProps["frameworks"] }) {
-  const [framework, setFramework] = useState<FrameworkId>(frameworks[0]?.id ?? "react");
   const withSource = files.filter((file) => file.code);
 
   if (withSource.length === 0) {
@@ -121,7 +120,7 @@ function SourcePane({ files, frameworks }: { files: SourceFile[]; frameworks: It
 
   return (
     <div className="grid gap-4">
-      <FrameworkSwitch options={frameworks} value={framework} onChange={setFramework} />
+      <FrameworkSwitch options={frameworks} />
       {withSource.map((file) => (
         <CodeBlock
           key={file.path}
