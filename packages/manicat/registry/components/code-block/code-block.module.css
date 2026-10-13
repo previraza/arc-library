@@ -18,7 +18,7 @@
 .viewport { --code-collapsed: calc(var(--code-lines, 0) * var(--text-sm) * 1.7 + var(--space-5) * 2); overflow: hidden; }
 .pre { position: relative; overflow: auto; margin: 0; padding: var(--space-5); color: var(--foreground); font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace; font-size: var(--text-sm); font-variant-ligatures: none; line-height: 1.7; tab-size: 2; white-space: pre; }
 /* Block so new source can rise in with a transform; inline code ignores transforms. */
-.code { display: block; }
+.code { display: block; font-family: inherit; }
 .expand { display: flex; width: 100%; min-height: 44px; align-items: center; justify-content: center; gap: var(--space-2); border: 0; border-top: 1px solid var(--border-subtle); padding: 0 var(--space-4); background: var(--surface-raised); color: var(--text-secondary); font: inherit; font-size: var(--text-sm); font-weight: 500; cursor: pointer; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
 .chevron { display: grid; flex: none; place-items: center; color: var(--text-muted); }
 /* Each role has contrast in both themes; color supports, but never replaces, source text. */
