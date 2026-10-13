@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct ColorPickerExample: View {
+    @State private var color = "#7747ff"
+
+    var body: some View {
+        ManicatColorPicker(hex: $color)
+            .frame(maxWidth: 320)
+    }
+}

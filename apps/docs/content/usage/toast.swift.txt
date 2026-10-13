@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct ToastExample: View {
+    @State private var saved = false
+
+    var body: some View {
+        ManicatButton("Show toast", variant: .secondary) { saved = true }
+            .manicatToast(isPresented: $saved, title: "Saved", description: "Your changes are live.")
+            .frame(minHeight: 160)
+    }
+}

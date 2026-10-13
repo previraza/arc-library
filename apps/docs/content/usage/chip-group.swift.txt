@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct ChipGroupExample: View {
+    @State private var topics: Set<String> = ["design"]
+    private let options = ["Design", "Code", "Docs", "Tests", "Release"].map { ManicatChipOption(value: $0.lowercased(), label: $0) }
+
+    var body: some View {
+        ManicatChipGroup(options: options, value: $topics, label: "Topics", maxVisible: 4)
+            .frame(maxWidth: 360)
+    }
+}

@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct FileUploadExample: View {
+    @State private var files: [ManicatFileUploadItem] = []
+
+    var body: some View {
+        ManicatFileUpload(files: $files, label: "Upload a cover", description: "PNG or JPG up to 5 MB.", maxSize: 5 * 1_048_576) {
+            // Open your picker here (fileImporter, PhotosPicker…) and return what was chosen.
+            [ManicatPickedFile(name: "cover.png", size: 2_400_000)]
+        }
+        .frame(maxWidth: 380)
+    }
+}

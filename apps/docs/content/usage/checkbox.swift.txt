@@ -1,0 +1,14 @@
+import SwiftUI
+
+struct CheckboxExample: View {
+    @State private var terms = false
+    @State private var some: ManicatCheckedState = .indeterminate
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            ManicatCheckbox(isOn: $terms, label: "Accept the terms", description: "You can change this later.")
+            ManicatCheckbox(state: $some, label: "Some selected")
+            ManicatCheckbox(isOn: .constant(false), label: "Disabled").disabled(true)
+        }
+    }
+}

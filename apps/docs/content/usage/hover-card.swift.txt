@@ -1,0 +1,16 @@
+import SwiftUI
+
+struct HoverCardExample: View {
+    var body: some View {
+        ManicatHoverCard {
+            Text("@manicat").font(.system(size: 14, weight: .medium)).underline()
+        } content: {
+            ManicatHoverCardProfile(
+                name: "Manicat UI",
+                role: "Component library",
+                bio: "Components you own, for every framework.",
+                stats: [.init(label: "components", value: "107"), .init(label: "blocks", value: "18")]
+            )
+        }
+    }
+}

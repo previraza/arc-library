@@ -1,0 +1,16 @@
+import SwiftUI
+
+struct GaugeExample: View {
+    @State private var load = 64.0
+
+    var body: some View {
+        VStack(spacing: 16) {
+            ManicatGauge(value: load, label: "CPU", thresholds: [
+                ManicatGaugeThreshold(from: 0, tone: .success, label: "Healthy"),
+                ManicatGaugeThreshold(from: 60, tone: .warning, label: "Busy"),
+                ManicatGaugeThreshold(from: 85, tone: .danger, label: "Overloaded"),
+            ])
+            Slider(value: $load, in: 0...100).frame(maxWidth: 240)
+        }
+    }
+}

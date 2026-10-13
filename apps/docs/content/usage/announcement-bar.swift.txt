@@ -1,0 +1,12 @@
+import SwiftUI
+
+struct AnnouncementBarExample: View {
+    @State private var open = true
+
+    var body: some View {
+        ManicatAnnouncementBar(messages: [
+            ManicatAnnouncement(id: "v2", message: "Manicat 2.0 is out.", actionLabel: "Read the notes") {},
+            ManicatAnnouncement(id: "swift", message: "Svelte and Swift ports are in preview."),
+        ], open: $open, interval: 4)
+    }
+}

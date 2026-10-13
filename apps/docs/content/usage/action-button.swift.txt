@@ -1,0 +1,9 @@
+import SwiftUI
+
+struct ActionButtonExample: View {
+    var body: some View {
+        ManicatActionButton("Save changes", successLabel: "Saved", pendingLabel: "Saving…") {
+            try await Task.sleep(nanoseconds: 1_200_000_000)
+        }
+    }
+}

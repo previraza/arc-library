@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct CopyButtonExample: View {
+    var body: some View {
+        HStack(spacing: 12) {
+            ManicatCopyButton(value: "npx shadcn add button")
+            ManicatCopyButton(value: "npx shadcn add button", iconOnly: true, variant: .plain)
+        }
+    }
+}

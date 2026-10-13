@@ -1,0 +1,12 @@
+import SwiftUI
+
+struct BarChartExample: View {
+    private let data = zip(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], [320.0, 540, 410, 620, 780, 290, 350]).map {
+        ManicatBarChartDatum(key: $0, label: $0, axisLabel: String($0.prefix(1)), value: $1)
+    }
+
+    var body: some View {
+        ManicatBarChart(data: data, label: "Visits", period: "This week", unit: "visits", showAverage: true)
+            .frame(maxWidth: 440)
+    }
+}

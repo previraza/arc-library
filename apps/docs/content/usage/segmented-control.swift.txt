@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct SegmentedControlExample: View {
+    @State private var view = "list"
+
+    var body: some View {
+        ManicatSegmentedControl(
+            options: [ManicatSegment(value: "list", label: "List"), ManicatSegment(value: "board", label: "Board"), ManicatSegment(value: "calendar", label: "Calendar")],
+            value: $view,
+            label: "View"
+        )
+    }
+}

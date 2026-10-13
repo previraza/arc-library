@@ -1,0 +1,16 @@
+import SwiftUI
+
+struct CodeBlockExample: View {
+    private let code = """
+    struct ContentView: View {
+        var body: some View {
+            ManicatButton("Save") {}
+        }
+    }
+    """
+
+    var body: some View {
+        ManicatCodeBlock(code: code, filename: "ContentView.swift", maxLines: 3)
+            .frame(maxWidth: 480)
+    }
+}

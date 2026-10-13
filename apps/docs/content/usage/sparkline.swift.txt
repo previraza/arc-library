@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct SparklineExample: View {
+    var body: some View {
+        HStack(spacing: 16) {
+            ManicatSparkline(data: [4, 6, 5, 8, 7, 11, 10, 14], label: "Revenue", value: "$12.4k", change: "+8.2%")
+            ManicatSparkline(data: [9, 8, 8, 6, 7, 5, 4, 4], label: "Churn", value: "2.1%", change: "-0.4%", tone: .danger)
+        }
+    }
+}

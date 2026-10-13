@@ -1,0 +1,13 @@
+import SwiftUI
+
+struct RadioGroupExample: View {
+    @State private var plan = "pro"
+
+    var body: some View {
+        ManicatRadioGroup("Plan", options: [
+            ManicatRadioOption(value: "free", label: "Free", description: "For side projects"),
+            ManicatRadioOption(value: "pro", label: "Pro", description: "For teams"),
+            ManicatRadioOption(value: "scale", label: "Scale"),
+        ], value: $plan)
+    }
+}

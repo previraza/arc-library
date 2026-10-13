@@ -44,8 +44,31 @@ export async function portPayload(item, { framework, files }, content) {
       if (!paths.includes(lib) && await readFile(lib, "utf8").then(() => true, () => false)) paths.push(lib);
     }
   }
+  // Swift has no imports between files, so a port names what it uses: `ManicatAvatar` is the avatar item, and a public type of
+  // a lib file (`ManicatChart`) ships that file.
+  const swiftSiblings = new Set();
+  if (framework.id === "swift") {
+    // The public types each Swift port declares tell which item a name belongs to.
+    const known = new Map();
+    for (const kind of ["components", "blocks"]) {
+      for (const name of await readdir(`registry/${kind}`)) {
+        const source = await readFile(`registry/${kind}/${name}/${name}.swift`, "utf8").catch(() => "");
+        for (const match of source.matchAll(/public (?:struct|enum|final class|class|protocol) (Manicat\w+)/g)) known.set(match[1], name);
+      }
+    }
+    const libs = [];
+    for (const name of await readdir("lib")) {
+      if (!name.endsWith(".swift") || (framework.shared ?? []).includes(`lib/${name}`)) continue;
+      libs.push({ file: `lib/${name}`, types: [...(await readFile(`lib/${name}`, "utf8")).matchAll(/public (?:struct|enum|final class|class) (\w+)/g)].map(match => match[1]) });
+    }
+    for (const file of files) {
+      const text = await readFile(file, "utf8");
+      for (const [type, name] of known) if (name !== item.name && new RegExp(`\\b${type}\\b`).test(text)) swiftSiblings.add(name);
+      for (const lib of libs) if (!paths.includes(lib.file) && lib.types.some(type => new RegExp(`\\b${type}\\b`).test(text))) paths.push(lib.file);
+    }
+  }
   // A port that imports another component's port (`@/registry/components/avatar/avatar.vue`) depends on that port's item.
-  const siblings = new Set();
+  const siblings = new Set(swiftSiblings);
   for (const file of files) {
     const source = await readFile(file, "utf8");
     for (const match of source.matchAll(/["']@\/registry\/components\/([a-z0-9-]+)\//g)) if (match[1] !== item.name) siblings.add(match[1]);

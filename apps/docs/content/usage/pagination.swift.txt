@@ -1,0 +1,9 @@
+import SwiftUI
+
+struct PaginationExample: View {
+    @State private var page = 3
+
+    var body: some View {
+        ManicatPagination(page: $page, pageCount: 12)
+    }
+}

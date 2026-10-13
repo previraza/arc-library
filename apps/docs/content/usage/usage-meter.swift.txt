@@ -1,0 +1,12 @@
+import SwiftUI
+
+struct UsageMeterExample: View {
+    var body: some View {
+        ManicatUsageMeter(label: "Storage", segments: [
+            ManicatUsageSegment(id: "photos", label: "Photos", value: 18),
+            ManicatUsageSegment(id: "docs", label: "Documents", value: 12),
+            ManicatUsageSegment(id: "other", label: "Other", value: 9),
+        ], limit: 50, unit: "GB")
+        .frame(maxWidth: 420)
+    }
+}

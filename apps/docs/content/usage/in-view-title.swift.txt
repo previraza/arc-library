@@ -1,0 +1,10 @@
+import SwiftUI
+
+struct InViewTitleExample: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            ManicatInViewTitle("Blur into focus")
+            ManicatInViewTitle("One word at a time", variant: .word)
+        }
+    }
+}
