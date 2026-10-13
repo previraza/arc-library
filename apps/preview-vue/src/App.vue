@@ -55,7 +55,7 @@ const groups = computed(() => ["components", "blocks"].map((kind) => ({ kind, it
         <section class="viewer__pane">
           <span>Vue</span>
           <div class="viewer__stage">
-            <component :is="demo" v-if="demo" />
+            <div v-if="demo" class="viewer__demo"><component :is="demo" /></div>
             <p v-else class="viewer__empty">No demo yet: add <code>apps/docs/content/usage/{{ current }}.vue.txt</code>.</p>
           </div>
         </section>

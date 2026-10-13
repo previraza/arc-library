@@ -16,6 +16,50 @@ const make = (tag: "span", className: string) => {
   return node;
 };
 
+export interface WidthFollower {
+  /** Call just before the content changes: the next resize within 700ms springs instead of jumping. */
+  arm(): void;
+  destroy(): void;
+}
+
+/**
+ * Keeps `slot` as wide as `content`. The first measure and any resize that no change of content caused (a late web font, a parent
+ * reflow) jump straight to the new width, so nothing wobbles on first paint; a resize that follows `arm()` springs.
+ */
+export function followWidth(slot: HTMLElement, content: HTMLElement, reduced: boolean): WidthFollower {
+  let measured = false;
+  let armedUntil = 0;
+  let width = 0;
+  let running: AnimationPlaybackControls | undefined;
+  const apply = (value: number) => {
+    width = value;
+    slot.style.width = `${value}px`;
+  };
+  const observer = new ResizeObserver(([entry]) => {
+    const next = entry.contentRect.width;
+    running?.stop();
+    if (!next || !measured || reduced || performance.now() > armedUntil) {
+      measured = next > 0;
+      if (next) apply(next);
+      else slot.style.width = "";
+      delete slot.dataset.morphing;
+      return;
+    }
+    slot.dataset.morphing = "";
+    running = animate(width, next, { ...motionTokens.spring.morph, onUpdate: apply, onComplete: () => delete slot.dataset.morphing });
+  });
+  observer.observe(content);
+  return {
+    arm() {
+      armedUntil = performance.now() + 700;
+    },
+    destroy() {
+      observer.disconnect();
+      running?.stop();
+    },
+  };
+}
+
 export type MorphTextClasses = { morph: string; glyphs: string; glyph: string };
 
 export interface MorphText {
@@ -28,13 +72,18 @@ export interface MorphText {
  * One label that turns into the next one: kept letters glide into place, new letters rise in from a soft blur, removed letters
  * float up and out, and the wrapper's width follows on a spring. The counterpart of `MorphText` in action-button.tsx.
  */
-export function createMorphText(host: HTMLElement, { text, reduced, classes }: { text: string; reduced: boolean; classes: MorphTextClasses }): MorphText {
+export function createMorphText(
+  host: HTMLElement,
+  { text, reduced, classes, arm }: { text: string; reduced: boolean; classes: MorphTextClasses; /** The letters only, with no wrapper of their own: the caller follows the width and is told when the text changes. */ arm?: () => void },
+): MorphText {
   type Glyph = { char: string; node: HTMLElement };
-  const morph = make("span", classes.morph);
   const row = make("span", classes.glyphs);
-  morph.setAttribute("aria-hidden", "true");
-  morph.append(row);
-  host.replaceChildren(morph);
+  const morph = arm ? undefined : make("span", classes.morph);
+  if (morph) {
+    morph.setAttribute("aria-hidden", "true");
+    morph.append(row);
+  }
+  host.replaceChildren(morph ?? row);
 
   const build = (char: string): Glyph => {
     const node = make("span", classes.glyph);
@@ -45,35 +94,13 @@ export function createMorphText(host: HTMLElement, { text, reduced, classes }: {
   row.append(...glyphs.map((glyph) => glyph.node));
   let current = text;
 
-  // The wrapper's width: the first measure and anything not caused by new text jump, a text change springs.
-  let measured = false;
-  let armedUntil = 0;
-  let width = 0;
-  let widthAnimation: AnimationPlaybackControls | undefined;
-  const applyWidth = (value: number) => {
-    width = value;
-    morph.style.width = `${value}px`;
-  };
-  const observer = new ResizeObserver(([entry]) => {
-    const next = entry.contentRect.width;
-    widthAnimation?.stop();
-    if (!next || !measured || reduced || performance.now() > armedUntil) {
-      measured = next > 0;
-      if (next) applyWidth(next);
-      else morph.style.width = "";
-      delete morph.dataset.morphing;
-      return;
-    }
-    morph.dataset.morphing = "";
-    widthAnimation = animate(width, next, { ...motionTokens.spring.morph, onUpdate: applyWidth, onComplete: () => delete morph.dataset.morphing });
-  });
-  observer.observe(row);
+  const follower = morph ? followWidth(morph, row, reduced) : { arm: arm ?? (() => undefined), destroy: () => undefined };
 
   return {
     set(next) {
       if (next === current) return;
       current = next;
-      armedUntil = performance.now() + 700;
+      follower.arm();
 
       const nextChars = [...next];
       const before = glyphs.map((glyph) => glyph.char);
@@ -116,8 +143,7 @@ export function createMorphText(host: HTMLElement, { text, reduced, classes }: {
       }
     },
     destroy() {
-      observer.disconnect();
-      widthAnimation?.stop();
+      follower.destroy();
     },
   };
 }
@@ -204,7 +230,7 @@ export function drawnCheckIcon(className: string, reduced: boolean, size = 17) {
 export function pressable(node: HTMLElement, { reduced, enabled }: { reduced: boolean; enabled: () => boolean }) {
   if (reduced) return () => undefined;
   const down = () => {
-    if (enabled()) animate(node, { scale: node.offsetWidth > 220 ? 0.985 : 0.97 }, { duration: motionTokens.duration.instant, ease: ease("standard") });
+    if (enabled()) animate(node, { scale: node.offsetWidth > 220 ? 0.985 : node.offsetWidth && node.offsetWidth <= 48 ? 0.96 : 0.97 }, { duration: motionTokens.duration.instant, ease: ease("standard") });
   };
   const up = () => {
     animate(node, { scale: 1 }, motionTokens.spring.snappy);
@@ -216,3 +242,117 @@ export function pressable(node: HTMLElement, { reduced, enabled }: { reduced: bo
     for (const type of ["pointerup", "pointerleave", "pointercancel"]) node.removeEventListener(type, up);
   };
 }
+
+/** Takes a node out of the flow where it stands, so what replaces it takes its place at once (`mode="popLayout"` in React). */
+export function popOut(node: HTMLElement) {
+  const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = node;
+  Object.assign(node.style, { position: "absolute", left: `${offsetLeft}px`, top: `${offsetTop}px`, width: `${offsetWidth}px`, height: `${offsetHeight}px`, margin: "0" });
+}
+
+/** A key that changes when the words or the elements of a label change, and not when only attributes do. */
+function labelKey(node: Node): string {
+  if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? "";
+  if (!(node instanceof Element)) return "";
+  const name = node.tagName.toLowerCase();
+  // Icons are told apart by their class (lucide names it after the icon), not only by being an svg.
+  return `<${name}${name === "svg" ? node.getAttribute("class") ?? "" : ""}>${[...node.childNodes].map(labelKey).join("")}`;
+}
+
+export interface LabelSwap {
+  destroy(): void;
+}
+
+/**
+ * Crossfades a button's label when its content changes. The framework renders the label into `phase` as usual; this watches it,
+ * and when the words or elements are different it keeps a copy of the old label, pops it out of the flow, lifts it away, and
+ * rises the new one in from a soft blur while the slot's width follows on a spring. A label that only updates an attribute stays
+ * in place. An icon-only label scales in instead of rising. The counterpart of `LabelPhase` in button.tsx.
+ */
+export function createLabelSwap(
+  slot: HTMLElement,
+  content: HTMLElement,
+  phase: HTMLElement,
+  { reduced, follower: shared, icon: alwaysIcon = false, pop = true }: { reduced: boolean; /** A width follower the caller owns, when the slot has other content that changes too. */ follower?: WidthFollower; /** The content is an icon, so it scales instead of rising. */ icon?: boolean; /** Take the old content out of the flow (a label); an icon stacked in a grid cell leaves in place. */ pop?: boolean },
+): LabelSwap {
+  const follower = shared ?? followWidth(slot, content, reduced);
+  let key = labelKey(phase);
+  const snapshot = () => ({ copy: phase.cloneNode(true) as HTMLElement, box: { left: phase.offsetLeft, top: phase.offsetTop, width: phase.offsetWidth, height: phase.offsetHeight } });
+  let before = snapshot();
+  const isIcon = (value: string) => alwaysIcon || !/\S/.test(value.replace(/<[^>]*>/g, ""));
+
+  const observer = new MutationObserver(() => {
+    const next = labelKey(phase);
+    if (next === key) {
+      before = snapshot();
+      return;
+    }
+    const icon = isIcon(next);
+    const leaving = before.copy;
+    key = next;
+    follower.arm();
+    leaving.removeAttribute("id");
+    leaving.setAttribute("aria-hidden", "true");
+    if (pop) Object.assign(leaving.style, { position: "absolute", left: `${before.box.left}px`, top: `${before.box.top}px`, width: `${before.box.width}px`, height: `${before.box.height}px`, margin: "0" });
+    content.append(leaving);
+
+    if (reduced) {
+      animate(leaving, { opacity: 0 }, { duration: motionTokens.duration.instant }).finished.then(() => leaving.remove());
+      animate(phase, { opacity: [0, 1] }, { duration: motionTokens.duration.instant });
+    } else {
+      const out = icon ? { opacity: 0, scale: 0.6, filter: blur(motionTokens.blur.subtle) } : { opacity: 0, y: -3, filter: blur(motionTokens.blur.soft) };
+      animate(leaving, out, { duration: motionTokens.duration.fast, ease: ease("standard") }).finished.then(() => leaving.remove());
+      if (icon) animate(phase, { opacity: [0, 1], scale: [0.6, 1], filter: [blur(motionTokens.blur.subtle), blur(0)] }, { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: ease("enter") }, filter: { duration: motionTokens.duration.fast, ease: ease("enter") } });
+      else animate(phase, { opacity: [0, 1], y: [4, 0], filter: [blur(motionTokens.blur.soft), blur(0)] }, { duration: motionTokens.duration.standard, ease: ease("enter") });
+    }
+    before = snapshot();
+  });
+  observer.observe(phase, { subtree: true, childList: true, characterData: true });
+
+  return {
+    destroy() {
+      observer.disconnect();
+      if (!shared) follower.destroy();
+    },
+  };
+}
+
+export interface Presence {
+  /** Shows or hides the node, with its enter and exit motion. Pass `false` as the second argument to skip the motion (the first paint). */
+  set(visible: boolean, motion?: boolean): void;
+  destroy(): void;
+}
+
+/** An element that comes and goes: `build` makes it, `enter` and `exit` are its motion. The counterpart of an `AnimatePresence` child. */
+export function createPresence(parent: HTMLElement, build: () => HTMLElement, { enter, exit }: { enter: (node: HTMLElement) => unknown; exit: (node: HTMLElement) => { finished: Promise<unknown> } }): Presence {
+  let node: HTMLElement | undefined;
+  return {
+    set(visible, motion = true) {
+      if (visible && !node) {
+        node = build();
+        parent.append(node);
+        if (motion) enter(node);
+      } else if (!visible && node) {
+        const leaving = node;
+        node = undefined;
+        if (motion) exit(leaving).finished.then(() => leaving.remove());
+        else leaving.remove();
+      }
+    },
+    destroy() {
+      node?.remove();
+      node = undefined;
+    },
+  };
+}
+
+/** The motion of the loader of a button: it scales in on a spring and out a little smaller. */
+export const loaderMotion = (reduced: boolean) => ({
+  enter: (node: HTMLElement) =>
+    reduced
+      ? animate(node, { opacity: [0, 1] }, { duration: motionTokens.duration.instant })
+      : animate(node, { opacity: [0, 1], scale: [0.6, 1] }, { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: ease("enter") } }),
+  exit: (node: HTMLElement) =>
+    reduced
+      ? animate(node, { opacity: 0 }, { duration: motionTokens.duration.instant })
+      : animate(node, { opacity: 0, scale: 0.8, filter: blur(motionTokens.blur.subtle) }, { duration: motionTokens.duration.fast, ease: ease("standard") }),
+});

@@ -52,7 +52,7 @@ const fromHash = () => decodeURIComponent(location.hash.slice(1)) || entries[0]?
         <div class="viewer__stage">
           {#if demo}
             {@const Demo = demo}
-            <Demo />
+            <div class="viewer__demo"><Demo /></div>
           {:else}
             <p class="viewer__empty">No demo yet: add <code>apps/docs/content/usage/{current}.svelte.txt</code>.</p>
           {/if}

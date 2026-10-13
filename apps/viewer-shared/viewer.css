@@ -25,4 +25,7 @@ body { margin: 0; background: var(--background); color: var(--foreground); font-
 .embed .viewer__nav, .embed .viewer__bar, .embed .viewer__pane:nth-child(n+2), .embed .viewer__pane > span { display: none; }
 .embed .viewer__main, .embed .viewer__panes, .embed .viewer__pane { display: block; padding: 0; gap: 0; }
 .embed .viewer__stage { display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100%; border: 0; border-radius: 0; padding: 16px; background: transparent; }
-.embed .viewer__stage > :not(iframe) { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 42rem; }
+.embed .viewer__demo { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 42rem; }
+
+.viewer__demo { display: contents; }
+.embed .viewer__demo { display: flex; }

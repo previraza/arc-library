@@ -3,11 +3,16 @@
  * class of the CSS module renamed `.mc-<item>__<name>` so it can be global and cannot collide. The ports use these class names
  * in their markup, which is what keeps them looking exactly like the React version.
  *
- *   node scripts/port-css.mjs action-button [file.module.css]
+ *   node scripts/port-css.mjs action-button [--vars=reka|bits] [file.module.css]
+ *
+ * `--vars` renames the custom properties of Radix (`--radix-dropdown-menu-content-transform-origin`) to those of the library a port
+ * uses instead: `--reka-…` for Reka UI (Vue) and `--bits-…` for Bits UI (Svelte).
  */
 import { readFile } from "node:fs/promises";
 
-const [item, file = `${item}.module.css`] = process.argv.slice(2);
+const args = process.argv.slice(2);
+const vars = args.find((arg) => arg.startsWith("--vars="))?.slice(7);
+const [item, file = `${item}.module.css`] = args.filter((arg) => !arg.startsWith("--"));
 const dir = `registry/${item.startsWith("@") ? "" : "components"}`;
 const css = await readFile(`${dir}/${item}/${file}`, "utf8").catch(() => readFile(`registry/blocks/${item}/${file}`, "utf8"));
 
@@ -16,4 +21,5 @@ const frames = new Set([...css.matchAll(/@keyframes\s+([\w-]+)/g)].map((match) =
 let out = css;
 for (const name of [...names].sort((a, b) => b.length - a.length)) out = out.replace(new RegExp(`\\.${name}(?![\\w-])`, "g"), `.mc-${item}__${name}`);
 for (const name of frames) out = out.replace(new RegExp(`(?<![\\w-])${name}(?![\\w-])`, "g"), `mc-${item}-${name}`);
+if (vars) out = out.replaceAll("--radix-", `--${vars}-`);
 process.stdout.write(out);
