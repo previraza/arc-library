@@ -12,6 +12,11 @@ const steps = [
 </script>
 
 <template>
-  <Stepper :steps="steps" :current="current" selectable @select="current = $event" />
-  <Button @click="current = Math.min(steps.length, current + 1)">Next</Button>
+  <div style="display: grid; width: 100%; max-width: 42rem; gap: 16px">
+    <Stepper :steps="steps" :current="current" details="all" @step-select="current = $event" />
+    <div style="display: flex; gap: 8px">
+      <Button size="sm" variant="secondary" @click="current = Math.max(0, current - 1)">Back</Button>
+      <Button size="sm" @click="current = Math.min(steps.length, current + 1)">Next</Button>
+    </div>
+  </div>
 </template>
