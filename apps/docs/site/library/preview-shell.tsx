@@ -52,7 +52,7 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
       aria-labelledby={full ? titleId : undefined}
       className={
         full
-          ? "fixed inset-0 z-[60] flex flex-col gap-3 bg-fd-background p-3 sm:p-5"
+          ? "arc-fullscreen-in fixed inset-0 z-[60] flex flex-col gap-3 bg-fd-background p-3 sm:p-5"
           : "flex flex-col gap-3"
       }
     >
@@ -120,10 +120,10 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
       </div>
 
       {/* Both panes stay mounted: switching tabs or size must not reset the example's state. */}
-      <div hidden={Boolean(showCode)} className={full ? "min-h-0 flex-1" : undefined}>
+      <div hidden={Boolean(showCode)} className={full ? "arc-fade-in min-h-0 flex-1" : "arc-fade-in"}>
         <div
-          className={`relative flex items-center justify-center overflow-auto rounded-[var(--radius-surface)] border border-fd-border bg-fd-background p-6 sm:p-10 ${
-            full ? "h-full" : size === "mobile" ? "min-h-[700px]" : "min-h-56"
+          className={`relative flex items-center justify-center overflow-auto rounded-[var(--radius-surface)] border border-fd-border bg-fd-background p-6 transition-[min-height] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none sm:p-10 ${
+            full ? "h-full" : size === "mobile" ? "min-h-[720px]" : "min-h-56"
           }`}
           style={
             bare
@@ -135,15 +135,13 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
                 }
           }
         >
-          {size === "mobile" ? (
-            <PhoneFrame full={full}>{children}</PhoneFrame>
-          ) : (
-            <div className="relative z-10 flex w-full max-w-2xl items-center justify-center">{children}</div>
-          )}
+          <Device mobile={size === "mobile"} full={full}>
+            {children}
+          </Device>
         </div>
       </div>
       {code && (
-        <div hidden={!showCode} className={full ? "min-h-0 flex-1 overflow-auto" : undefined}>
+        <div hidden={!showCode} className={full ? "arc-fade-in min-h-0 flex-1 overflow-auto" : "arc-fade-in"}>
           {code}
         </div>
       )}
@@ -151,24 +149,63 @@ export function PreviewShell({ children, code, label, bare }: PreviewShellProps)
   );
 }
 
-/** A phone: bezel, dynamic island and home indicator around a screen that centres the example both ways. */
-function PhoneFrame({ children, full }: { children: ReactNode; full: boolean }) {
+const PHONE_RATIO = 393 / 852;
+
+/**
+ * One element that is either the plain preview column or a phone. Switching animates its width, height, bezel and radius,
+ * so the phone appears to be built around the example (and folds back into the column) instead of swapping in.
+ */
+function Device({ mobile, full, children }: { mobile: boolean; full: boolean; children: ReactNode }) {
+  const phoneHeight = full ? "min(740px, 85vh)" : "650px";
+  const fade = "transition-opacity duration-300 ease-[var(--ease-standard)] motion-reduce:transition-none";
+
   return (
     <div
-      className="relative z-10 shrink-0 rounded-[3rem] border border-fd-border bg-fd-foreground/90 p-2.5 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.35)]"
-      style={{ width: 340, height: full ? "min(720px, 100%)" : 640 }}
+      className="relative z-10 shrink-0 transition-[width,height,padding,border-radius,background-color,box-shadow] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none"
+      style={{
+        interpolateSize: "allow-keywords",
+        width: mobile ? `calc(${phoneHeight} * ${PHONE_RATIO})` : "min(100%, 42rem)",
+        height: mobile ? phoneHeight : "auto",
+        padding: mobile ? 7 : 0,
+        borderRadius: mobile ? "2.75rem" : "0rem",
+        backgroundColor: mobile ? "color-mix(in oklab, var(--color-fd-foreground) 90%, transparent)" : "transparent",
+        boxShadow: mobile
+          ? "0 0 0 1px rgb(0 0 0 / 0.12), 0 30px 70px -24px rgb(0 0 0 / 0.45)"
+          : "0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0)",
+      }}
     >
-      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[2.4rem] bg-fd-background">
-        <span aria-hidden className="absolute left-1/2 top-2.5 z-20 h-6 w-24 -translate-x-1/2 rounded-full bg-fd-foreground/90" />
-        <div className="flex h-12 shrink-0 items-end justify-between px-7 pb-1 text-[11px] font-medium text-fd-foreground" aria-hidden>
+      <span aria-hidden className={`absolute -left-[3px] top-24 h-8 w-[3px] rounded-l bg-fd-foreground/70 ${fade} ${mobile ? "opacity-100" : "opacity-0"}`} />
+      <span aria-hidden className={`absolute -left-[3px] top-36 h-12 w-[3px] rounded-l bg-fd-foreground/70 ${fade} ${mobile ? "opacity-100" : "opacity-0"}`} />
+      <span aria-hidden className={`absolute -right-[3px] top-32 h-16 w-[3px] rounded-r bg-fd-foreground/70 ${fade} ${mobile ? "opacity-100" : "opacity-0"}`} />
+
+      <div
+        className="relative flex h-full w-full flex-col overflow-hidden bg-fd-background transition-[border-radius] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none"
+        style={{ borderRadius: mobile ? "2.3rem" : "0rem" }}
+      >
+        <span
+          aria-hidden
+          className={`absolute left-1/2 top-2 z-20 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-fd-foreground/90 ${fade} ${mobile ? "opacity-100" : "opacity-0"}`}
+        />
+        <div
+          aria-hidden
+          className={`flex shrink-0 items-end justify-between overflow-hidden px-7 text-[11px] font-medium text-fd-foreground transition-[height,opacity] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none ${
+            mobile ? "h-11 pb-1 opacity-100" : "h-0 opacity-0"
+          }`}
+        >
           <span>9:41</span>
           <span className="tracking-widest">●●●</span>
         </div>
-        {/* container-type lets the example size itself to the screen, not the page. */}
-        <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto p-4 [container-type:inline-size]">
+
+        <div className={`flex min-h-0 flex-1 items-center justify-center ${mobile ? "overflow-auto p-4" : ""}`}>
           <div className="flex w-full items-center justify-center">{children}</div>
         </div>
-        <span aria-hidden className="mx-auto mb-2 mt-1 h-1 w-28 shrink-0 rounded-full bg-fd-foreground/80" />
+
+        <span
+          aria-hidden
+          className={`mx-auto shrink-0 rounded-full bg-fd-foreground/80 transition-[height,margin,opacity] duration-500 ease-[var(--ease-standard)] motion-reduce:transition-none ${
+            mobile ? "mb-2 mt-1 h-1 w-28 opacity-100" : "h-0 w-28 opacity-0"
+          }`}
+        />
       </div>
     </div>
   );
