@@ -42,6 +42,7 @@ public struct ManicatFilterField: Identifiable {
 public struct ManicatFilterToolbar<Leading: View>: View {
     public struct Styles {
         public var chip: ManicatStyle = { $0 }
+        public var chipText: ManicatStyle = { $0 }
         public var remove: ManicatStyle = { $0 }
         public var add: ManicatStyle = { $0 }
         public var clear: ManicatStyle = { $0 }
@@ -73,7 +74,7 @@ public struct ManicatFilterToolbar<Leading: View>: View {
             leading
             ForEach(filters) { filter in
                 HStack(spacing: 6) {
-                    Text(filter.label).font(.system(size: ManicatMetrics.textXs, weight: .medium)).foregroundStyle(tokens.foreground)
+                    Text(filter.label).font(.system(size: ManicatMetrics.textXs, weight: .medium)).foregroundStyle(tokens.foreground).manicatStyle(styles.chipText)
                     Button { filters.removeAll { $0.id == filter.id } } label: {
                         Text("×").font(.system(size: 14)).foregroundStyle(tokens.textMuted).manicatStyle(styles.remove)
                     }

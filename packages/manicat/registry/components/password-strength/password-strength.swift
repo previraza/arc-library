@@ -38,6 +38,7 @@ public func manicatEstimateStrength(_ password: String, rules: [ManicatPasswordR
 /// rules it checks.
 public struct ManicatPasswordStrength: View {
     public struct Styles {
+        public var label: ManicatStyle = { $0 }
         public var shell: ManicatStyle = { $0 }
         public var input: ManicatStyle = { $0 }
         public var toggle: ManicatStyle = { $0 }
@@ -73,7 +74,7 @@ public struct ManicatPasswordStrength: View {
         let tone = [tokens.border, tokens.danger, tokens.warning, tokens.series[0], tokens.success][strength.level]
 
         VStack(alignment: .leading, spacing: ManicatMetrics.space.s2) {
-            Text(label).font(.system(size: ManicatMetrics.textSm, weight: .medium)).foregroundStyle(tokens.foreground)
+            Text(label).font(.system(size: ManicatMetrics.textSm, weight: .medium)).foregroundStyle(tokens.foreground).manicatStyle(styles.label)
             HStack(spacing: ManicatMetrics.space.s2) {
                 Group {
                     if shown { TextField("", text: $password) } else { SecureField("", text: $password) }

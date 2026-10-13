@@ -9,6 +9,7 @@ public struct ManicatButton<Label: View>: View {
     public struct Styles {
         public var root: (AnyView) -> AnyView = { $0 }
         public var label: (AnyView) -> AnyView = { $0 }
+        public var spinner: (AnyView) -> AnyView = { $0 }
         public init() {}
     }
 
@@ -38,7 +39,7 @@ public struct ManicatButton<Label: View>: View {
                 label
                     .font(.system(size: ManicatMetrics.textSm, weight: .medium))
                     .opacity(loading ? 0 : 1)
-                    .overlay { if loading { ProgressView().controlSize(.small).tint(palette.text) } }
+                    .overlay { if loading { styles.spinner(AnyView(ProgressView().controlSize(.small).tint(palette.text))) } }
             ))
         }
         .buttonStyle(PressStyle(palette: palette, size: size, metrics: dimensions, dimmed: !enabled))

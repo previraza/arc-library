@@ -4,28 +4,44 @@ public enum ManicatBadgeTone { case neutral, success, info, warning, danger }
 
 /// Mirrors badge.tsx / badge.rn.tsx / badge.vue.
 public struct ManicatBadge: View {
+    public struct Styles {
+        public var root: ManicatStyle = { $0 }
+        public var icon: ManicatStyle = { $0 }
+        public var label: ManicatStyle = { $0 }
+        public init() {}
+    }
+
     @Environment(\.manicat) private var tokens
 
     private let title: String
     private let tone: ManicatBadgeTone
     private let small: Bool
+    private let icon: AnyView?
+    private let styles: Styles
 
-    public init(_ title: String, tone: ManicatBadgeTone = .neutral, small: Bool = false) {
+    public init(_ title: String, tone: ManicatBadgeTone = .neutral, small: Bool = false, icon: AnyView? = nil, styles: Styles = Styles()) {
         self.title = title
         self.tone = tone
         self.small = small
+        self.icon = icon
+        self.styles = styles
     }
 
     public var body: some View {
         let color = palette
-        Text(title)
-            .font(.system(size: small ? 11 : ManicatMetrics.textXs, weight: .medium))
-            .foregroundStyle(color.text)
-            .lineLimit(1)
-            .padding(.horizontal, small ? 8 : 10)
-            .frame(minHeight: small ? 22 : 26)
-            .background(color.background, in: Capsule())
-            .overlay(Capsule().stroke(color.border, lineWidth: 1))
+        HStack(spacing: 4) {
+            if let icon { icon.manicatStyle(styles.icon) }
+            Text(title)
+                .font(.system(size: small ? 11 : ManicatMetrics.textXs, weight: .medium))
+                .lineLimit(1)
+                .manicatStyle(styles.label)
+        }
+        .foregroundStyle(color.text)
+        .padding(.horizontal, small ? 8 : 10)
+        .frame(minHeight: small ? 22 : 26)
+        .background(color.background, in: Capsule())
+        .overlay(Capsule().stroke(color.border, lineWidth: 1))
+        .manicatStyle(styles.root)
     }
 
     private var palette: (text: Color, background: Color, border: Color) {
