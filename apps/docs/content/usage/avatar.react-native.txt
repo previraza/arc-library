@@ -1,0 +1,13 @@
+import { View } from "react-native";
+import { Avatar } from "@/components/manicat/avatar/avatar.rn";
+
+export function Presence() {
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+      <Avatar name="Elia Kuratli" size="sm" />
+      <Avatar name="Ada Lovelace" status="online" />
+      <Avatar name="Grace Hopper" size="lg" src="https://i.pravatar.cc/96?img=32" />
+      <Avatar name="Alan Turing" size="xl" status="offline" />
+    </View>
+  );
+}

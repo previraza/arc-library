@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import Input from "@/components/manicat/input/input.vue";
+
+const email = ref("ada@");
+const invalid = computed(() => !/^\S+@\S+\.\S+$/.test(email.value));
+</script>
+
+<template>
+  <form class="grid gap-4">
+    <Input label="Full name" placeholder="Ada Lovelace" autocomplete="name" />
+    <Input
+      v-model="email"
+      label="Work email"
+      type="email"
+      description="We send the receipt here."
+      :error="invalid ? 'Enter a valid email address.' : undefined"
+    />
+  </form>
+</template>

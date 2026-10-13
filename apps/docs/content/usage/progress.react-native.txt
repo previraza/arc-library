@@ -1,0 +1,18 @@
+import { useEffect, useState } from "react";
+import { View } from "react-native";
+import { Progress } from "@/components/manicat/progress/progress.rn";
+
+export function UploadProgress() {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setValue((current) => Math.min(100, current + 10)), 250);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <View style={{ padding: 16 }}>
+      <Progress label="Uploading brand-assets.zip" value={value} showValue />
+    </View>
+  );
+}

@@ -1,0 +1,22 @@
+import { useState } from "react";
+import { View } from "react-native";
+import { Textarea } from "@/components/manicat/textarea/textarea.rn";
+
+export function FeedbackForm() {
+  const [message, setMessage] = useState("");
+  const limit = 280;
+
+  return (
+    <View style={{ gap: 12 }}>
+      <Textarea
+        label="What could be better?"
+        placeholder="Tell us what got in your way"
+        rows={4}
+        value={message}
+        onChangeText={setMessage}
+        description={`${message.length}/${limit}`}
+        error={message.length > limit ? "Over the limit." : undefined}
+      />
+    </View>
+  );
+}

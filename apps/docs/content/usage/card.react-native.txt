@@ -1,0 +1,20 @@
+import { Text, View } from "react-native";
+import { Avatar } from "@/components/manicat/avatar/avatar.rn";
+import { Button } from "@/components/manicat/button/button.rn";
+import { Card } from "@/components/manicat/card/card.rn";
+
+export function Roadmap() {
+  return (
+    <View style={{ padding: 16 }}>
+      <Card
+        title="Quiet motion"
+        description="Springs for anything that moves on screen."
+        avatar={<Avatar name="Ada Lovelace" size="sm" />}
+        meta="Ada Lovelace"
+        status="Updated 2 hours ago"
+        action={<Button size="sm" variant="secondary">Open</Button>}
+        onPress={() => console.log("open")}
+      />
+    </View>
+  );
+}

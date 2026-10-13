@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import Avatar from "@/components/manicat/avatar/avatar.vue";
+</script>
+
+<template>
+  <div class="flex items-center gap-3">
+    <Avatar name="Elia Kuratli" size="sm" />
+    <Avatar name="Ada Lovelace" status="online" />
+    <Avatar name="Grace Hopper" size="lg" src="https://i.pravatar.cc/96?img=32" />
+    <Avatar name="Alan Turing" size="xl" status="offline" />
+  </div>
+</template>

@@ -1,0 +1,16 @@
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from "vue";
+import Progress from "@/components/manicat/progress/progress.vue";
+
+const value = ref(0);
+let timer: ReturnType<typeof setInterval>;
+
+onMounted(() => {
+  timer = setInterval(() => (value.value = Math.min(100, value.value + 10)), 250);
+});
+onUnmounted(() => clearInterval(timer));
+</script>
+
+<template>
+  <Progress label="Uploading brand-assets.zip" :value="value" show-value />
+</template>

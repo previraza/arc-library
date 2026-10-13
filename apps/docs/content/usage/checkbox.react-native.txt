@@ -1,0 +1,31 @@
+import { useState } from "react";
+import { View } from "react-native";
+import { Checkbox } from "@/components/manicat/checkbox/checkbox.rn";
+
+const permissions = ["Read", "Comment", "Edit"];
+
+export function Permissions() {
+  const [selected, setSelected] = useState<string[]>(["Read"]);
+  const all = selected.length === permissions.length;
+
+  return (
+    <View style={{ gap: 4 }}>
+      <Checkbox
+        label="All permissions"
+        checked={all ? true : selected.length > 0 ? "indeterminate" : false}
+        onCheckedChange={(next) => setSelected(next ? permissions : [])}
+      />
+      {permissions.map((permission) => (
+        <Checkbox
+          key={permission}
+          label={permission}
+          style={{ marginLeft: 28 }}
+          checked={selected.includes(permission)}
+          onCheckedChange={(next) =>
+            setSelected((current) => (next ? [...current, permission] : current.filter((entry) => entry !== permission)))
+          }
+        />
+      ))}
+    </View>
+  );
+}

@@ -3,6 +3,7 @@ import defaultMdxComponents from "fumadocs-ui/mdx";
 import { Steps } from "fumadocs-ui/components/steps";
 import { AccentSwitcher } from "@/site/components/accent-switcher";
 import { ThemeSwitch } from "@/site/components/theme-switch";
+import { PortCoverage } from "@/site/components/port-coverage";
 import { MotionPlayground } from "@/site/components/motion-playground";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -13,6 +14,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     AccentSwitcher,
     ThemeSwitch,
     MotionPlayground,
+    PortCoverage,
     ...components,
   } satisfies MDXComponents;
 }

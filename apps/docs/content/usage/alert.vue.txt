@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import Alert from "@/components/manicat/alert/alert.vue";
+
+const open = ref(true);
+</script>
+
+<template>
+  <div class="grid gap-3">
+    <Alert tone="warning" title="Your trial ends in 3 days" dismissible :open="open" @dismiss="open = false">
+      Add a payment method to keep your workspace.
+    </Alert>
+    <Alert tone="success" title="Deployed to production">v2.4.0 is live.</Alert>
+  </div>
+</template>
