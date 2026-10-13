@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import BillingPrice from "@/components/manicat/billing-toggle/billing-price.vue";
 import BillingToggle from "@/components/manicat/billing-toggle/billing-toggle.vue";
 
 const period = ref("yearly");
 </script>
 
 <template>
-  <BillingToggle v-model="period" />
-  <p>{{ period === "yearly" ? "$190 per year" : "$19 per month" }}</p>
+  <div style="display: grid; justify-items: center; gap: 12px">
+    <BillingToggle v-model="period" />
+    <BillingPrice :amount="period === 'yearly' ? 190 : 19" :period="period === 'yearly' ? 'per year' : 'per month'" :was="period === 'yearly' ? 228 : undefined" />
+  </div>
 </template>

@@ -1,9 +1,11 @@
 <script lang="ts">
+  import BillingPrice from "@/components/manicat/billing-toggle/billing-price.svelte";
   import BillingToggle from "@/components/manicat/billing-toggle/billing-toggle.svelte";
-  let period = $state("monthly");
+
+  let period = $state("yearly");
 </script>
 
-<div style="display: grid; gap: 12px; justify-items: start">
+<div style="display: grid; justify-items: center; gap: 12px">
   <BillingToggle bind:value={period} />
-  <strong>{period === "monthly" ? "$12 / month" : "$115 / year"}</strong>
+  <BillingPrice amount={period === "yearly" ? 190 : 19} period={period === "yearly" ? "per year" : "per month"} was={period === "yearly" ? 228 : undefined} />
 </div>
