@@ -1,0 +1,23 @@
+import SwiftUI
+
+struct ButtonDemo: ManicatDemo {
+    static let item = "button"
+    @State private var saving = false
+
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                ManicatButton("Save changes", loading: saving) {
+                    saving = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) { saving = false }
+                }
+                ManicatButton("Cancel", variant: .secondary) {}
+                ManicatButton("Skip", variant: .ghost, size: .sm) {}
+            }
+            HStack(spacing: 12) {
+                ManicatButton("Delete project", variant: .danger, size: .lg) {}
+                ManicatButton("Disabled") {}.disabled(true)
+            }
+        }
+    }
+}

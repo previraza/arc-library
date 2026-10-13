@@ -27,5 +27,5 @@
     "registryDependencies": ["https://manicat.dev/r/manicat-foundation.json"],
     "classNamesProp": "classNames"
   },
-  { "id": "swift", "label": "Swift", "suffix": ".swift", "lang": "swift", "classNamesProp": "styles" }
+  { "id": "swift", "label": "Swift", "suffix": ".swift", "lang": "swift", "shared": ["lib/ManicatTokens.swift"], "classNamesProp": "styles" }
 ]

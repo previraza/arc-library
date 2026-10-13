@@ -1,0 +1,22 @@
+{
+  "name": "@manicat/preview-svelte",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Viewer for the Svelte ports of Manicat UI. Loads every *.svelte port next to its React source and shows it beside the React demo.",
+  "scripts": {
+    "dev": "vite --port 3001",
+    "build": "vite build",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "dependencies": {
+    "manicat": "workspace:*"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.0.0",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
+    "typescript": "^6.0.3",
+    "vite": "^7.0.0"
+  }
+}

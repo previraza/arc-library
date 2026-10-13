@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit && vue-tsc --noEmit -p tsconfig.vue.json",
-    "check:registry": "node scripts/check-registry.mjs",
+    "check:registry": "node scripts/check-registry.mjs && node scripts/check-parity.mjs",
     "build:registry": "node scripts/build-registry.mjs"
   },
   "devDependencies": {
@@ -43,6 +43,7 @@
     "react-native": "~0.79.7",
     "react-native-svg": "^15.15.5",
     "typescript": "^6.0.3",
+    "svelte": "^5.0.0",
     "vue": "^3.5.43",
     "vue-tsc": "^3.3.13"
   }

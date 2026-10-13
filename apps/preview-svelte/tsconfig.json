@@ -1,0 +1,11 @@
+{
+  "extends": "../../packages/manicat/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "verbatimModuleSyntax": true,
+    "types": ["svelte", "vite/client"],
+    "paths": { "@/*": ["../../packages/manicat/*"] }
+  },
+  "include": ["src/**/*.ts", "src/**/*.svelte", "../../packages/manicat/registry/**/*.svelte", "../../packages/manicat/types/**/*.d.ts"],
+  "exclude": ["node_modules"]
+}

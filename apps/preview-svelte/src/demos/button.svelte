@@ -1,0 +1,17 @@
+<script lang="ts">
+  import Button from "@/registry/components/button/button.svelte";
+
+  let saving = $state(false);
+  function save() {
+    saving = true;
+    setTimeout(() => (saving = false), 1400);
+  }
+</script>
+
+<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+  <Button onclick={save} loading={saving}>Save changes</Button>
+  <Button variant="secondary">Cancel</Button>
+  <Button variant="ghost" size="sm">Skip</Button>
+  <Button variant="danger" size="lg">Delete project</Button>
+  <Button disabled>Disabled</Button>
+</div>

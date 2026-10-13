@@ -1,0 +1,10 @@
+{
+  "name": "@manicat/preview-swift",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Viewer for the Swift ports of Manicat UI: a SwiftUI package that compiles every *.swift port in place. Needs Xcode or a Swift 5.9 toolchain on macOS.",
+  "scripts": {
+    "generate": "node scripts/generate-demos.mjs"
+  }
+}
