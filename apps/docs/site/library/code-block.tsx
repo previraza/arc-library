@@ -59,6 +59,7 @@ export function CodeBlock({ label, lang, html, code, maxHeight }: CodeBlockProps
 
       <div
         id={label ? `code-${label}` : undefined}
+        className="grid"
         style={maxHeight ? { maxHeight, overflowY: "auto" } : undefined}
         dangerouslySetInnerHTML={html ? { __html: html } : undefined}
       >

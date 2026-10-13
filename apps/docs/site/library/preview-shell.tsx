@@ -288,8 +288,8 @@ function Device({
       style={shell}
     >
       <div
-        className={`relative h-full w-full overflow-hidden bg-fd-background transition-[border-radius] ${slow}`}
-        style={{ borderRadius: mobile ? 36 : 0 }}
+        className={`relative h-full w-full py-10 bg-fd-background transition-[border-radius] ${slow}`}
+        style={{ borderRadius: mobile ? 24 : 0 }}
       >
         <div className={`relative transition-[width,height,transform] ${slow}`} style={scaler}>
           <div
