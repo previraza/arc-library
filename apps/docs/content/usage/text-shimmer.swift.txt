@@ -1,12 +1,11 @@
 import SwiftUI
 
 struct TextShimmerExample: View {
-    @State private var thinking = true
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            ManicatTextShimmer("Thinking through your question…", active: thinking)
-            ManicatButton(thinking ? "Stop" : "Start", variant: .secondary, size: .sm) { thinking.toggle() }
+        VStack(spacing: 12) {
+            ManicatTextShimmer("Synthesizing the registry…")
+            ManicatTextShimmer("Mostly ready", active: false)
         }
+        .frame(maxWidth: .infinity)
     }
 }

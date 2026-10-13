@@ -26,7 +26,7 @@ export interface WidthFollower {
  * Keeps `slot` as wide as `content`. The first measure and any resize that no change of content caused (a late web font, a parent
  * reflow) jump straight to the new width, so nothing wobbles on first paint; a resize that follows `arm()` springs.
  */
-export function followWidth(slot: HTMLElement, content: HTMLElement, reduced: boolean): WidthFollower {
+export function followWidth(slot: HTMLElement, content: HTMLElement, reduced: boolean, { release = false, flag = "morphing" }: { /** Give the width back to the layout (auto) whenever it is not moving, instead of keeping the measured pixels. */ release?: boolean; /** The data attribute set on the slot while it springs, for CSS to hang rules on. */ flag?: string } = {}): WidthFollower {
   let measured = false;
   let armedUntil = 0;
   let width = 0;
@@ -40,13 +40,17 @@ export function followWidth(slot: HTMLElement, content: HTMLElement, reduced: bo
     running?.stop();
     if (!next || !measured || reduced || performance.now() > armedUntil) {
       measured = next > 0;
-      if (next) apply(next);
+      if (next && !release) apply(next);
       else slot.style.width = "";
-      delete slot.dataset.morphing;
+      delete slot.dataset[flag];
       return;
     }
-    slot.dataset.morphing = "";
-    running = animate(width, next, { ...motionTokens.spring.morph, onUpdate: apply, onComplete: () => delete slot.dataset.morphing });
+    if (release && !running) {
+      // Start the spring from where the slot is now, which is its natural width: it has not been pinned.
+      width = slot.getBoundingClientRect().width;
+    }
+    slot.dataset[flag] = "";
+    running = animate(width, next, { ...motionTokens.spring.morph, onUpdate: apply, onComplete: () => { delete slot.dataset[flag]; if (release) slot.style.width = ""; } });
   });
   observer.observe(content);
   return {
@@ -272,9 +276,9 @@ export function createLabelSwap(
   slot: HTMLElement,
   content: HTMLElement,
   phase: HTMLElement,
-  { reduced, follower: shared, icon: alwaysIcon = false, pop = true, width = true, variant = "label", direction }: { reduced: boolean; /** How the text moves: `label` (buttons), `badge` (badges, progress, empty states) or `rise` (it enters from the side the value moved toward, see `direction`). */ variant?: "label" | "badge" | "rise"; /** For `rise`: 1 when the new content is larger than the old, -1 when smaller. */ direction?: (next: string, previous: string) => number; /** Follow the width of the content on a spring. Off for a label whose box is set by its container. */ width?: boolean; /** A width follower the caller owns, when the slot has other content that changes too. */ follower?: WidthFollower; /** The content is an icon, so it scales instead of rising. */ icon?: boolean; /** Take the old content out of the flow (a label); an icon stacked in a grid cell leaves in place. */ pop?: boolean },
+  { reduced, follower: shared, icon: alwaysIcon = false, pop = true, width = true, release, flag, variant = "label", direction }: { reduced: boolean; /** Passed to the width follower: give the width back to the layout when it is not moving. */ release?: boolean; /** Passed to the width follower: the data attribute set while it springs. */ flag?: string; /** How the text moves: `label` (buttons), `badge` (badges, progress, empty states) or `rise` (it enters from the side the value moved toward, see `direction`). */ variant?: "label" | "badge" | "rise"; /** For `rise`: 1 when the new content is larger than the old, -1 when smaller. */ direction?: (next: string, previous: string) => number; /** Follow the width of the content on a spring. Off for a label whose box is set by its container. */ width?: boolean; /** A width follower the caller owns, when the slot has other content that changes too. */ follower?: WidthFollower; /** The content is an icon, so it scales instead of rising. */ icon?: boolean; /** Take the old content out of the flow (a label); an icon stacked in a grid cell leaves in place. */ pop?: boolean },
 ): LabelSwap {
-  const follower = shared ?? (width ? followWidth(slot, content, reduced) : { arm: () => undefined, destroy: () => undefined });
+  const follower = shared ?? (width ? followWidth(slot, content, reduced, { release, flag }) : { arm: () => undefined, destroy: () => undefined });
   let key = labelKey(phase);
   const snapshot = () => ({ copy: phase.cloneNode(true) as HTMLElement, box: { left: phase.offsetLeft, top: phase.offsetTop, width: phase.offsetWidth, height: phase.offsetHeight } });
   let before = snapshot();
@@ -833,4 +837,93 @@ export function createMenuHighlight(content: HTMLElement, highlight: HTMLElement
 export function drawPath(path: Element, { reduced, duration = motionTokens.duration.standard, ease: curve = "enter", delay = 0.05 }: { reduced: boolean; duration?: number; ease?: "enter" | "standard"; delay?: number }) {
   if (reduced) return;
   animate(path, { pathLength: [0, 1], opacity: [0, 1] }, { pathLength: { duration, ease: ease(curve), delay }, opacity: { duration: duration === motionTokens.duration.standard ? 0.05 : 0.01, delay } } as never);
+}
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Text shimmer
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+const band = 2.2;
+const falloff = [[-1, 0], [-0.5, 0.5], [-0.2, 0.9], [0, 1], [0.2, 0.9], [0.5, 0.5], [1, 0]] as const;
+const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+/** Paints the band at sweep position `t` (0 sits left of the text, 1 right of it) over a base that is `settle` of the way to solid. */
+function shimmerImage(t: number, settle: number) {
+  const base = `color-mix(in oklab, var(--ts-highlight) ${percent(settle)}, var(--ts-base))`;
+  const stops = falloff.map(([offset, strength]) => `color-mix(in oklab, var(--ts-highlight) ${percent(strength)}, ${base}) calc(${(t * 100).toFixed(2)}% + ${((2 * t - 1 + offset) * band).toFixed(3)}em)`);
+  return `linear-gradient(90deg, ${base}, ${stops.join(", ")}, ${base})`;
+}
+
+/**
+ * A calm light sweep across a short status line. The band loops only while work is ongoing, visible, and motion is allowed, and a
+ * paused band resumes where it stopped; when `active` turns false it glides off and the text settles to solid. The counterpart of the
+ * sweep in text-shimmer.tsx. `label` is the element that holds the text, whose background is painted.
+ */
+export function createTextShimmer(label: HTMLElement, { active, duration, reduced }: { active: boolean; duration: number; reduced: boolean }) {
+  let sweep = 0;
+  let settle = active ? 0 : 1;
+  let isActive = active;
+  let inView = true;
+  let pageVisible = document.visibilityState !== "hidden";
+  let loop: AnimationPlaybackControls | undefined;
+  let glide: AnimationPlaybackControls | undefined;
+  let solid: AnimationPlaybackControls | undefined;
+  let dim: AnimationPlaybackControls | undefined;
+  const paint = () => {
+    label.style.backgroundImage = shimmerImage(sweep, settle);
+  };
+  paint();
+
+  const run = () => {
+    loop?.stop();
+    if (reduced) {
+      sweep = 0;
+      paint();
+    }
+    if (!(isActive && !reduced && inView && pageVisible)) return;
+    const pass = (delay: number) => {
+      if (sweep >= 1) sweep = 0;
+      loop = animate(sweep, 1, { duration: duration * (1 - sweep), delay, ease: "linear", onUpdate: (value) => ((sweep = value), paint()), onComplete: () => pass(duration * 0.32) });
+    };
+    pass(sweep > 0 ? 0 : 0.12);
+  };
+
+  const settleTo = (next: boolean) => {
+    isActive = next;
+    dim?.stop();
+    glide?.stop();
+    solid?.stop();
+    if (next) {
+      dim = animate(settle, 0, { duration: reduced ? 0 : motionTokens.duration.standard, ease: ease("standard"), onUpdate: (value) => ((settle = value), paint()) });
+    } else {
+      // Finishing lets a band in flight glide off while the base resolves to solid, so the text never hard cuts.
+      if (!reduced && sweep > 0 && sweep < 1) glide = animate(sweep, 1, { duration: Math.min(0.42, duration * (1 - sweep) * 0.5), ease: ease("enter"), onUpdate: (value) => ((sweep = value), paint()) });
+      solid = animate(settle, 1, { duration: reduced ? motionTokens.duration.instant : 0.36, ease: ease("standard"), onUpdate: (value) => ((settle = value), paint()) });
+    }
+    run();
+  };
+
+  const observer = new IntersectionObserver(([entry]) => {
+    inView = entry.isIntersecting;
+    run();
+  }, { rootMargin: "64px" });
+  observer.observe(label);
+  const visibility = () => {
+    pageVisible = document.visibilityState !== "hidden";
+    run();
+  };
+  document.addEventListener("visibilitychange", visibility);
+  run();
+
+  return {
+    set: settleTo,
+    destroy() {
+      loop?.stop();
+      glide?.stop();
+      solid?.stop();
+      dim?.stop();
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", visibility);
+    },
+  };
 }

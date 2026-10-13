@@ -2,17 +2,17 @@ import { useState } from "react";
 import { View } from "react-native";
 import { Alert } from "@/components/manicat/alert/alert.rn";
 
-export function Banners() {
+export function AlertDemo() {
   const [open, setOpen] = useState(true);
 
   return (
-    <View style={{ gap: 12 }}>
-      <Alert tone="warning" title="Your trial ends in 3 days" open={open} onDismiss={() => setOpen(false)}>
-        Add a payment method to keep your workspace.
+    <View style={{ width: "100%", maxWidth: 512, gap: 12 }}>
+      <Alert tone="info" title="Heads up" onDismiss={() => setOpen(false)} open={open}>
+        Your trial ends in three days. Add a payment method to keep the workspace.
       </Alert>
-      <Alert tone="success" title="Deployed to production">
-        v2.4.0 is live.
-      </Alert>
+      <Alert tone="success" title="Deployed">manicat-library is live on manicat.dev.</Alert>
+      <Alert tone="warning" title="Slow build">The last build took 4 minutes 12 seconds.</Alert>
+      <Alert tone="danger" title="Build failed">Two components failed to typecheck.</Alert>
     </View>
   );
 }

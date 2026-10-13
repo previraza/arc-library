@@ -1,9 +1,8 @@
 <script lang="ts">
   import TextShimmer from "@/components/manicat/text-shimmer/text-shimmer.svelte";
-  let active = $state(true);
 </script>
 
-<div style="display: grid; gap: 12px; justify-items: start">
-  <TextShimmer {active}>Thinking through your question…</TextShimmer>
-  <button type="button" onclick={() => (active = !active)}>{active ? "Stop" : "Start"}</button>
+<div style="display: flex; width: 100%; flex-direction: column; align-items: center; gap: 12px">
+  <TextShimmer>Synthesizing the registry…</TextShimmer>
+  <TextShimmer active={false}>Mostly ready</TextShimmer>
 </div>

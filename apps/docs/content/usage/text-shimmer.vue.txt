@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import TextShimmer from "@/components/manicat/text-shimmer/text-shimmer.vue";
-
-const done = ref(false);
 </script>
 
 <template>
-  <TextShimmer :active="!done">{{ done ? "Done." : "Synthesizing the registry…" }}</TextShimmer>
-  <button @click="done = !done">{{ done ? "Run again" : "Finish" }}</button>
+  <div style="display: flex; width: 100%; flex-direction: column; align-items: center; gap: 12px">
+    <TextShimmer>Synthesizing the registry…</TextShimmer>
+    <TextShimmer :active="false">Mostly ready</TextShimmer>
+  </div>
 </template>

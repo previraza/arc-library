@@ -4,12 +4,12 @@ struct AlertExample: View {
     @State private var open = true
 
     var body: some View {
-        VStack(spacing: 10) {
-            ManicatAlert(title: "Heads up", open: open, onDismiss: { open = false }) { Text("Your trial ends in three days.") }
-            ManicatAlert(tone: .success, title: "Saved")
-            ManicatAlert(tone: .warning, title: "Almost full") { Text("You have used 92% of your storage.") }
-            ManicatAlert(tone: .danger, title: "Payment failed")
+        VStack(spacing: 12) {
+            ManicatAlert(title: "Heads up", open: open, onDismiss: { open = false }) { Text("Your trial ends in three days. Add a payment method to keep the workspace.") }
+            ManicatAlert(tone: .success, title: "Deployed") { Text("manicat-library is live on manicat.dev.") }
+            ManicatAlert(tone: .warning, title: "Slow build") { Text("The last build took 4 minutes 12 seconds.") }
+            ManicatAlert(tone: .danger, title: "Build failed") { Text("Two components failed to typecheck.") }
         }
-        .frame(maxWidth: 380)
+        .frame(maxWidth: 512)
     }
 }
