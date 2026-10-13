@@ -2,7 +2,6 @@
   import InViewTitle from "@/components/manicat/in-view-title/in-view-title.svelte";
 </script>
 
-<div style="display: grid; gap: 16px">
-  <InViewTitle text="Blur into focus" variant="blur" />
-  <InViewTitle text="One word at a time" variant="word" />
+<div style="width: 100%">
+  <InViewTitle as="h2" text="The heading in view, line by line." lines={["The heading in view,", "line by line."]} variant="line" />
 </div>
