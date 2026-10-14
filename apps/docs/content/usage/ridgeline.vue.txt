@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import Ridgeline from "@/components/manicat/ridgeline/ridgeline.vue";
+import type { RidgelineSeries } from "@/components/manicat/ridgeline/ridgeline.vue";
 
-const wave = (mean: number, spread: number) => Array.from({ length: 48 }, (_, index) => mean + Math.round(spread * Math.sin(index * 1.7)));
-const series = [{ id: "jul", label: "July", values: wave(24, 4) }, { id: "aug", label: "August", values: wave(27, 3) }, { id: "sep", label: "September", values: wave(21, 5) }];
+function ridge(mean: number, spread: number): number[] {
+  return Array.from({ length: 48 }, (_, index) => mean + Math.round(spread * Math.sin(index * 1.7) + ((index * 7) % 5) - 2));
+}
+
+const series: RidgelineSeries[] = [
+  { id: "jul", label: "July", values: ridge(24, 4) },
+  { id: "aug", label: "August", values: ridge(27, 3) },
+  { id: "sep", label: "September", values: ridge(21, 5) },
+];
 </script>
 
 <template>
