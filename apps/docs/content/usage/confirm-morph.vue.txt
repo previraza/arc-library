@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { Trash2 } from "lucide-vue-next";
 import ConfirmMorph from "@/components/manicat/confirm-morph/confirm-morph.vue";
 
 const wait = (ms: number) => new Promise<void>((done) => setTimeout(done, ms));
 </script>
 
 <template>
-  <ConfirmMorph label="Delete" tone="danger" :on-confirm="() => wait(1200)" :on-undo="() => wait(600)" />
+  <ConfirmMorph label="Delete" tone="danger" :on-confirm="() => wait(1200)" :on-undo="() => wait(600)">
+    <template #icon><Trash2 :size="16" /></template>
+  </ConfirmMorph>
 </template>

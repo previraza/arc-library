@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { Trash2 } from "@lucide/svelte";
   import ConfirmMorph from "@/components/manicat/confirm-morph/confirm-morph.svelte";
 
   const wait = (ms: number) => new Promise<void>((done) => setTimeout(done, ms));
 </script>
 
-<ConfirmMorph label="Delete" tone="danger" onConfirm={() => wait(1200)} onUndo={() => wait(600)} />
+<ConfirmMorph label="Delete" tone="danger" onConfirm={() => wait(1200)} onUndo={() => wait(600)}>
+  {#snippet icon()}<Trash2 size={16} />{/snippet}
+</ConfirmMorph>
