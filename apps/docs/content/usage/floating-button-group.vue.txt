@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Undo2 } from "lucide-vue-next";
 import FloatingButtonGroup from "@/components/manicat/floating-button-group/floating-button-group.vue";
 
 const items = [
@@ -6,7 +7,7 @@ const items = [
   { id: "draw", label: "Draw" },
   { id: "share", label: "Share" },
   { type: "separator" as const },
-  { id: "undo", label: "Undo", shortcut: "⌘Z" },
+  { id: "undo", label: "Undo", icon: Undo2, shortcut: "⌘Z" },
 ];
 </script>
 

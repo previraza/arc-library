@@ -1,8 +1,14 @@
 <script lang="ts">
+  import { Undo2 } from "@lucide/svelte";
   import FloatingButtonGroup from "@/components/manicat/floating-button-group/floating-button-group.svelte";
+
+  const items = [
+    { id: "select", label: "Select" },
+    { id: "draw", label: "Draw" },
+    { id: "share", label: "Share" },
+    { type: "separator" as const },
+    { id: "undo", label: "Undo", icon: Undo2, shortcut: "⌘Z" },
+  ];
 </script>
 
-<FloatingButtonGroup
-  label="Board actions"
-  items={[{ id: "select", label: "Select" }, { id: "draw", label: "Draw" }, { id: "share", label: "Share" }, { type: "separator" }, { id: "undo", label: "Undo", shortcut: "⌘Z" }]}
-/>
+<FloatingButtonGroup label="Board actions" {items} />
