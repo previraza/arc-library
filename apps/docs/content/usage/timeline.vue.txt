@@ -3,12 +3,13 @@ import Timeline from "@/components/manicat/timeline/timeline.vue";
 
 const now = Date.UTC(2026, 8, 9, 12);
 const events = [
-  { id: "1", at: now - 2 * 3_600_000, actor: "Elia", title: "merged the redesign into main", meta: "PR #482" },
-  { id: "2", at: now - 5 * 3_600_000, actor: "Deploy bot", title: "deployed to staging", tone: "success" as const },
-  { id: "3", at: now - 26 * 3_600_000, actor: "CI", title: "failed on main", tone: "danger" as const },
+  { id: "m1", at: now - 2 * 3_600_000, actor: "Elia", title: "merged Manicat v2 into main", meta: "PR #482" },
+  { id: "m2", at: now - 5 * 3_600_000, actor: "Deploy bot", title: "deployed to staging", meta: "commit 9f3ca2b", tone: "success" as const },
+  { id: "m3", at: now - 26 * 3_600_000, actor: "Mara", title: "opened a PR for the search dialog", meta: "PR #491" },
+  { id: "m4", at: now - 30 * 3_600_000, actor: "CI", title: "failed on main", meta: "Run #12041", tone: "danger" as const },
 ];
 </script>
 
 <template>
-  <Timeline :events="events" :now="now" label="Project activity" />
+  <Timeline :events="events" :now="now" label="Project activity" time-zone="UTC" />
 </template>

@@ -1,13 +1,13 @@
 <script lang="ts">
   import Timeline from "@/components/manicat/timeline/timeline.svelte";
-  const now = Date.now();
+
+  const now = Date.UTC(2026, 8, 9, 12);
   const events = [
-    { id: "1", at: now - 4 * 60_000, actor: "Ada", title: "merged the release", tone: "success" as const },
-    { id: "2", at: now - 3 * 3600_000, title: "Build failed", meta: "web · 2m 14s", tone: "danger" as const },
-    { id: "3", at: now - 26 * 3600_000, actor: "Lin", title: "opened the pull request" },
+    { id: "m1", at: now - 2 * 3_600_000, actor: "Elia", title: "merged Manicat v2 into main", meta: "PR #482" },
+    { id: "m2", at: now - 5 * 3_600_000, actor: "Deploy bot", title: "deployed to staging", meta: "commit 9f3ca2b", tone: "success" as const },
+    { id: "m3", at: now - 26 * 3_600_000, actor: "Mara", title: "opened a PR for the search dialog", meta: "PR #491" },
+    { id: "m4", at: now - 30 * 3_600_000, actor: "CI", title: "failed on main", meta: "Run #12041", tone: "danger" as const },
   ];
 </script>
 
-<div style="width: min(420px, 100%)">
-  <Timeline label="Activity" {now} {events} />
-</div>
+<Timeline {events} {now} label="Project activity" timeZone="UTC" />
