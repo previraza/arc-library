@@ -11,6 +11,8 @@
  * --act click|focus|hover opens the first trigger of each demo before comparing, so menus, dialogs and tooltips are compared open.
  * --type <text> types into the first field of each demo before comparing.
  * --nth <n> acts on the n-th trigger instead of the first (0-based), e.g. the second tab.
+ * --real sends real mouse input (what a person does) instead of synthetic events for --act click and hover. --drag <dx> presses the picked
+ * trigger and drags it dx pixels to the right (negative to the left) in small steps, then releases, to compare swipes, sliders and carousels.
  * --sel <css> picks the triggers with a selector of your own instead of the buttons and inputs, e.g. [data-tile] for the tiles of a chart.
  * --max-diff sets how much of the picture may differ, in percent (default 2.5). --save <dir> writes the React and port
  * screenshots of every render that differs. Exit code 1 when something differs. Swift has no web viewer, so it is checked by the token and naming checks instead.
@@ -40,6 +42,8 @@ const act = flag("--act");
 const settle = Number(flag("--wait") ?? 1000);
 const typeText = flag("--type");
 const saveDir = flag("--save");
+const real = args.includes("--real");
+const dragBy = flag("--drag") === undefined ? null : Number(flag("--drag"));
 if (saveDir) mkdirSync(saveDir, { recursive: true });
 
 const jobs = [];
@@ -106,13 +110,37 @@ const trigger = `(() => {
   if (mode === "hover") { fire("pointerover"); fire("pointerenter"); fire("pointermove"); fire("mouseover"); fire("mousemove"); }
 })()`;
 
+const center = `(() => {
+  const root = document.querySelector(".viewer__demo") || document.querySelector(".phone__screen") || document.querySelector("main") || document.body;
+  const target = root.querySelectorAll(${JSON.stringify(flag("--sel") ?? "[aria-haspopup],[data-state],button,[role=button],input")})[${Number(flag("--nth") ?? 0)}];
+  if (!target) return null;
+  target.scrollIntoView({ block: "center", inline: "center" });
+  const r = target.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+})()`;
+
 async function look(url, wait) {
   // A hash-only change does not reload the page, so always come from a blank one.
   await send("Page.navigate", { url: "about:blank" });
   await send("Page.navigate", { url });
   await sleep(wait);
-  if (act) {
-    await send("Runtime.evaluate", { expression: trigger });
+  if (act || dragBy !== null) {
+    if (real || dragBy !== null) {
+      const box = (await send("Runtime.evaluate", { expression: center, returnByValue: true }))?.result?.value;
+      if (box) {
+        const mouse = (type, x, y, extra = {}) => send("Input.dispatchMouseEvent", { type, x, y, button: "left", pointerType: "mouse", ...extra });
+        await mouse("mouseMoved", box.x, box.y, { button: "none" });
+        if (dragBy !== null) {
+          await mouse("mousePressed", box.x, box.y, { buttons: 1, clickCount: 1 });
+          const steps = 16;
+          for (let i = 1; i <= steps; i += 1) { await mouse("mouseMoved", box.x + (dragBy * i) / steps, box.y, { buttons: 1 }); await sleep(12); }
+          await mouse("mouseReleased", box.x + dragBy, box.y, { buttons: 0, clickCount: 1 });
+        } else if (act === "click") {
+          await mouse("mousePressed", box.x, box.y, { buttons: 1, clickCount: 1 });
+          await mouse("mouseReleased", box.x, box.y, { buttons: 0, clickCount: 1 });
+        }
+      }
+    } else await send("Runtime.evaluate", { expression: trigger });
     await sleep(800);
   }
   if (typeText) {

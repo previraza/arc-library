@@ -1,18 +1,30 @@
 <script setup lang="ts">
+import { Star, Trash2 } from "lucide-vue-next";
 import SwipeActions from "@/components/manicat/swipe-actions/swipe-actions.vue";
+import SwipeActionsRow from "@/components/manicat/swipe-actions/swipe-actions-row.vue";
 </script>
 
 <template>
-  <div role="list" aria-label="Message actions">
-    <SwipeActions
+  <SwipeActions label="Message actions">
+    <SwipeActionsRow
+      key="ada"
       label="Ada Lovelace"
-      :leading="[{ label: 'Pin', onSelect: () => {}, keepRow: true }]"
-      :trailing="[{ label: 'Archive', onSelect: () => {} }, { label: 'Delete', tone: 'danger', onSelect: () => {} }]"
+      :leading="[{ label: 'Pin', icon: Star, onSelect: () => {}, keepRow: true }]"
+      :trailing="[
+        { label: 'Archive', icon: Star, onSelect: () => {} },
+        { label: 'Delete', icon: Trash2, tone: 'danger', onSelect: () => {} },
+      ]"
     >
-      <span style="font-weight: 500">Ada Lovelace</span> <span style="opacity: 0.6">Analytical engine notes</span>
-    </SwipeActions>
-    <SwipeActions label="Grace Hopper" :trailing="[{ label: 'Delete', tone: 'danger', onSelect: () => {} }]">
-      <span style="font-weight: 500">Grace Hopper</span> <span style="opacity: 0.6">Compiler design</span>
-    </SwipeActions>
-  </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; font-size: 14px; line-height: 20px">
+        <span style="font-weight: 500">Ada Lovelace</span>
+        <span style="color: var(--text-muted)">Analytical engine notes</span>
+      </div>
+    </SwipeActionsRow>
+    <SwipeActionsRow key="grace" label="Grace Hopper" :trailing="[{ label: 'Delete', icon: Trash2, tone: 'danger', onSelect: () => {} }]">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; font-size: 14px; line-height: 20px">
+        <span style="font-weight: 500">Grace Hopper</span>
+        <span style="color: var(--text-muted)">Compiler design</span>
+      </div>
+    </SwipeActionsRow>
+  </SwipeActions>
 </template>
