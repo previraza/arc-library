@@ -1,12 +1,44 @@
 <script setup lang="ts">
 import Treemap from "@/components/manicat/treemap/treemap.vue";
+import type { TreemapNode } from "@/components/manicat/treemap/treemap.vue";
 
-const data = {
+const data: TreemapNode = {
   id: "revenue",
   label: "Revenue",
   children: [
-    { id: "storage", label: "Storage", children: [{ id: "objects", label: "Objects", value: 84, color: 22 }, { id: "sql", label: "Managed SQL", value: 47, color: 8 }] },
-    { id: "compute", label: "Compute", children: [{ id: "instances", label: "Instances", value: 102, color: -12 }, { id: "functions", label: "Functions", value: 23, color: 64 }] },
+    {
+      id: "storage",
+      label: "Storage",
+      children: [
+        { id: "objects", label: "Objects", value: 84, color: 22 },
+        { id: "sql", label: "Managed SQL", value: 47, color: 8 },
+        { id: "backup", label: "Backups", value: 31, color: 35 },
+      ],
+    },
+    {
+      id: "compute",
+      label: "Compute",
+      children: [
+        { id: "instances", label: "Instances", value: 102, color: -12 },
+        { id: "functions", label: "Functions", value: 23, color: 64 },
+      ],
+    },
+    {
+      id: "network",
+      label: "Network",
+      children: [
+        { id: "bandwidth", label: "Bandwidth", value: 39, color: 18 },
+        { id: "load-balancers", label: "Load balancers", value: 12, color: -5 },
+      ],
+    },
+    {
+      id: "support",
+      label: "Support",
+      children: [
+        { id: "plan-seats", label: "Plan seats", value: 58, color: 41 },
+        { id: "egress", label: "Egress overage", value: 9, color: 76 },
+      ],
+    },
   ],
 };
 </script>
