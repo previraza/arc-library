@@ -1,13 +1,12 @@
 <script lang="ts">
   import AnnouncementBar from "@/components/manicat/announcement-bar/announcement-bar.svelte";
+
+  const messages = [
+    { id: "pro", message: "Manicat Pro adds 43 motion components and the larger blocks.", action: { label: "See Pro", onClick: () => {} } },
+    { id: "registry", message: "Every item installs with the shadcn CLI.", action: { label: "Installation", onClick: () => {} } },
+  ];
 </script>
 
-<div style="width: min(560px, 100%)">
-  <AnnouncementBar
-    interval={4000}
-    messages={[
-      { id: "v2", message: "Manicat 2.0 is out.", action: { label: "Read the notes", href: "#notes" } },
-      { id: "svelte", message: "Svelte and Swift ports are in preview.", action: { label: "Try them" } },
-    ]}
-  />
+<div style="width: 100%">
+  <AnnouncementBar {messages} />
 </div>

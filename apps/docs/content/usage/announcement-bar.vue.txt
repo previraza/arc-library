@@ -2,11 +2,13 @@
 import AnnouncementBar from "@/components/manicat/announcement-bar/announcement-bar.vue";
 
 const messages = [
-  { id: "pro", message: "Manicat Pro adds 43 motion components.", action: { label: "See Pro", href: "/pro" } },
-  { id: "cli", message: "Every item installs with the shadcn CLI." },
+  { id: "pro", message: "Manicat Pro adds 43 motion components and the larger blocks.", action: { label: "See Pro", onClick: () => {} } },
+  { id: "registry", message: "Every item installs with the shadcn CLI.", action: { label: "Installation", onClick: () => {} } },
 ];
 </script>
 
 <template>
-  <AnnouncementBar :messages="messages" />
+  <div style="width: 100%">
+    <AnnouncementBar :messages="messages" />
+  </div>
 </template>
