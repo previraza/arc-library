@@ -1,9 +1,16 @@
 <script lang="ts">
   import ResizablePanels from "@/components/manicat/resizable-panels/resizable-panels.svelte";
+
+  const panels = [
+    { id: "files", label: "Files", defaultSize: 40 },
+    { id: "editor", label: "Editor", defaultSize: 60 },
+  ];
 </script>
 
-<div style="height: 180px; width: min(520px, 100%)">
-  <ResizablePanels panels={[{ id: "nav", label: "Navigation", defaultSize: 30, minSize: 15 }, { id: "main", label: "Content", defaultSize: 70 }]}>
-    {#snippet panel(id)}<div style="padding: 12px">{id === "nav" ? "Navigation" : "Content"}</div>{/snippet}
+<div style="height: 192px; width: 100%; max-width: 672px">
+  <ResizablePanels {panels} label="Editor split" style="border: 1px solid var(--border); border-radius: var(--radius-panel)">
+    {#snippet panel(config)}
+      <div style="padding: 16px; font-size: 14px; line-height: 20px; color: var(--text-muted)">{config.label}</div>
+    {/snippet}
   </ResizablePanels>
 </div>

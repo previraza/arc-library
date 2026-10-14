@@ -69,14 +69,16 @@ export function ExpandableCardDemo() {
 
 export function ResizablePanelsDemo() {
   return (
-    <ResizablePanels label="Editor split" className="h-48 w-full max-w-2xl rounded-[var(--radius-panel)] border border-fd-border">
-      <ResizablePanel id="files" label="Files" defaultSize={40}>
-        <div className="p-4 text-sm text-fd-muted-foreground">Files</div>
-      </ResizablePanel>
-      <ResizablePanel id="editor" label="Editor" defaultSize={60}>
-        <div className="p-4 text-sm text-fd-muted-foreground">Editor</div>
-      </ResizablePanel>
-    </ResizablePanels>
+    <div className="h-48 w-full max-w-2xl">
+      <ResizablePanels label="Editor split" className="rounded-[var(--radius-panel)] border border-fd-border">
+        <ResizablePanel id="files" label="Files" defaultSize={40}>
+          <div className="p-4 text-sm text-fd-muted-foreground">Files</div>
+        </ResizablePanel>
+        <ResizablePanel id="editor" label="Editor" defaultSize={60}>
+          <div className="p-4 text-sm text-fd-muted-foreground">Editor</div>
+        </ResizablePanel>
+      </ResizablePanels>
+    </div>
   );
 }
 

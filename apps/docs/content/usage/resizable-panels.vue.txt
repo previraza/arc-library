@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import ResizablePanel from "@/components/manicat/resizable-panels/resizable-panel.vue";
 import ResizablePanels from "@/components/manicat/resizable-panels/resizable-panels.vue";
-
-const panels = [
-  { id: "files", label: "Files", defaultSize: 40, minSize: 20 },
-  { id: "editor", label: "Editor", defaultSize: 60 },
-];
 </script>
 
 <template>
-  <ResizablePanels :panels="panels" label="Editor split" class="h-48 rounded-2xl border">
-    <template #files><p class="p-4">Files</p></template>
-    <template #editor><p class="p-4">Editor</p></template>
-  </ResizablePanels>
+  <div style="height: 192px; width: 100%; max-width: 672px">
+    <ResizablePanels label="Editor split" style="border: 1px solid var(--border); border-radius: var(--radius-panel)">
+      <ResizablePanel id="files" label="Files" :default-size="40">
+        <div style="padding: 16px; font-size: 14px; line-height: 20px; color: var(--text-muted)">Files</div>
+      </ResizablePanel>
+      <ResizablePanel id="editor" label="Editor" :default-size="60">
+        <div style="padding: 16px; font-size: 14px; line-height: 20px; color: var(--text-muted)">Editor</div>
+      </ResizablePanel>
+    </ResizablePanels>
+  </div>
 </template>
