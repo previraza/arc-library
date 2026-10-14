@@ -3,11 +3,11 @@
 
   let value = $state("");
   const options = [
-  { value: "next", label: "Next.js", keywords: ["react", "app router"] },
-  { value: "vite", label: "Vite", keywords: ["react", "bundler"] },
-  { value: "astro", label: "Astro", keywords: ["islands"] },
-  { value: "waku", label: "Waku", keywords: ["react"] },
-];
+    { value: "next", label: "Next.js", keywords: ["react", "app router"] },
+    { value: "vite", label: "Vite", keywords: ["react", "bundler"] },
+    { value: "astro", label: "Astro", keywords: ["islands"] },
+    { value: "waku", label: "Waku", keywords: ["react"] },
+  ];
 </script>
 
 <Combobox bind:value label="Framework" placeholder="Choose a framework" {options} />
