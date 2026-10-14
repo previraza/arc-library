@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check, Minus } from "lucide-react-native";
 
 export type CheckedState = boolean | "indeterminate";
 
@@ -58,7 +60,7 @@ export function Checkbox({ checked, defaultChecked = false, onCheckedChange, lab
                 parts?.box,
               ]}
             >
-              {on ? <Text style={[local.mark, { color: tokens.controlThumbOn }, parts?.mark]}>{state === "indeterminate" ? "–" : "✓"}</Text> : null}
+              {on ? <View style={parts?.mark}>{state === "indeterminate" ? <Minus size={14} strokeWidth={2} color={tokens.controlGlyph} /> : <Check size={14} strokeWidth={2} color={tokens.controlGlyph} />}</View> : null}
             </View>
           </View>
           {label || description ? (

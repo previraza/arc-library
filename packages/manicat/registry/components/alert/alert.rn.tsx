@@ -1,8 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
+import { Check, CircleX, Info, TriangleAlert } from "lucide-react-native";
 
 export type AlertTone = "info" | "success" | "warning" | "danger";
 
@@ -24,7 +27,7 @@ export interface AlertProps extends Omit<ViewProps, "children"> {
   };
 }
 
-const glyph: Record<AlertTone, string> = { info: "i", success: "✓", warning: "!", danger: "×" };
+const glyph: Record<AlertTone, typeof Info> = { info: Info, success: Check, warning: TriangleAlert, danger: CircleX };
 
 export function Alert({ tone = "info", title, children, open = true, onDismiss, style, styles: parts, ...props }: AlertProps) {
   const tokens = useTokens();
@@ -39,7 +42,7 @@ export function Alert({ tone = "info", title, children, open = true, onDismiss, 
       style={[local.root, { borderColor: tokens.border, backgroundColor: tokens.surface }, style]}
     >
       <View style={[local.icon, { borderColor: color }, parts?.icon]}>
-        <Text style={[local.glyph, { color }]}>{glyph[tone]}</Text>
+        {(() => { const Glyph = glyph[tone]; return <Glyph size={18} strokeWidth={1.75} color={color} />; })()}
       </View>
       <View style={[local.copy, parts?.copy]}>
         <Text style={[local.title, { color: tokens.foreground }, parts?.title]}>{title}</Text>
@@ -53,7 +56,7 @@ export function Alert({ tone = "info", title, children, open = true, onDismiss, 
       </View>
       {onDismiss ? (
         <Pressable accessibilityRole="button" accessibilityLabel="Dismiss" hitSlop={8} onPress={onDismiss} style={[local.dismiss, parts?.dismiss]}>
-          <Text style={{ color: tokens.textMuted, fontSize: 18, lineHeight: 20 }}>×</Text>
+          <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
         </Pressable>
       ) : null}
     </View>
@@ -62,7 +65,7 @@ export function Alert({ tone = "info", title, children, open = true, onDismiss, 
 
 const local = StyleSheet.create({
   root: { flexDirection: "row", alignItems: "flex-start", gap: metrics.space[3], borderWidth: 1, borderRadius: metrics.radiusControl, padding: metrics.space[4] },
-  icon: { width: 18, height: 18, marginTop: 1, borderWidth: 1.5, borderRadius: 9, alignItems: "center", justifyContent: "center" },
+  icon: { width: 18, height: 18, marginTop: 1, alignItems: "center", justifyContent: "center" },
   glyph: { fontSize: 11, fontWeight: "700", lineHeight: 13 },
   copy: { flex: 1, gap: 4 },
   title: { fontSize: metrics.text.sm, fontWeight: "500" },

@@ -123,7 +123,7 @@
   const tagIn = poseTransition(reduced ? { opacity: 0 } : { opacity: 0, scale: 0.9, blur: blur.soft }, { opacity: 1, scale: 1, blur: 0 }, reduced ? { duration: duration.instant } : { spring: "morph", fade: duration.fast });
   const tagOut = (node: HTMLElement) => poseTransition(reduced ? { opacity: 0 } : { opacity: 0, scale: 0.9, blur: blur.subtle }, { opacity: 1, scale: 1, blur: 0 }, reduced ? { duration: 0 } : { duration: duration.instant, ease: "standard" }, { pop: true })(node);
   const placeholderIn = (node: HTMLElement) => poseTransition(reduced ? { opacity: 0 } : { opacity: 0, y: em(node, 0.3), blur: blur.soft }, { opacity: 1, y: 0, blur: 0 }, reduced ? { duration: duration.instant } : { duration: duration.standard, ease: "enter" })(node);
-  const placeholderOut = () => ({ duration: 0 });
+  const placeholderOut = (_node: HTMLElement) => ({ duration: 0 });
 </script>
 
 <div class="mc-tag-input__field">

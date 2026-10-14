@@ -22,7 +22,7 @@ const props = defineProps<{
 }>();
 
 /** `v-model:expanded` binds whether the details are showing. */
-const expanded = defineModel<boolean>("expanded", { default: undefined });
+const expanded = defineModel<boolean | undefined>("expanded");
 const open = ref(props.defaultExpanded ?? false);
 const panelId = useId();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;

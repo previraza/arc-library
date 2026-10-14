@@ -32,7 +32,7 @@ const props = withDefaults(
 );
 
 /** `v-model` binds the value of the chosen option. */
-const model = defineModel<string>({ default: undefined });
+const model = defineModel<string | undefined>();
 const attrs = useAttrs();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const { duration, blur, ease } = motionTokens;

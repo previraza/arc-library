@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "@/lib/rn-text";
 import type { StyleProp, TextInputProps, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
 
 export interface SearchFieldProps extends Omit<TextInputProps, "style" | "value" | "onChangeText"> {
   label: string;
@@ -55,7 +57,7 @@ export function SearchField({ label, value, onValueChange, style, styles: parts,
         <View style={local.clearSlot}>
           {value ? (
             <Pressable accessibilityRole="button" accessibilityLabel="Clear search" hitSlop={8} onPress={() => onValueChange("")} style={[local.clear, { backgroundColor: tokens.surfaceMuted }, parts?.clear]}>
-              <Text style={{ color: tokens.textMuted, fontSize: 12, lineHeight: 14 }}>×</Text>
+              <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
             </Pressable>
           ) : null}
         </View>

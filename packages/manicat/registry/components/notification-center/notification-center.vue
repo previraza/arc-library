@@ -38,7 +38,7 @@ const props = withDefaults(
 
 /** `readChange` and `dismiss` report what the person did; the list is kept here, starting from `notifications`. */
 const emit = defineEmits<{ readChange: [notification: NotificationItem, read: boolean]; dismiss: [notification: NotificationItem] }>();
-const openModel = defineModel<boolean>("open", { default: undefined });
+const openModel = defineModel<boolean | undefined>("open");
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const { duration, blur, stagger, spring } = motionTokens;
 /** Bulk actions cascade down the list, capped so the whole sweep stays under a quarter second. */

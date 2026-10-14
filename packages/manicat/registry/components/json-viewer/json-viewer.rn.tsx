@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronDown, ChevronRight } from "lucide-react-native";
 
 export type JsonValueType = "object" | "array" | "string" | "number" | "boolean" | "null" | "other";
 
@@ -55,7 +57,7 @@ export function JsonViewer({ data, rootName = "root", defaultExpandDepth = 1, ex
     return (
       <View key={path}>
         <Pressable accessibilityRole="button" accessibilityState={{ expanded: branch ? isOpen : undefined }} onPress={() => (branch && toggle(path), onSelect?.({ path, value, type }))} style={[local.row, { paddingLeft: depth * 14 }]}>
-          <Text style={{ width: 14, color: tokens.textMuted, fontSize: 12 }}>{branch ? (isOpen ? "▾" : "▸") : ""}</Text>
+          <View style={{ width: 14, alignItems: "center" }}>{branch ? (isOpen ? <ChevronDown size={14} strokeWidth={1.75} color={tokens.textMuted} /> : <ChevronRight size={14} strokeWidth={1.75} color={tokens.textMuted} />) : null}</View>
           <Text style={[{ color: tokens.foreground, fontSize: 12, fontFamily: "Menlo" }, parts?.key]}>{name}</Text>
           <Text style={{ color: tokens.textMuted, fontSize: 12, fontFamily: "Menlo" }}>: </Text>
           <Text style={[{ color: color[type], fontSize: 12, fontFamily: "Menlo", flexShrink: 1 }, parts?.value]}>

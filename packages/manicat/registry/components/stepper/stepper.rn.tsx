@@ -1,7 +1,9 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check } from "lucide-react-native";
 
 export type StepperStatus = "complete" | "current" | "upcoming" | "error";
 
@@ -56,7 +58,7 @@ export function Stepper({ steps, current, onStepSelect, details = "all", label =
           >
             <View style={local.rail}>
               <View style={[local.marker, { borderColor: color, backgroundColor: filled ? color : tokens.surface }, parts?.marker]}>
-                <Text style={[{ color: filled ? tokens.controlThumbOn : color, fontSize: 12, fontWeight: "600" }, parts?.markerText]}>{status === "complete" ? "✓" : status === "error" ? "!" : index + 1}</Text>
+                {status === "complete" ? <Check size={14} strokeWidth={2} color={filled ? tokens.controlGlyph : color} /> : <Text style={[{ color: filled ? tokens.controlGlyph : color, fontSize: 12, fontWeight: "600" }, parts?.markerText]}>{status === "error" ? "!" : index + 1}</Text>}
               </View>
               {last ? null : <View style={[local.line, { backgroundColor: index < current ? tokens.controlOn : tokens.border }, parts?.line]} />}
             </View>

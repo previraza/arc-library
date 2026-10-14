@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
-import { Text, AnimatedText } from "@/lib/rn-text";
+import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronDown } from "lucide-react-native";
 
 export interface AccordionItem {
   title: string;
@@ -33,7 +35,7 @@ function Chevron({ open, style, color }: { open: boolean; style?: StyleProp<Text
   }, [open, turn]);
 
   return (
-    <AnimatedText style={[{ color, fontSize: 18, transform: [{ rotate: turn.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "180deg"] }) }] }, style]}>⌄</AnimatedText>
+    <Animated.View style={[{ transform: [{ rotate: turn.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "180deg"] }) }] }, style]}><ChevronDown size={17} strokeWidth={1.75} color={color} /></Animated.View>
   );
 }
 

@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check, ChevronDown } from "lucide-react-native";
 
 export interface SelectOption {
   value: string;
@@ -71,7 +73,7 @@ export function Select({ label, options, description, placeholder = "Select…",
         <Text numberOfLines={1} style={[local.value, { color: selected ? tokens.foreground : tokens.textMuted }, parts?.valueText]}>
           {selected?.label ?? placeholder}
         </Text>
-        <Text style={[{ color: tokens.textMuted, fontSize: 16, transform: [{ rotate: open ? "180deg" : "0deg" }] }, parts?.chevron]}>⌄</Text>
+        <View style={[{ transform: [{ rotate: open ? "180deg" : "0deg" }] }, parts?.chevron]}><ChevronDown size={16} strokeWidth={1.75} color={tokens.textMuted} /></View>
       </Pressable>
       {description ? <Text style={[local.hint, { color: tokens.textMuted }, parts?.hint]}>{description}</Text> : null}
 
@@ -98,7 +100,7 @@ export function Select({ label, options, description, placeholder = "Select…",
                     ]}
                   >
                     <Text style={[{ flex: 1, color: tokens.foreground, fontSize: metrics.text.sm }, parts?.itemText]}>{option.label}</Text>
-                    {active ? <Text style={{ color: tokens.foreground }}>✓</Text> : null}
+                    {active ? <Check size={16} strokeWidth={1.75} color={tokens.foreground} /> : null}
                   </Pressable>
                 );
               })}

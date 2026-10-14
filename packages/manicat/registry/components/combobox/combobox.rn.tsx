@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "@/lib/rn-text";
 import type { StyleProp, TextInputProps, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check } from "lucide-react-native";
 
 export interface ComboboxOption {
   value: string;
@@ -98,7 +100,7 @@ export function Combobox({ label, options, value, defaultValue, onValueChange, d
                 style={({ pressed }) => [local.option, { backgroundColor: pressed ? tokens.surfaceMuted : "transparent", opacity: option.disabled ? 0.45 : 1 }, parts?.option]}
               >
                 <Text style={[{ flex: 1, color: tokens.foreground, fontSize: metrics.text.sm }, parts?.optionText]}>{option.label}</Text>
-                {option.value === current ? <Text style={{ color: tokens.foreground }}>✓</Text> : null}
+                {option.value === current ? <Check size={16} strokeWidth={1.75} color={tokens.foreground} /> : null}
               </Pressable>
             ))
           )}

@@ -38,7 +38,7 @@ const props = withDefaults(
 );
 
 /** `v-model:active` binds the id of the lifted ridge. */
-const activeModel = defineModel<string | null | undefined>("active", { default: undefined });
+const activeModel = defineModel<string | null | undefined>("active");
 const attrs = useAttrs();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const cn = (base: string, key: string) => (props.classNames?.[key] ? `${base} ${props.classNames[key]}` : base);

@@ -1,7 +1,9 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronLeft, ChevronRight } from "lucide-react-native";
 
 export interface PaginationProps extends ViewProps {
   page: number;
@@ -36,7 +38,7 @@ export function Pagination({ page, pageCount, onPageChange, label = "Pagination"
         onPress={() => onPageChange(current - 1)}
         style={({ pressed }) => [local.cell, cell, { opacity: current <= 1 ? 0.4 : 1, backgroundColor: pressed ? tokens.surfaceMuted : "transparent" }, parts?.step]}
       >
-        <Text style={[{ color: tokens.textSecondary, fontSize: 18 }, parts?.text]}>‹</Text>
+        <ChevronLeft size={16} strokeWidth={1.75} color={tokens.textSecondary} />
       </Pressable>
       {visible.map((number) => {
         const active = number === current;
@@ -66,7 +68,7 @@ export function Pagination({ page, pageCount, onPageChange, label = "Pagination"
         onPress={() => onPageChange(current + 1)}
         style={({ pressed }) => [local.cell, cell, { opacity: current >= total ? 0.4 : 1, backgroundColor: pressed ? tokens.surfaceMuted : "transparent" }, parts?.step]}
       >
-        <Text style={[{ color: tokens.textSecondary, fontSize: 18 }, parts?.text]}>›</Text>
+        <ChevronRight size={16} strokeWidth={1.75} color={tokens.textSecondary} />
       </Pressable>
     </View>
   );

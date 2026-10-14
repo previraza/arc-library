@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // @manicat-dependencies motion reka-ui
+import type { ComponentPublicInstance } from "vue";
 import { onBeforeUnmount, onMounted, ref, useAttrs, watch } from "vue";
 import { SwitchRoot } from "reka-ui";
 import { createSwitchThumb } from "@/lib/motion-dom";
@@ -16,7 +17,7 @@ const props = defineProps<{
 
 const model = defineModel<boolean>({ default: false });
 const attrs = useAttrs();
-const root = ref<InstanceType<typeof SwitchRoot>>();
+const root = ref<ComponentPublicInstance>();
 const thumb = ref<HTMLElement>();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 let controller: ReturnType<typeof createSwitchThumb> | undefined;

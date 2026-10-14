@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronDown } from "lucide-react-native";
 
 export interface SplitButtonAction {
   label: string;
@@ -57,7 +59,7 @@ export function SplitButton({ label, actions, onClick, disabled, variant = "prim
           onPress={() => setOpen(true)}
           style={({ pressed }) => [local.toggle, { minHeight: metrics.controlHeight.md, borderColor: edge, backgroundColor: background, opacity: pressed ? 0.85 : 1 }, parts?.toggle]}
         >
-          <Text style={{ color, fontSize: 16 }}>⌄</Text>
+          <ChevronDown size={16} strokeWidth={1.75} color={color} />
         </Pressable>
       </View>
 

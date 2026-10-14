@@ -197,6 +197,9 @@ function onItemMove(event: PointerEvent, index: number) {
   if (document.activeElement !== el) el.focus({ preventScroll: true });
   if (highlight.value?.index !== index) place(el, true);
 }
+const markPointer = (value: boolean) => { pointer = value; };
+const onMenuLeave = (event: PointerEvent) => { if (live) (event.currentTarget as HTMLElement).focus({ preventScroll: true }); };
+const focusMenu = () => { if (live) menu.value?.focus({ preventScroll: true }); };
 </script>
 
 <template>
@@ -205,9 +208,9 @@ function onItemMove(event: PointerEvent, index: number) {
   </div>
   <Teleport v-if="portal" to="body">
     <Transition :css="false" @enter="enter" @leave="leave">
-      <div v-if="open" :key="point.key" :ref="setMenu" :class="cn('mc-context-menu__menu', classNames?.menu)" role="menu" :aria-label="label" tabindex="-1" :style="{ left: `${point.x}px`, top: `${point.y}px`, transformOrigin: `${point.originX}px ${point.originY}px` }" @keydown="onMenuKeydown" @focusin="onMenuFocus" @pointermove.capture="pointer = true" @keydown.capture="pointer = false" @pointerleave="(event) => { if (live) (event.currentTarget as HTMLElement).focus({ preventScroll: true }); }">
+      <div v-if="open" :key="point.key" :ref="setMenu" :class="cn('mc-context-menu__menu', classNames?.menu)" role="menu" :aria-label="label" tabindex="-1" :style="{ left: `${point.x}px`, top: `${point.y}px`, transformOrigin: `${point.originX}px ${point.originY}px` }" @keydown="onMenuKeydown" @focusin="onMenuFocus" @pointermove.capture="markPointer(true)" @keydown.capture="markPointer(false)" @pointerleave="onMenuLeave">
         <span ref="mark" :class="cn('mc-context-menu__highlight', classNames?.highlight)" :data-tone="highlight?.danger ? 'danger' : undefined" aria-hidden="true" />
-        <button v-for="(item, index) in items" :key="item.id" type="button" role="menuitem" tabindex="-1" :data-index="index" :data-tone="item.destructive ? 'danger' : undefined" :style="{ '--i': index }" :disabled="item.disabled" :class="cn('mc-context-menu__item', item.destructive && 'mc-context-menu__destructive', classNames?.item)" @pointermove="onItemMove($event, index)" @pointerleave="() => { if (live) menu?.focus({ preventScroll: true }); }" @click="selectItem(item)">
+        <button v-for="(item, index) in items" :key="item.id" type="button" role="menuitem" tabindex="-1" :data-index="index" :data-tone="item.destructive ? 'danger' : undefined" :style="{ '--i': index }" :disabled="item.disabled" :class="cn('mc-context-menu__item', item.destructive && 'mc-context-menu__destructive', classNames?.item)" @pointermove="onItemMove($event, index)" @pointerleave="focusMenu" @click="selectItem(item)">
           <span :class="cn('mc-context-menu__icon', classNames?.icon)" aria-hidden="true"><component :is="item.icon" v-if="item.icon" :size="15" /><Check v-else-if="item.checked" :size="15" /><MoreHorizontal v-else :size="15" /></span><span>{{ item.label }}</span>
         </button>
       </div>

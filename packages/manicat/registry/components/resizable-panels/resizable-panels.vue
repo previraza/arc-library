@@ -75,7 +75,7 @@ const leaveTab = (el: Element, done: () => void) => { popOut(el as HTMLElement);
         </Transition>
       </div>
       <div :id="panel.config.id" data-pane :class="cn('mc-resizable-panels__panel', panel.className, classNames?.panel)" :style="paneVars(panel.config, configs)" :data-collapsed="state.collapsed[index] || undefined" :data-free="state.free[index] || undefined" :data-anchor="index === 0 && panels.length > 1 ? 'end' : 'start'">
-        <div :class="cn('mc-resizable-panels__content', classNames?.content)" :inert="state.collapsed[index] ? '' : undefined"><component :is="() => (panel.node.children as Record<string, () => VNode[]>)?.default?.()" /></div>
+        <div :class="cn('mc-resizable-panels__content', classNames?.content)" :inert="(state.collapsed[index] ? '' : undefined) as unknown as boolean"><component :is="() => (panel.node.children as Record<string, () => VNode[]>)?.default?.()" /></div>
       </div>
     </template>
   </div>

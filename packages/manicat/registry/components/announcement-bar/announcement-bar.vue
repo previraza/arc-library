@@ -49,8 +49,8 @@ const props = withDefaults(
 );
 
 /** `v-model:open` binds whether the bar is shown; `v-model:index` binds the visible message. */
-const openModel = defineModel<boolean>("open", { default: undefined });
-const indexModel = defineModel<number>("index", { default: undefined });
+const openModel = defineModel<boolean | undefined>("open");
+const indexModel = defineModel<number | undefined>("index");
 const emit = defineEmits<{ action: [announcement: Announcement]; countdownEnd: [announcement: Announcement] }>();
 const attrs = useAttrs();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;

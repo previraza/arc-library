@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useEffect, useRef, useState } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check, Copy } from "lucide-react-native";
 
 export interface CopyButtonProps extends Omit<PressableProps, "style" | "children" | "onPress"> {
   value: string;
@@ -60,7 +62,7 @@ export function CopyButton({ value, label = "Copy", copy, iconOnly = false, vari
         style,
       ]}
     >
-      <Text style={[{ color: copied ? tokens.success : tokens.textSecondary, fontSize: 14 }, parts?.icon]}>{copied ? "✓" : "⧉"}</Text>
+      <View style={parts?.icon}>{copied ? <Check size={16} strokeWidth={1.75} color={tokens.success} /> : <Copy size={16} strokeWidth={1.75} color={tokens.textSecondary} />}</View>
       {iconOnly ? null : <Text style={[{ color: tokens.foreground, fontSize: metrics.text.sm, fontWeight: "500" }, parts?.label]}>{copied ? "Copied" : label}</Text>}
     </Pressable>
   );

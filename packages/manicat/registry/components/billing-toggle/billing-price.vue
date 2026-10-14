@@ -61,12 +61,12 @@ function enterWas(el: Element, done: () => void) {
   if (reduced) return void playPose(node, { opacity: 0 }, { opacity: 1 }, { duration: duration.fast }).finished.then(done);
   node.style.width = "0px";
   playPose(node, { opacity: 0 }, { opacity: 1 }, { duration: duration.standard, ease: "enter" });
-  animateSize(node, "width", "open", clip).finished.then(done);
+  animateSize(node, "width", "open", clip as never).finished.then(done);
 }
 function leaveWas(el: Element, done: () => void) {
   if (reduced) return void animate(el, { opacity: 0 }, { duration: 0 }).finished.then(done);
   playPose(el, { opacity: 1 }, { opacity: 0 }, { duration: duration.fast });
-  animateSize(el as HTMLElement, "width", "close", clip).finished.then(done);
+  animateSize(el as HTMLElement, "width", "close", clip as never).finished.then(done);
 }
 function enterPeriod(el: Element, done: () => void) {
   if (reduced) return void playPose(el, { opacity: 0 }, { opacity: 1 }, { duration: duration.fast }).finished.then(done);

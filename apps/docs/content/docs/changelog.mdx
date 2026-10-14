@@ -5,6 +5,28 @@ description: Every free component and block added to Manicat UI, newest first.
 
 New free components and blocks ship regularly. Every entry links to its live preview on this site.
 
+## 2026-10-14
+
+### Added
+
+- Faithful Vue and Svelte ports, rebuilt from the React source with the same markup, CSS, motion and lucide icons, and checked against the React demo with a pixel diff: waffle chart, sortable data table, carousel, treemap, swipe actions, expanding search, expanding button group, usage meter, inline edit, card stack, resizable panels and ridgeline. They join the components ported the same way earlier in the week.
+- React Native colours are now generated from `foundation.css` (`scripts/gen-rn-tokens.mjs`): every `oklch()` is converted to sRGB for light, dark and each accent, and the SwiftUI tokens are generated from the same values, so the three platforms cannot drift. New tokens: `surfaceRaised`, `borderSubtle`, `accentForeground`, `controlGlyph`, `controlFill`, plus `accents` and `radii`.
+- React Native text uses Inter and Geist like the web, through one `Text`/`TextInput` (`lib/rn-text.tsx`) that sets the family, weight and line height; `useManicatFonts()` loads the fonts on a device with `expo-font`.
+- Real lucide icons (`lucide-react-native`) replace the text glyphs in 28 React Native components, and the chevrons, checks and close buttons of the rest are being moved over.
+- The parity script can click and hover with real mouse input (`--real`), drag (`--drag`), and pick its own targets (`--sel`), so swipes, sliders, carousels and panels are compared in motion.
+
+### Changed
+
+- The counter used by the usage meter can keep the digits that are off the wheel in the text tree (`hideOffWheel: false`), as the React usage meter does.
+- The Vue ports no longer type-fail: `defineModel` options, template handlers and refs were tightened, and `pnpm check` (typecheck, lint, registry) is green again apart from one lint warning.
+- `check:parity` compares Svelte and Vue CSS with the Reka UI and Bits UI variable names treated as the same, since those two libraries name them differently.
+
+### Fixed
+
+- The resizable panels demo no longer collapses to its content height: the height class lost to the component's own `height: 100%`, so the demo now sizes a wrapper.
+- Svelte inline edit lost focus right after a real click, closing the editor at once.
+- Svelte copy button and resizable panels no longer name a variable `state`, which shadows the `$state` rune.
+
 ## 2026-10-13
 
 ### Added

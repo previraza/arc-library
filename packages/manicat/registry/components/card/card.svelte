@@ -146,7 +146,7 @@
       <h3 class={["mc-card__title", classNames?.title]}>
         {#if details}
           <Dialog.Trigger>
-            {#snippet child({ props })}<button {...props} type="button" class="mc-card__trigger" onclick={(event) => { origin = card.getBoundingClientRect(); props.onclick?.(event); }}>{title}</button>{/snippet}
+            {#snippet child({ props })}<button {...props} type="button" class="mc-card__trigger" onclick={(event) => { origin = card.getBoundingClientRect(); (props as { onclick?: (event: MouseEvent) => void }).onclick?.(event); }}>{title}</button>{/snippet}
           </Dialog.Trigger>
         {:else}{title}{/if}
       </h3>

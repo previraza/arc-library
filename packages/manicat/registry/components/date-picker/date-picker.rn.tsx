@@ -1,3 +1,4 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
@@ -6,6 +7,7 @@ import { Calendar } from "@/registry/components/calendar/calendar.rn";
 import { sameDay, startOfMonth } from "@/lib/calendar";
 import type { CalendarDateMatcher } from "@/lib/calendar";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronDown } from "lucide-react-native";
 
 export interface DatePickerProps {
   label: string;
@@ -51,7 +53,7 @@ export function DatePicker({ label, value, onChange, description, placeholder = 
         style={[local.trigger, { minHeight: metrics.controlHeight.md, borderColor: tokens.border, backgroundColor: tokens.surface, opacity: disabled ? 0.5 : 1 }, parts?.trigger]}
       >
         <Text style={[{ color: value ? tokens.foreground : tokens.textMuted, fontSize: metrics.text.sm }, parts?.valueText]}>{value ? value.toLocaleDateString(locale, format) : placeholder}</Text>
-        <Text style={{ color: tokens.textMuted, fontSize: 14 }}>▾</Text>
+        <ChevronDown size={16} strokeWidth={1.75} color={tokens.textMuted} />
       </Pressable>
       {description ? <Text style={[{ color: tokens.textMuted, fontSize: metrics.text.xs }, parts?.hint]}>{description}</Text> : null}
       <Modal transparent animationType="fade" visible={open} onRequestClose={() => setOpen(false)} statusBarTranslucent>

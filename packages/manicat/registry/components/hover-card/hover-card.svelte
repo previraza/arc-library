@@ -66,7 +66,7 @@
     surface.in();
     return { duration: 0 };
   }
-  function shrink() {
+  function shrink(_node: HTMLElement) {
     // The surface runs its own fade and shrink; the transition only keeps the node mounted for as long as they take.
     surface?.out(() => undefined);
     return { duration: reduced ? 100 : 120 };

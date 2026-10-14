@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check, ChevronDown } from "lucide-react-native";
 
 export interface MorphSelectOption {
   value: string;
@@ -83,7 +85,7 @@ export function MorphSelect({ label, items, value, defaultValue = null, onValueC
       >
         {selected?.icon}
         <Text style={[{ color: selected ? tokens.foreground : tokens.textMuted, fontSize: metrics.text.sm }, parts?.valueText]}>{selected?.label ?? placeholder}</Text>
-        <Text style={{ color: tokens.textMuted, fontSize: 14 }}>⌄</Text>
+        <ChevronDown size={16} strokeWidth={1.75} color={tokens.textMuted} />
       </Pressable>
       <Modal transparent animationType="slide" visible={open} onRequestClose={() => setOpen(false)} statusBarTranslucent>
         <Pressable accessibilityLabel="Close list" onPress={() => setOpen(false)} style={local.overlay}>
@@ -106,7 +108,7 @@ export function MorphSelect({ label, items, value, defaultValue = null, onValueC
                       {option.icon}
                       <Text style={[{ flex: 1, color: tokens.foreground, fontSize: metrics.text.sm }, parts?.optionText]}>{option.label}</Text>
                       {option.meta ? <Text style={[{ color: tokens.textMuted, fontSize: metrics.text.xs, fontVariant: ["tabular-nums"] }, parts?.meta]}>{option.meta}</Text> : null}
-                      {option.value === current ? <Text style={{ color: tokens.foreground }}>✓</Text> : null}
+                      {option.value === current ? <Check size={16} strokeWidth={1.75} color={tokens.foreground} /> : null}
                     </Pressable>
                   ))}
                 </View>

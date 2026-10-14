@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useEffect, useState } from "react";
 import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
 
 export interface ToastProps {
   title: string;
@@ -60,7 +62,7 @@ export function Toast({ title, description, open = true, onOpenChange, duration 
           {description ? <Text style={[{ color: tokens.textSecondary, fontSize: metrics.text.xs }, parts?.description]}>{description}</Text> : null}
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Dismiss" hitSlop={8} onPress={() => onOpenChange?.(false)} style={parts?.close}>
-          <Text style={{ color: tokens.textMuted, fontSize: 18, lineHeight: 20 }}>×</Text>
+          <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
         </Pressable>
       </View>
     </Animated.View>

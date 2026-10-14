@@ -1,3 +1,4 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
@@ -5,6 +6,7 @@ import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { Calendar } from "@/registry/components/calendar/calendar.rn";
 import { addDays, startOfDay, startOfMonth } from "@/lib/calendar";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronDown } from "lucide-react-native";
 
 export interface DateRange {
   start: Date;
@@ -78,7 +80,7 @@ export function DateRangePicker({ value, defaultValue = null, onChange, label = 
         style={[local.trigger, { minHeight: metrics.controlHeight.md, borderColor: tokens.border, backgroundColor: tokens.surface }, parts?.trigger]}
       >
         <Text style={[{ color: current ? tokens.foreground : tokens.textMuted, fontSize: metrics.text.sm }, parts?.valueText]}>{current ? `${short(current.start)} – ${short(current.end)}` : placeholder}</Text>
-        <Text style={{ color: tokens.textMuted, fontSize: 14 }}>▾</Text>
+        <ChevronDown size={16} strokeWidth={1.75} color={tokens.textMuted} />
       </Pressable>
       <Modal transparent animationType="fade" visible={open} onRequestClose={() => setOpen(false)} statusBarTranslucent>
         <Pressable accessibilityLabel="Close calendar" onPress={() => (setAnchor(null), setOpen(false))} style={local.overlay}>

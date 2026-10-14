@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { LayoutAnimation, Platform, Pressable, StyleSheet, UIManager, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronDown } from "lucide-react-native";
 
 if (Platform.OS === "android") UIManager.setLayoutAnimationEnabledExperimental?.(true);
 
@@ -42,7 +44,7 @@ export function ExpandableCard({ title, description, children, defaultExpanded =
           <Text style={[{ color: tokens.foreground, fontSize: metrics.text.lg, fontWeight: "500" }, parts?.title]}>{title}</Text>
           {description ? <Text style={[{ color: tokens.textSecondary, fontSize: metrics.text.sm }, parts?.description]}>{description}</Text> : null}
         </View>
-        <Text style={[{ color: tokens.textMuted, fontSize: 18, transform: [{ rotate: expanded ? "180deg" : "0deg" }] }, parts?.chevron]}>⌄</Text>
+        <View style={[{ transform: [{ rotate: expanded ? "180deg" : "0deg" }] }, parts?.chevron]}><ChevronDown size={16} strokeWidth={1.75} color={tokens.textMuted} /></View>
       </Pressable>
       {expanded ? <View style={[local.body, { borderTopColor: tokens.border }, parts?.body]}>{children}</View> : null}
     </View>

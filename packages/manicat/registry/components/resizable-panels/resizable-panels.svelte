@@ -1,16 +1,20 @@
+<script lang="ts" module>
+  import type { PanelConfig } from "@/lib/resizable-panels";
+
+  export type { PanelConfig };
+  /** One pane of a group: its configuration. The group renders the `panel` snippet for each. */
+  export type ResizablePanel = PanelConfig & { class?: string };
+</script>
+
 <script lang="ts">
   // @manicat-dependencies motion @lucide/svelte
   import type { Snippet } from "svelte";
   import { onMount } from "svelte";
   import { ChevronLeft, ChevronRight } from "@lucide/svelte";
   import { createResizablePanels, initialPanels, paneVars } from "@/lib/resizable-panels";
-  import type { PanelConfig, PanelsState, ResizablePanelsController } from "@/lib/resizable-panels";
+  import type { PanelsState, ResizablePanelsController } from "@/lib/resizable-panels";
   import { poseTransition } from "@/lib/motion-dom";
   import { motionTokens } from "@/lib/motion-tokens";
-
-  export type { PanelConfig };
-  /** One pane of a group: its configuration. The group renders the `panel` snippet for each. */
-  export type ResizablePanel = PanelConfig & { class?: string };
 
   /**
    * A horizontal split view whose panes people resize by dragging the dividers between them, the way a mail or code editor window works.
@@ -39,17 +43,17 @@
   const cn = (base: string, ...extra: (string | undefined)[]) => [base, ...extra].filter(Boolean).join(" ");
 
   let group = $state<HTMLElement>();
-  let state = $state.raw<PanelsState>(initialPanels($state.snapshot(panels) as PanelConfig[]));
+  let view = $state.raw<PanelsState>(initialPanels($state.snapshot(panels) as PanelConfig[]));
   let controller = $state.raw<ResizablePanelsController>();
   onMount(() => {
-    const made = createResizablePanels(group!, { configs: () => panels, reduced, onChange: (next) => (state = next), onLayoutChange: (sizes) => onlayoutchange?.(sizes) });
+    const made = createResizablePanels(group!, { configs: () => panels, reduced, onChange: (next) => (view = next), onLayoutChange: (sizes) => onlayoutchange?.(sizes) });
     controller = made;
     return () => made.destroy();
   });
 
-  const modeOf = (index: number) => (state.collapsed[index - 1] ? "before" : state.collapsed[index] ? "after" : "open");
-  // The state is read so the dividers update on every change.
-  const aria = (index: number) => (void state, controller?.aria(index - 1) ?? { now: Math.round(state.shares[index - 1]), min: 0, max: 100 });
+  const modeOf = (index: number) => (view.collapsed[index - 1] ? "before" : view.collapsed[index] ? "after" : "open");
+  // The view is read so the dividers update on every change.
+  const aria = (index: number) => (void view, controller?.aria(index - 1) ?? { now: Math.round(view.shares[index - 1]), min: 0, max: 100 });
   const hiddenLabel = (index: number) => (modeOf(index) === "before" ? panels[index - 1].label : modeOf(index) === "after" ? panels[index].label : null);
 
   // The restore tab scales and blurs in on a spring, and leaves a little faster.
@@ -60,7 +64,7 @@
   const leaveTab = poseTransition(tabIn, tabRest, { duration: reduced ? duration.instant : duration.fast, ease: "standard" }, { pop: true });
 </script>
 
-<div bind:this={group} {...rest} class={cn("mc-resizable-panels__group", className)} role="group" aria-label={label} data-resizing={state.resizing !== null || undefined}>
+<div bind:this={group} {...rest} class={cn("mc-resizable-panels__group", className)} role="group" aria-label={label} data-resizing={view.resizing !== null || undefined}>
   {#each panels as config, index (config.id)}
     {#if index > 0}
       {@const a = aria(index)}
@@ -78,7 +82,7 @@
         aria-valuetext={hidden ? `${hidden} hidden, press Enter to show` : `${a.now}%`}
         class={cn("mc-resizable-panels__handle", classNames?.handle)}
         data-collapsed={mode === "open" ? undefined : mode}
-        data-active={state.resizing === index - 1 || undefined}
+        data-active={view.resizing === index - 1 || undefined}
         onpointerdown={(event) => controller?.pointerDown(index - 1, event)}
         onpointermove={(event) => controller?.pointerMove(event)}
         onpointerup={(event) => controller?.pointerEnd(event, false)}
@@ -97,8 +101,8 @@
       </div>
     {/if}
     {@const vars = paneVars(config, panels)}
-    <div id={config.id} data-pane class={cn("mc-resizable-panels__panel", config.class, classNames?.panel)} style:--panel-min={vars["--panel-min"]} style:--panel-max={vars["--panel-max"]} data-collapsed={state.collapsed[index] || undefined} data-free={state.free[index] || undefined} data-anchor={index === 0 && panels.length > 1 ? "end" : "start"}>
-      <div class={cn("mc-resizable-panels__content", classNames?.content)} inert={state.collapsed[index]}>{@render panel(config)}</div>
+    <div id={config.id} data-pane class={cn("mc-resizable-panels__panel", config.class, classNames?.panel)} style:--panel-min={vars["--panel-min"]} style:--panel-max={vars["--panel-max"]} data-collapsed={view.collapsed[index] || undefined} data-free={view.free[index] || undefined} data-anchor={index === 0 && panels.length > 1 ? "end" : "start"}>
+      <div class={cn("mc-resizable-panels__content", classNames?.content)} inert={view.collapsed[index]}>{@render panel(config)}</div>
     </div>
   {/each}
 </div>

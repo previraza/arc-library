@@ -36,7 +36,7 @@ const props = withDefaults(
 );
 
 /** `v-model:focus` binds the id of the node that fills the view. */
-const focusModel = defineModel<string | undefined>("focus", { default: undefined });
+const focusModel = defineModel<string | undefined>("focus");
 const attrs = useAttrs();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const cn = (base: string, key: string) => (props.classNames?.[key] ? `${base} ${props.classNames[key]}` : base);

@@ -1,19 +1,23 @@
-<script lang="ts">
-  // @manicat-dependencies motion @lucide/svelte
-  import { animate } from "motion";
-  import { onMount, untrack } from "svelte";
+<script lang="ts" module>
   import type { Component } from "svelte";
-  import { Search, X } from "@lucide/svelte";
-  import ExpandingSearchPanel from "@/registry/components/expanding-search/expanding-search-panel.svelte";
-  import ExpandingSearchListbox from "@/registry/components/expanding-search/expanding-search-listbox.svelte";
-  import { createSearchShell, enter, groupBy, rank, standard } from "@/lib/expanding-search";
-  import type { ExpandingSearchEntry, SearchGroup, SearchMode } from "@/lib/expanding-search";
-  import { poseTransition } from "@/lib/motion-dom";
-  import { motionTokens } from "@/lib/motion-tokens";
+  import type { ExpandingSearchEntry } from "@/lib/expanding-search";
 
   export interface ExpandingSearchItem extends ExpandingSearchEntry {
     icon?: Component;
   }
+</script>
+
+<script lang="ts">
+  // @manicat-dependencies motion @lucide/svelte
+  import { animate } from "motion";
+  import { onMount, untrack } from "svelte";
+  import { Search, X } from "@lucide/svelte";
+  import ExpandingSearchPanel from "@/registry/components/expanding-search/expanding-search-panel.svelte";
+  import ExpandingSearchListbox from "@/registry/components/expanding-search/expanding-search-listbox.svelte";
+  import { createSearchShell, enter, groupBy, rank, standard } from "@/lib/expanding-search";
+  import type { SearchGroup, SearchMode } from "@/lib/expanding-search";
+  import { poseTransition } from "@/lib/motion-dom";
+  import { motionTokens } from "@/lib/motion-tokens";
 
   /**
    * A search that waits as an icon button until it is needed. Use it in headers and toolbars where a full field would crowd the layout.

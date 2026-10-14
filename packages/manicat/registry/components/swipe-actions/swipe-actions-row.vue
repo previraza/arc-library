@@ -65,6 +65,10 @@ function onCloseAutoFocus(event: Event) {
   event.preventDefault();
   controller?.focusNeighbour();
 }
+function onItemSelect(action: SwipeAction, side: Side, index: number) {
+  focusNeighbour = !action.keepRow;
+  controller?.commit(side, index);
+}
 </script>
 
 <template>
@@ -87,7 +91,7 @@ function onCloseAutoFocus(event: Event) {
         </DropdownMenuTrigger>
         <DropdownMenuPortal>
           <DropdownMenuContent :class="cn('mc-swipe-actions__menu', classNames?.menu)" align="end" :side-offset="6" :collision-padding="12" loop @close-auto-focus="onCloseAutoFocus">
-            <DropdownMenuItem v-for="({ action, side, index }, order) in menuItems()" :key="`${side}-${index}`" :class="cn('mc-swipe-actions__item', classNames?.item)" :data-tone="action.tone" :style="{ '--i': order }" @select="() => { focusNeighbour = !action.keepRow; controller?.commit(side, index); }">
+            <DropdownMenuItem v-for="({ action, side, index }, order) in menuItems()" :key="`${side}-${index}`" :class="cn('mc-swipe-actions__item', classNames?.item)" :data-tone="action.tone" :style="{ '--i': order }" @select="onItemSelect(action, side, index)">
               <span :class="cn('mc-swipe-actions__itemIcon', classNames?.itemIcon)" aria-hidden="true"><component :is="action.icon" v-if="action.icon" /></span>{{ action.label }}
             </DropdownMenuItem>
           </DropdownMenuContent>

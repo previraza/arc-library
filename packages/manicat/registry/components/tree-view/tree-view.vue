@@ -29,7 +29,7 @@ const props = withDefaults(
 );
 
 /** `v-model:expanded` binds the ids of the open folders; without it the tree keeps its own, starting at `defaultExpandedIds`. */
-const expandedModel = defineModel<string[] | undefined>("expanded", { default: undefined });
+const expandedModel = defineModel<string[] | undefined>("expanded");
 const emit = defineEmits<{ select: [node: TreeNode] }>();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const { duration, blur } = motionTokens;

@@ -65,7 +65,7 @@ const root = ref<HTMLElement>();
 const display = ref<HTMLElement>();
 const box = ref<HTMLElement>();
 const frame = ref<HTMLElement>();
-let control: HTMLInputElement | HTMLTextAreaElement | null = null;
+let control = null as HTMLInputElement | HTMLTextAreaElement | null;
 let selection: number | "all" | null = null;
 let focusDisplay = false;
 let saveRun = 0;
@@ -233,6 +233,7 @@ const leaveText = (el: Element, done: () => void) => { const poses = textPoses(e
 const enterSlot = (el: Element, done: () => void) => { const poses = slotPoses(reduced); const path = el.querySelector("path"); if (path) drawTick(path, reduced); void playPose(el, poses.from, poses.rest, poses.enterTiming).finished.then(done); };
 const leaveSlot = (el: Element, done: () => void) => { const poses = slotPoses(reduced); void playPose(el, poses.rest, poses.from, poses.leaveTiming).finished.then(done); };
 void nextTick;
+const setControl = (el: unknown) => { control = el as HTMLInputElement | HTMLTextAreaElement | null; };
 </script>
 
 <template>
@@ -247,8 +248,8 @@ void nextTick;
             </Transition>
           </span>
         </button>
-        <textarea v-if="editing && multiline" :ref="(el) => (control = el as HTMLTextAreaElement | null)" class="mc-inline-edit__control" :value="draft" :placeholder="placeholder" :aria-label="label" :aria-invalid="error ? true : undefined" :aria-describedby="describedBy(editHintId)" autocomplete="off" :spellcheck="variant === 'body'" rows="1" enterkeyhint="done" @input="onInput" @keydown="onKeydown" />
-        <input v-else-if="editing" :ref="(el) => (control = el as HTMLInputElement | null)" class="mc-inline-edit__control" type="text" :value="draft" :placeholder="placeholder" :aria-label="label" :aria-invalid="error ? true : undefined" :aria-describedby="describedBy(editHintId)" autocomplete="off" :spellcheck="variant === 'body'" enterkeyhint="done" @input="onInput" @keydown="onKeydown" />
+        <textarea v-if="editing && multiline" :ref="setControl" class="mc-inline-edit__control" :value="draft" :placeholder="placeholder" :aria-label="label" :aria-invalid="error ? true : undefined" :aria-describedby="describedBy(editHintId)" autocomplete="off" :spellcheck="variant === 'body'" rows="1" enterkeyhint="done" @input="onInput" @keydown="onKeydown" />
+        <input v-else-if="editing" :ref="setControl" class="mc-inline-edit__control" type="text" :value="draft" :placeholder="placeholder" :aria-label="label" :aria-invalid="error ? true : undefined" :aria-describedby="describedBy(editHintId)" autocomplete="off" :spellcheck="variant === 'body'" enterkeyhint="done" @input="onInput" @keydown="onKeydown" />
         <span ref="frame" :class="cn('mc-inline-edit__frame', 'frame')">
           <span :class="cn('mc-inline-edit__slot', 'slot')">
             <Transition :css="false" @enter="enterSlot" @leave="leaveSlot">

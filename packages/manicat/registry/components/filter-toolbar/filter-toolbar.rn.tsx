@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronRight, X } from "lucide-react-native";
 
 export interface FilterChip {
   id: string;
@@ -75,7 +77,7 @@ export function FilterMenu({ fields, onSelect, active = [], label = "Add filter"
                   >
                     <Text style={{ flex: 1, color: tokens.foreground, fontSize: metrics.text.sm }}>{text}</Text>
                     {!isField && (option as FilterOption).hint !== undefined ? <Text style={{ color: tokens.textMuted, fontSize: metrics.text.xs }}>{(option as FilterOption).hint}</Text> : null}
-                    {isField ? <Text style={{ color: tokens.textMuted }}>›</Text> : null}
+                    {isField ? <ChevronRight size={16} strokeWidth={1.75} color={tokens.textMuted} /> : null}
                   </Pressable>
                 );
               })}
@@ -113,7 +115,7 @@ export function FilterToolbar({ filters, onRemove, onClearAll, children, label =
         <View key={filter.id} style={[local.chip, { borderColor: tokens.border, backgroundColor: tokens.surfaceMuted }, parts?.chip]}>
           <Text style={[{ color: tokens.foreground, fontSize: metrics.text.xs, fontWeight: "500" }, parts?.chipText]}>{filter.label}</Text>
           <Pressable accessibilityRole="button" accessibilityLabel={`Remove ${filter.label}`} hitSlop={8} onPress={() => onRemove(filter.id)}>
-            <Text style={{ color: tokens.textMuted, fontSize: 14, lineHeight: 16 }}>×</Text>
+            <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
           </Pressable>
         </View>
       ))}

@@ -1,3 +1,9 @@
+<script lang="ts" module>
+  import type { MeterSegment } from "@/lib/usage-meter";
+
+  export type UsageMeterSegment = MeterSegment;
+</script>
+
 <script lang="ts">
   // @manicat-dependencies motion @lucide/svelte
   import { onMount } from "svelte";
@@ -6,9 +12,8 @@
   import UsageMeterTicker from "@/registry/components/usage-meter/usage-meter-ticker.svelte";
   import { poseTransition } from "@/lib/motion-dom";
   import { createBadgeWidth, createUsageBar, popPoses } from "@/lib/usage-meter";
-  import type { MeterSegment } from "@/lib/usage-meter";
+  
 
-  export type UsageMeterSegment = MeterSegment;
   type Status = "ok" | "near" | "over";
 
   /** Use a usage meter for a fixed allowance, such as storage or seats, when people need to see what takes the space and how close they are to the limit. */

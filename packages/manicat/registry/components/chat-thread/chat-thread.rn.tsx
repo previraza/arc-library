@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { Avatar } from "@/registry/components/avatar/avatar.rn";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ArrowUp } from "lucide-react-native";
 
 export interface ChatParticipant {
   id: string;
@@ -145,7 +147,7 @@ export function ChatThread({ participants, currentUserId, messages, defaultMessa
         <View style={[local.composer, { borderTopColor: tokens.border }, parts?.composer]}>
           <TextInput value={draft} onChangeText={setDraft} onSubmitEditing={send} placeholder={placeholder} placeholderTextColor={tokens.textMuted} accessibilityLabel={placeholder} returnKeyType="send" style={[local.input, { color: tokens.foreground, backgroundColor: tokens.surfaceMuted }, parts?.input]} />
           <Pressable accessibilityRole="button" accessibilityLabel="Send" disabled={!draft.trim()} onPress={send} style={[local.send, { backgroundColor: tokens.foreground, opacity: draft.trim() ? 1 : 0.4 }]}>
-            <Text style={{ color: tokens.background, fontSize: 16 }}>↑</Text>
+            <ArrowUp size={16} strokeWidth={1.75} color={tokens.background} />
           </Pressable>
         </View>
       ) : null}

@@ -24,7 +24,7 @@ const props = withDefaults(
 );
 
 /** `v-model` binds where the divider sits, in percent from the left (or top). The original is the `before` slot, the result the `after` slot. */
-const model = defineModel<number>({ default: undefined });
+const model = defineModel<number | undefined>();
 const attrs = useAttrs();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const internal = ref(props.defaultPosition);

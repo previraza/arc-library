@@ -13,7 +13,7 @@ import path from "node:path";
 const root = new URL("../registry/", import.meta.url).pathname;
 const errors = [];
 
-const squash = css => css.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ").replace(/\s*([{};:,>])\s*/g, "$1").trim();
+const squash = css => css.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ").replace(/\s*([{};:,>])\s*/g, "$1").replace(/--(?:reka|bits)-[a-z-]+/g, "--primitive").trim();
 const vueCss = source => /<style[^>]*>([\s\S]*?)<\/style>/.exec(source)?.[1] ?? "";
 const svelteCss = source => {
   const body = /<style[^>]*>([\s\S]*?)<\/style>/.exec(source)?.[1] ?? "";

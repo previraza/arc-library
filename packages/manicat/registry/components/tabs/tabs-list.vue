@@ -34,12 +34,15 @@ watch(() => state.active(), () => {
   glide?.update();
   scroll?.reveal(activeTab());
 }, { flush: "post" });
+function onFocusIn(event: FocusEvent) {
+  if (event.target instanceof HTMLElement && event.target.getAttribute("role") === "tab") scroll?.reveal(event.target);
+}
 </script>
 
 <template>
   <div ref="shell" :class="cn('mc-tabs__listShell', state.classNames()?.listShell)" :data-overflow="edges.overflow" :data-left="edges.left" :data-right="edges.right">
     <button v-if="edges.overflow" type="button" :class="cn('mc-tabs__scrollButton', 'mc-tabs__scrollLeft', state.classNames()?.scrollButton)" aria-label="Scroll tabs left" :disabled="!edges.left" @click="scroll?.page(-1)"><ChevronLeft :size="17" aria-hidden="true" /></button>
-    <div ref="viewport" :class="cn('mc-tabs__viewport', state.classNames()?.viewport)" @focusin.capture="(event) => { if (event.target instanceof HTMLElement && event.target.getAttribute('role') === 'tab') scroll?.reveal(event.target); }">
+    <div ref="viewport" :class="cn('mc-tabs__viewport', state.classNames()?.viewport)" @focusin.capture="onFocusIn">
       <TabsList ref="list" v-bind="{ ...$attrs, class: undefined }" :class="cn('mc-tabs__list', $attrs.class as string | undefined, state.classNames()?.list)"><slot /></TabsList>
     </div>
     <button v-if="edges.overflow" type="button" :class="cn('mc-tabs__scrollButton', 'mc-tabs__scrollRight', state.classNames()?.scrollButton)" aria-label="Scroll tabs right" :disabled="!edges.right" @click="scroll?.page(1)"><ChevronRight :size="17" aria-hidden="true" /></button>

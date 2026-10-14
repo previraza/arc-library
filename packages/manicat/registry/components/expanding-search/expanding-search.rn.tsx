@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
 
 export interface ExpandingSearchItem {
   id: string;
@@ -65,7 +67,7 @@ export function ExpandingSearch({ label, items, suggestions = [], suggestionsLab
         <Text style={{ color: tokens.textMuted, fontSize: 16 }}>⌕</Text>
         <TextInput autoFocus value={query} onChangeText={setQuery} placeholder={placeholder} placeholderTextColor={tokens.textMuted} accessibilityLabel={label} returnKeyType="search" style={[local.input, { color: tokens.foreground }, parts?.input]} />
         <Pressable accessibilityRole="button" accessibilityLabel="Close search" hitSlop={8} onPress={() => toggle(false)}>
-          <Text style={{ color: tokens.textMuted, fontSize: 18 }}>×</Text>
+          <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
         </Pressable>
       </View>
       <View style={[local.results, { borderColor: tokens.border, backgroundColor: tokens.surface }, parts?.results]}>

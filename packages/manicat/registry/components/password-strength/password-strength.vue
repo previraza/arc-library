@@ -27,7 +27,7 @@ const props = withDefaults(
 
 /** `v-model` binds the password; `v-model:revealed` binds whether it is shown as text. */
 const model = defineModel<string>({ default: "" });
-const revealedModel = defineModel<boolean>("revealed", { default: undefined });
+const revealedModel = defineModel<boolean | undefined>("revealed");
 const attrs = useAttrs();
 const generated = useId();
 const controlId = computed(() => (attrs.id as string | undefined) ?? generated);

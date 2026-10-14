@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="Item">
   // @manicat-dependencies motion @lucide/svelte
   import type { Snippet } from "svelte";
   import { onMount, untrack } from "svelte";
@@ -11,7 +11,7 @@
    * A row of slides people browse by dragging, flicking, a trackpad swipe, the arrow keys, or the controls below it. Use it for a short,
    * ordered set of peers such as products or case studies, where the neighbours stay in view as a hint that there is more.
    */
-  interface Props<Item> {
+  interface Props {
     /** Names the carousel for assistive technology, for example "From the Harbour suites". */
     label: string;
     /** One entry per slide. The `slide` snippet renders each of them. */
@@ -34,7 +34,7 @@
     [key: string]: unknown;
   }
 
-  let { label, items, slide, index = $bindable(undefined), defaultIndex = 0, slideSize = "min(80cqw, 340px)", slideLabel = defaultSlideLabel, interval, autoplay = false, classNames, class: className, ...rest }: Props<unknown> = $props();
+  let { label, items, slide, index = $bindable(undefined), defaultIndex = 0, slideSize = "min(80cqw, 340px)", slideLabel = defaultSlideLabel, interval, autoplay = false, classNames, class: className, ...rest }: Props = $props();
 
   const id = $props.id();
   const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;

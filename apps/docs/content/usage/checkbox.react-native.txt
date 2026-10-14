@@ -7,7 +7,7 @@ export function CheckboxDemo() {
 
   return (
     <View style={{ gap: 12 }}>
-      <Checkbox label="Email me about releases" checked={checked} onCheckedChange={(next) => setChecked(next === true ? true : next === "indeterminate" ? "indeterminate" : false)} />
+      <Checkbox label="Email me about releases" checked={checked} onCheckedChange={setChecked} />
       <Checkbox label="Include a digest" description="One email a week, never more." />
       <Checkbox label="Locked" disabled />
     </View>

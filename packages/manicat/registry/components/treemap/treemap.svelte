@@ -1,3 +1,9 @@
+<script lang="ts" module>
+  import type { TreemapNode } from "@/lib/treemap";
+
+  export type { TreemapNode };
+</script>
+
 <script lang="ts">
   // @manicat-dependencies motion
   import { onMount, tick, untrack } from "svelte";
@@ -5,9 +11,7 @@
   import { motionTokens } from "@/lib/motion-tokens";
   import { createTooltipFollow } from "@/lib/slope-chart";
   import { STEPS, TIP, branchIndex, clamp, colorScale, createTreemapMotion, flatten, follow, grouped, hueOf, keyAction, layoutFrom, percent, topOf } from "@/lib/treemap";
-  import type { Flat, Rect, TreemapNode } from "@/lib/treemap";
-
-  export type { TreemapNode };
+  import type { Flat, Rect } from "@/lib/treemap";
 
   /** Use a treemap for a hierarchy of parts, such as revenue by region, country, and plan, when sizes matter more than exact comparisons. */
   interface Props {

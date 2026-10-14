@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check } from "lucide-react-native";
 
 export type SortDirection = "asc" | "desc";
 export type SortState = { key: string; direction: SortDirection };
@@ -69,7 +71,7 @@ export function SortableDataTable<T extends Record<string, unknown>>({ rows, col
   const all = allKeys.length > 0 && allKeys.every((key) => selected.includes(key));
   const box = (on: boolean, label: string, onPress: () => void) => (
     <Pressable accessibilityRole="checkbox" accessibilityLabel={label} accessibilityState={{ checked: on }} onPress={onPress} hitSlop={8} style={[local.box, { borderColor: on ? tokens.controlOn : tokens.borderStrong, backgroundColor: on ? tokens.controlOn : tokens.surface }]}>
-      {on ? <Text style={{ color: tokens.controlThumbOn, fontSize: 10, fontWeight: "700" }}>✓</Text> : null}
+      {on ? <Check size={16} strokeWidth={1.75} color={tokens.controlThumbOn} /> : null}
     </Pressable>
   );
 

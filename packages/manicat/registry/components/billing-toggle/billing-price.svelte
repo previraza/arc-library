@@ -56,13 +56,13 @@
   function wasIn(node: HTMLElement) {
     if (reduced) return poseTransition({ opacity: 0 }, { opacity: 1 }, { duration: duration.fast })(node);
     const natural = node.offsetWidth;
-    const { duration: length, easing } = curveOf(clip);
+    const { duration: length, easing } = curveOf(clip as never);
     return { duration: length, easing, css: (t: number) => `width: ${natural * t}px; opacity: ${Math.min(1, t * 2)}; overflow: clip;` };
   }
   function wasOut(node: HTMLElement) {
     if (reduced) return { duration: 0 };
     const natural = node.offsetWidth;
-    const { duration: length, easing } = curveOf(clip);
+    const { duration: length, easing } = curveOf(clip as never);
     return { duration: length, easing, css: (t: number) => `width: ${natural * t}px; opacity: ${Math.min(1, t * 4)}; overflow: clip;` };
   }
   const periodIn = (node: HTMLElement) => poseTransition(reduced ? { opacity: 0 } : { opacity: 0, y: em(node, 0.45), blur: blur.subtle }, { opacity: 1, y: 0, blur: 0 }, reduced ? { duration: duration.fast } : { duration: duration.standard, ease: "enter" })(node);

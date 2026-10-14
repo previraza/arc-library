@@ -1,3 +1,9 @@
+<script lang="ts" module>
+  import type { CardDecision } from "@/lib/card-stack";
+
+  export type { CardDecision };
+</script>
+
 <script lang="ts" generics="T">
   // @manicat-dependencies motion @lucide/svelte
   import type { Snippet } from "svelte";
@@ -5,11 +11,9 @@
   import { Check, RotateCcw, X } from "@lucide/svelte";
   import CardStackCard from "@/registry/components/card-stack/card-stack-card.svelte";
   import { FLICK, VISIBLE, createLift } from "@/lib/card-stack";
-  import type { CardDecision, Exit, Point, Return } from "@/lib/card-stack";
+  import type { Exit, Point, Return } from "@/lib/card-stack";
   import { poseTransition } from "@/lib/motion-dom";
   import { motionTokens } from "@/lib/motion-tokens";
-
-  export type { CardDecision };
 
   /**
    * A deck of cards reviewed one at a time: drag or flick the top card left or right, or use the buttons and arrow keys.

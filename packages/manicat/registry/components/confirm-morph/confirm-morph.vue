@@ -51,7 +51,7 @@ const props = withDefaults(
 );
 
 /** `v-model:state` binds where the control is; without it the control keeps its own. */
-const stateModel = defineModel<ConfirmMorphState>("state", { default: undefined });
+const stateModel = defineModel<ConfirmMorphState | undefined>("state");
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const { blur } = motionTokens;
 const TRAVEL = 12;

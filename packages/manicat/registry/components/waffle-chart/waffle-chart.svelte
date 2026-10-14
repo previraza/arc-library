@@ -1,12 +1,17 @@
+<script lang="ts" module>
+  import type { WaffleCategory } from "@/lib/waffle-chart";
+
+  export type { WaffleCategory };
+</script>
+
 <script lang="ts">
   // @manicat-dependencies motion
   import { onMount, tick } from "svelte";
   import WaffleChartRolling from "@/registry/components/waffle-chart/waffle-chart-rolling.svelte";
   import { SHADES, SHAPES, allocate, clamp, createWaffleMotion, grouped, reassign, GAP } from "@/lib/waffle-chart";
-  import type { Cell, WaffleCategory } from "@/lib/waffle-chart";
+  import type { Cell } from "@/lib/waffle-chart";
   import { createTooltipFollow } from "@/lib/slope-chart";
 
-  export type { WaffleCategory };
   type Pointer = { key: string; slot: number } | null;
 
   interface Props {

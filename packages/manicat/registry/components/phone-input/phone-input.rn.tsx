@@ -1,3 +1,4 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "@/lib/rn-text";
@@ -5,6 +6,7 @@ import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { BY_ISO, PHONE_COUNTRIES, capDigits, flagOf, formatNational, onlyDigits, parsePhoneNumber, statusOf, toE164 } from "@/lib/phone";
 import type { PhoneCountry, PhoneStatus } from "@/lib/phone";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check } from "lucide-react-native";
 
 export type { PhoneCountry, PhoneStatus };
 export { PHONE_COUNTRIES, flagOf, formatPhoneNumber, parsePhoneNumber } from "@/lib/phone";
@@ -142,7 +144,7 @@ export function PhoneInput({ label, value, defaultValue = "", onValueChange, def
           accessibilityLabel={label}
           style={[local.input, { color: tokens.foreground }, parts?.input]}
         />
-        {status === "valid" ? <Text style={{ color: tokens.success, fontSize: 16, paddingRight: 12 }}>✓</Text> : null}
+        {status === "valid" ? <Check size={16} strokeWidth={1.75} color={tokens.success} /> : null}
       </View>
       {message ? <Text accessibilityRole="alert" style={[{ color: tokens.danger, fontSize: metrics.text.xs }, parts?.hint]}>{message}</Text> : description ? <Text style={[{ color: tokens.textMuted, fontSize: metrics.text.xs }, parts?.hint]}>{description}</Text> : null}
 

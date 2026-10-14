@@ -12,7 +12,7 @@ export function CardPreview({ name }: { name: string }) {
       {!loaded && <PreviewSkeleton />}
       <iframe
         src={`/frame/demo/${name}`}
-        title=""
+        title={`${name} preview`}
         tabIndex={-1}
         scrolling="no"
         loading="lazy"

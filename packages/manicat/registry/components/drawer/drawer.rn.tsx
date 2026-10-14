@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
 
 export interface DrawerProps {
   trigger?: ReactNode;
@@ -63,7 +65,7 @@ export function Drawer({ trigger, title, description, children, side = "right", 
                 {description ? <Text style={[{ color: tokens.textSecondary, fontSize: metrics.text.sm }, parts?.description]}>{description}</Text> : null}
               </View>
               <Pressable accessibilityRole="button" accessibilityLabel="Close" hitSlop={8} onPress={() => change(false)}>
-                <Text style={{ color: tokens.textMuted, fontSize: 20, lineHeight: 22 }}>×</Text>
+                <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
               </Pressable>
             </View>
             <View style={[local.body, parts?.body]}>{children}</View>

@@ -94,6 +94,8 @@ function leave(el: Element, done: () => void) {
   surface.out(done);
 }
 const cn = (base: string, ...extra: (string | undefined)[]) => [base, ...extra].filter(Boolean).join(" ");
+const onCardEnter = (event: PointerEvent) => { if (!mouse(event)) return; inside.card = true; window.clearTimeout(timers.close); };
+const onCardLeave = (event: PointerEvent) => { if (!mouse(event)) return; inside.card = false; scheduleClose(); };
 </script>
 
 <template>
@@ -103,7 +105,7 @@ const cn = (base: string, ...extra: (string | undefined)[]) => [base, ...extra].
     </PopoverAnchor>
     <PopoverPortal force-mount>
       <Transition :css="false" @enter="enter" @leave="leave">
-        <PopoverContent v-if="open" key="card" force-mount :id="cardId" role="tooltip" :side="side" :align="align" :side-offset="8" :collision-padding="12" :class="cn('mc-hover-card__card', classNames?.card, attrs.class as string | undefined)" @open-auto-focus.prevent @close-auto-focus.prevent @escape-key-down="dismissed = true" @interact-outside="(event: Event) => { if (trigger?.$el?.contains(event.target as Node)) event.preventDefault(); }" @pointerenter="(event: PointerEvent) => { if (!mouse(event)) return; inside.card = true; window.clearTimeout(timers.close); }" @pointerleave="(event: PointerEvent) => { if (!mouse(event)) return; inside.card = false; scheduleClose(); }">
+        <PopoverContent v-if="open" key="card" force-mount :id="cardId" role="tooltip" :side="side" :align="align" :side-offset="8" :collision-padding="12" :class="cn('mc-hover-card__card', classNames?.card, attrs.class as string | undefined)" @open-auto-focus.prevent @close-auto-focus.prevent @escape-key-down="dismissed = true" @interact-outside="(event: Event) => { if (trigger?.$el?.contains(event.target as Node)) event.preventDefault(); }" @pointerenter="onCardEnter" @pointerleave="onCardLeave">
           <slot name="content" />
         </PopoverContent>
       </Transition>

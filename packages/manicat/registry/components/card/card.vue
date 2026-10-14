@@ -20,7 +20,7 @@ const props = defineProps<{
 }>();
 
 /** `v-model:open` binds the quick look, which exists when the `details` slot is filled. */
-const openModel = defineModel<boolean>("open", { default: undefined });
+const openModel = defineModel<boolean | undefined>("open");
 const slots = useSlots();
 const attrs = useAttrs();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;

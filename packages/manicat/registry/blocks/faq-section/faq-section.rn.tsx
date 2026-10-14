@@ -1,3 +1,4 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
@@ -5,6 +6,7 @@ import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { SearchField } from "@/registry/components/search-field/search-field.rn";
 import { SegmentedControl } from "@/registry/components/segmented-control/segmented-control.rn";
 import { useTokens } from "@/lib/rn-tokens";
+import { ArrowRight } from "lucide-react-native";
 
 export type FaqSectionVariant = "accordion" | "columns" | "search";
 export interface FaqItem {
@@ -95,7 +97,7 @@ export function FaqSection({ variant = "accordion", title = "Frequently asked qu
             <Text style={{ color: tokens.foreground, fontWeight: "500" }}>{contact.label}</Text>
             {contact.description ? <Text style={{ color: tokens.textSecondary, fontSize: 13 }}>{contact.description}</Text> : null}
           </View>
-          <Text style={{ color: tokens.foreground }}>→</Text>
+          <ArrowRight size={16} strokeWidth={1.75} color={tokens.foreground} />
         </Pressable>
       ) : null}
     </View>

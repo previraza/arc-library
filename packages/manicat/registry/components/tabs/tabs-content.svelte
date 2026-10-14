@@ -15,7 +15,8 @@
 
   // The incoming panel takes over the outgoing panel's height while it slides in from the side of the new tab.
   function panel(node: HTMLElement) {
-    return mountPanel(node, tabs.memory, reduced);
+    const stop = mountPanel(node, tabs.memory, reduced);
+    return { destroy: () => (stop as unknown as () => void)() };
   }
   function enter(node: HTMLElement) {
     const { from, to, timing } = panelMotion(tabs.direction(), reduced).enter;

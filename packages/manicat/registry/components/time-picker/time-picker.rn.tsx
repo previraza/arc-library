@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check, ChevronDown } from "lucide-react-native";
 
 export interface TimePickerProps {
   label: string;
@@ -55,7 +57,7 @@ export function TimePicker({ label, value, defaultValue = "09:00", onChange, des
         style={[local.trigger, { minHeight: metrics.controlHeight.md, borderColor: tokens.border, backgroundColor: tokens.surface, opacity: disabled ? 0.5 : 1 }, parts?.trigger]}
       >
         <Text style={[{ color: current ? tokens.foreground : tokens.textMuted, fontSize: metrics.text.sm, fontVariant: ["tabular-nums"] }, parts?.valueText]}>{current ? display(current, format) : placeholder}</Text>
-        <Text style={{ color: tokens.textMuted, fontSize: 16 }}>⌄</Text>
+        <ChevronDown size={16} strokeWidth={1.75} color={tokens.textMuted} />
       </Pressable>
       {description ? <Text style={[{ color: tokens.textMuted, fontSize: metrics.text.xs }, parts?.hint]}>{description}</Text> : null}
 
@@ -78,7 +80,7 @@ export function TimePicker({ label, value, defaultValue = "09:00", onChange, des
                     style={({ pressed }) => [local.option, { backgroundColor: pressed || active ? tokens.surfaceMuted : "transparent" }, parts?.option]}
                   >
                     <Text style={{ color: tokens.foreground, fontSize: metrics.text.sm, fontVariant: ["tabular-nums"] }}>{display(time, format)}</Text>
-                    {active ? <Text style={{ color: tokens.foreground }}>✓</Text> : null}
+                    {active ? <Check size={16} strokeWidth={1.75} color={tokens.foreground} /> : null}
                   </Pressable>
                 );
               })}

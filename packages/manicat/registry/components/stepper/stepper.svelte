@@ -106,12 +106,12 @@
 
   // The number, check, and alert share one spot: the outgoing glyph shrinks away while the next one pops in and draws its stroke.
   const delayOf = (node: HTMLElement) => Number(node.dataset.delay ?? 0);
-  const glyphIn = (node: HTMLElement) => {
-    const delay = delayOf(node);
+  const glyphIn = (node: HTMLElement | SVGElement) => {
+    const delay = delayOf(node as HTMLElement);
     if (node instanceof SVGElement) queueMicrotask(() => drawGlyph(node, delay, reduced));
-    return poseTransition(reduced ? {} : { opacity: 0, scale: 0.5, blur: motionTokens.blur.subtle }, { opacity: 1, scale: 1, blur: 0 }, reduced ? { duration: 0 } : { spring: "snappy", fade: duration.fast, delay, fadeDelay: delay })(node);
+    return poseTransition(reduced ? {} : { opacity: 0, scale: 0.5, blur: motionTokens.blur.subtle }, { opacity: 1, scale: 1, blur: 0 }, reduced ? { duration: 0 } : { spring: "snappy", fade: duration.fast, delay, fadeDelay: delay })(node as HTMLElement);
   };
-  const glyphOut = (node: HTMLElement) => poseTransition(reduced ? {} : { opacity: 0, scale: 0.5, blur: motionTokens.blur.subtle }, { opacity: 1, scale: 1, blur: 0 }, reduced ? { duration: 0 } : { duration: duration.fast, ease: "standard" })(node);
+  const glyphOut = (node: HTMLElement | SVGElement) => poseTransition(reduced ? {} : { opacity: 0, scale: 0.5, blur: motionTokens.blur.subtle }, { opacity: 1, scale: 1, blur: 0 }, reduced ? { duration: 0 } : { duration: duration.fast, ease: "standard" })(node as HTMLElement);
   // The ring grows out from behind the disc once progress arrives, so the eye lands on the new step after the connector fills.
   const ringIn = (node: HTMLElement) => poseTransition(reduced ? {} : { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1 }, reduced ? { duration: 0 } : { spring: "snappy", fade: duration.fast, delay: ringDelay(), fadeDelay: ringDelay() })(node);
   const ringOut = poseTransition(reduced ? {} : { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1 }, reduced ? { duration: 0 } : { duration: duration.fast, ease: "standard" });

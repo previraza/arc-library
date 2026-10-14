@@ -35,7 +35,7 @@ const props = withDefaults(
 );
 
 /** `v-model:active-key` binds the item in focus. The others fade while one is in focus. */
-const activeModel = defineModel<string | null>("activeKey", { default: undefined });
+const activeModel = defineModel<string | null | undefined>("activeKey");
 const attrs = useAttrs();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const figure = ref<HTMLElement>();

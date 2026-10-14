@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
 
 export interface FileUploadItem {
   id: string;
@@ -64,7 +66,7 @@ export function FileUpload({ onPick, label = "Upload a file", description, multi
             <Text style={{ color: file.error ? tokens.danger : tokens.textMuted, fontSize: metrics.text.xs }}>{file.error ?? size(file.size)}</Text>
           </View>
           <Pressable accessibilityRole="button" accessibilityLabel={`Remove ${file.name}`} hitSlop={8} onPress={() => set(files.filter((entry) => entry.id !== file.id))}>
-            <Text style={{ color: tokens.textMuted, fontSize: 18 }}>×</Text>
+            <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
           </Pressable>
         </View>
       ))}

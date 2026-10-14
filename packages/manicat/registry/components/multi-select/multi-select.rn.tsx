@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { Check, ChevronDown } from "lucide-react-native";
 
 export interface MultiSelectOption {
   value: string;
@@ -66,7 +68,7 @@ export function MultiSelect({ label, options, value, defaultValue = [], onValueC
           ))}
           {labels.length > maxVisible ? <Text style={{ color: tokens.textSecondary, fontSize: metrics.text.xs }}>+{labels.length - maxVisible}</Text> : null}
         </View>
-        <Text style={{ color: tokens.textMuted, fontSize: 16 }}>⌄</Text>
+        <ChevronDown size={16} strokeWidth={1.75} color={tokens.textMuted} />
       </Pressable>
       {description ? <Text style={[{ color: tokens.textMuted, fontSize: metrics.text.xs }, parts?.hint]}>{description}</Text> : null}
 
@@ -86,7 +88,7 @@ export function MultiSelect({ label, options, value, defaultValue = [], onValueC
                     style={({ pressed }) => [local.item, { backgroundColor: pressed ? tokens.surfaceMuted : "transparent", opacity: option.disabled ? 0.45 : 1 }, parts?.item]}
                   >
                     <View style={[local.box, { borderColor: on ? tokens.controlOn : tokens.borderStrong, backgroundColor: on ? tokens.controlOn : tokens.surface }]}>
-                      {on ? <Text style={{ color: tokens.controlThumbOn, fontSize: 11, fontWeight: "700" }}>✓</Text> : null}
+                      {on ? <Check size={16} strokeWidth={1.75} color={tokens.controlThumbOn} /> : null}
                     </View>
                     <Text style={{ flex: 1, color: tokens.foreground, fontSize: metrics.text.sm }}>{option.label}</Text>
                   </Pressable>

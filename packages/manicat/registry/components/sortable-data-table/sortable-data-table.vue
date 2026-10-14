@@ -44,7 +44,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{ sortChange: [sort: SortState] }>();
 /** `v-model:selected` binds the selected row keys. A `cell-<column key>` slot renders a column; it gets `{ value, row }`. */
-const selectedModel = defineModel<string[] | undefined>("selected", { default: undefined });
+const selectedModel = defineModel<string[] | undefined>("selected");
 const attrs = useAttrs();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const cn = (base: string, ...extra: (string | undefined)[]) => [base, ...extra].filter(Boolean).join(" ");

@@ -1,3 +1,4 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { GestureResponderEvent, StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
@@ -38,7 +39,7 @@ export function Breadcrumb({ items, style, styles: parts, ...props }: Breadcrumb
                 <Text style={[local.text, { color: tokens.textSecondary }, parts?.crumb]}>{item.label}</Text>
               </Pressable>
             )}
-            {last ? null : <Text style={[local.separator, { color: tokens.borderStrong }, parts?.separator]}>›</Text>}
+            {last ? null : <Text style={[local.separator, { color: tokens.borderStrong }, parts?.separator]}>/</Text>}
           </View>
         );
       })}

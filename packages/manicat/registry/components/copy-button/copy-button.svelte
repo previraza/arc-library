@@ -21,12 +21,12 @@
 
   let { value, label = "Copy", iconOnly = false, variant = "outline", disabled, oncopied, classNames }: Props = $props();
 
-  let state = $state<CopyFeedbackState>("idle");
-  const feedback = createCopyFeedback((next) => (state = next));
+  let phase = $state<CopyFeedbackState>("idle");
+  const feedback = createCopyFeedback((next) => (phase = next));
   const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
   let glyphHost: HTMLElement | undefined = $state();
   let morph: MorphText | undefined;
-  const text = $derived(state === "copied" ? "Copied" : state === "error" ? "Failed" : label);
+  const text = $derived(phase === "copied" ? "Copied" : phase === "error" ? "Failed" : label);
 
   async function copy() {
     if (await feedback.copy(value)) oncopied?.();
@@ -51,13 +51,13 @@
   const draw = (path: Element) => drawPath(path, { reduced, duration: 0.5, ease: "standard" });
 </script>
 
-<button type="button" class={["mc-copy-button__button", iconOnly && "mc-copy-button__iconOnly", variant === "plain" && "mc-copy-button__plain"]} aria-label={label} data-copy-state={state} {disabled} onclick={copy}>
+<button type="button" class={["mc-copy-button__button", iconOnly && "mc-copy-button__iconOnly", variant === "plain" && "mc-copy-button__plain"]} aria-label={label} data-copy-state={phase} {disabled} onclick={copy}>
   <span class={["mc-copy-button__icon", classNames?.icon]} aria-hidden="true">
-    {#key state}
-      <span class={["mc-copy-button__iconInner", classNames?.iconInner]} data-state={state} in:enter out:leave>
-        {#if state === "copied"}
+    {#key phase}
+      <span class={["mc-copy-button__iconInner", classNames?.iconInner]} data-state={phase} in:enter out:leave>
+        {#if phase === "copied"}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path use:draw d="M4 12l5 5L20 6" /></svg>
-        {:else if state === "error"}
+        {:else if phase === "error"}
           <CircleAlert size={16} strokeWidth={1.75} />
         {:else}
           <Copy size={16} strokeWidth={1.75} />
@@ -72,7 +72,7 @@
     </span>
   {/if}
 </button>
-<span class="mc-copy-button__srOnly" role="status" aria-live="polite">{state === "idle" ? "" : state === "error" ? `${label}: Could not copy` : `${label}: Copied`}</span>
+<span class="mc-copy-button__srOnly" role="status" aria-live="polite">{phase === "idle" ? "" : phase === "error" ? `${label}: Could not copy` : `${label}: Copied`}</span>
 
 <style>
 :global {

@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
 
 export type FileDropzoneStatus = "uploading" | "uploaded" | "failed";
 
@@ -98,7 +100,7 @@ export function FileDropzone({ onPick, multiple = true, maxFiles = Infinity, max
             <Pressable accessibilityRole="button" onPress={() => run(item)}><Text style={{ color: tokens.textSecondary, fontSize: metrics.text.xs }}>Retry</Text></Pressable>
           ) : null}
           <Pressable accessibilityRole="button" accessibilityLabel={`Remove ${item.name}`} hitSlop={8} onPress={() => update(items.filter((entry) => entry.id !== item.id))}>
-            <Text style={{ color: tokens.textMuted, fontSize: 18 }}>×</Text>
+            <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
           </Pressable>
         </View>
       ))}

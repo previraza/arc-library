@@ -1,11 +1,15 @@
+<script lang="ts" module>
+  import type { RidgelineEntry } from "@/lib/ridgeline";
+
+  export type RidgelineSeries = RidgelineEntry;
+</script>
+
 <script lang="ts">
   // @manicat-dependencies motion
   import { onMount, tick, untrack } from "svelte";
   import { AXIS, LIFT, TIP, buildModel, clamp, createRidgelineMotion, follow, grouped, heightAt, niceStep, percent } from "@/lib/ridgeline";
-  import type { RidgelineEntry, Shape } from "@/lib/ridgeline";
+  import type { Shape } from "@/lib/ridgeline";
   import { createTooltipFollow } from "@/lib/slope-chart";
-
-  export type RidgelineSeries = RidgelineEntry;
 
   /** Use a ridgeline to compare the shape of many distributions at once, such as daily temperatures by month or response times by region. */
   interface Props {

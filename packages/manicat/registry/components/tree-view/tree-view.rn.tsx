@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronRight } from "lucide-react-native";
 
 export interface TreeNode {
   id: string;
@@ -58,7 +60,7 @@ export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpand
               parts?.row,
             ]}
           >
-            <Text style={[{ width: 14, color: tokens.textMuted, fontSize: 14, transform: [{ rotate: open ? "90deg" : "0deg" }] }, parts?.chevron]}>{branch ? "›" : ""}</Text>
+            <View style={[{ width: 14, alignItems: "center", transform: [{ rotate: open ? "90deg" : "0deg" }] }, parts?.chevron]}>{branch ? <ChevronRight size={14} strokeWidth={1.9} color={tokens.textMuted} /> : null}</View>
             {node.icon}
             <Text style={[{ color: tokens.foreground, fontSize: metrics.text.sm }, parts?.rowText]}>{node.label}</Text>
           </Pressable>

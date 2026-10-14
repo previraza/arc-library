@@ -44,7 +44,7 @@ onBeforeUnmount(() => controller?.destroy());
 </script>
 
 <template>
-  <div ref="slot" class="mc-card-stack__slot" :style="{ zIndex }" :aria-hidden="interactive ? undefined : true" :inert="!interactive ? '' : undefined">
+  <div ref="slot" class="mc-card-stack__slot" :style="{ zIndex }" :aria-hidden="interactive ? undefined : true" :inert="(!interactive ? '' : undefined) as unknown as boolean">
     <div ref="card" class="mc-card-stack__card" :data-top="interactive ? '' : undefined" :data-flying="decision !== null ? '' : undefined" :role="interactive ? 'group' : undefined" :aria-label="interactive ? label : undefined">
       <div class="mc-card-stack__face">
         <slot />

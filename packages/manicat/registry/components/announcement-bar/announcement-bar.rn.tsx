@@ -1,9 +1,11 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
 
 export interface AnnouncementAction {
   label: string;
@@ -68,7 +70,7 @@ export function AnnouncementBar({ messages, open, defaultOpen = true, onOpenChan
         }}
         style={parts?.dismiss}
       >
-        <Text style={{ color: tokens.background, fontSize: 18, lineHeight: 20 }}>×</Text>
+        <X size={16} strokeWidth={1.75} color={tokens.background} />
       </Pressable>
     </View>
   );

@@ -1,3 +1,4 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
@@ -8,6 +9,7 @@ import { Button } from "@/registry/components/button/button.rn";
 import { Progress } from "@/registry/components/progress/progress.rn";
 import { SegmentedControl } from "@/registry/components/segmented-control/segmented-control.rn";
 import { useTokens } from "@/lib/rn-tokens";
+import { Circle } from "lucide-react-native";
 
 type Section = "overview" | "issues" | "updates" | "files";
 export type PageHeaderIssue = { id: string; title: string; owner: string; label: string };
@@ -95,7 +97,7 @@ export function PageHeader({ title = "Checkout redesign", breadcrumbs = ["Projec
           {issues.map((issue) => (
             <View key={issue.id} style={[local.line, { borderBottomWidth: 1, borderColor: tokens.border, paddingVertical: 10 }, parts?.row]}>
               <Pressable accessibilityRole="checkbox" accessibilityLabel={`Mark ${issue.id} done`} accessibilityState={{ checked: false }} onPress={() => { setIssues((current) => current.filter((item) => item.id !== issue.id)); setDone((value) => value + 1); }}>
-                <Text style={{ color: tokens.textMuted, fontSize: 20 }}>○</Text>
+                <Circle size={16} strokeWidth={1.75} color={tokens.textMuted} />
               </Pressable>
               <View style={{ flex: 1 }}>
                 <Text style={{ color: tokens.textMuted, fontSize: 11 }}>{issue.id} · {issue.label} · {issue.owner}</Text>

@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
 
 export interface NotificationItem {
   id: string;
@@ -94,7 +96,7 @@ export function NotificationCenter({ notifications: initial, label = "Notificati
                       onDismiss?.(item);
                     }}
                   >
-                    <Text style={{ color: tokens.textMuted, fontSize: 18 }}>×</Text>
+                    <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
                   </Pressable>
                 </Pressable>
               ))}

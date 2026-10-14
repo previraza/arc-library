@@ -1,3 +1,4 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/lib/rn-text";
@@ -5,6 +6,7 @@ import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { addMonths, isDisabled, monthGrid, monthLabel, sameDay, startOfMonth, weekdayLabels } from "@/lib/calendar";
 import type { CalendarDateMatcher } from "@/lib/calendar";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { ChevronLeft, ChevronRight } from "lucide-react-native";
 
 export interface CalendarProps extends Omit<ViewProps, "children"> {
   value?: Date;
@@ -51,11 +53,11 @@ export function Calendar({ value, onChange, month, onMonthChange, minDate, maxDa
     <View {...props} accessibilityRole="none" style={[{ alignSelf: "stretch" }, style]}>
       <View style={[local.header, parts?.header]}>
         <Pressable accessibilityRole="button" accessibilityLabel="Previous month" hitSlop={8} onPress={() => go(-1)} style={[local.nav, parts?.nav]}>
-          <Text style={{ color: tokens.textSecondary, fontSize: 18 }}>‹</Text>
+          <ChevronLeft size={16} strokeWidth={1.75} color={tokens.textSecondary} />
         </Pressable>
         <Text accessibilityRole="header" style={[{ color: tokens.foreground, fontSize: metrics.text.sm, fontWeight: "600" }, parts?.title]}>{monthLabel(shown, locale)}</Text>
         <Pressable accessibilityRole="button" accessibilityLabel="Next month" hitSlop={8} onPress={() => go(1)} style={[local.nav, parts?.nav]}>
-          <Text style={{ color: tokens.textSecondary, fontSize: 18 }}>›</Text>
+          <ChevronRight size={16} strokeWidth={1.75} color={tokens.textSecondary} />
         </Pressable>
       </View>
       <View style={local.week}>

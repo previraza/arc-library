@@ -1,8 +1,10 @@
+// @manicat-dependencies lucide-react-native react-native-svg
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
+import { X } from "lucide-react-native";
 
 export interface TagInputProps {
   label: string;
@@ -50,7 +52,7 @@ export function TagInput({ label, value, defaultValue = [], onValueChange, place
           <View key={tag} style={[local.tag, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.border }, parts?.tag]}>
             <Text style={[{ color: tokens.foreground, fontSize: metrics.text.xs, fontWeight: "500" }, parts?.tagText]}>{tag}</Text>
             <Pressable accessibilityRole="button" accessibilityLabel={`Remove ${tag}`} hitSlop={8} onPress={() => commit(tags.filter((entry) => entry !== tag))}>
-              <Text style={{ color: tokens.textMuted, fontSize: 14, lineHeight: 16 }}>×</Text>
+              <X size={16} strokeWidth={1.75} color={tokens.textMuted} />
             </Pressable>
           </View>
         ))}

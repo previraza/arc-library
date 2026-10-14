@@ -33,7 +33,7 @@ const props = withDefaults(
 );
 
 /** `v-model` binds the active slide. Give each slide its own element in the default slot. */
-const model = defineModel<number | undefined>({ default: undefined });
+const model = defineModel<number | undefined>();
 const slots = useSlots();
 const attrs = useAttrs();
 const id = useId();
@@ -81,13 +81,15 @@ const iconIn = reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6, blur: blur.s
 const iconRest = { opacity: 1, scale: 1, blur: 0 };
 const enterIcon = (el: Element, done: () => void) => playPose(el, iconIn, iconRest, reduced ? { duration: duration.instant } : { spring: "snappy", fade: duration.fast }).finished.then(done);
 const leaveIcon = (el: Element, done: () => void) => playPose(el, iconRest, iconIn, { duration: reduced ? duration.instant : duration.fast, ease: "standard" }).finished.then(done);
+const previous = () => { if (carousel && carousel.target() > 0) carousel.select(carousel.target() - 1); };
+const following = () => { if (carousel && carousel.target() < last.value) carousel.select(carousel.target() + 1); };
 </script>
 
 <template>
   <section ref="root" v-bind="{ ...attrs, class: undefined }" :class="cn('mc-carousel__root', attrs.class as string | undefined, classNames?.root)" :style="{ '--carousel-slide': slideSize, '--carousel-start': startIndex }" aria-roledescription="carousel" :aria-label="label">
     <div ref="viewport" :class="cn('mc-carousel__viewport', classNames?.viewport)" role="group" aria-label="Slides" tabindex="0" :data-dragging="dragging || undefined">
       <div ref="track" :class="cn('mc-carousel__track', classNames?.track)">
-        <div v-for="(slide, i) in slides" :id="`${id}-slide-${i}`" :key="slide.key ?? i" class="mc-carousel__slide" role="tabpanel" aria-roledescription="slide" :aria-label="slideLabel(i, count)" :inert="i !== index ? '' : undefined"><component :is="slide" /></div>
+        <div v-for="(slide, i) in slides" :id="`${id}-slide-${i}`" :key="slide.key ?? i" class="mc-carousel__slide" role="tabpanel" aria-roledescription="slide" :aria-label="slideLabel(i, count)" :inert="(i !== index ? '' : undefined) as unknown as boolean"><component :is="slide" /></div>
       </div>
     </div>
     <div v-if="count > 1" :class="cn('mc-carousel__controls', classNames?.controls)">
@@ -107,8 +109,8 @@ const leaveIcon = (el: Element, done: () => void) => playPose(el, iconRest, icon
         </button>
       </div>
       <div :class="cn('mc-carousel__arrows', classNames?.arrows)">
-        <button type="button" :class="cn('mc-carousel__control', classNames?.control)" aria-label="Previous slide" :aria-disabled="index === 0" @click="() => { if (carousel && carousel.target() > 0) carousel.select(carousel.target() - 1); }"><ChevronLeft :size="18" :stroke-width="1.75" aria-hidden="true" /></button>
-        <button type="button" :class="cn('mc-carousel__control', classNames?.control)" aria-label="Next slide" :aria-disabled="index === last" @click="() => { if (carousel && carousel.target() < last) carousel.select(carousel.target() + 1); }"><ChevronRight :size="18" :stroke-width="1.75" aria-hidden="true" /></button>
+        <button type="button" :class="cn('mc-carousel__control', classNames?.control)" aria-label="Previous slide" :aria-disabled="index === 0" @click="previous"><ChevronLeft :size="18" :stroke-width="1.75" aria-hidden="true" /></button>
+        <button type="button" :class="cn('mc-carousel__control', classNames?.control)" aria-label="Next slide" :aria-disabled="index === last" @click="following"><ChevronRight :size="18" :stroke-width="1.75" aria-hidden="true" /></button>
       </div>
     </div>
     <span class="mc-carousel__visuallyHidden" aria-live="polite" aria-atomic="true">{{ announcement }}</span>

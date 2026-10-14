@@ -38,7 +38,7 @@ const props = withDefaults(
 );
 
 /** `v-model:active-key` binds the focused category. Others dim while one is focused. */
-const activeModel = defineModel<string | null>("activeKey", { default: undefined });
+const activeModel = defineModel<string | null | undefined>("activeKey");
 const attrs = useAttrs();
 const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const figure = ref<HTMLElement>();
