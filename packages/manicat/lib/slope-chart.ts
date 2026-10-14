@@ -172,7 +172,7 @@ export function createSlopeMotion(root: HTMLElement, { reduced }: { reduced: boo
 }
 
 /** The tooltip glides to the middle of the line in focus and stays inside the chart. */
-export function createTooltipFollow(tip: HTMLElement, reduced: boolean) {
+export function createTooltipFollow(tip: HTMLElement, reduced: boolean, { stiffness = 480, damping = 42 }: { stiffness?: number; damping?: number } = {}) {
   const x = motionValue(0);
   const y = motionValue(0);
   const paint = () => (tip.style.transform = `translate(${x.get()}px, ${y.get()}px)`);
@@ -180,7 +180,7 @@ export function createTooltipFollow(tip: HTMLElement, reduced: boolean) {
   y.on("change", paint);
   let shown = false;
   let runs: AnimationPlaybackControls[] = [];
-  const follow = { type: "spring", stiffness: 480, damping: 42, restDelta: 0.01 } as const;
+  const follow = { type: "spring", stiffness, damping, restDelta: 0.01 } as const;
   return {
     to(left: number, top: number) {
       runs.forEach((run) => run.stop());

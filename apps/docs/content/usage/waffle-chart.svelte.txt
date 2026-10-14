@@ -1,7 +1,15 @@
 <script lang="ts">
   import WaffleChart from "@/components/manicat/waffle-chart/waffle-chart.svelte";
+
+  const data = [
+    { key: "solar", label: "Solar", value: 350 },
+    { key: "wind", label: "Wind", value: 490 },
+    { key: "gas", label: "Gas", value: 520 },
+    { key: "coal", label: "Coal", value: 610 },
+    { key: "hydro", label: "Hydro", value: 260 },
+  ];
 </script>
 
-<div style="width: min(320px, 100%)">
-  <WaffleChart label="Traffic by source" unit="visits" data={[{ key: "search", label: "Search", value: 52 }, { key: "direct", label: "Direct", value: 31 }, { key: "social", label: "Social", value: 17 }]} />
+<div style="width: 100%">
+  <WaffleChart {data} label="Electricity generation, 2025" unit="TWh" legend />
 </div>
