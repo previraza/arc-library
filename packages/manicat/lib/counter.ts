@@ -41,6 +41,8 @@ export interface CounterOptions {
   locale: string;
   animateOnView: boolean;
   reduced: boolean;
+  /** Takes the digits that are off the wheel out of the accessibility and text tree, as the animated counter does. On by default. */
+  hideOffWheel?: boolean;
   classes: CounterClasses;
 }
 
@@ -67,11 +69,11 @@ export function createCounter(host: HTMLElement, srOnly: HTMLElement, initial: C
   const draw = (column: Column) => {
     column.glyphs.forEach((glyph, digit) => {
       const o = offset(digit, column.position.value);
-      const hidden = Math.abs(o) >= 1;
+      const far = Math.abs(o) >= 1;
       glyph.style.transform = `translateY(${o}em)`;
       glyph.style.opacity = String(Math.max(0, 1 - Math.abs(o)));
-      glyph.style.visibility = hidden ? "hidden" : "visible";
-      glyph.style.filter = Math.abs(o) < 0.02 || hidden ? "none" : `blur(${(Math.abs(o) * motionTokens.blur.subtle).toFixed(2)}px)`;
+      if (options.hideOffWheel !== false) glyph.style.visibility = far ? "hidden" : "visible";
+      glyph.style.filter = Math.abs(o) < 0.02 || far ? "none" : `blur(${(Math.abs(o) * motionTokens.blur.subtle).toFixed(2)}px)`;
     });
   };
 

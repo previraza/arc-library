@@ -1,13 +1,19 @@
 <script setup lang="ts">
+import { computed, ref } from "vue";
+import Button from "@/components/manicat/button/button.vue";
 import UsageMeter from "@/components/manicat/usage-meter/usage-meter.vue";
 
-const segments = [
-  { id: "db", label: "Database", value: 32 },
-  { id: "media", label: "Media", value: 26 },
-  { id: "logs", label: "Logs", value: 6 },
-];
+const used = ref(64);
+const segments = computed(() => [
+  { id: "db", label: "Database", value: used.value * 0.5 },
+  { id: "media", label: "Media", value: used.value * 0.4 },
+  { id: "logs", label: "Logs", value: used.value * 0.1 },
+]);
 </script>
 
 <template>
-  <UsageMeter label="Workspace storage" :limit="100" unit="GB" :segments="segments" />
+  <div style="display: grid; width: 100%; max-width: 384px; gap: 12px">
+    <UsageMeter label="Workspace storage" :limit="100" unit="GB" :segments="segments" />
+    <Button size="sm" variant="secondary" @click="used = used > 90 ? 20 : used + 20">Add 20 GB</Button>
+  </div>
 </template>
