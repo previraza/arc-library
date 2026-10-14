@@ -1,13 +1,27 @@
 <script lang="ts">
   import SortableDataTable from "@/components/manicat/sortable-data-table/sortable-data-table.svelte";
-  let selected = $state<string[]>([]);
-  const rows = [
-    { id: "1", name: "Ada Lovelace", role: "Engineer", seats: 12 },
-    { id: "2", name: "Lin Chen", role: "Designer", seats: 4 },
-    { id: "3", name: "Grace Hopper", role: "Admiral", seats: 30 },
+
+  const projects = [
+    { id: "p1", name: "Manicat UI", owner: "Elia", status: "Active", seats: 24 },
+    { id: "p2", name: "Atlas", owner: "Mara", status: "Trialing", seats: 6 },
+    { id: "p3", name: "Halo", owner: "Denis", status: "Active", seats: 12 },
+    { id: "p4", name: "Nimbus", owner: "Ravi", status: "Paused", seats: 3 },
+    { id: "p5", name: "Quartz", owner: "Sofia", status: "Active", seats: 9 },
+  ];
+  const columns = [
+    { key: "name", label: "Project", sortable: true },
+    { key: "owner", label: "Owner", sortable: true },
+    { key: "status", label: "Status", sortable: true },
+    { key: "seats", label: "Seats", sortable: true, numeric: true },
   ];
 </script>
 
-<div style="width: min(520px, 100%)">
-  <SortableDataTable {rows} rowKey="id" selectable bind:selected defaultSort={{ key: "name", direction: "asc" }} columns={[{ key: "name", label: "Name", sortable: true }, { key: "role", label: "Role", sortable: true }, { key: "seats", label: "Seats", sortable: true, numeric: true }]} />
-</div>
+<SortableDataTable
+  rows={projects}
+  {columns}
+  rowKey="id"
+  caption="Projects in the workspace"
+  defaultSort={{ key: "seats", direction: "desc" }}
+  selectable
+  itemName={{ one: "project", other: "projects" }}
+/>
