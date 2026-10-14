@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import ImageCompare from "@/components/manicat/image-compare/image-compare.vue";
-
-const position = ref(50);
 </script>
 
 <template>
-  <ImageCompare v-model="position" :labels="['Original', 'Retouched']">
-    <template #before><img src="/photos/original.jpg" alt="Original" /></template>
-    <template #after><img src="/photos/retouched.jpg" alt="Retouched" /></template>
+  <ImageCompare aspect-ratio="16/10" :labels="['Original', 'Retouched']">
+    <template #before>
+      <div style="display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e3a5f, #3b5b8c)">
+        <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: rgb(255 255 255 / 0.8)">Original</span>
+      </div>
+    </template>
+    <template #after>
+      <div style="display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; background: linear-gradient(135deg, #0ea5e9, #22c55e)">
+        <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: rgb(255 255 255 / 0.8)">Retouched</span>
+      </div>
+    </template>
   </ImageCompare>
 </template>
