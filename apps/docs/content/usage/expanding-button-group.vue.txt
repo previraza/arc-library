@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { Star, Trash2 } from "lucide-vue-next";
 import ExpandingButtonGroup from "@/components/manicat/expanding-button-group/expanding-button-group.vue";
 
 const items = [
-  { id: "archive", label: "Archive", doneLabel: "Archived" },
-  { id: "delete", label: "Delete", tone: "danger" as const },
+  { id: "archive", label: "Archive", icon: Star, doneLabel: "Archived" },
+  { id: "delete", label: "Delete", icon: Trash2, tone: "danger" as const },
 ];
 </script>
 
