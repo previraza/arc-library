@@ -1,13 +1,30 @@
 <script setup lang="ts">
 import CardStack from "@/components/manicat/card-stack/card-stack.vue";
 
-const trips = [{ name: "Lisbon", tag: "Seven hills, ocean light" }, { name: "Kyoto", tag: "Temples and quiet lanes" }, { name: "Reykjavik", tag: "Lava fields, hot springs" }];
+const destinations = [
+  { name: "Lisbon", tag: "Seven hills, ocean light", emoji: "🌊" },
+  { name: "Kyoto", tag: "Temples and quiet lanes", emoji: "⛩️" },
+  { name: "Reykjavik", tag: "Lava fields, hot springs", emoji: "🌋" },
+  { name: "Auckland", tag: "Harbour and rainforest", emoji: "⛵" },
+];
 </script>
 
 <template>
-  <CardStack :items="trips" :get-key="(trip) => trip.name" :get-label="(trip) => trip.name" :labels="{ left: 'Skip', right: 'Shortlist' }" :outcomes="{ left: 'skipped', right: 'shortlisted' }">
+  <CardStack :items="destinations" :get-key="(item) => item.name" :get-label="(item) => item.name" :labels="{ left: 'Skip', right: 'Shortlist' }" :outcomes="{ left: 'skipped', right: 'shortlisted' }" label="Trip ideas">
     <template #card="{ item }">
-      <div class="p-6"><p class="text-lg font-semibold">{{ item.name }}</p><p>{{ item.tag }}</p></div>
+      <div style="display: flex; aspect-ratio: 5 / 3; flex-direction: column; justify-content: space-between; padding: 24px">
+        <span style="font-size: var(--text-4xl); line-height: 1.1111">{{ item.emoji }}</span>
+        <div>
+          <p style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600">{{ item.name }}</p>
+          <p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--text-muted)">{{ item.tag }}</p>
+        </div>
+      </div>
+    </template>
+    <template #empty="{ reset }">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 0; text-align: center">
+        <p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--text-muted)">Every idea was decided.</p>
+        <button type="button" style="border: 0; background: none; padding: 0; font: inherit; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--accent); cursor: pointer" @click="reset">Start over</button>
+      </div>
     </template>
   </CardStack>
 </template>
