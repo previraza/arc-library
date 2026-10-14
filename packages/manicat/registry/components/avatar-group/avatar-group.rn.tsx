@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { Avatar } from "@/registry/components/avatar/avatar.rn";
 import { metrics, useTokens } from "@/lib/rn-tokens";

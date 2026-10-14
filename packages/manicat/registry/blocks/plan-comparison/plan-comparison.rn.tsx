@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { Button } from "@/registry/components/button/button.rn";
 import { SegmentedControl } from "@/registry/components/segmented-control/segmented-control.rn";

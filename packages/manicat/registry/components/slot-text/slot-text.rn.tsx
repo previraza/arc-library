@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
+import { AnimatedText } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps } from "react-native";
 import { useTokens } from "@/lib/rn-tokens";
 
@@ -26,7 +27,7 @@ function Cell({ char, index, duration, style }: { char: string; index: number; d
   }, [char, duration, index, progress]);
 
   return (
-    <Animated.Text style={[style, { opacity: progress, transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }] }]}>{char}</Animated.Text>
+    <AnimatedText style={[style, { opacity: progress, transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }] }]}>{char}</AnimatedText>
   );
 }
 

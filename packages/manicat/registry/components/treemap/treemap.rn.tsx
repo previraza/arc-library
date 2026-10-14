@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { LayoutChangeEvent, StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { squarify } from "@/lib/chart";
 import { metrics, useTokens } from "@/lib/rn-tokens";

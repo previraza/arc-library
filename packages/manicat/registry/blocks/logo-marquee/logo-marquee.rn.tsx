@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, Image, StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { ImageSourcePropType, StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { Button } from "@/registry/components/button/button.rn";
 import { useTokens } from "@/lib/rn-tokens";

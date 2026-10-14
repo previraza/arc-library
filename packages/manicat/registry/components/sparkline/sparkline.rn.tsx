@@ -1,5 +1,6 @@
 // @manicat-dependencies react-native-svg
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { areaPath, linePath, linearScale } from "@/lib/chart";

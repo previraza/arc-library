@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Linking, StyleSheet, Text, View } from "react-native";
+import { Linking, StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { Button } from "@/registry/components/button/button.rn";
 import { Input } from "@/registry/components/input/input.rn";

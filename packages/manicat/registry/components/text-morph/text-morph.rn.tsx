@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Animated, Easing } from "react-native";
+import { AnimatedText } from "@/lib/rn-text";
 import type { StyleProp, TextProps, TextStyle } from "react-native";
 
 export interface TextMorphProps extends Omit<TextProps, "children"> {
@@ -22,13 +23,13 @@ export function TextMorph({ children, style, styles: parts, ...props }: TextMorp
   }, [children, shown, progress]);
 
   return (
-    <Animated.Text
+    <AnimatedText
       {...props}
       accessibilityLabel={children}
       style={[style, parts?.glyph, { opacity: progress, transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [-6, 0] }) }] }]}
     >
       {shown}
-    </Animated.Text>
+    </AnimatedText>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Animated, Easing, Pressable, StyleSheet, Text } from "react-native";
+import { Animated, Easing, Pressable, StyleSheet } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
 

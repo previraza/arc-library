@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { Animated, Easing, Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
+import { Text, AnimatedText } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
 
@@ -32,7 +33,7 @@ function Chevron({ open, style, color }: { open: boolean; style?: StyleProp<Text
   }, [open, turn]);
 
   return (
-    <Animated.Text style={[{ color, fontSize: 18, transform: [{ rotate: turn.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "180deg"] }) }] }, style]}>⌄</Animated.Text>
+    <AnimatedText style={[{ color, fontSize: 18, transform: [{ rotate: turn.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "180deg"] }) }] }, style]}>⌄</AnimatedText>
   );
 }
 

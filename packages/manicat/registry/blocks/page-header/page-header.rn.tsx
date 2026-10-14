@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { AvatarGroup } from "@/registry/components/avatar-group/avatar-group.rn";
 import { Badge } from "@/registry/components/badge/badge.rn";

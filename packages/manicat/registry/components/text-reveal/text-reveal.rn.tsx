@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Animated, Easing, View } from "react-native";
+import { AnimatedText } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { useTokens } from "@/lib/rn-tokens";
 
@@ -22,11 +23,11 @@ function Word({ children, index, delay, style }: { children: string; index: numb
   }, [delay, index, progress]);
 
   return (
-    <Animated.Text
+    <AnimatedText
       style={[style, { opacity: progress, transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }] }]}
     >
       {children}{" "}
-    </Animated.Text>
+    </AnimatedText>
   );
 }
 

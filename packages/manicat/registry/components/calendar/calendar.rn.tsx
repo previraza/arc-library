@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { addMonths, isDisabled, monthGrid, monthLabel, sameDay, startOfMonth, weekdayLabels } from "@/lib/calendar";
 import type { CalendarDateMatcher } from "@/lib/calendar";

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Text, TextInput } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { BY_ISO, PHONE_COUNTRIES, capDigits, flagOf, formatNational, onlyDigits, parsePhoneNumber, statusOf, toE164 } from "@/lib/phone";
 import type { PhoneCountry, PhoneStatus } from "@/lib/phone";

@@ -1,6 +1,7 @@
 // @manicat-dependencies react-native-svg
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { arcPath } from "@/lib/chart";

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AccessibilityInfo, Animated, Easing } from "react-native";
+import { AnimatedText } from "@/lib/rn-text";
 import type { TextProps } from "react-native";
 import { useTokens } from "@/lib/rn-tokens";
 
@@ -37,9 +38,9 @@ export function TextShimmer({ children, active = true, duration = 1.8, style, ..
   }, [active, duration, pulse, reduceMotion]);
 
   return (
-    <Animated.Text {...props} accessibilityState={{ busy: active }} style={[{ color: active ? tokens.textSecondary : tokens.textMuted, opacity: pulse }, style]}>
+    <AnimatedText {...props} accessibilityState={{ busy: active }} style={[{ color: active ? tokens.textSecondary : tokens.textMuted, opacity: pulse }, style]}>
       {children}
-    </Animated.Text>
+    </AnimatedText>
   );
 }
 

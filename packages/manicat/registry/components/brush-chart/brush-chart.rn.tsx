@@ -1,6 +1,7 @@
 // @manicat-dependencies react-native-svg
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { LayoutChangeEvent, StyleProp, TextStyle, ViewProps } from "react-native";
 import Svg, { Circle, Line, Path } from "react-native-svg";
 import { Slider } from "@/registry/components/slider/slider.rn";

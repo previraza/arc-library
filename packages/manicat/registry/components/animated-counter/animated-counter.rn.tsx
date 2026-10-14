@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Animated, Easing, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
+import { Text } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps } from "react-native";
 import { metrics, useTokens } from "@/lib/rn-tokens";
 

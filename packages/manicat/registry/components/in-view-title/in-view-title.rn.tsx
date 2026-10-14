@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Animated, Easing, View } from "react-native";
+import { AnimatedText } from "@/lib/rn-text";
 import type { StyleProp, TextStyle, ViewProps, ViewStyle } from "react-native";
 import { useTokens } from "@/lib/rn-tokens";
 
@@ -25,9 +26,9 @@ function Piece({ children, index, step, style }: { children: string; index: numb
   }, [index, step, progress]);
 
   return (
-    <Animated.Text style={[style, { opacity: progress, transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [14, 0] }) }] }]}>
+    <AnimatedText style={[style, { opacity: progress, transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [14, 0] }) }] }]}>
       {children}
-    </Animated.Text>
+    </AnimatedText>
   );
 }
 
