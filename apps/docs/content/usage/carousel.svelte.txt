@@ -1,12 +1,19 @@
 <script lang="ts">
   import Carousel from "@/components/manicat/carousel/carousel.svelte";
-  const colors = ["#7747ff", "#2563eb", "#22c55e", "#f59e0b"];
+
+  const slides = [
+    { title: "Harbour suites", from: "oklch(74.6% 0.16 232.661)", to: "oklch(54.6% 0.245 262.881)" },
+    { title: "Old town lofts", from: "oklch(71.2% 0.194 13.428)", to: "oklch(57.7% 0.245 27.325)" },
+    { title: "Wine cellar stay", from: "oklch(82.8% 0.189 84.429)", to: "oklch(64.6% 0.222 41.116)" },
+    { title: "Hilltop villa", from: "oklch(76.5% 0.177 163.223)", to: "oklch(62.7% 0.194 149.214)" },
+    { title: "Lakeside cabin", from: "oklch(67.3% 0.182 276.935)", to: "oklch(54.1% 0.281 293.009)" },
+  ];
 </script>
 
-<div style="width: min(460px, 100%)">
-  <Carousel label="Highlights" count={colors.length}>
-    {#each colors as color, at (color)}
-      <div style="height: 140px; border-radius: 16px; background: {color}; color: white; display: grid; place-items: center; font-weight: 600">Slide {at + 1}</div>
-    {/each}
-  </Carousel>
-</div>
+<Carousel label="From the Harbour suites" slideSize="72cqw" items={slides}>
+  {#snippet slide(item)}
+    <div style="display: flex; aspect-ratio: 4 / 3; align-items: center; justify-content: center; border-radius: var(--radius-panel); background: linear-gradient(to bottom right in oklab, {item.from}, {item.to})">
+      <p style="margin: 0; font-weight: 500; color: white">{item.title}</p>
+    </div>
+  {/snippet}
+</Carousel>

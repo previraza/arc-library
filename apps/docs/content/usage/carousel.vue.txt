@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import Carousel from "@/components/manicat/carousel/carousel.vue";
 
-const stays = ["Harbour suites", "Old town lofts", "Wine cellar stay", "Hilltop villa"];
-const index = ref(0);
+const slides = [
+  { title: "Harbour suites", from: "oklch(74.6% 0.16 232.661)", to: "oklch(54.6% 0.245 262.881)" },
+  { title: "Old town lofts", from: "oklch(71.2% 0.194 13.428)", to: "oklch(57.7% 0.245 27.325)" },
+  { title: "Wine cellar stay", from: "oklch(82.8% 0.189 84.429)", to: "oklch(64.6% 0.222 41.116)" },
+  { title: "Hilltop villa", from: "oklch(76.5% 0.177 163.223)", to: "oklch(62.7% 0.194 149.214)" },
+  { title: "Lakeside cabin", from: "oklch(67.3% 0.182 276.935)", to: "oklch(54.1% 0.281 293.009)" },
+];
 </script>
 
 <template>
-  <Carousel v-model="index" label="Featured stays" :count="stays.length">
-    <div v-for="stay in stays" :key="stay" class="grid aspect-[4/3] place-items-center rounded-3xl bg-blue-500 font-medium text-white">{{ stay }}</div>
+  <Carousel label="From the Harbour suites" slide-size="72cqw">
+    <div
+      v-for="slide in slides"
+      :key="slide.title"
+      :style="{ display: 'flex', aspectRatio: '4 / 3', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-panel)', background: `linear-gradient(to bottom right in oklab, ${slide.from}, ${slide.to})` }"
+    >
+      <p style="margin: 0; font-weight: 500; color: white">{{ slide.title }}</p>
+    </div>
   </Carousel>
 </template>
