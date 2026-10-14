@@ -6,8 +6,8 @@ const title = ref("Quarterly plan");
 </script>
 
 <template>
-  <div style="border: 1px solid var(--border); border-radius: 22px; padding: 24px; text-align: center">
+  <div style="border: 1px solid var(--border); border-radius: var(--radius-panel); padding: 24px; text-align: center">
     <InlineEdit v-model="title" label="Title" />
-    <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.6">Click the title to edit it in place.</p>
+    <p style="margin: 8px 0 0; font-size: 14px; line-height: 20px; color: var(--text-muted)">Click the title to edit it in place.</p>
   </div>
 </template>
