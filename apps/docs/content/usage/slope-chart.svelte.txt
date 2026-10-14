@@ -1,14 +1,15 @@
 <script lang="ts">
   import SlopeChart from "@/components/manicat/slope-chart/slope-chart.svelte";
+
+  const data = [
+    { key: "search", label: "Organic search", start: 38, end: 29 },
+    { key: "direct", label: "Direct", start: 24, end: 27 },
+    { key: "referral", label: "Referral", start: 12, end: 8 },
+    { key: "social", label: "Social", start: 16, end: 21 },
+    { key: "newsletter", label: "Newsletter", start: 10, end: 15 },
+  ];
 </script>
 
-<div style="width: min(460px, 100%)">
-  <SlopeChart
-    label="Plan adoption"
-    startLabel="Q1"
-    endLabel="Q2"
-    ranks
-    data={[{ key: "free", label: "Free", start: 62, end: 54 }, { key: "pro", label: "Pro", start: 28, end: 37 }, { key: "scale", label: "Scale", start: 10, end: 9 }]}
-    formatValue={(n) => `${n}%`}
-  />
+<div style="width: 100%">
+  <SlopeChart {data} label="Conversion rate by channel" startLabel="Q1" endLabel="Q2" ranks highlightKey="social" />
 </div>
